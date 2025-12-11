@@ -1,0 +1,2131 @@
+<!-- Load NOHU Tool CSS V2 -->
+<link rel="stylesheet" href="tools-ui/nohu-tool-v2.css">
+
+<!-- Inline Critical CSS for immediate rendering -->
+<style>
+    .nohu-tool-container {
+        padding: 0;
+        width: 100%;
+    }
+
+    .form-section {
+        background: #f7fafc;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .results-table-wrapper {
+        overflow-x: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .results-table thead {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+
+    .results-table th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .results-table td {
+        padding: 15px;
+        border-bottom: 1px solid #e2e8f0;
+        font-size: 14px;
+        color: #2d3748;
+    }
+
+    /* Check times badge */
+    .check-times-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    /* Warning button */
+    .btn-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+    }
+</style>
+
+<!-- NOHU Auto Tool UI -->
+<div class="nohu-tool-container">
+
+    <!-- Info Banner -->
+    <div class="info-banner">
+        <h3>🎰 NOHU Auto Tool</h3>
+        <p>Tự động đăng ký, đăng nhập, thêm ngân hàng và check khuyến mãi cho các trang game</p>
+    </div>
+
+    <!-- Tabs with START button -->
+    <div class="tabs-container">
+        <div class="tabs">
+            <div class="tab active" data-tab="auto">🤖 Tự Động</div>
+            <div class="tab" data-tab="register">📝 Đăng Ký</div>
+            <div class="tab" data-tab="login">🔐 Đăng Nhập</div>
+            <div class="tab" data-tab="bank">💳 Thêm Bank</div>
+            <div class="tab" data-tab="promo">🎁 Check KM</div>
+        </div>
+        <button class="btn btn-start" id="startButton" onclick="handleStartAction()">
+            <span class="start-icon">▶️</span>
+            <span class="start-text" id="startButtonText">CHẠY TỰ ĐỘNG</span>
+        </button>
+    </div>
+
+    <!-- Results Full Width -->
+    <div class="results-full-width">
+        <h3>🎯 Chọn Trang</h3>
+
+        <!-- Group 1: Khuyến Mãi Tải App -->
+        <div style="margin-bottom: 25px;">
+            <h4 style="margin: 0 0 12px 0; color: #4a5568; font-size: 14px; font-weight: 600;">
+                📱 Khuyến Mãi Tải App
+            </h4>
+            <div class="sites-grid" id="appPromoSites">
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="Go99"
+                        data-register="https://m.1go99.vip/?f=3528698"
+                        data-login="https://m.ghhdj-567dhdhhmm.asia/?app=1" data-promo="https://go99code.store">
+                    <div class="site-icon go99">GO</div>
+                    <div class="site-name">Go99</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="NOHU"
+                        data-register="https://m.8nohu.vip/?f=6344995" data-login="https://m.88111188.com/?app=1"
+                        data-promo="https://nohucode.shop">
+                    <div class="site-icon nohu">NO</div>
+                    <div class="site-name">NOHU</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="TT88"
+                        data-register="https://m.1tt88.vip/?f=3535864"
+                        data-login="https://m.1bedd-fb89bj53gg9hjs0bka.club/?app=1" data-promo="https://tt88code.win">
+                    <div class="site-icon tt88">TT</div>
+                    <div class="site-name">TT88</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="MMOO"
+                        data-register="https://m.mmoo.team/?f=394579" data-login="https://m.0mmoo.com/?app=1"
+                        data-promo="https://mmoocode.shop">
+                    <div class="site-icon mmoo">MM</div>
+                    <div class="site-name">MMOO</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="789P"
+                        data-register="https://m.789p1.vip/?f=784461"
+                        data-login="https://m.jvdf76fd92jk87gfuj60o.xyz/?app=1" data-promo="https://789pcode.store">
+                    <div class="site-icon p789">789</div>
+                    <div class="site-name">789P</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="33WIN"
+                        data-register="https://m.3333win.cc/?f=3115867" data-login="https://m.336049.com/?app=1"
+                        data-promo="https://33wincode.com">
+                    <div class="site-icon win33">33</div>
+                    <div class="site-name">33WIN</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="88VV"
+                        data-register="https://m.888vvv.bet/?f=1054152" data-login="https://m.88vv.my/?app=1"
+                        data-promo="https://88vvcode.com/">
+                    <div class="site-icon vv88">88</div>
+                    <div class="site-name">88VV</div>
+                </label>
+            </div>
+            <div class="site-actions">
+                <button class="btn btn-sm" onclick="selectAppPromoSites()">✅ Chọn Tất Cả</button>
+                <button class="btn btn-sm" onclick="deselectAppPromoSites()">❌ Bỏ Chọn</button>
+            </div>
+        </div>
+
+        <!-- Group 2: Khuyến Mãi Tin Nhắn SMS -->
+        <div style="margin-bottom: 25px;">
+            <h4 style="margin: 0 0 12px 0; color: #4a5568; font-size: 14px; font-weight: 600;">
+                💬 Khuyến Mãi Tin Nhắn SMS
+            </h4>
+            <div class="sites-grid" id="smsPromoSites">
+                <label class="site-card">
+                    <input type="checkbox" class="site-check site-check-sms" data-name="Go99-SMS"
+                        data-register="https://m.91111119.com/Account/Register?f=4571131">
+                    <div class="site-icon go99">GO</div>
+                    <div class="site-name">Go99</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check site-check-sms" data-name="NOHU-SMS" data-register="">
+                    <div class="site-icon nohu">NO</div>
+                    <div class="site-name">NOHU</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check site-check-sms" data-name="TT88-SMS"
+                        data-register="https://m.88809888.app/Account/Register?f=4587344">
+                    <div class="site-icon tt88">TT</div>
+                    <div class="site-name">TT88</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check site-check-sms" data-name="MMOO-SMS" data-register="">
+                    <div class="site-icon mmoo">MM</div>
+                    <div class="site-name">MMOO</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check site-check-sms" data-name="789P-SMS" data-register="">
+                    <div class="site-icon p789">789</div>
+                    <div class="site-name">789P</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check site-check-sms" data-name="33WIN-SMS" data-register="">
+                    <div class="site-icon win33">33</div>
+                    <div class="site-name">33WIN</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check site-check-sms" data-name="88VV-SMS" data-register="">
+                    <div class="site-icon vv88">88</div>
+                    <div class="site-name">88VV</div>
+                </label>
+            </div>
+            <div class="site-actions">
+                <button class="btn btn-sm" onclick="selectSmsPromoSites()">✅ Chọn Tất Cả</button>
+                <button class="btn btn-sm" onclick="deselectSmsPromoSites()">❌ Bỏ Chọn</button>
+            </div>
+        </div>
+    </div>
+    <!-- End Sites Selection form-section -->
+
+    <!-- Tab Content: Auto -->
+    <div class="tab-content active" id="tab-auto">
+        <!-- Promo Type Selection (Only in Auto tab) -->
+        <div class="form-section">
+            <h3>🎯 Chọn Loại Khuyến Mãi</h3>
+            <div style="background: #f7fafc; padding: 15px; border-radius: 8px;">
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600;">
+                        <input type="radio" name="promoType" value="app" checked
+                            style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>📱 Khuyến Mãi Tải App</span>
+                        <span style="font-size: 12px; color: #718096; font-weight: normal;">(Đăng Ký → Đăng Nhập →
+                            Thêm
+                            Bank → Check KM)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600;">
+                        <input type="radio" name="promoType" value="sms"
+                            style="width: 18px; height: 18px; cursor: pointer;">
+                        <span>💬 Khuyến Mãi Tin Nhắn SMS</span>
+                        <span style="font-size: 12px; color: #718096; font-weight: normal;">(Đăng Ký → Thêm
+                            Bank)</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">📋 Chọn Profile</h3>
+                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()" title="Tải lại profiles">🔄
+                    Tải Lại</button>
+            </div>
+
+            <!-- Profile Carousel -->
+            <div class="profile-carousel-wrapper">
+                <div class="profile-carousel-container">
+                    <button class="carousel-btn carousel-prev" onclick="scrollProfileCarousel('auto', -1)">‹</button>
+                    <div class="profile-carousel" id="autoProfileCarousel">
+                        <div class="profile-carousel-empty">
+                            <p>Click "Tải Lại" để xem profiles</p>
+                        </div>
+                    </div>
+                    <button class="carousel-btn carousel-next" onclick="scrollProfileCarousel('auto', 1)">›</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>👤 Thông Tin Tài Khoản</h3>
+            <div class="form-grid">
+                <div class="input-with-button">
+                    <input type="text" id="autoUsername" placeholder="Tên tài khoản">
+                    <button class="btn-icon" onclick="generateUsername('autoUsername')" title="Random">🎲</button>
+                </div>
+                <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)">
+                <input type="password" id="autoPassword" placeholder="Mật khẩu">
+                <input type="password" id="autoWithdrawPassword" placeholder="MK rút tiền">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>💳 Thông Tin Ngân Hàng</h3>
+            <div class="form-grid">
+                <select id="autoBankName">
+                    <option value="">Chọn ngân hàng...</option>
+                </select>
+                <input type="text" id="autoBankBranch" placeholder="Chi nhánh">
+                <input type="text" id="autoAccountNumber" placeholder="Số tài khoản">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary btn-large" onclick="runAutoSequence()">
+                🚀 CHẠY TỰ ĐỘNG (Đăng Ký → Đăng Nhập → Thêm Bank → Check KM)
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Register -->
+    <div class="tab-content" id="tab-register">
+        <div class="form-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">📋 Chọn Profile</h3>
+                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()" title="Tải lại profiles">🔄
+                    Tải Lại</button>
+            </div>
+
+            <!-- Profile Carousel -->
+            <div class="profile-carousel-wrapper">
+                <div class="profile-carousel-container">
+                    <button class="carousel-btn carousel-prev" onclick="scrollProfileCarousel('reg', -1)">‹</button>
+                    <div class="profile-carousel" id="regProfileCarousel">
+                        <div class="profile-carousel-empty">
+                            <p>Click "Tải Lại" để xem profiles</p>
+                        </div>
+                    </div>
+                    <button class="carousel-btn carousel-next" onclick="scrollProfileCarousel('reg', 1)">›</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>👤 Thông Tin Đăng Ký</h3>
+            <div class="form-grid">
+                <div class="input-with-button">
+                    <input type="text" id="regUsername" placeholder="Tên tài khoản">
+                    <button class="btn-icon" onclick="generateUsername('regUsername')" title="Random">🎲</button>
+                </div>
+                <input type="text" id="regFullname" placeholder="Họ và Tên (IN HOA)">
+                <input type="password" id="regPassword" placeholder="Mật khẩu">
+                <input type="password" id="regWithdrawPassword" placeholder="MK rút tiền">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary btn-large" onclick="runRegisterOnly()">
+                📝 Đăng Ký
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Login -->
+    <div class="tab-content" id="tab-login">
+        <div class="form-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">📋 Chọn Profile</h3>
+                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()" title="Tải lại profiles">🔄
+                    Tải Lại</button>
+            </div>
+
+            <!-- Profile Carousel -->
+            <div class="profile-carousel-wrapper">
+                <div class="profile-carousel-container">
+                    <button class="carousel-btn carousel-prev" onclick="scrollProfileCarousel('login', -1)">‹</button>
+                    <div class="profile-carousel" id="loginProfileCarousel">
+                        <div class="profile-carousel-empty">
+                            <p>Click "Tải Lại" để xem profiles</p>
+                        </div>
+                    </div>
+                    <button class="carousel-btn carousel-next" onclick="scrollProfileCarousel('login', 1)">›</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>🔐 Thông Tin Đăng Nhập</h3>
+            <div class="form-grid">
+                <input type="text" id="loginUsername" placeholder="Tên tài khoản">
+                <input type="password" id="loginPassword" placeholder="Mật khẩu">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary btn-large" onclick="runLoginOnly()">
+                🔐 Đăng Nhập
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Bank -->
+    <div class="tab-content" id="tab-bank">
+        <div class="warning-banner">
+            <strong>⚠️ Lưu ý:</strong> Bạn cần đăng nhập trước vào các trang trước khi sử dụng chức năng này.
+        </div>
+
+        <div class="form-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">📋 Chọn Profile</h3>
+                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()" title="Tải lại profiles">🔄
+                    Tải Lại</button>
+            </div>
+
+            <!-- Profile Carousel -->
+            <div class="profile-carousel-wrapper">
+                <div class="profile-carousel-container">
+                    <button class="carousel-btn carousel-prev" onclick="scrollProfileCarousel('bank', -1)">‹</button>
+                    <div class="profile-carousel" id="bankProfileCarousel">
+                        <div class="profile-carousel-empty">
+                            <p>Click "Tải Lại" để xem profiles</p>
+                        </div>
+                    </div>
+                    <button class="carousel-btn carousel-next" onclick="scrollProfileCarousel('bank', 1)">›</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>💳 Thông Tin Ngân Hàng</h3>
+            <div class="form-grid">
+                <select id="bankBankName">
+                    <option value="">Chọn ngân hàng...</option>
+                </select>
+                <input type="text" id="bankBankBranch" placeholder="Chi nhánh">
+                <input type="text" id="bankAccountNumber" placeholder="Số tài khoản">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary btn-large" onclick="runAddBankOnly()">
+                💳 Thêm Ngân Hàng
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Promo -->
+    <div class="tab-content" id="tab-promo">
+        <div class="form-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">📋 Chọn Profile</h3>
+                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()" title="Tải lại profiles">🔄
+                    Tải Lại</button>
+            </div>
+
+            <!-- Profile Carousel -->
+            <div class="profile-carousel-wrapper">
+                <div class="profile-carousel-container">
+                    <button class="carousel-btn carousel-prev" onclick="scrollProfileCarousel('promo', -1)">‹</button>
+                    <div class="profile-carousel" id="promoProfileCarousel">
+                        <div class="profile-carousel-empty">
+                            <p>Click "Tải Lại" để xem profiles</p>
+                        </div>
+                    </div>
+                    <button class="carousel-btn carousel-next" onclick="scrollProfileCarousel('promo', 1)">›</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h3>👤 Thông Tin Tài Khoản</h3>
+            <input type="text" id="promoUsername" placeholder="Tên tài khoản" class="full-width">
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary btn-large" onclick="runCheckPromo()">
+                🎁 Check Khuyến Mãi
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content: Profile Management -->
+    <div class="tab-content" id="tab-profiles">
+        <div class="info-banner">
+            <h3>📋 Quản Lý Profiles</h3>
+            <p>Tạo, xóa, start/stop profiles. Chọn profile để chạy automation.</p>
+        </div>
+
+        <!-- Profile Actions -->
+        <div class="form-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">📋 Danh Sách Profiles</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="openCreateProfileModal()">
+                        ➕ Tạo Profile
+                    </button>
+                    <button class="btn btn-secondary" onclick="loadProfilesForTool()">
+                        🔄 Tải Lại
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bulk Actions -->
+            <div id="toolBulkActions"
+                style="background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: none;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                    <button class="btn btn-primary" onclick="startSelectedProfiles()">
+                        ▶️ Start đã chọn
+                    </button>
+                    <button class="btn btn-secondary" onclick="stopSelectedProfiles()">
+                        ⏹️ Stop đã chọn
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteSelectedProfiles()">
+                        🗑️ Xóa đã chọn
+                    </button>
+                    <button class="btn btn-sm" onclick="selectAllProfiles()">✅ Chọn tất cả</button>
+                    <button class="btn btn-sm" onclick="deselectAllProfiles()">❌ Bỏ chọn</button>
+                    <div style="flex: 1; text-align: right;">
+                        <span id="toolSelectedCount" style="color: #4a5568; font-weight: 600;">
+                            Đã chọn: 0 profile(s)
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profiles Grid -->
+            <div id="toolProfilesGrid" class="profiles-grid-tool">
+                <p class="empty-state">Click "Tải Lại" để xem profiles</p>
+            </div>
+        </div>
+
+        <!-- Selected Profile Info -->
+        <div class="form-section" id="selectedProfileInfo" style="display: none;">
+            <h3>✅ Profile Đã Chọn</h3>
+            <div
+                style="background: linear-gradient(135deg, #ebf4ff, #e0e7ff); padding: 15px; border-radius: 8px; border-left: 4px solid #667eea;">
+                <div style="font-weight: 600; font-size: 16px; color: #2d3748; margin-bottom: 8px;"
+                    id="selectedProfileName">
+                    Profile Name
+                </div>
+                <div style="font-size: 14px; color: #718096;" id="selectedProfileDetails">
+                    OS | Browser | Proxy
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Left Column -->
+
+<!-- Results Full Width -->
+<div class="results-full-width">
+    <!-- Header with START button -->
+    <div class="results-header">
+        <h2>📊 Kết Quả Automation</h2>
+        <div class="header-actions">
+            <button class="btn btn-secondary btn-sm" onclick="refreshResults()">
+                🔄 Tải Lại
+            </button>
+            <button class="btn btn-warning btn-sm" onclick="deleteSelectedResults()">
+                🗑️ Xóa Đã Chọn
+            </button>
+            <button class="btn btn-start" onclick="openFormModal()">
+                <span class="start-icon">▶️</span>
+                <span class="start-text">START</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="results-section" id="resultsSection">
+        <div class="results-table-wrapper">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">
+                            <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll(this)"
+                                style="cursor: pointer; width: 18px; height: 18px;">
+                        </th>
+                        <th>Profile</th>
+                        <th>Tài Khoản</th>
+                        <th>Số Trang</th>
+                        <th>Số Lần Check</th>
+                        <th>Trạng Thái</th>
+                        <th>Kết Quả</th>
+                        <th>Thời Gian</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTableBody">
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: #a0aec0; padding: 40px;">
+                            Chưa có kết quả. Chạy automation để xem kết quả ở đây.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination-controls" id="paginationControls" style="display: none;">
+            <div class="pagination-info">
+                Hiển thị <span id="pageStart">0</span>-<span id="pageEnd">0</span> / <span id="totalResults">0</span>
+                kết quả
+            </div>
+            <div class="pagination-buttons">
+                <button class="btn btn-sm" onclick="goToFirstPage()" id="btnFirst">⏮️ Đầu</button>
+                <button class="btn btn-sm" onclick="goToPrevPage()" id="btnPrev">◀️ Trước</button>
+                <span class="page-indicator">
+                    Trang <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                </span>
+                <button class="btn btn-sm" onclick="goToNextPage()" id="btnNext">Sau ▶️</button>
+                <button class="btn btn-sm" onclick="goToLastPage()" id="btnLast">Cuối ⏭️</button>
+            </div>
+            <div class="pagination-size">
+                <label>Hiển thị:</label>
+                <select id="pageSize" onchange="changePageSize()" class="page-size-select">
+                    <option value="10">10</option>
+                    <option value="20" selected>20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screenshots Modal -->
+    <div id="screenshotsModal" class="screenshots-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeScreenshotsModal()"></div>
+        <div class="modal-content-large">
+            <div class="modal-header">
+                <h3 id="modalTitle">📷 Kết Quả</h3>
+                <button class="modal-close" onclick="closeScreenshotsModal()">×</button>
+            </div>
+            <div class="modal-body" id="modalScreenshotsGrid">
+                <!-- Screenshots will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Results Section -->
+
+<!-- Form Modal -->
+<div class="form-modal" id="formModal">
+    <div class="modal-content-form">
+        <!-- Modal Header -->
+        <div class="modal-header-form">
+            <h2>🎰 NOHU Auto Tool</h2>
+            <button class="modal-close-form" onclick="closeFormModal()">×</button>
+        </div>
+
+        <!-- Tabs in Modal -->
+        <div class="modal-tabs">
+            <div class="modal-tab active" data-tab="auto" onclick="switchModalTab('auto')">
+                🤖 Tự Động
+            </div>
+            <div class="modal-tab" data-tab="register" onclick="switchModalTab('register')">
+                📝 Đăng Ký
+            </div>
+            <div class="modal-tab" data-tab="login" onclick="switchModalTab('login')">
+                🔐 Đăng Nhập
+            </div>
+            <div class="modal-tab" data-tab="bank" onclick="switchModalTab('bank')">
+                💳 Thêm Bank
+            </div>
+            <div class="modal-tab" data-tab="promo" onclick="switchModalTab('promo')">
+                🎁 Check KM
+            </div>
+        </div>
+
+        <!-- Modal Body - Move all tool-left-column content here -->
+        <div class="modal-body-form" id="modalBodyForm">
+            <!-- Content will be moved here -->
+        </div>
+
+        <!-- Modal Footer with Action Button -->
+        <div class="modal-footer-form">
+            <button class="btn btn-secondary" onclick="closeFormModal()">
+                Đóng
+            </button>
+            <button class="btn btn-run-action" id="runActionButton" onclick="runModalAction()">
+                <span id="runActionText">🚀 CHẠY TỰ ĐỘNG</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+</div>
+<!-- End nohu-tool-container -->
+
+<!-- NOHU Tool JavaScript -->
+<script>
+    // Initialize tool when loaded
+    window.initToolUI = function (tool) {
+        console.log('🎰 Initializing NOHU Tool UI...', tool);
+
+        // Initialize tab switching
+        initTabSwitching();
+
+        // Initialize promo type switching
+        initPromoTypeSwitching();
+
+        // Load banks
+        loadBanksForTool();
+
+        // Load profiles for carousel
+        loadProfilesCarousel();
+
+        // Load results from server (scan actual screenshot files)
+        // This ensures we always show accurate results based on actual files
+        loadResultsFromServer();
+
+        console.log('✅ NOHU Tool initialized');
+    };
+
+    // Validate API key format (client-side validation)
+    function validateApiKeyFormat(apiKey) {
+        if (!apiKey || typeof apiKey !== 'string') {
+            return { valid: false, error: 'API key phải là chuỗi ký tự' };
+        }
+
+        const trimmed = apiKey.trim();
+
+        if (trimmed.length === 0) {
+            return { valid: false, error: 'API key không được để trống' };
+        }
+
+        if (trimmed.length < 10) {
+            return { valid: false, error: 'API key quá ngắn (tối thiểu 10 ký tự)' };
+        }
+
+        // Check for valid characters (alphanumeric and common special chars)
+        if (!/^[a-zA-Z0-9\-_]+$/.test(trimmed)) {
+            return { valid: false, error: 'API key chứa ký tự không hợp lệ (chỉ chấp nhận a-z, A-Z, 0-9, -, _)' };
+        }
+
+        return { valid: true, key: trimmed };
+    }
+
+    // Promo type switching
+    function initPromoTypeSwitching() {
+        const radioButtons = document.querySelectorAll('input[name="promoType"]');
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', function () {
+                const selectedType = this.value;
+                console.log('Promo type changed to:', selectedType);
+
+                const appGroup = document.getElementById('appPromoSites')?.closest('div[style*="margin-bottom: 25px"]');
+                const smsGroup = document.getElementById('smsPromoSites')?.closest('div[style*="margin-bottom: 25px"]');
+
+                if (selectedType === 'app') {
+                    if (appGroup) appGroup.style.display = 'block';
+                    if (smsGroup) smsGroup.style.display = 'none';
+                } else {
+                    if (appGroup) appGroup.style.display = 'none';
+                    if (smsGroup) smsGroup.style.display = 'block';
+                }
+            });
+        });
+
+        // Trigger initial state
+        const checkedRadio = document.querySelector('input[name="promoType"]:checked');
+        if (checkedRadio) {
+            checkedRadio.dispatchEvent(new Event('change'));
+        }
+
+        console.log('✅ Promo type switching initialized');
+    }
+
+    // Tab switching
+    function initTabSwitching() {
+        const tabs = document.querySelectorAll('.nohu-tool-container .tab');
+        console.log('Found tabs:', tabs.length);
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function () {
+                const tabName = this.getAttribute('data-tab');
+                console.log('Tab clicked:', tabName);
+
+                // Remove active from all
+                document.querySelectorAll('.nohu-tool-container .tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.nohu-tool-container .tab-content').forEach(c => c.classList.remove('active'));
+
+                // Add active to clicked
+                this.classList.add('active');
+                const content = document.getElementById(`tab-${tabName}`);
+                if (content) {
+                    content.classList.add('active');
+                    console.log('Switched to tab:', tabName);
+
+                    // Save active tab state
+                    if (typeof saveActiveTab === 'function') {
+                        saveActiveTab(tabName);
+                    }
+                } else {
+                    console.error('Tab content not found:', `tab-${tabName}`);
+                }
+
+                // Update START button text
+                updateStartButtonText(tabName);
+            });
+        });
+
+        console.log('✅ Tab switching initialized');
+    }
+
+    // Update START button text based on active tab
+    function updateStartButtonText(tabName) {
+        const startButtonText = document.getElementById('startButtonText');
+        if (!startButtonText) return;
+
+        const buttonTexts = {
+            'auto': 'CHẠY TỰ ĐỘNG',
+            'register': 'ĐĂNG KÝ NGAY',
+            'login': 'ĐĂNG NHẬP NGAY',
+            'bank': 'THÊM BANK NGAY',
+            'promo': 'CHECK KM NGAY'
+        };
+
+        startButtonText.textContent = buttonTexts[tabName] || 'START';
+    }
+
+    // Handle START button click - run action based on active tab
+    window.handleStartAction = function () {
+        const activeTab = document.querySelector('.nohu-tool-container .tab.active');
+        if (!activeTab) {
+            showToast('error', 'Lỗi', 'Không tìm thấy tab active');
+            return;
+        }
+
+        const tabName = activeTab.getAttribute('data-tab');
+        console.log('START clicked for tab:', tabName);
+
+        // Call appropriate function based on tab
+        switch (tabName) {
+            case 'auto':
+                runAutoSequence();
+                break;
+            case 'register':
+                runRegisterOnly();
+                break;
+            case 'login':
+                runLoginOnly();
+                break;
+            case 'bank':
+                runAddBankOnly();
+                break;
+            case 'promo':
+                runCheckPromo(); // Fixed: use correct function name
+                break;
+            default:
+                showToast('warning', 'Chưa hỗ trợ', `Chức năng ${tabName} chưa được implement`);
+        }
+    };
+
+    // Site selection - App Promo
+    function selectAppPromoSites() {
+        document.querySelectorAll('#appPromoSites .site-check').forEach(cb => cb.checked = true);
+    }
+
+    function deselectAppPromoSites() {
+        document.querySelectorAll('#appPromoSites .site-check').forEach(cb => cb.checked = false);
+    }
+
+    // Site selection - SMS Promo
+    function selectSmsPromoSites() {
+        document.querySelectorAll('#smsPromoSites .site-check-sms').forEach(cb => cb.checked = true);
+    }
+
+    function deselectSmsPromoSites() {
+        document.querySelectorAll('#smsPromoSites .site-check-sms').forEach(cb => cb.checked = false);
+    }
+
+    // Site selection - All (legacy support)
+    function selectAllSites() {
+        selectAppPromoSites();
+        selectSmsPromoSites();
+    }
+
+    function deselectAllSites() {
+        deselectAppPromoSites();
+        deselectSmsPromoSites();
+    }
+
+    function getSelectedSites(action) {
+        const sites = [];
+        document.querySelectorAll('.site-check:checked').forEach(checkbox => {
+            const name = checkbox.getAttribute('data-name');
+
+            if (action === 'full') {
+                // For full automation, get all URLs
+                const registerUrl = checkbox.getAttribute('data-register');
+                const loginUrl = checkbox.getAttribute('data-login');
+                const promoUrl = checkbox.getAttribute('data-promo');
+
+                if (registerUrl) {
+                    sites.push({
+                        name,
+                        registerUrl,
+                        loginUrl,
+                        promoUrl
+                    });
+                }
+            } else {
+                // For specific action, get that URL only
+                const url = checkbox.getAttribute(`data-${action}`);
+                if (url) sites.push({ name, url });
+            }
+        });
+        return sites;
+    }
+
+    // Get selected sites by type (app or sms)
+    function getSelectedSitesByType() {
+        const appSites = [];
+        const smsSites = [];
+
+        // Get App Promo sites
+        document.querySelectorAll('#appPromoSites .site-check:checked').forEach(checkbox => {
+            const name = checkbox.getAttribute('data-name');
+            const registerUrl = checkbox.getAttribute('data-register');
+            const loginUrl = checkbox.getAttribute('data-login');
+            const promoUrl = checkbox.getAttribute('data-promo');
+
+            if (registerUrl) {
+                appSites.push({ name, registerUrl, loginUrl, promoUrl });
+            }
+        });
+
+        // Get SMS Promo sites (only need register URL)
+        document.querySelectorAll('#smsPromoSites .site-check-sms:checked').forEach(checkbox => {
+            const name = checkbox.getAttribute('data-name');
+            const registerUrl = checkbox.getAttribute('data-register');
+
+            if (registerUrl) {
+                smsSites.push({ name, registerUrl });
+            }
+        });
+
+        return { appSites, smsSites };
+    }
+
+    // Load banks
+    async function loadBanksForTool() {
+        const selects = ['autoBankName', 'bankBankName'];
+        try {
+            const response = await fetch('https://api.vietqr.io/v2/banks');
+            const data = await response.json();
+            if (data.code === '00' && data.data) {
+                const sortedBanks = data.data.sort((a, b) => a.shortName.localeCompare(b.shortName));
+                selects.forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    if (select) {
+                        select.innerHTML = '<option value="">Chọn ngân hàng...</option>';
+                        sortedBanks.forEach(bank => {
+                            const option = document.createElement('option');
+                            option.value = bank.shortName;
+                            option.textContent = `${bank.shortName} - ${bank.name}`;
+                            select.appendChild(option);
+                        });
+                    }
+                });
+                console.log(`✅ Loaded ${sortedBanks.length} banks`);
+            }
+        } catch (error) {
+            console.error('❌ Failed to load banks:', error);
+        }
+    }
+
+    // Random username generator
+    const uniqueWords = {
+        prefixes: ['Sky', 'Moon', 'Star', 'Fire', 'Dragon', 'Phoenix', 'Tiger', 'Wolf', 'Eagle', 'Lion'],
+        suffixes: ['Blade', 'Strike', 'Storm', 'Fire', 'Bolt', 'Flash', 'Fury', 'Soul', 'Power'],
+        numbers: ['', '1', '7', '9', '88', '99', '777', '888']
+    };
+
+    function generateRandomUsername() {
+        const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+        const suffix = uniqueWords.suffixes[Math.floor(Math.random() * uniqueWords.suffixes.length)];
+        const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+        return prefix + suffix + number;
+    }
+
+    function generateUsername(inputId) {
+        const username = generateRandomUsername();
+        const input = document.getElementById(inputId);
+        if (input) {
+            input.value = username;
+            input.style.background = 'linear-gradient(135deg, #ebf4ff, #e0e7ff)';
+            setTimeout(() => { input.style.background = ''; }, 1000);
+        }
+    }
+
+    // Automation functions
+    async function runAutoSequence() {
+        if (!profileManager.selectedProfileId) {
+            showToast('warning', 'Chưa chọn profile', 'Vui lòng chọn profile từ sidebar');
+            return;
+        }
+
+        // Sync profile status from Hidemium before running
+        console.log('🔄 Syncing profile status from Hidemium...');
+        await profileManager.loadAll();
+        await loadProfilesCarousel();
+
+        // Check if profile is already running
+        if (profileManager.isRunning(profileManager.selectedProfileId)) {
+            showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
+            return;
+        }
+
+        // Get selected promo type
+        const promoType = document.querySelector('input[name="promoType"]:checked')?.value || 'app';
+        console.log('Selected promo type:', promoType);
+
+        // Get sites based on selected type
+        let sites = [];
+        let actionType = 'full'; // default for app
+
+        if (promoType === 'app') {
+            // Get App Promo sites
+            document.querySelectorAll('#appPromoSites .site-check:checked').forEach(checkbox => {
+                const name = checkbox.getAttribute('data-name');
+                const registerUrl = checkbox.getAttribute('data-register');
+                const loginUrl = checkbox.getAttribute('data-login');
+                const promoUrl = checkbox.getAttribute('data-promo');
+                if (registerUrl) {
+                    sites.push({ name, registerUrl, loginUrl, promoUrl });
+                }
+            });
+            actionType = 'full'; // Full sequence with promo check
+        } else {
+            // Get SMS Promo sites (only need register URL)
+            let hasEmptyLinks = false;
+            document.querySelectorAll('#smsPromoSites .site-check-sms:checked').forEach(checkbox => {
+                const name = checkbox.getAttribute('data-name');
+                const registerUrl = checkbox.getAttribute('data-register');
+
+                // Check if register URL is empty
+                if (!registerUrl || registerUrl.trim() === '') {
+                    hasEmptyLinks = true;
+                } else {
+                    // SMS only needs registerUrl (no login, no promo)
+                    sites.push({ name, registerUrl });
+                }
+            });
+
+            // If any selected SMS site has empty links, show "under development" message
+            if (hasEmptyLinks) {
+                showToast('info', '🚧 Đang Phát Triển', 'Tính năng Khuyến Mãi SMS đang được phát triển. Vui lòng chọn Khuyến Mãi Tải App hoặc quay lại sau!', 6000);
+                return;
+            }
+
+            actionType = 'sms'; // SMS sequence (register + add bank only)
+        }
+
+        if (sites.length === 0) {
+            showToast('warning', 'Chưa chọn trang', 'Vui lòng chọn ít nhất 1 trang');
+            return;
+        }
+
+        const config = {
+            username: document.getElementById('autoUsername').value,
+            fullname: document.getElementById('autoFullname').value,
+            password: document.getElementById('autoPassword').value,
+            withdrawPassword: document.getElementById('autoWithdrawPassword').value,
+            bankName: document.getElementById('autoBankName').value,
+            bankBranch: document.getElementById('autoBankBranch').value,
+            accountNumber: document.getElementById('autoAccountNumber').value,
+            apiKey: apiKeyManager.get(),
+            sites: sites
+        };
+
+        // Validate required fields
+        if (!config.username || !config.password) {
+            showToast('warning', 'Thiếu thông tin', 'Vui lòng điền đầy đủ thông tin');
+            return;
+        }
+
+        // Validate API key (required for captcha solving)
+        const apiKey = config.apiKey;
+
+        if (!apiKey || apiKey.trim() === '') {
+            showToast('error', 'Thiếu API Key', '⚠️ Vui lòng thêm Captcha API Key ở sidebar bên trái trước khi chạy automation!\n\n📝 Lấy API key tại: autocaptcha.pro', 8000);
+            return;
+        }
+
+        // Validate API key format
+        const apiValidation = validateApiKeyFormat(apiKey);
+        if (!apiValidation.valid) {
+            showToast('error', 'API Key không hợp lệ', '❌ ' + apiValidation.error + '\n\n💡 Vui lòng kiểm tra lại API Key ở sidebar bên trái!', 8000);
+            return;
+        }
+
+        console.log('✅ API Key validated:', apiKey.substring(0, 10) + '...');
+
+        // Add action type for SMS
+        if (actionType === 'sms') {
+            config.action = 'sms';
+        } else {
+            config.checkPromo = true; // Enable promo check for app type
+        }
+
+        const currentProfileId = profileManager.selectedProfileId;
+
+        // Mark profile as running
+        profileManager.runningProfiles.add(currentProfileId);
+        profileManager.saveRunningProfiles();
+
+        // Refresh carousel to show running status
+        await loadProfilesCarousel();
+
+        const promoTypeLabel = promoType === 'app' ? '📱 Tải App' : '💬 SMS';
+        showToast('info', 'Đang chạy', `Automation ${promoTypeLabel} đang chạy trên ${sites.length} trang...`);
+
+        try {
+            console.log(`🚀 Running ${promoType} sequence for ${sites.length} sites...`);
+            // Use relative URL to automatically use current port
+            const response = await fetch('/api/automation/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ toolId: 'nohu-tool', profileId: currentProfileId, config: config })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('success', 'Đã bắt đầu', `Automation ${promoTypeLabel} đang chạy trong background`, 5000);
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
+
+        } catch (error) {
+            showToast('error', 'Lỗi', error.message);
+            // Unmark on error
+            profileManager.runningProfiles.delete(currentProfileId);
+            profileManager.saveRunningProfiles();
+            await loadProfilesCarousel();
+        }
+
+        // Note: Profile will be unmarked when user manually stops it or restarts dashboard
+        // For auto-unmark when done, need server-side callback (future enhancement)
+    }
+
+    // Helper function to run automation with profile marking
+    async function runAutomationWithMarking(toolId, action, config) {
+        const currentProfileId = profileManager.selectedProfileId;
+
+        // Sync profile status from Hidemium before running
+        console.log('🔄 Syncing profile status from Hidemium...');
+        await profileManager.loadAll();
+        await loadProfilesCarousel();
+
+        // Check if already running
+        if (profileManager.isRunning(currentProfileId)) {
+            showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
+            return { success: false };
+        }
+
+        // Mark as running
+        profileManager.runningProfiles.add(currentProfileId);
+        profileManager.saveRunningProfiles();
+        await loadProfilesCarousel();
+
+        try {
+            // Use relative URL to automatically use current port
+            const response = await fetch('/api/automation/run', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ toolId, profileId: currentProfileId, config: { ...config, action } })
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showToast('success', 'Đã bắt đầu', 'Automation đang chạy trong background', 5000);
+                return { success: true };
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
+        } catch (error) {
+            showToast('error', 'Lỗi', error.message);
+
+            // Unmark on error
+            profileManager.runningProfiles.delete(currentProfileId);
+            profileManager.saveRunningProfiles();
+            await loadProfilesCarousel();
+            return { success: false };
+        }
+    }
+
+    async function runRegisterOnly() {
+        // Validate
+        if (!profileManager.selectedProfileId) {
+            showToast('error', 'Lỗi', 'Vui lòng chọn profile');
+            return;
+        }
+
+        const sites = getSelectedSites();
+        if (sites.length === 0) {
+            showToast('error', 'Lỗi', 'Vui lòng chọn ít nhất 1 trang');
+            return;
+        }
+
+        const username = document.getElementById('registerUsername').value.trim();
+        const password = document.getElementById('registerPassword').value.trim();
+        const fullname = document.getElementById('registerFullname').value.trim();
+        const withdrawPassword = document.getElementById('registerWithdrawPassword').value.trim();
+
+        if (!username || !password || !fullname || !withdrawPassword) {
+            showToast('error', 'Lỗi', 'Vui lòng điền đầy đủ thông tin');
+            return;
+        }
+
+        // Validate API key (required for captcha solving during registration)
+        const apiKey = apiKeyManager.get();
+        if (!apiKey || apiKey.trim() === '') {
+            showToast('error', 'Thiếu API Key', '⚠️ Vui lòng thêm Captcha API Key ở sidebar trước khi đăng ký!\n\n📝 Lấy API key tại: autocaptcha.pro', 8000);
+            return;
+        }
+
+        const apiValidation = validateApiKeyFormat(apiKey);
+        if (!apiValidation.valid) {
+            showToast('error', 'API Key không hợp lệ', '❌ ' + apiValidation.error + '\n\n💡 Vui lòng kiểm tra lại API Key!', 8000);
+            return;
+        }
+
+        console.log('✅ API Key validated for registration:', apiKey.substring(0, 10) + '...');
+
+        const fullSites = sites.map(site => ({
+            name: site.name,
+            registerUrl: site.registerUrl,
+            url: site.registerUrl
+        }));
+
+        showToast('info', 'Đang chạy', `Đăng ký trên ${sites.length} trang...`);
+
+        await runAutomationWithMarking('nohu-tool', 'registerOnly', {
+            username,
+            password,
+            fullname,
+            withdrawPassword,
+            apiKey: apiKeyManager.get(),
+            sites: fullSites
+        });
+    }
+
+    async function runLoginOnly() {
+        // Validate
+        if (!profileManager.selectedProfileId) {
+            showToast('error', 'Lỗi', 'Vui lòng chọn profile');
+            return;
+        }
+
+        const sites = getSelectedSites();
+        if (sites.length === 0) {
+            showToast('error', 'Lỗi', 'Vui lòng chọn ít nhất 1 trang');
+            return;
+        }
+
+        const username = document.getElementById('loginUsername').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+
+        if (!username || !password) {
+            showToast('error', 'Lỗi', 'Vui lòng điền username và password');
+            return;
+        }
+
+        // Validate API key (required for captcha solving during login)
+        const apiKey = apiKeyManager.get();
+        if (!apiKey || apiKey.trim() === '') {
+            showToast('error', 'Thiếu API Key', '⚠️ Vui lòng thêm Captcha API Key ở sidebar trước khi đăng nhập!\n\n📝 Lấy API key tại: autocaptcha.pro', 8000);
+            return;
+        }
+
+        const apiValidation = validateApiKeyFormat(apiKey);
+        if (!apiValidation.valid) {
+            showToast('error', 'API Key không hợp lệ', '❌ ' + apiValidation.error + '\n\n💡 Vui lòng kiểm tra lại API Key!', 8000);
+            return;
+        }
+
+        console.log('✅ API Key validated for login:', apiKey.substring(0, 10) + '...');
+
+        const fullSites = sites.map(site => ({
+            name: site.name,
+            loginUrl: site.loginUrl,
+            url: site.loginUrl
+        }));
+
+        showToast('info', 'Đang chạy', `Đăng nhập vào ${sites.length} trang...`);
+
+        await runAutomationWithMarking('nohu-tool', 'loginOnly', {
+            username,
+            password,
+            apiKey: apiKeyManager.get(),
+            sites: fullSites
+        });
+    }
+
+    async function runAddBankOnly() {
+        // Validate
+        if (!profileManager.selectedProfileId) {
+            showToast('error', 'Lỗi', 'Vui lòng chọn profile');
+            return;
+        }
+
+        const sites = getSelectedSites();
+        if (sites.length === 0) {
+            showToast('error', 'Lỗi', 'Vui lòng chọn ít nhất 1 trang');
+            return;
+        }
+
+        const bankName = document.getElementById('bankBankName').value.trim();
+        const bankBranch = document.getElementById('bankBankBranch').value.trim();
+        const accountNumber = document.getElementById('bankAccountNumber').value.trim();
+
+        if (!bankName || !accountNumber) {
+            showToast('error', 'Lỗi', 'Vui lòng chọn ngân hàng và nhập số tài khoản');
+            return;
+        }
+
+        const fullSites = sites.map(site => ({
+            name: site.name,
+            loginUrl: site.loginUrl,
+            url: site.loginUrl
+        }));
+
+        showToast('info', 'Đang chạy', `Thêm ngân hàng cho ${sites.length} trang...`);
+
+        await runAutomationWithMarking('nohu-tool', 'addBankOnly', {
+            bankName,
+            bankBranch,
+            accountNumber,
+            apiKey: apiKeyManager.get(),
+            sites: fullSites
+        });
+    }
+
+    async function runCheckPromo() {
+        if (!profileManager.selectedProfileId) {
+            showToast('warning', 'Chưa chọn profile', 'Vui lòng chọn profile từ sidebar');
+            return;
+        }
+        const sites = getSelectedSites('promo');
+        if (sites.length === 0) {
+            showToast('warning', 'Chưa chọn trang', 'Vui lòng chọn ít nhất 1 trang');
+            return;
+        }
+        const username = document.getElementById('promoUsername').value;
+
+        if (!username) {
+            showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập tên tài khoản');
+            return;
+        }
+
+        // Validate API key (required for captcha solving in check promo)
+        const apiKey = apiKeyManager.get();
+        if (!apiKey || apiKey.trim() === '') {
+            showToast('error', 'Thiếu API Key', '⚠️ Vui lòng thêm Captcha API Key ở sidebar trước khi check khuyến mãi!\n\n📝 Lấy API key tại: autocaptcha.pro', 8000);
+            return;
+        }
+
+        const apiValidation = validateApiKeyFormat(apiKey);
+        if (!apiValidation.valid) {
+            showToast('error', 'API Key không hợp lệ', '❌ ' + apiValidation.error + '\n\n💡 Vui lòng kiểm tra lại API Key ở sidebar!', 8000);
+            return;
+        }
+
+        console.log('✅ API Key validated for check promo:', apiKey.substring(0, 10) + '...');
+
+        // Convert sites to full format with promoUrl
+        const fullSites = sites.map(site => ({
+            name: site.name,
+            registerUrl: site.url,
+            loginUrl: site.url,
+            promoUrl: site.url
+        }));
+
+        showToast('info', 'Đang chạy', `Check khuyến mãi trên ${sites.length} trang...`);
+
+        await runAutomationWithMarking('nohu-tool', 'checkPromoOnly', {
+            username: username,
+            apiKey: apiKeyManager.get(), // Required for captcha solving
+            checkPromo: true,
+            sites: fullSites
+        });
+    }
+
+    // ============================================
+    // PROFILE CAROUSEL
+    // ============================================
+
+    let allProfilesData = [];
+
+    async function loadProfilesCarousel() {
+        const result = await profileManager.loadAll();
+
+        if (result.success && result.profiles) {
+            allProfilesData = result.profiles;
+
+            // Update all carousels
+            const carousels = ['auto', 'reg', 'login', 'bank', 'promo'];
+
+            carousels.forEach(tabPrefix => {
+                displayProfilesInCarousel(tabPrefix, allProfilesData);
+            });
+
+            showToast('success', 'Đã tải profiles', `${allProfilesData.length} profiles`);
+            console.log(`✅ Loaded ${allProfilesData.length} profiles into carousels`);
+        } else {
+            showToast('error', 'Lỗi tải profiles', result.error);
+            console.error('❌ Failed to load profiles:', result.error);
+        }
+    }
+
+    function displayProfilesInCarousel(tabPrefix, profiles) {
+        const carousel = document.getElementById(`${tabPrefix}ProfileCarousel`);
+        if (!carousel) return;
+
+        carousel.innerHTML = '';
+
+        if (profiles.length === 0) {
+            carousel.innerHTML = '<div class="profile-carousel-empty"><p>Chưa có profiles</p></div>';
+            return;
+        }
+
+        profiles.forEach(profile => {
+            const isRunning = profileManager.isRunning(profile.uuid);
+            const isSelected = profileManager.selectedProfileId === profile.uuid;
+
+            // Extract proxy IP
+            let proxyIP = 'No proxy';
+            if (profile.proxy && typeof profile.proxy === 'object' && profile.proxy.ip) {
+                proxyIP = profile.proxy.ip;
+            } else if (profile.proxy && typeof profile.proxy === 'string') {
+                const parts = profile.proxy.split('|');
+                if (parts.length >= 2 && parts[1]) {
+                    proxyIP = parts[1];
+                }
+            }
+
+            // OS & Browser icons
+            const osIcons = { 'win': '🪟', 'windows': '🪟', 'mac': '🍎', 'macos': '🍎', 'linux': '🐧', 'android': '🤖', 'ios': '📱' };
+            const browserIcons = { 'chrome': '🌐', 'firefox': '🦊', 'edge': '🔷', 'opera': '🔴', 'brave': '🦁', 'safari': '🧭' };
+            const osIcon = osIcons[profile.os?.toLowerCase()] || '💻';
+            const browserIcon = browserIcons[profile.browser?.toLowerCase()] || '🌐';
+
+            const card = document.createElement('div');
+            card.className = `profile-carousel-card ${isSelected ? 'selected' : ''} ${isRunning ? 'running' : ''}`;
+            card.setAttribute('data-uuid', profile.uuid);
+            card.setAttribute('data-tab', tabPrefix);
+
+            card.innerHTML = `
+                <div class="profile-card-header">
+                    <div class="profile-avatar">
+                        ${profile.name ? profile.name.substring(0, 2).toUpperCase() : 'PR'}
+                    </div>
+                    ${isRunning ? '<span class="running-badge">● Running</span>' : ''}
+                    ${isSelected ? '<span class="selected-badge">✓ Selected</span>' : ''}
+                </div>
+                <div class="profile-card-body">
+                    <div class="profile-card-name">${profile.name || 'Unnamed Profile'}</div>
+                    <div class="profile-card-info">
+                        <div class="info-item">
+                            <span class="info-icon">${osIcon}</span>
+                            <span class="info-text">${profile.os || 'N/A'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">${browserIcon}</span>
+                            <span class="info-text">${profile.browser || 'chrome'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🌍</span>
+                            <span class="info-text">${proxyIP}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="profile-card-footer">
+                    <button class="btn-select-profile ${isRunning ? 'disabled' : ''}" 
+                            onclick="selectProfileFromCarousel('${tabPrefix}', '${profile.uuid}')"
+                            ${isRunning ? 'disabled' : ''}>
+                        ${isRunning ? '🔴 Đang Chạy' : (isSelected ? '✓ Đã Chọn' : 'Chọn Profile')}
+                    </button>
+                </div>
+            `;
+
+            carousel.appendChild(card);
+        });
+    }
+
+    function selectProfileFromCarousel(tabPrefix, uuid) {
+        // Check if profile is running
+        if (profileManager.isRunning(uuid)) {
+            showToast('warning', 'Profile đang chạy', 'Không thể chọn profile đang chạy automation');
+            return;
+        }
+
+        // Select in manager
+        profileManager.select(uuid);
+
+        // Update all carousels to show selected state
+        const carousels = ['auto', 'reg', 'login', 'bank', 'promo'];
+        carousels.forEach(prefix => {
+            const carousel = document.getElementById(`${prefix}ProfileCarousel`);
+            if (carousel) {
+                // Remove selected class from all cards
+                carousel.querySelectorAll('.profile-carousel-card').forEach(card => {
+                    card.classList.remove('selected');
+                    const btn = card.querySelector('.btn-select-profile');
+                    if (btn) {
+                        const cardUuid = card.getAttribute('data-uuid');
+                        const isRunning = profileManager.isRunning(cardUuid);
+                        btn.textContent = isRunning ? '🔴 Đang Chạy' : 'Chọn Profile';
+                    }
+                });
+
+                // Add selected class to clicked card
+                const selectedCard = carousel.querySelector(`[data-uuid="${uuid}"]`);
+                if (selectedCard) {
+                    selectedCard.classList.add('selected');
+                    const btn = selectedCard.querySelector('.btn-select-profile');
+                    if (btn) btn.textContent = '✓ Đã Chọn';
+                }
+            }
+        });
+
+        const profile = profileManager.getSelected();
+        showToast('success', 'Profile đã chọn', profile?.name || 'Unknown');
+    }
+
+    function scrollProfileCarousel(tabPrefix, direction) {
+        const carousel = document.getElementById(`${tabPrefix}ProfileCarousel`);
+        console.log('Scroll carousel:', tabPrefix, direction, carousel);
+
+        if (!carousel) {
+            console.error('Carousel not found:', `${tabPrefix}ProfileCarousel`);
+            return;
+        }
+
+        const cardWidth = 350; // 320px card + 30px gap
+        const scrollAmount = cardWidth * direction;
+
+        console.log('Scrolling by:', scrollAmount);
+
+        carousel.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+
+        // Update card states after scroll
+        setTimeout(() => updateCarouselCardStates(tabPrefix), 400);
+    }
+
+    function updateCarouselCardStates(tabPrefix) {
+        const carousel = document.getElementById(`${tabPrefix}ProfileCarousel`);
+        if (!carousel) return;
+
+        const cards = carousel.querySelectorAll('.profile-carousel-card');
+        const carouselRect = carousel.getBoundingClientRect();
+        const carouselCenter = carouselRect.left + carouselRect.width / 2;
+
+        cards.forEach(card => {
+            const cardRect = card.getBoundingClientRect();
+            const cardCenter = cardRect.left + cardRect.width / 2;
+            const distance = Math.abs(carouselCenter - cardCenter);
+
+            // Card is in center view if distance is small
+            if (distance < 200) {
+                card.classList.add('in-view');
+            } else {
+                card.classList.remove('in-view');
+            }
+        });
+    }
+
+    // ============================================
+    // DRAG TO SCROLL
+    // ============================================
+
+    function enableDragScroll(carousel) {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        carousel.addEventListener('mousedown', (e) => {
+            // Don't drag if clicking on button
+            if (e.target.closest('.btn-select-profile')) return;
+
+            isDown = true;
+            carousel.style.cursor = 'grabbing';
+            carousel.style.userSelect = 'none';
+            startX = e.pageX - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
+        });
+
+        carousel.addEventListener('mouseleave', () => {
+            isDown = false;
+            carousel.style.cursor = 'grab';
+        });
+
+        carousel.addEventListener('mouseup', () => {
+            isDown = false;
+            carousel.style.cursor = 'grab';
+        });
+
+        carousel.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - carousel.offsetLeft;
+            const walk = (x - startX) * 2; // Scroll speed
+            carousel.scrollLeft = scrollLeft - walk;
+        });
+
+        // Set initial cursor
+        carousel.style.cursor = 'grab';
+    }
+
+    // Update card states on scroll and enable drag
+    document.addEventListener('DOMContentLoaded', () => {
+        const carousels = ['auto', 'reg', 'login', 'bank', 'promo'];
+        carousels.forEach(prefix => {
+            const carousel = document.getElementById(`${prefix}ProfileCarousel`);
+            if (carousel) {
+                // Enable scroll update
+                carousel.addEventListener('scroll', () => {
+                    updateCarouselCardStates(prefix);
+                });
+
+                // Enable drag to scroll
+                enableDragScroll(carousel);
+            }
+        });
+    });
+
+    // ============================================
+    // RESULTS TABLE MANAGEMENT - GROUPED BY USERNAME
+    // ============================================
+
+    // Store results grouped by username
+    const resultsData = {};
+
+    // Track processed result IDs to avoid duplicates
+
+    // Pagination state
+    let currentPage = 1;
+    let pageSize = 20;
+    let totalResults = 0;
+    let allResultsKeys = []; // Store all sorted keys
+    const processedResults = new Set();
+
+    // Add result to table (grouped by username + sessionId)
+    function addResultToTable(result) {
+        // Create unique ID for this result
+        const resultId = `${result.profileName}_${result.username}_${result.sessionId}_${result.siteName}_${result.timestamp}`;
+
+        // Skip if already processed
+        if (processedResults.has(resultId)) {
+            return;
+        }
+
+        processedResults.add(resultId);
+        const username = result.username || 'N/A';
+        const sessionId = result.sessionId || 'default';
+        const key = `${username}_${sessionId}`; // Group by username + sessionId (each run is separate)
+
+        // Initialize group if not exists
+        if (!resultsData[key]) {
+            resultsData[key] = {
+                profileName: result.profileName,
+                username: username,
+                sessionId: sessionId, // Store sessionId for deletion
+                sites: [],
+                screenshots: [],
+                checkTimes: [], // Track each check session
+                firstTimestamp: result.timestamp || Date.now(),
+                lastTimestamp: result.timestamp || Date.now()
+            };
+        }
+
+        // Add site result
+        resultsData[key].sites.push({
+            name: result.siteName,
+            status: result.status,
+            screenshot: result.screenshot,
+            timestamp: result.timestamp || Date.now()
+        });
+
+        // Add screenshot if exists
+        if (result.screenshot) {
+            resultsData[key].screenshots.push({
+                site: result.siteName,
+                url: result.screenshot,
+                timestamp: result.timestamp || Date.now()
+            });
+        }
+
+        // Track check times (group by day to count separate check sessions)
+        const checkDate = new Date(result.timestamp || Date.now()).toDateString();
+        if (!resultsData[key].checkTimes.includes(checkDate)) {
+            resultsData[key].checkTimes.push(checkDate);
+        }
+
+        // Update last timestamp
+        resultsData[key].lastTimestamp = result.timestamp || Date.now();
+
+        // Refresh table display
+        refreshResultsTable();
+    }
+
+    // Refresh table display
+    function refreshResultsTable() {
+        const tbody = document.getElementById('resultsTableBody');
+        if (!tbody) return;
+
+        // Clear table
+        tbody.innerHTML = '';
+
+        // Check if empty
+        if (Object.keys(resultsData).length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" style="text-align: center; color: #a0aec0; padding: 40px;">
+                        Chưa có kết quả. Chạy automation để xem kết quả ở đây.
+                    </td>
+                </tr>
+            `;
+            document.getElementById('paginationControls').style.display = 'none';
+            return;
+        }
+
+        // Sort by last timestamp (newest first)
+        const sortedKeys = Object.keys(resultsData).sort((a, b) => {
+            return resultsData[b].lastTimestamp - resultsData[a].lastTimestamp;
+        });
+
+        // Store for pagination
+        allResultsKeys = sortedKeys;
+        totalResults = sortedKeys.length;
+
+        // Group sessions by username and sort by timestamp to get run order
+        const sessionsByUsername = {};
+        sortedKeys.forEach(key => {
+            const group = resultsData[key];
+            const username = group.username;
+            if (!sessionsByUsername[username]) {
+                sessionsByUsername[username] = [];
+            }
+            sessionsByUsername[username].push({
+                key: key,
+                timestamp: group.firstTimestamp || group.lastTimestamp
+            });
+        });
+
+        // Sort each username's sessions by timestamp (oldest first) and assign run number
+        const runNumberByKey = {};
+        Object.keys(sessionsByUsername).forEach(username => {
+            const sessions = sessionsByUsername[username];
+            // Sort by timestamp (oldest first)
+            sessions.sort((a, b) => a.timestamp - b.timestamp);
+            // Assign run number (1, 2, 3, ...)
+            sessions.forEach((session, index) => {
+                runNumberByKey[session.key] = index + 1;
+            });
+        });
+
+        // Calculate pagination
+        const totalPages = Math.ceil(totalResults / pageSize);
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, totalResults);
+
+        // Get current page items
+        const pageKeys = sortedKeys.slice(startIndex, endIndex);
+
+        // Update pagination UI
+        updatePaginationUI(startIndex, endIndex, totalPages);
+
+        // Display each group (only current page)
+        pageKeys.forEach(key => {
+            const group = resultsData[key];
+            const row = document.createElement('tr');
+
+            // Check if this is a running automation (no screenshots yet)
+            const isRunning = group.status === 'running';
+
+            // Count statuses
+            const successCount = group.sites.filter(s => s.status === 'success').length;
+            const errorCount = group.sites.filter(s => s.status === 'error').length;
+            const runningCount = group.sites.filter(s => s.status === 'running').length;
+
+            // Status summary
+            let statusHtml = '';
+            if (isRunning) {
+                // Show running status for the whole automation
+                statusHtml = `<span class="status-badge running">🔄 Đang chạy...</span>`;
+            } else {
+                // Show detailed status after completion
+                if (successCount > 0) statusHtml += `<span class="status-badge success">✅ ${successCount}</span> `;
+                if (errorCount > 0) statusHtml += `<span class="status-badge error">❌ ${errorCount}</span> `;
+                if (runningCount > 0) statusHtml += `<span class="status-badge running">🔄 ${runningCount}</span>`;
+            }
+
+            // Screenshots preview (icon only, no count since count = sites count)
+            const screenshotCount = group.screenshots.length;
+            let screenshotHtml = '<span style="color: #a0aec0;">Chưa có</span>';
+            if (isRunning) {
+                screenshotHtml = '<span style="color: #f59e0b;">⏳ Đang chạy...</span>';
+            } else if (screenshotCount > 0) {
+                screenshotHtml = `
+                    <div class="screenshot-preview" onclick="openScreenshotsModal('${key}')">
+                        <span class="screenshot-preview-icon">📷</span>
+                    </div>
+                `;
+            }
+
+            // Format time
+            const time = new Date(group.lastTimestamp).toLocaleString('vi-VN');
+
+            // Run number = which run is this for this username (1st, 2nd, 3rd, ...)
+            const runNumber = isRunning ? '-' : runNumberByKey[key];
+
+            // Sites count
+            const sitesCount = group.sites.length;
+
+            row.innerHTML = `
+                <td style="text-align: center;">
+                    <input type="checkbox" class="row-checkbox" data-key="${key}" 
+                           style="cursor: pointer; width: 18px; height: 18px;"
+                           ${isRunning ? 'disabled' : ''}>
+                </td>
+                <td>${group.profileName || 'Unknown'}</td>
+                <td><strong>${group.username}</strong></td>
+                <td>${sitesCount} trang</td>
+                <td>${isRunning ? '<span style="color: #a0aec0;">-</span>' : `<span class="check-times-badge">Lần ${runNumber}</span>`}</td>
+                <td>${statusHtml}</td>
+                <td>${screenshotHtml}</td>
+                <td>${time}</td>
+            `;
+
+            tbody.appendChild(row);
+        });
+    }
+
+    // Open screenshots modal
+    function openScreenshotsModal(key) {
+        const group = resultsData[key];
+        if (!group || group.screenshots.length === 0) return;
+
+        const modal = document.getElementById('screenshotsModal');
+        const title = document.getElementById('modalTitle');
+        const grid = document.getElementById('modalScreenshotsGrid');
+
+        // Set title
+        title.textContent = `📷 Kết Quả - ${group.username} (${group.screenshots.length} trang)`;
+
+        // Build screenshots grid
+        grid.innerHTML = '<div class="screenshots-grid">';
+        group.screenshots.forEach((screenshot, index) => {
+            const time = new Date(screenshot.timestamp).toLocaleString('vi-VN');
+            grid.innerHTML += `
+                <div class="screenshot-item">
+                    <div class="screenshot-item-header">
+                        <span class="screenshot-site-name">${screenshot.site}</span>
+                        <span style="font-size: 12px; color: #718096;">#${index + 1}</span>
+                    </div>
+                    <img src="${screenshot.url}" 
+                         onclick="window.open('${screenshot.url}', '_blank')"
+                         alt="${screenshot.site}"
+                         title="Click để xem full size">
+                    <div class="screenshot-item-footer">
+                        ${time}
+                    </div>
+                </div>
+            `;
+        });
+        grid.innerHTML += '</div>';
+
+        // Show modal
+        modal.style.display = 'flex';
+    }
+
+    // Close screenshots modal
+    function closeScreenshotsModal() {
+        const modal = document.getElementById('screenshotsModal');
+        modal.style.display = 'none';
+    }
+
+    // Close modal on ESC key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeScreenshotsModal();
+        }
+    });
+
+    // Toggle select all checkboxes
+    function toggleSelectAll(checkbox) {
+        const checkboxes = document.querySelectorAll('.row-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = checkbox.checked;
+        });
+    }
+
+    // Delete selected results
+    async function deleteSelectedResults() {
+        const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+
+        if (checkboxes.length === 0) {
+            showToast('warning', 'Chưa chọn', 'Vui lòng chọn ít nhất 1 kết quả để xóa');
+            return;
+        }
+
+        if (!confirm(`Bạn có chắc muốn xóa ${checkboxes.length} kết quả đã chọn?`)) {
+            return;
+        }
+
+        showToast('info', 'Đang xóa...', `Đang xóa ${checkboxes.length} kết quả...`);
+
+        try {
+            // Get selected keys (username-sessionId pairs)
+            const selectedKeys = Array.from(checkboxes).map(cb => cb.dataset.key);
+
+            // Build list of sessions to delete (username + sessionId)
+            const sessionsToDelete = selectedKeys.map(key => {
+                const data = resultsData[key];
+                return {
+                    username: data?.username,
+                    sessionId: data?.sessionId || null // null for old structure (no session)
+                };
+            }).filter(s => s.username);
+
+            console.log('🗑️ Deleting sessions:', sessionsToDelete);
+
+            // Call API to delete specific sessions
+            const response = await fetch('/api/results/clear-selected', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessions: sessionsToDelete })
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to delete selected results');
+            }
+
+            // Remove from in-memory data
+            selectedKeys.forEach(key => {
+                delete resultsData[key];
+            });
+
+            // Reload from server to confirm deletion
+            await loadResultsFromServer();
+
+            // Uncheck "select all"
+            const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+            if (selectAllCheckbox) selectAllCheckbox.checked = false;
+
+            showToast('success', 'Đã xóa', `Đã xóa ${data.deletedFiles || 0} file kết quả`);
+        } catch (error) {
+            console.error('Error deleting selected results:', error);
+            showToast('error', 'Lỗi', 'Không thể xóa kết quả: ' + error.message);
+        }
+    }
+
+    // Clear all results
+    async function clearResultsTable() {
+        if (!confirm('Bạn có chắc muốn xóa TẤT CẢ kết quả?')) {
+            return;
+        }
+
+        showToast('info', 'Đang xóa...', 'Đang xóa tất cả kết quả...');
+
+        try {
+            // Call API to delete all screenshots
+            // Use relative URL to automatically use current port
+            const response = await fetch('/api/results/clear', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to clear results');
+            }
+
+            // Clear in-memory data
+            Object.keys(resultsData).forEach(key => delete resultsData[key]);
+
+            // Clear processed results tracking
+            processedResults.clear();
+
+            // Reload from server to confirm deletion
+            await loadResultsFromServer();
+
+            showToast('success', 'Đã xóa', `Đã xóa ${data.deletedFiles || 0} file kết quả`);
+        } catch (error) {
+            console.error('Error clearing results:', error);
+            showToast('error', 'Lỗi', 'Không thể xóa kết quả: ' + error.message);
+        }
+    }
+
+    // Example: Add result when automation completes
+    // This should be called from automation callbacks
+    window.addAutomationResult = function (profileName, username, siteName, status, screenshot) {
+        addResultToTable({
+            profileName: profileName,
+            username: username,
+            siteName: siteName,
+            status: status,
+            screenshot: screenshot,
+            timestamp: Date.now()
+        });
+    };
+
+    // Removed loadSavedResults() - now we only load from server (actual files)
+    // This ensures results are always accurate and match actual screenshot files
+
+    // Load automation statuses (running automations)
+    async function loadAutomationStatuses() {
+        try {
+            const response = await fetch('/api/automation/statuses');
+            const data = await response.json();
+
+            if (data.success && data.statuses) {
+                // Add running statuses to table
+                data.statuses.forEach(status => {
+                    if (status.status === 'running') {
+                        // Add as running result
+                        const sessionId = status.sessionId || 'running'; // Use 'running' as temp sessionId
+                        const key = `${status.username}_${sessionId}`;
+
+                        if (!resultsData[key]) {
+                            resultsData[key] = {
+                                profileName: status.profileName || 'Profile',
+                                username: status.username,
+                                sessionId: sessionId, // Store sessionId
+                                sites: status.sites || [],
+                                screenshots: [],
+                                checkTimes: [],
+                                status: 'running',
+                                firstTimestamp: status.timestamp || Date.now(),
+                                lastTimestamp: status.timestamp || Date.now()
+                            };
+
+                            refreshResultsTable();
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Failed to load automation statuses:', error);
+        }
+    }
+
+    // Load results from server API (scan screenshots folder)
+    async function loadResultsFromServer() {
+        try {
+            // Use relative URL to automatically use current port
+            const response = await fetch('/api/automation/results');
+            const data = await response.json();
+
+            if (data.success && data.results) {
+                // Clear existing data first
+                Object.keys(resultsData).forEach(key => delete resultsData[key]);
+                processedResults.clear();
+
+                // Add all results
+                data.results.forEach(result => {
+                    addResultToTable(result);
+                });
+
+                console.log(`✅ Loaded ${data.results.length} results from screenshots folder`);
+            }
+        } catch (error) {
+            console.error('Failed to load results from server:', error);
+        }
+    }
+
+    // Refresh button handler
+    window.refreshResults = function () {
+        loadResultsFromServer();
+        showToast('success', 'Đã tải lại', 'Kết quả đã được cập nhật');
+    };
+
+    // Auto-refresh results from server every 5 seconds
+    // This ensures we always show accurate results based on actual files
+    // Also checks for status updates (running → completed)
+    setInterval(() => {
+        loadResultsFromServer();
+        loadAutomationStatuses(); // Check for running automations
+    }, 5000); // Refresh every 5 seconds
+
+    // ============================================
+    // PAGINATION FUNCTIONS
+    // ============================================
+
+    function updatePaginationUI(startIndex, endIndex, totalPages) {
+        const paginationControls = document.getElementById('paginationControls');
+
+        if (totalResults === 0) {
+            paginationControls.style.display = 'none';
+            return;
+        }
+
+        paginationControls.style.display = 'flex';
+
+        // Update info
+        document.getElementById('pageStart').textContent = startIndex + 1;
+        document.getElementById('pageEnd').textContent = endIndex;
+        document.getElementById('totalResults').textContent = totalResults;
+        document.getElementById('currentPage').textContent = currentPage;
+        document.getElementById('totalPages').textContent = totalPages;
+
+        // Update buttons state
+        document.getElementById('btnFirst').disabled = currentPage === 1;
+        document.getElementById('btnPrev').disabled = currentPage === 1;
+        document.getElementById('btnNext').disabled = currentPage === totalPages;
+        document.getElementById('btnLast').disabled = currentPage === totalPages;
+    }
+
+    window.goToFirstPage = function () {
+        currentPage = 1;
+        refreshResultsTable();
+    };
+
+    window.goToPrevPage = function () {
+        if (currentPage > 1) {
+            currentPage--;
+            refreshResultsTable();
+        }
+    };
+
+    window.goToNextPage = function () {
+        const totalPages = Math.ceil(totalResults / pageSize);
+        if (currentPage < totalPages) {
+            currentPage++;
+            refreshResultsTable();
+        }
+    };
+
+    window.goToLastPage = function () {
+        const totalPages = Math.ceil(totalResults / pageSize);
+        currentPage = totalPages;
+        refreshResultsTable();
+    };
+
+    window.changePageSize = function () {
+        const select = document.getElementById('pageSize');
+        pageSize = parseInt(select.value);
+        currentPage = 1; // Reset to first page
+        refreshResultsTable();
+    };
+
+    console.log('✅ NOHU Tool JavaScript loaded');
+</script>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Layout 2 Cột</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="nohu-tool.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f7fafc;
+        }
+
+        .demo-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .demo-header h1 {
+            margin: 0 0 10px 0;
+        }
+
+        /* Demo specific styles */
+        .demo-left {
+            background: #e6fffa;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px dashed #38b2ac;
+            min-height: 400px;
+        }
+
+        .demo-right {
+            background: #fef5e7;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px dashed #f6ad55;
+            min-height: 400px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 650px;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1400px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>📐 Demo Layout 2 Cột</h1>
+            <p>Form nhập liệu bên trái, Bảng kết quả bên phải (sticky)</p>
+        </div>
+
+        <h2 style="margin-bottom: 15px;">🎨 Cấu Trúc Layout</h2>
+        <div class="demo-grid">
+            <div class="demo-left">
+                <h3>⬅️ Cột Trái (Flexible)</h3>
+                <p><strong>Nội dung:</strong></p>
+                <ul>
+                    <li>✅ Chọn trang (Go99, NOHU, TT88...)</li>
+                    <li>✅ Chọn profile (carousel)</li>
+                    <li>✅ Form nhập thông tin</li>
+                    <li>✅ Nút chạy automation</li>
+                    <li>✅ Tất cả các tab content</li>
+                </ul>
+                <p><strong>Đặc điểm:</strong></p>
+                <ul>
+                    <li>📏 Width: Flexible (tự động điều chỉnh)</li>
+                    <li>📜 Scroll: Theo nội dung</li>
+                    <li>🎯 Vị trí: Bên trái</li>
+                </ul>
+            </div>
+
+            <div class="demo-right">
+                <h3>➡️ Cột Phải (Fixed 650px)</h3>
+                <p><strong>Nội dung:</strong></p>
+                <ul>
+                    <li>📊 Bảng kết quả automation</li>
+                    <li>🖼️ Ảnh chụp màn hình</li>
+                    <li>✅ Trạng thái real-time</li>
+                </ul>
+                <p><strong>Đặc điểm:</strong></p>
+                <ul>
+                    <li>📏 Width: Fixed 650px</li>
+                    <li>📌 Position: Sticky (cố định khi scroll)</li>
+                    <li>📜 Scroll: Riêng biệt (nếu quá dài)</li>
+                    <li>🎯 Vị trí: Bên phải</li>
+                </ul>
+                <p><strong>⚡ Lợi ích:</strong></p>
+                <ul>
+                    <li>👀 Luôn nhìn thấy kết quả khi nhập form</li>
+                    <li>⚡ Theo dõi real-time</li>
+                    <li>🎯 Không cần scroll lên xuống</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 15px;">📊 Demo Bảng Kết Quả Thực Tế</h2>
+        <div class="demo-grid">
+            <div style="background: white; padding: 30px; border-radius: 12px;">
+                <h3>Form Nhập Liệu (Mô Phỏng)</h3>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Tên tài khoản:</label>
+                    <input type="text" placeholder="user123"
+                        style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;">
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 600;">Mật khẩu:</label>
+                    <input type="password" placeholder="••••••••"
+                        style="width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px;">
+                </div>
+                <button class="btn btn-primary btn-large" onclick="addSampleResult()">
+                    🚀 Chạy Automation (Demo)
+                </button>
+                <p style="margin-top: 15px; color: #718096; font-size: 14px;">
+                    💡 Click nút trên để thêm kết quả mẫu vào bảng bên phải
+                </p>
+            </div>
+
+            <div style="position: sticky; top: 20px;">
+                <div class="form-section" id="resultsSection">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0;">📊 Kết Quả Automation</h3>
+                        <button class="btn btn-secondary btn-sm" onclick="clearTable()">
+                            🗑️ Xóa
+                        </button>
+                    </div>
+                    <div class="results-table-wrapper">
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>Profile</th>
+                                    <th>Tài Khoản</th>
+                                    <th>Trang</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Ảnh</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #a0aec0; padding: 40px;">
+                                        Chưa có kết quả
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="background: #ebf8ff; padding: 20px; border-radius: 12px; margin-top: 30px; border-left: 4px solid #4299e1;">
+            <h3 style="margin-top: 0;">💡 Responsive Design</h3>
+            <p>Trên màn hình nhỏ hơn 1400px, layout tự động chuyển về <strong>1 cột dọc</strong>:</p>
+            <ul>
+                <li>📱 Mobile/Tablet: Bảng kết quả hiển thị ở dưới form</li>
+                <li>💻 Desktop: Bảng kết quả sticky bên phải</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const sampleProfiles = ['Profile 1', 'Profile 2', 'Profile VIP'];
+        const sampleUsernames = ['user123', 'player456', 'gamer789'];
+        const sampleSites = ['Go99', 'NOHU', 'TT88'];
+        const sampleScreenshots = [
+            'https://via.placeholder.com/100x75/667eea/ffffff?text=1',
+            'https://via.placeholder.com/100x75/48bb78/ffffff?text=2',
+            'https://via.placeholder.com/100x75/f56565/ffffff?text=3'
+        ];
+
+        function addSampleResult() {
+            const tbody = document.getElementById('resultsTableBody');
+
+            // Remove empty state
+            const emptyRow = tbody.querySelector('td[colspan="5"]');
+            if (emptyRow) {
+                tbody.innerHTML = '';
+            }
+
+            const row = document.createElement('tr');
+
+            const profile = sampleProfiles[Math.floor(Math.random() * sampleProfiles.length)];
+            const username = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+            const site = sampleSites[Math.floor(Math.random() * sampleSites.length)];
+            const screenshot = sampleScreenshots[Math.floor(Math.random() * sampleScreenshots.length)];
+
+            const statuses = [
+                '<span class="status-badge success">✅ Thành Công</span>',
+                '<span class="status-badge error">❌ Lỗi</span>',
+                '<span class="status-badge running">🔄 Đang Chạy</span>'
+            ];
+            const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+            row.innerHTML = `
+                <td>${profile}</td>
+                <td>${username}</td>
+                <td>${site}</td>
+                <td>${status}</td>
+                <td><img src="${screenshot}" class="screenshot-thumb" style="width: 50px; height: 38px; border-radius: 6px;"></td>
+            `;
+
+            tbody.insertBefore(row, tbody.firstChild);
+
+            // Limit to 10 rows
+            while (tbody.children.length > 10) {
+                tbody.removeChild(tbody.lastChild);
+            }
+        }
+
+        function clearTable() {
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #a0aec0; padding: 40px;">
+                        Chưa có kết quả
+                    </td>
+                </tr>
+            `;
+        }
+
+        // Add some initial data
+        setTimeout(() => {
+            addSampleResult();
+            addSampleResult();
+        }, 500);
+    </script>
+</body>
+
+</html>

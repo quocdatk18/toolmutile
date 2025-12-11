@@ -1,0 +1,32 @@
+========================================
+✅ CORRECT LICENSE KEY
+========================================
+
+Secret Key: SECRET_test_final_45379_53242
+Machine ID: 48b62c73fe0a524f
+Customer: test_final
+
+========================================
+🔑 LICENSE KEY (Copy toàn bộ dòng dưới):
+========================================
+
+Chạy lệnh này trong CMD để generate:
+
+cd C:\Users\DDC\Desktop\hidemium-multi-tool
+node generate-license-for-test.js
+
+Hoặc double-click file:
+GENERATE_LICENSE_NOW.bat
+
+========================================
+📝 HƯỚNG DẪN
+========================================
+
+1. Chạy script trên để generate license key
+2. Copy license key được hiển thị
+3. Paste vào dashboard
+4. Click "Activate License"
+
+License key sẽ được tính với secret key ĐÚNG!
+
+========================================

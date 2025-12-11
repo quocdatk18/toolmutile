@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Generate License Key</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        .info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+
+        .license-key {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 5px;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+            margin: 20px 0;
+            border: 2px solid #4CAF50;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .success {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔑 Generate License Key</h1>
+
+        <div class="info">
+            <strong>Secret Key:</strong> SECRET_test_final_45379_53242<br>
+            <strong>Customer:</strong> test_final<br>
+            <strong>Machine ID:</strong> 48b62c73fe0a524f<br>
+            <strong>License Type:</strong> Trial 7 days
+        </div>
+
+        <button onclick="generateLicense()">Generate License Key</button>
+
+        <div id="result" style="display:none; margin-top: 20px;">
+            <h3>✅ License Key Generated:</h3>
+            <div class="license-key" id="licenseKey"></div>
+            <button onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+            <div class="success" id="copySuccess">✅ Copied to clipboard!</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        function generateLicense() {
+            const SECRET_KEY = 'SECRET_test_final_45379_53242';
+            const customerName = 'test_final';
+            const machineId = '48b62c73fe0a524f';
+            const days = 7;
+            const now = Date.now();
+            const expiry = now + (days * 24 * 60 * 60 * 1000);
+
+            const licenseData = {
+                username: customerName,
+                machineId: machineId,
+                expiry: expiry,
+                created: now
+            };
+
+            // Create signature BEFORE encoding
+            const jsonStr = JSON.stringify(licenseData);
+
+            // Sign the JSON string (NOT the base64)
+            const signature = CryptoJS.HmacSHA256(jsonStr, SECRET_KEY).toString();
+
+            // Then encode to base64
+            const encoded = btoa(jsonStr);
+
+            const licenseKey = encoded + '.' + signature;
+
+            // Display result
+            document.getElementById('licenseKey').textContent = licenseKey;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        function copyToClipboard() {
+            const licenseKey = document.getElementById('licenseKey').textContent;
+            navigator.clipboard.writeText(licenseKey).then(() => {
+                const successMsg = document.getElementById('copySuccess');
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+
+</html>

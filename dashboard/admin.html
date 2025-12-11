@@ -1,0 +1,2224 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Manager - Admin</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .admin-header {
+            flex-shrink: 0;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-left h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 5px 0;
+        }
+
+        .header-left p {
+            color: #6c757d;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+        }
+
+        /* Customer Manager Styles */
+        .machine-id {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .machine-id.placeholder {
+            background: #fef3c7;
+            color: #92400e;
+            font-family: inherit;
+        }
+
+        .machine-id-input {
+            width: 200px;
+            padding: 8px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .machine-id-input:disabled {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .license-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .license-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .license-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .btn-update-machine-id {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 8px;
+        }
+
+        .btn-update-machine-id:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-update-machine-id:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border: 2px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .packages-list {
+            margin-top: 20px;
+        }
+
+        .package-item {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #dee2e6;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+
+        .package-item:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .package-info {
+            flex: 1;
+        }
+
+        .package-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .package-meta {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .package-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .info-box {
+            background: #e7f3ff;
+            border: 2px solid #2196F3;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-box strong {
+            color: #1976D2;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e2e8f0;
+        }
+
+        .customer-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .customer-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .customer-table th {
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .customer-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+
+        .customer-table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .customer-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .customer-name {
+            font-weight: 600;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .customer-date {
+            color: #64748b;
+            font-size: 13px;
+            cursor: help;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .customer-date:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .customer-size {
+            color: #64748b;
+            font-size: 13px;
+            font-family: monospace;
+        }
+
+        .machine-id-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .machine-id-display {
+            background: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 4px;
+            color: #334155;
+        }
+
+        .machine-id-placeholder {
+            background: #fef3c7;
+            color: #92400e;
+            font-family: inherit;
+            font-style: italic;
+        }
+
+        .machine-id-input-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .machine-id-input-cell input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-has-machine {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-no-machine {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-create-key {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-create-key:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-create-key:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-edit-machine {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .btn-edit-machine:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-unlock {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .btn-unlock:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-refresh {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-refresh:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .pagination-info {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .pagination-btn {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            color: #374151;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .page-size-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .page-size-selector select {
+            padding: 4px 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background: white;
+            font-size: 14px;
+        }
+
+        /* Layout adjustments for no-scroll */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .admin-container {
+            height: 100vh;
+            max-width: none;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .admin-header {
+            flex-shrink: 0;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            margin-bottom: 0;
+        }
+
+        .table-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .customer-table {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .customer-table thead {
+            flex-shrink: 0;
+        }
+
+        .customer-table tbody {
+            flex: 1;
+            overflow-y: auto;
+            display: block;
+        }
+
+        .customer-table thead tr,
+        .customer-table tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .customer-table th:nth-child(1),
+        .customer-table td:nth-child(1) {
+            width: 12%;
+        }
+
+        .customer-table th:nth-child(2),
+        .customer-table td:nth-child(2) {
+            width: 10%;
+        }
+
+        .customer-table th:nth-child(3),
+        .customer-table td:nth-child(3) {
+            width: 8%;
+        }
+
+        .customer-table th:nth-child(4),
+        .customer-table td:nth-child(4) {
+            width: 20%;
+        }
+
+        .customer-table th:nth-child(5),
+        .customer-table td:nth-child(5) {
+            width: 12%;
+        }
+
+        .customer-table th:nth-child(6),
+        .customer-table td:nth-child(6) {
+            width: 15%;
+        }
+
+        .customer-table th:nth-child(7),
+        .customer-table td:nth-child(7) {
+            width: 23%;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 40px 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 30px;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f8f9fa;
+            color: #dc3545;
+        }
+
+        .modal-body {
+            padding: 30px 40px 40px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        .customer-info {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            border-left: 4px solid #667eea;
+        }
+
+        .customer-info p {
+            margin: 8px 0;
+            color: #374151;
+        }
+
+        .customer-info code {
+            background: #e5e7eb;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .success-box {
+            background: #dcfce7;
+            border: 2px solid #16a34a;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .success-box h3 {
+            color: #15803d;
+            margin: 0 0 15px 0;
+            font-size: 18px;
+        }
+
+        .success-box textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid #16a34a;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: white;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .success-box button {
+            width: 100%;
+        }
+
+        /* License Time Remaining Styles */
+        .license-time {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 6px 10px;
+            border-radius: 6px;
+            text-align: center;
+            display: inline-block;
+            min-width: 80px;
+        }
+
+        .license-time.expired {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .license-time.expiring-soon {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .license-time.active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .license-time.lifetime {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .license-time.no-license {
+            background: #f3f4f6;
+            color: #6b7280;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>👥 Customer Manager</h1>
+                    <p>Quản lý khách hàng, Machine ID và License Keys</p>
+                </div>
+                <div class="header-actions">
+                    <button onclick="showAddCustomerModal()" class="btn btn-primary">
+                        👤 Thêm Khách Hàng
+                    </button>
+                    <button onclick="refreshPackages()" class="btn btn-success">
+                        🔄 Làm Mới
+                    </button>
+                    <a href="/" class="btn btn-secondary">
+                        ← Quay Lại Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <!-- Customer Management Table Section -->
+        <div class="section">
+            <div class="section-title">
+                <span>👥 Danh Sách Khách Hàng</span>
+            </div>
+
+            <div class="table-container">
+                <table class="customer-table" id="customerTable">
+                    <thead>
+                        <tr>
+                            <th>👤 Tên Khách Hàng</th>
+                            <th>📅 Ngày Tạo</th>
+                            <th>💾 Dung Lượng</th>
+                            <th>🆔 Machine ID</th>
+                            <th>📊 Trạng Thái</th>
+                            <th>⏰ Thời Gian Còn Lại</th>
+                            <th>⚡ Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; color: #6c757d;">
+                                Đang tải danh sách khách hàng...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="pagination-container">
+                    <div class="pagination-info">
+                        <span id="paginationInfo">Hiển thị 0 - 0 của 0 khách hàng</span>
+                    </div>
+
+                    <div class="pagination-controls">
+                        <div class="page-size-selector">
+                            <span>Hiển thị:</span>
+                            <select id="pageSize" onchange="changePageSize()">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                            <span>/ trang</span>
+                        </div>
+
+                        <button class="pagination-btn" id="prevBtn" onclick="previousPage()" disabled>
+                            ← Trước
+                        </button>
+
+                        <div id="pageNumbers"></div>
+
+                        <button class="pagination-btn" id="nextBtn" onclick="nextPage()" disabled>
+                            Sau →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <!-- Add Customer Modal -->
+    <div id="addCustomerModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👤 Thêm Khách Hàng Mới</h2>
+                <button onclick="closeAddCustomerModal()" class="modal-close">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="info-box">
+                    <strong>💡 Lưu ý:</strong> Package sẽ được tạo với code đã obfuscate và xóa dữ liệu nhạy cảm.
+                    License key sẽ được tạo sau khi khách hàng gửi Machine ID.
+                </div>
+
+                <form id="buildForm">
+                    <div class="form-group">
+                        <label for="customerName">👤 Tên Khách Hàng *</label>
+                        <input type="text" id="customerName" placeholder="vd: customer001" required>
+                        <small>Tên duy nhất cho khách hàng</small>
+                    </div>
+
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill">0%</div>
+                        </div>
+                        <div class="progress-text" id="progressText">Đang xử lý...</div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" onclick="closeAddCustomerModal()" class="btn btn-secondary">
+                            Hủy
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            👤 Tạo Khách Hàng
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- License History Modal -->
+    <div id="licenseHistoryModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h2>📋 Lịch Sử License Key</h2>
+                <button onclick="closeLicenseHistoryModal()" class="modal-close">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="customer-info">
+                    <p><strong>👤 Khách hàng:</strong> <span id="historyCustomerName"></span></p>
+                    <div id="licenseStats"></div>
+                </div>
+
+                <div class="license-history-table">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #f8fafc;">
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">📅 Ngày
+                                    Tạo</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">⏰ Thời
+                                    Hạn</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">📊 Trạng
+                                    Thái</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">📝 Ghi
+                                    Chú</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">🔑
+                                    License Key</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licenseHistoryTableBody">
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">
+                                    Đang tải lịch sử...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" onclick="closeLicenseHistoryModal()" class="btn btn-secondary">
+                        Đóng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate License Modal -->
+    <div id="generateLicenseModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔑 Tạo License Key</h2>
+                <button onclick="closeLicenseModal()" class="modal-close">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="customer-info">
+                    <p><strong>👤 Khách hàng:</strong> <span id="licenseCustomerName"></span></p>
+                    <p><strong>🆔 Machine ID:</strong> <code id="licenseMachineIdDisplay"></code></p>
+                </div>
+
+                <div class="form-group">
+                    <label for="licenseType">📅 Loại License *</label>
+                    <select id="licenseType" onchange="toggleCustomFields()">
+                        <option value="0.000694">🧪 Test - 1 phút</option>
+                        <option value="0.00347">🧪 Test - 5 phút</option>
+                        <option value="0.0208">🧪 Test - 30 phút</option>
+                        <option value="0.0417">🧪 Test - 1 giờ</option>
+                        <option value="1">📅 Trial - 1 ngày</option>
+                        <option value="3">📅 Trial - 3 ngày</option>
+                        <option value="7">📅 Trial - 7 ngày</option>
+                        <option value="15">📅 Basic - 15 ngày</option>
+                        <option value="30" selected>📅 Monthly - 30 ngày</option>
+                        <option value="60">📅 Extended - 60 ngày</option>
+                        <option value="90">📅 Quarterly - 90 ngày</option>
+                        <option value="180">📅 Half Year - 180 ngày</option>
+                        <option value="365">📅 Yearly - 365 ngày</option>
+                        <option value="-1">♾️ Lifetime - Vĩnh viễn</option>
+                        <option value="custom-days">✏️ Tùy chỉnh số ngày...</option>
+                        <option value="custom-minutes">⏱️ Tùy chỉnh số phút (test)...</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="customDaysGroup" style="display: none;">
+                    <label for="customDays">📆 Số Ngày Tùy Chỉnh *</label>
+                    <input type="number" id="customDays" placeholder="Nhập số ngày (1-3650)" min="1" max="3650">
+                    <small>Nhập số ngày từ 1 đến 3650 (10 năm)</small>
+                </div>
+
+                <div class="form-group" id="customMinutesGroup" style="display: none;">
+                    <label for="customMinutes">⏱️ Số Phút Tùy Chỉnh *</label>
+                    <input type="number" id="customMinutes" placeholder="Nhập số phút (1-1440)" min="1" max="1440">
+                    <small>Nhập số phút từ 1 đến 1440 (24 giờ) - Chỉ dùng để test</small>
+                </div>
+
+                <input type="hidden" id="licenseMachineId">
+
+                <div id="licenseResult" style="display: none;">
+                    <div class="success-box">
+                        <h3>✅ License Key Đã Tạo:</h3>
+                        <textarea id="licenseKeyText" readonly></textarea>
+                        <button onclick="copyLicenseKey()" class="btn btn-success">📋 Copy Key</button>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" onclick="closeLicenseModal()" class="btn btn-secondary">
+                        Đóng
+                    </button>
+                    <button type="button" onclick="generateLicenseKey()" class="btn btn-primary"
+                        id="generateLicenseBtn">
+                        🔑 Tạo License Key
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Machine ID field
+        function toggleMachineIdField() {
+            const machineBinding = document.getElementById('modalMachineBinding').checked;
+            const machineIdGroup = document.getElementById('modalMachineIdGroup');
+            const machineIdInput = document.getElementById('modalMachineId');
+
+            if (machineBinding) {
+                machineIdGroup.style.display = 'block';
+                machineIdInput.required = true;
+            } else {
+                machineIdGroup.style.display = 'none';
+                machineIdInput.required = false;
+                machineIdInput.value = '';
+            }
+        }
+
+
+
+        // Build package
+        document.getElementById('buildForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const customerName = document.getElementById('customerName').value.trim();
+            const obfuscate = true; // Always enable obfuscation for security
+
+            if (!customerName) {
+                showAlert('Vui lòng nhập tên khách hàng', 'error');
+                return;
+            }
+
+            // Show progress
+            document.getElementById('progressContainer').style.display = 'block';
+            updateProgress(0, 'Đang khởi tạo...');
+
+            try {
+                const response = await fetch('/api/admin/build-package', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        customerName,
+                        licenseType: 30, // Default 30 days (not used until license generation)
+                        machineBinding: true, // Always enable machine binding for security
+                        obfuscate
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    updateProgress(100, 'Hoàn thành!');
+                    showAlert(`✅ Tạo package thành công!\n📦 Location: ${data.packagePath}\n🔐 Secret Key: ${data.secretKey}`, 'success');
+
+                    // Reset form and close modal
+                    document.getElementById('buildForm').reset();
+
+                    // Refresh list and close modal
+                    setTimeout(() => {
+                        refreshPackages();
+                        document.getElementById('progressContainer').style.display = 'none';
+                        closeAddCustomerModal();
+                    }, 2000);
+                } else {
+                    updateProgress(0, 'Lỗi!');
+                    showAlert('❌ ' + data.message, 'error');
+                    setTimeout(() => {
+                        document.getElementById('progressContainer').style.display = 'none';
+                    }, 2000);
+                }
+            } catch (error) {
+                updateProgress(0, 'Lỗi!');
+                showAlert('❌ Lỗi: ' + error.message, 'error');
+                setTimeout(() => {
+                    document.getElementById('progressContainer').style.display = 'none';
+                }, 2000);
+            }
+        });
+
+        // Refresh packages list
+        async function refreshPackages() {
+            const tableBody = document.getElementById('customerTableBody');
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #6c757d;">Đang tải...</td></tr>';
+
+            try {
+                const response = await fetch('/api/admin/packages');
+                const data = await response.json();
+
+                if (data.success && data.packages.length > 0) {
+                    // Load customer data to merge with packages
+                    loadCustomerData().then(customers => {
+                        console.log('🎯 Rendering packages with customer data:', customers);
+                        // Prepare all customer data for pagination
+                        allCustomers = data.packages.map(pkg => {
+                            const customer = customers[pkg.name] || {};
+                            const machineId = customer.machineId || 'PLACEHOLDER_MACHINE_ID';
+                            const isPlaceholder = machineId === 'PLACEHOLDER_MACHINE_ID';
+                            const isLocked = !isPlaceholder && (customer.machineIdLocked !== false);
+
+                            console.log(`📦 Package: ${pkg.name}, Customer:`, customer, `Machine ID: ${machineId}, Placeholder: ${isPlaceholder}, Locked: ${isLocked}`);
+
+                            return {
+                                pkg,
+                                customer,
+                                machineId,
+                                isPlaceholder,
+                                isLocked
+                            };
+                        });
+
+                        // Sort by customer creation time (newest first)
+                        allCustomers.sort((a, b) => {
+                            const dateA = a.customer.createdAt ? new Date(a.customer.createdAt) : new Date(0);
+                            const dateB = b.customer.createdAt ? new Date(b.customer.createdAt) : new Date(0);
+                            return dateB - dateA; // Newest first
+                        });
+
+                        totalCustomers = allCustomers.length;
+                        currentPage = 1; // Reset to first page
+                        renderCurrentPage();
+                    });
+                } else {
+                    allCustomers = [];
+                    totalCustomers = 0;
+                    tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #6c757d;">Chưa có khách hàng nào</td></tr>';
+                    updatePaginationInfo();
+                }
+            } catch (error) {
+                allCustomers = [];
+                totalCustomers = 0;
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #dc3545;">Lỗi tải danh sách</td></tr>';
+                updatePaginationInfo();
+            }
+        }
+
+        // Download package
+        function downloadPackage(name) {
+            window.location.href = `/api/admin/download-package/${name}`;
+        }
+
+        // Load customer data
+        async function loadCustomerData() {
+            console.log('🔄 Loading customer data...');
+            try {
+                const response = await fetch('/api/admin/customers');
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log('✅ Customer data loaded:', data.customers.length, 'customers');
+                    // Convert array to object for easy lookup
+                    const customersObj = {};
+                    data.customers.forEach(customer => {
+                        customersObj[customer.customerName] = customer;
+                        console.log(`📋 Customer: ${customer.customerName}, Machine ID: ${customer.machineId}, Locked: ${customer.machineIdLocked}`);
+                    });
+                    return customersObj;
+                }
+                return {};
+            } catch (error) {
+                console.error('Error loading customer data:', error);
+                return {};
+            }
+        }
+
+        // Update Machine ID
+        async function updateMachineId(customerName) {
+            const input = document.getElementById(`machineId_${customerName}`);
+            const machineId = input.value.trim();
+
+            if (!machineId) {
+                alert('Vui lòng nhập Machine ID');
+                return;
+            }
+
+            if (machineId.length !== 16) {
+                alert('Machine ID phải có đúng 16 ký tự');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerName,
+                        machineId,
+                        notes: `Updated from package management. Package exists.`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('success', 'Machine ID đã được lưu và khóa!');
+                    // Add delay to ensure database is updated
+                    setTimeout(() => {
+                        refreshPackages(); // Reload to show updated state
+                    }, 500);
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Edit Machine ID (for unlocked ones)
+        function editMachineId(customerName, currentMachineId) {
+            editMachineIdDirectly(customerName, currentMachineId);
+        }
+
+        // Direct edit function (used by both manual edit and unlock+edit)
+        function editMachineIdDirectly(customerName, currentMachineId) {
+            const newMachineId = prompt(`Sửa Machine ID cho ${customerName}:`, currentMachineId);
+
+            if (newMachineId !== null) {
+                // User entered something (even if same as current)
+                if (newMachineId.trim() === '') {
+                    alert('Machine ID không được để trống');
+                    return;
+                }
+
+                if (newMachineId.length !== 16) {
+                    alert('Machine ID phải có đúng 16 ký tự');
+                    return;
+                }
+
+                // Always save and lock, even if same as current (because we unlocked it)
+                updateMachineIdDirectWithLock(customerName, newMachineId);
+            } else {
+                // User cancelled, need to refresh to show locked state again
+                showToast('info', 'Đã hủy sửa. Machine ID vẫn được khóa lại.');
+                setTimeout(() => {
+                    refreshPackages();
+                }, 500);
+            }
+        }
+
+        // Unlock Machine ID and immediately edit (admin function)
+        async function unlockMachineId(customerName) {
+            if (!confirm(`Mở khóa để sửa Machine ID cho ${customerName}?\n\nLưu ý: Sau khi nhập xong sẽ tự động khóa lại.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/customers/${customerName}/unlock-machine-id`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        reason: 'Admin unlock for editing'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('success', 'Machine ID đã được mở khóa!');
+
+                    // Get current Machine ID and immediately start editing
+                    setTimeout(() => {
+                        // Find current customer data to get current Machine ID
+                        const currentCustomer = allCustomers.find(c => c.pkg.name === customerName);
+                        if (currentCustomer) {
+                            editMachineIdDirectly(customerName, currentCustomer.machineId);
+                        }
+                    }, 500);
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Update Machine ID directly (original function for first-time setup)
+        async function updateMachineIdDirect(customerName, machineId) {
+            try {
+                const response = await fetch('/api/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerName,
+                        machineId,
+                        notes: `Updated Machine ID from package management.`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('success', 'Machine ID đã được cập nhật!');
+                    // Add delay to ensure database is updated
+                    setTimeout(() => {
+                        refreshPackages(); // Reload to show updated state
+                    }, 500);
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Update Machine ID and automatically lock it (for edit operations)
+        async function updateMachineIdDirectWithLock(customerName, machineId) {
+            try {
+                const response = await fetch('/api/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerName,
+                        machineId,
+                        notes: `Machine ID updated and locked by admin.`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('success', 'Machine ID đã được lưu và khóa lại!');
+                    // Add delay to ensure database is updated
+                    setTimeout(() => {
+                        refreshPackages(); // Reload to show updated state
+                    }, 500);
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Generate license for customer - Open modal
+        function generateLicenseForCustomer(customerName) {
+            // Find customer data to get Machine ID
+            const customerData = allCustomers.find(c => c.pkg.name === customerName);
+            if (!customerData || customerData.isPlaceholder) {
+                showToast('error', 'Cần có Machine ID trước khi tạo license key!');
+                return;
+            }
+
+            // Set customer info in modal
+            document.getElementById('licenseCustomerName').textContent = customerName;
+            document.getElementById('licenseMachineId').value = customerData.machineId;
+            document.getElementById('licenseMachineIdDisplay').textContent = customerData.machineId;
+
+            // Reset form
+            document.getElementById('licenseType').value = '30';
+            document.getElementById('customDaysGroup').style.display = 'none';
+            document.getElementById('customMinutesGroup').style.display = 'none';
+            document.getElementById('licenseResult').style.display = 'none';
+
+            // Show modal
+            document.getElementById('generateLicenseModal').style.display = 'flex';
+        }
+
+        // Debug reload function
+        function debugReload() {
+            console.log('🔄 Manual debug reload triggered');
+            console.log('🧹 Clearing any cached data...');
+            // Force reload by clearing container first
+            const container = document.getElementById('packagesList');
+            container.innerHTML = '<div style="text-align: center; padding: 40px; color: #6c757d;">Đang tải lại...</div>';
+
+            // Add delay to ensure clean reload
+            setTimeout(() => {
+                refreshPackages();
+            }, 100);
+        }
+
+        // Show toast notification
+        function showToast(type, message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 2000;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+                ${type === 'success' ? 'background: linear-gradient(135deg, #10b981, #059669);' : 'background: linear-gradient(135deg, #ef4444, #dc2626);'}
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.style.transform = 'translateX(0)', 100);
+            setTimeout(() => {
+                toast.style.transform = 'translateX(400px)';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Delete package
+        async function deletePackage(name) {
+            if (!confirm(`Bạn có chắc chắn muốn xóa package "${name}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/delete-package/${name}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('✅ Đã xóa package thành công', 'success');
+                    refreshPackages();
+                } else {
+                    showAlert('❌ ' + data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('❌ Lỗi: ' + error.message, 'error');
+            }
+        }
+
+        // Update progress
+        function updateProgress(percent, text) {
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressFill').textContent = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            alert.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(alert);
+
+            setTimeout(() => {
+                alert.remove();
+            }, 10000);
+        }
+
+
+
+        // Pagination variables
+        let currentPage = 1;
+        let pageSize = 10;
+        let totalCustomers = 0;
+        let allCustomers = [];
+
+        // Pagination functions
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('pageSize').value);
+            currentPage = 1;
+            renderCurrentPage();
+        }
+
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderCurrentPage();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(totalCustomers / pageSize);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderCurrentPage();
+            }
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            renderCurrentPage();
+        }
+
+        function updatePaginationInfo() {
+            const totalPages = Math.ceil(totalCustomers / pageSize);
+            const startItem = totalCustomers === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+            const endItem = Math.min(currentPage * pageSize, totalCustomers);
+
+            document.getElementById('paginationInfo').textContent =
+                `Hiển thị ${startItem} - ${endItem} của ${totalCustomers} khách hàng`;
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages || totalPages === 0;
+
+            // Update page numbers
+            renderPageNumbers(totalPages);
+        }
+
+        function renderPageNumbers(totalPages) {
+            const pageNumbersContainer = document.getElementById('pageNumbers');
+            pageNumbersContainer.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            // Adjust start if we're near the end
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            // Add first page and ellipsis if needed
+            if (startPage > 1) {
+                pageNumbersContainer.appendChild(createPageButton(1));
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.className = 'pagination-btn';
+                    ellipsis.style.cursor = 'default';
+                    pageNumbersContainer.appendChild(ellipsis);
+                }
+            }
+
+            // Add visible page numbers
+            for (let i = startPage; i <= endPage; i++) {
+                pageNumbersContainer.appendChild(createPageButton(i));
+            }
+
+            // Add ellipsis and last page if needed
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.className = 'pagination-btn';
+                    ellipsis.style.cursor = 'default';
+                    pageNumbersContainer.appendChild(ellipsis);
+                }
+                pageNumbersContainer.appendChild(createPageButton(totalPages));
+            }
+        }
+
+        function createPageButton(pageNum) {
+            const button = document.createElement('button');
+            button.textContent = pageNum;
+            button.className = `pagination-btn ${pageNum === currentPage ? 'active' : ''}`;
+            button.onclick = () => goToPage(pageNum);
+            return button;
+        }
+
+        function renderCurrentPage() {
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const pageCustomers = allCustomers.slice(startIndex, endIndex);
+
+            const tableBody = document.getElementById('customerTableBody');
+
+            if (pageCustomers.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px; color: #6c757d;">Không có khách hàng nào</td></tr>';
+            } else {
+                tableBody.innerHTML = pageCustomers.map(customerData => {
+                    const { pkg, customer, machineId, isPlaceholder, isLocked } = customerData;
+
+                    return `
+                        <tr>
+                            <td>
+                                <div class="customer-name">
+                                    👤 ${pkg.name}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="customer-date" title="${customerData.customer.createdAt ? new Date(customerData.customer.createdAt).toLocaleString('vi-VN') : 'Thời gian tạo package: ' + customerData.pkg.created}">
+                                    📅 ${formatCustomerDate(customerData.customer, customerData.pkg)}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="customer-size">💾 ${pkg.size}</div>
+                            </td>
+                            <td class="machine-id-cell">
+                                ${isPlaceholder ?
+                            `<div class="machine-id-input-cell">
+                                        <input type="text" id="machineId_${pkg.name}" placeholder="Nhập Machine ID..." maxlength="16">
+                                        <button class="btn-small btn-save" onclick="updateMachineId('${pkg.name}')">💾 Lưu</button>
+                                    </div>` :
+                            `<div class="machine-id-display">${machineId} ${isLocked ? '🔒' : ''}</div>
+                                    ${!isLocked ?
+                                `<button class="btn-small btn-edit-machine" onclick="editMachineId('${pkg.name}', '${machineId}')">✏️ Sửa</button>` :
+                                `<button class="btn-small btn-unlock" onclick="unlockMachineId('${pkg.name}')">🔓 Mở khóa</button>`
+                            }`
+                        }
+                            </td>
+                            <td>
+                                <span class="status-badge ${!isPlaceholder ? 'status-has-machine' : 'status-no-machine'}">
+                                    ${!isPlaceholder ? '✅ Có Machine ID' : '❌ Chưa có Machine ID'}
+                                </span>
+                            </td>
+                            <td>
+                                ${(() => {
+                            const timeRemaining = calculateLicenseTimeRemaining(customerData.customer);
+                            return `<span class="license-time ${timeRemaining.class}">${timeRemaining.text}</span>`;
+                        })()}
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    ${!isPlaceholder ?
+                            `<button class="btn-small btn-create-key" onclick="generateLicenseForCustomer('${pkg.name}')">
+                                            🔑 Tạo Key
+                                        </button>` :
+                            `<button class="btn-small btn-create-key" disabled>
+                                            🔑 Tạo Key
+                                        </button>`
+                        }
+                                    <button class="btn-small btn-download" onclick="downloadPackage('${pkg.name}')">
+                                        📥 Tải File
+                                    </button>
+                                    <button class="btn-small" onclick="showLicenseHistory('${pkg.name}')" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white;">
+                                        📋 Lịch Sử
+                                    </button>
+                                    <button class="btn-small btn-delete" onclick="deletePackage('${pkg.name}')">
+                                        🗑️ Xóa
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            updatePaginationInfo();
+        }
+
+        // Calculate license time remaining
+        function calculateLicenseTimeRemaining(customer) {
+            // Handle old data without licenseHistory
+            if (!customer || !customer.licenseHistory || customer.licenseHistory.length === 0) {
+                return {
+                    text: 'Chưa có License',
+                    class: 'no-license'
+                };
+            }
+
+            // Find active license
+            const activeLicense = customer.licenseHistory.find(l => l.isActive);
+            if (!activeLicense) {
+                return {
+                    text: 'License hết hạn',
+                    class: 'expired'
+                };
+            }
+
+            // Check if lifetime
+            if (activeLicense.expiryDays === -1) {
+                return {
+                    text: '♾️ Vĩnh viễn',
+                    class: 'lifetime'
+                };
+            }
+
+            // Calculate expiry date from createdAt + expiryDays
+            const createdAt = new Date(activeLicense.createdAt);
+            const expiryDate = new Date(createdAt.getTime() + (activeLicense.expiryDays * 24 * 60 * 60 * 1000));
+
+            const now = new Date();
+            const diffMs = expiryDate - now;
+
+            if (diffMs <= 0) {
+                return {
+                    text: 'Đã hết hạn',
+                    class: 'expired'
+                };
+            }
+
+            const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+            const diffHours = Math.ceil(diffMs / (1000 * 60 * 60));
+            const diffMinutes = Math.ceil(diffMs / (1000 * 60));
+
+            let text, cssClass;
+
+            if (diffDays > 7) {
+                text = `${diffDays} ngày`;
+                cssClass = 'active';
+            } else if (diffDays > 1) {
+                text = `${diffDays} ngày`;
+                cssClass = 'expiring-soon';
+            } else if (diffHours > 1) {
+                text = `${diffHours} giờ`;
+                cssClass = 'expiring-soon';
+            } else if (diffMinutes > 0) {
+                text = `${diffMinutes} phút`;
+                cssClass = 'expiring-soon';
+            } else {
+                text = 'Đã hết hạn';
+                cssClass = 'expired';
+            }
+
+            return {
+                text: text,
+                class: cssClass
+            };
+        }
+
+        // Format date function
+        function formatCustomerDate(customer, pkg) {
+            if (customer.createdAt) {
+                const date = new Date(customer.createdAt);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+                if (diffDays === 0) {
+                    return `Hôm nay ${date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+                } else if (diffDays === 1) {
+                    return `Hôm qua ${date.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}`;
+                } else if (diffDays < 7) {
+                    return `${diffDays} ngày trước`;
+                } else {
+                    return date.toLocaleString('vi-VN', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            }
+            return pkg.created; // Fallback to package creation time
+        }
+
+        // Modal functions
+        function showAddCustomerModal() {
+            document.getElementById('addCustomerModal').style.display = 'flex';
+            document.getElementById('customerName').focus();
+        }
+
+        function closeAddCustomerModal() {
+            document.getElementById('addCustomerModal').style.display = 'none';
+            document.getElementById('buildForm').reset();
+            document.getElementById('progressContainer').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('addCustomerModal').addEventListener('click', (e) => {
+            if (e.target.id === 'addCustomerModal') {
+                closeAddCustomerModal();
+            }
+        });
+
+        // License modal functions
+        function toggleCustomFields() {
+            const licenseType = document.getElementById('licenseType').value;
+            const customDaysGroup = document.getElementById('customDaysGroup');
+            const customMinutesGroup = document.getElementById('customMinutesGroup');
+
+            if (licenseType === 'custom-days') {
+                customDaysGroup.style.display = 'block';
+                customMinutesGroup.style.display = 'none';
+                document.getElementById('customDays').required = true;
+                document.getElementById('customMinutes').required = false;
+            } else if (licenseType === 'custom-minutes') {
+                customDaysGroup.style.display = 'none';
+                customMinutesGroup.style.display = 'block';
+                document.getElementById('customDays').required = false;
+                document.getElementById('customMinutes').required = true;
+            } else {
+                customDaysGroup.style.display = 'none';
+                customMinutesGroup.style.display = 'none';
+                document.getElementById('customDays').required = false;
+                document.getElementById('customMinutes').required = false;
+            }
+        }
+
+        function closeLicenseModal() {
+            document.getElementById('generateLicenseModal').style.display = 'none';
+            document.getElementById('licenseResult').style.display = 'none';
+            document.getElementById('licenseType').value = '30';
+            toggleCustomFields();
+        }
+
+        async function generateLicenseKey() {
+            const customerName = document.getElementById('licenseCustomerName').textContent;
+            const machineId = document.getElementById('licenseMachineId').value;
+            let licenseType = document.getElementById('licenseType').value;
+            const btn = document.getElementById('generateLicenseBtn');
+
+            // Handle custom values
+            if (licenseType === 'custom-days') {
+                const customDays = document.getElementById('customDays').value;
+                if (!customDays || customDays < 1 || customDays > 3650) {
+                    showToast('error', 'Vui lòng nhập số ngày hợp lệ (1-3650)');
+                    return;
+                }
+                licenseType = customDays;
+            } else if (licenseType === 'custom-minutes') {
+                const customMinutes = document.getElementById('customMinutes').value;
+                if (!customMinutes || customMinutes < 1 || customMinutes > 1440) {
+                    showToast('error', 'Vui lòng nhập số phút hợp lệ (1-1440)');
+                    return;
+                }
+                licenseType = customMinutes / 1440; // Convert to days
+            }
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Đang tạo...';
+
+            try {
+                const response = await fetch(`/api/admin/customers/${customerName}/generate-license`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        expiryDays: parseFloat(licenseType),
+                        notes: `Generated from Customer Manager. ${licenseType == -1 ? 'Lifetime' : licenseType >= 1 ? licenseType + ' days' : (licenseType * 24 * 60).toFixed(0) + ' minutes'}`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('licenseKeyText').value = data.licenseKey;
+                    document.getElementById('licenseResult').style.display = 'block';
+
+                    // Auto copy to clipboard
+                    navigator.clipboard.writeText(data.licenseKey).then(() => {
+                        showToast('success', 'License key đã được tạo và copy vào clipboard!');
+                    });
+
+                    // Refresh packages to show updated status
+                    setTimeout(() => {
+                        refreshPackages();
+                    }, 1000);
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🔑 Tạo License Key';
+            }
+        }
+
+        function copyLicenseKey() {
+            const textarea = document.getElementById('licenseKeyText');
+            textarea.select();
+            document.execCommand('copy');
+            showToast('success', 'License key đã được copy!');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('generateLicenseModal').addEventListener('click', (e) => {
+            if (e.target.id === 'generateLicenseModal') {
+                closeLicenseModal();
+            }
+        });
+
+        // License history functions
+        async function showLicenseHistory(customerName) {
+            document.getElementById('historyCustomerName').textContent = customerName;
+            document.getElementById('licenseHistoryModal').style.display = 'flex';
+
+            // Clear previous data first
+            document.getElementById('licenseStats').innerHTML = '<div style="text-align: center; color: #6c757d;">Đang tải...</div>';
+            document.getElementById('licenseHistoryTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">Đang tải dữ liệu...</td></tr>';
+
+            // Load license history
+            try {
+                // Add cache busting to prevent stale data
+                const response = await fetch(`/api/admin/customers/${customerName}/license-history?t=${Date.now()}`);
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server trả về HTML thay vì JSON. Có thể server đang restart.');
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Display stats
+                    const stats = data.stats;
+                    document.getElementById('licenseStats').innerHTML = `
+                        <div style="display: flex; gap: 20px; margin-top: 10px;">
+                            <span style="background: #e0e7ff; color: #3730a3; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                📊 Tổng: ${stats.total}
+                            </span>
+                            <span style="background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                ✅ Còn hạn: ${stats.active}
+                            </span>
+                            <span style="background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                ❌ Hết hạn: ${stats.expired}
+                            </span>
+                            <span style="background: #fef3c7; color: #92400e; padding: 4px 8px; border-radius: 4px; font-size: 12px;">
+                                ♾️ Vĩnh viễn: ${stats.lifetime}
+                            </span>
+                        </div>
+                    `;
+
+                    // Display history table
+                    const tbody = document.getElementById('licenseHistoryTableBody');
+                    if (data.history.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">Chưa có lịch sử license</td></tr>';
+                    } else {
+                        tbody.innerHTML = data.history.map(license => {
+                            const createdDate = new Date(license.createdAt);
+                            const now = new Date();
+
+                            let statusText, statusClass;
+                            if (license.expiryDays === -1) {
+                                statusText = '♾️ Vĩnh viễn';
+                                statusClass = 'background: #e0e7ff; color: #3730a3;';
+                            } else {
+                                const expiryDate = new Date(createdDate.getTime() + (license.expiryDays * 24 * 60 * 60 * 1000));
+                                if (license.isActive) {
+                                    statusText = '🟢 Đang dùng';
+                                    statusClass = 'background: #dcfce7; color: #166534;';
+                                } else if (expiryDate > now) {
+                                    statusText = '🟡 Còn hạn';
+                                    statusClass = 'background: #fef3c7; color: #92400e;';
+                                } else {
+                                    statusText = '🔴 Hết hạn';
+                                    statusClass = 'background: #fee2e2; color: #991b1b;';
+                                }
+                            }
+
+                            return `
+                                <tr style="border-bottom: 1px solid #e2e8f0;">
+                                    <td style="padding: 12px; font-size: 13px;">
+                                        ${createdDate.toLocaleString('vi-VN')}
+                                    </td>
+                                    <td style="padding: 12px; font-size: 13px;">
+                                        ${license.expiryDays === -1 ? '♾️ Vĩnh viễn' : license.expiryDays + ' ngày'}
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; ${statusClass}">
+                                            ${statusText}
+                                        </span>
+                                    </td>
+                                    <td style="padding: 12px; font-size: 13px; max-width: 200px; overflow: hidden; text-overflow: ellipsis;">
+                                        ${license.notes || 'Không có ghi chú'}
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <code style="font-size: 11px; background: #f1f5f9; padding: 4px 6px; border-radius: 4px; cursor: pointer;" 
+                                              onclick="copyToClipboard('${license.licenseKey}')" 
+                                              title="Click để copy">
+                                            ${license.licenseKey.substring(0, 20)}...
+                                        </code>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                } else {
+                    // Show error in modal instead of toast
+                    document.getElementById('licenseStats').innerHTML = '<div style="color: #dc2626; text-align: center;">❌ Lỗi: ' + data.error + '</div>';
+                    document.getElementById('licenseHistoryTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc2626;">❌ ' + data.error + '</td></tr>';
+                    showToast('error', 'Lỗi tải lịch sử: ' + data.error);
+                }
+            } catch (error) {
+                // Show error in modal instead of toast
+                document.getElementById('licenseStats').innerHTML = '<div style="color: #dc2626; text-align: center;">❌ Lỗi kết nối: ' + error.message + '</div>';
+                document.getElementById('licenseHistoryTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc2626;">❌ Lỗi kết nối: ' + error.message + '</td></tr>';
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        function closeLicenseHistoryModal() {
+            document.getElementById('licenseHistoryModal').style.display = 'none';
+            // Clear data when closing to prevent stale data
+            document.getElementById('licenseStats').innerHTML = '';
+            document.getElementById('licenseHistoryTableBody').innerHTML = '';
+            document.getElementById('historyCustomerName').textContent = '';
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('success', 'License key đã được copy!');
+            });
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('licenseHistoryModal').addEventListener('click', (e) => {
+            if (e.target.id === 'licenseHistoryModal') {
+                closeLicenseHistoryModal();
+            }
+        });
+
+        // Load packages on page load
+        refreshPackages();
+    </script>
+</body>
+
+</html>

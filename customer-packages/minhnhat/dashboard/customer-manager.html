@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Machine Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .controls {
+            padding: 30px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .customers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        .customers-table th,
+        .customers-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .customers-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .customers-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .machine-id {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .license-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+
+        .license-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .license-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            z-index: 2000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .license-key-display {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+
+            .customers-table {
+                font-size: 0.9em;
+            }
+
+            .customers-table th,
+            .customers-table td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Customer Machine Manager</h1>
+            <p>Quản lý Machine ID và License Key cho từng khách hàng</p>
+        </div>
+
+        <div class="stats" id="statsContainer">
+            <div class="stat-card">
+                <div class="stat-number" id="totalCustomers">0</div>
+                <div class="stat-label">Tổng Khách Hàng</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeLicenses">0</div>
+                <div class="stat-label">License Đang Hoạt Động</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="customersWithLicense">0</div>
+                <div class="stat-label">Có License</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="customersWithoutLicense">0</div>
+                <div class="stat-label">Chưa Có License</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="controls-row">
+                <button class="btn btn-primary" onclick="openAddCustomerModal()">
+                    ➕ Thêm Khách Hàng
+                </button>
+                <button class="btn btn-success" onclick="refreshData()">
+                    🔄 Tải Lại
+                </button>
+                <input type="text" class="search-box" id="searchBox" placeholder="🔍 Tìm kiếm khách hàng, Machine ID..."
+                    onkeyup="searchCustomers()">
+            </div>
+        </div>
+
+        <div id="customersContainer">
+            <div class="loading">
+                <div>⏳ Đang tải dữ liệu...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Customer Modal -->
+    <div class="modal" id="customerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">➕ Thêm Khách Hàng</h3>
+                <button class="modal-close" onclick="closeCustomerModal()">×</button>
+            </div>
+            <form id="customerForm" onsubmit="saveCustomer(event)">
+                <div class="form-group">
+                    <label for="customerName">Tên Khách Hàng *</label>
+                    <input type="text" id="customerName" required>
+                </div>
+                <div class="form-group">
+                    <label for="machineId">Machine ID *</label>
+                    <input type="text" id="machineId" required placeholder="16 ký tự Machine ID">
+                </div>
+                <div class="form-group">
+                    <label for="notes">Ghi Chú</label>
+                    <textarea id="notes" placeholder="Thông tin thêm về khách hàng..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn" onclick="closeCustomerModal()">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Generate License Modal -->
+    <div class="modal" id="licenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🔑 Tạo License Key</h3>
+                <button class="modal-close" onclick="closeLicenseModal()">×</button>
+            </div>
+            <div id="licenseForm">
+                <div class="form-group">
+                    <label>Khách Hàng</label>
+                    <input type="text" id="licenseCustomerName" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Machine ID</label>
+                    <input type="text" id="licenseMachineId" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="expiryDays">Thời Hạn (ngày) *</label>
+                    <select id="expiryDays">
+                        <option value="7">7 ngày</option>
+                        <option value="15">15 ngày</option>
+                        <option value="30" selected>30 ngày</option>
+                        <option value="60">60 ngày</option>
+                        <option value="90">90 ngày</option>
+                        <option value="180">180 ngày</option>
+                        <option value="365">365 ngày</option>
+                        <option value="-1">Vĩnh viễn</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="licenseNotes">Ghi Chú</label>
+                    <textarea id="licenseNotes" placeholder="Ghi chú về license này..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 20px;">
+                    <button type="button" class="btn" onclick="closeLicenseModal()">Hủy</button>
+                    <button type="button" class="btn btn-primary" onclick="generateLicense()">🔑 Tạo License</button>
+                </div>
+                <div id="licenseResult" style="display: none;">
+                    <h4>✅ License Key Đã Tạo:</h4>
+                    <div class="license-key-display" id="generatedLicenseKey"></div>
+                    <button class="copy-btn" onclick="copyLicenseKey()">📋 Copy License Key</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let customers = [];
+        let currentCustomer = null;
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            refreshData();
+        });
+
+        // Refresh data from server
+        async function refreshData() {
+            try {
+                const response = await fetch('/api/admin/customers');
+                const data = await response.json();
+
+                if (data.success) {
+                    customers = data.customers;
+                    updateStats(data.stats);
+                    renderCustomers(customers);
+                } else {
+                    showToast('error', 'Lỗi tải dữ liệu: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Update statistics
+        function updateStats(stats) {
+            document.getElementById('totalCustomers').textContent = stats.totalCustomers;
+            document.getElementById('activeLicenses').textContent = stats.activeLicenses;
+            document.getElementById('customersWithLicense').textContent = stats.customersWithLicense;
+            document.getElementById('customersWithoutLicense').textContent = stats.customersWithoutLicense;
+        }
+
+        // Render customers table
+        function renderCustomers(customerList) {
+            const container = document.getElementById('customersContainer');
+
+            if (customerList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👥</div>
+                        <h3>Chưa có khách hàng nào</h3>
+                        <p>Thêm khách hàng đầu tiên để bắt đầu quản lý</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const table = `
+                <table class="customers-table">
+                    <thead>
+                        <tr>
+                            <th>Khách Hàng</th>
+                            <th>Machine ID</th>
+                            <th>License Status</th>
+                            <th>Ngày Tạo</th>
+                            <th>Ghi Chú</th>
+                            <th>Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${customerList.map(customer => {
+                const currentLicense = customer.licenseHistory && customer.licenseHistory.find(l => l.isActive);
+                const hasActiveLicense = currentLicense !== undefined;
+
+                return `
+                                <tr>
+                                    <td><strong>${customer.customerName}</strong></td>
+                                    <td><span class="machine-id">${customer.machineId}</span></td>
+                                    <td>
+                                        <span class="license-status ${hasActiveLicense ? 'license-active' : 'license-inactive'}">
+                                            ${hasActiveLicense ? '✅ Có License' : '❌ Chưa có'}
+                                        </span>
+                                    </td>
+                                    <td>${new Date(customer.createdAt).toLocaleDateString('vi-VN')}</td>
+                                    <td>${customer.notes || '-'}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="openLicenseModal('${customer.customerName}')">
+                                            🔑 Tạo License
+                                        </button>
+                                        <button class="btn btn-sm" onclick="editCustomer('${customer.customerName}')">
+                                            ✏️ Sửa
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteCustomer('${customer.customerName}')">
+                                            🗑️ Xóa
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+            }).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            container.innerHTML = table;
+        }
+
+        // Search customers
+        function searchCustomers() {
+            const query = document.getElementById('searchBox').value.toLowerCase();
+            if (query === '') {
+                renderCustomers(customers);
+                return;
+            }
+
+            const filtered = customers.filter(customer =>
+                customer.customerName.toLowerCase().includes(query) ||
+                customer.machineId.toLowerCase().includes(query) ||
+                (customer.notes && customer.notes.toLowerCase().includes(query))
+            );
+
+            renderCustomers(filtered);
+        }
+
+        // Open add customer modal
+        function openAddCustomerModal() {
+            currentCustomer = null;
+            document.getElementById('modalTitle').textContent = '➕ Thêm Khách Hàng';
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerModal').style.display = 'block';
+        }
+
+        // Edit customer
+        function editCustomer(customerName) {
+            currentCustomer = customers.find(c => c.customerName === customerName);
+            if (!currentCustomer) return;
+
+            document.getElementById('modalTitle').textContent = '✏️ Sửa Khách Hàng';
+            document.getElementById('customerName').value = currentCustomer.customerName;
+            document.getElementById('machineId').value = currentCustomer.machineId;
+            document.getElementById('notes').value = currentCustomer.notes || '';
+            document.getElementById('customerModal').style.display = 'block';
+        }
+
+        // Close customer modal
+        function closeCustomerModal() {
+            document.getElementById('customerModal').style.display = 'none';
+            currentCustomer = null;
+        }
+
+        // Save customer
+        async function saveCustomer(event) {
+            event.preventDefault();
+
+            const customerName = document.getElementById('customerName').value;
+            const machineId = document.getElementById('machineId').value;
+            const notes = document.getElementById('notes').value;
+
+            try {
+                const response = await fetch('/api/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ customerName, machineId, notes })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('success', currentCustomer ? 'Cập nhật thành công!' : 'Thêm khách hàng thành công!');
+                    closeCustomerModal();
+                    refreshData();
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Delete customer
+        async function deleteCustomer(customerName) {
+            if (!confirm(`Bạn có chắc muốn xóa khách hàng "${customerName}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/admin/customers/${customerName}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('success', 'Xóa khách hàng thành công!');
+                    refreshData();
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Open license modal
+        function openLicenseModal(customerName) {
+            const customer = customers.find(c => c.customerName === customerName);
+            if (!customer) return;
+
+            document.getElementById('licenseCustomerName').value = customer.customerName;
+            document.getElementById('licenseMachineId').value = customer.machineId;
+            document.getElementById('licenseResult').style.display = 'none';
+            document.getElementById('licenseModal').style.display = 'block';
+        }
+
+        // Close license modal
+        function closeLicenseModal() {
+            document.getElementById('licenseModal').style.display = 'none';
+        }
+
+        // Generate license
+        async function generateLicense() {
+            const customerName = document.getElementById('licenseCustomerName').value;
+            const expiryDays = parseInt(document.getElementById('expiryDays').value);
+            const notes = document.getElementById('licenseNotes').value;
+
+            try {
+                const response = await fetch(`/api/admin/customers/${customerName}/generate-license`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ expiryDays, notes })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('generatedLicenseKey').textContent = data.licenseKey;
+                    document.getElementById('licenseResult').style.display = 'block';
+                    showToast('success', 'Tạo license key thành công!');
+                    refreshData(); // Refresh to update license status
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Copy license key
+        function copyLicenseKey() {
+            const licenseKey = document.getElementById('generatedLicenseKey').textContent;
+            navigator.clipboard.writeText(licenseKey).then(() => {
+                showToast('success', 'Đã copy license key!');
+            });
+        }
+
+        // Show toast notification
+        function showToast(type, message) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function (event) {
+            const customerModal = document.getElementById('customerModal');
+            const licenseModal = document.getElementById('licenseModal');
+
+            if (event.target === customerModal) {
+                closeCustomerModal();
+            }
+            if (event.target === licenseModal) {
+                closeLicenseModal();
+            }
+        }
+    </script>
+</body>
+
+</html>

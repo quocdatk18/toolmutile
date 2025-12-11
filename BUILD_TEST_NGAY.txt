@@ -1,0 +1,29 @@
+========================================
+🔧 BUILD TEST PACKAGE - HƯỚNG DẪN NHANH
+========================================
+
+⚠️  Package hiện tại chưa đầy đủ files!
+
+✅ GIẢI PHÁP:
+
+1. Chạy:
+   BUILD_CUSTOMER_PACKAGE_OBFUSCATED.bat
+
+2. Nhập khi được hỏi:
+   Customer name: test_customer
+   License type: 1
+   Machine binding: y
+
+3. Đợi build xong (~1-2 phút)
+
+4. LƯU SECRET KEY được hiển thị!
+
+5. Test:
+   TEST_NGAY.bat
+
+========================================
+
+BẮT ĐẦU NGAY:
+> BUILD_CUSTOMER_PACKAGE_OBFUSCATED.bat
+
+========================================

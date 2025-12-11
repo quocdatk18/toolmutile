@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hidemium Multi-Tool Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="dashboard-container">
+
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="header-left">
+                <h1>🎛️ Hidemium Multi-Tool Dashboard</h1>
+                <p class="subtitle">Quản lý tất cả automation tools tại một nơi</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-create-profile" onclick="openCreateProfileModal()" title="Tạo profile mới">
+                    ➕ Tạo Profile
+                </button>
+                <a href="/license.html" class="btn btn-secondary" id="licenseBtn" title="Kích hoạt bản quyền"
+                    style="text-decoration: none;">
+                    🔑 Nhập Key
+                </a>
+                <a href="/admin" class="btn btn-secondary" id="adminBtn" title="Quản lý packages"
+                    style="text-decoration: none; display: none;">
+                    ⚙️ Admin
+                </a>
+                <div class="status-badge" id="hidemiumStatus">
+                    <span class="status-icon">🔄</span>
+                    <span class="status-text">Checking...</span>
+                </div>
+                <div class="api-status" id="apiStatus">
+                    <span class="status-icon">🔑</span>
+                    <span class="status-text">No API Key</span>
+                </div>
+                <div class="license-status" id="licenseStatus" style="display: none;">
+                    <span class="status-icon">🔐</span>
+                    <span class="status-text">No License</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <div class="dashboard-main">
+
+            <!-- Sidebar: Shared Resources -->
+            <div class="dashboard-sidebar">
+                <h2>🔑 API Key Manager</h2>
+
+                <!-- Captcha API Key Section -->
+                <div class="resource-section">
+                    <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #4a5568;">🤖 Captcha API</h3>
+                    <div class="api-usage-note">
+                        <span class="usage-badge">🎰 NOHU Tool</span>
+                        <span class="usage-badge">🎲 HAI2VIP Tool</span>
+                    </div>
+                    <div class="api-key-panel">
+                        <div class="input-with-toggle">
+                            <input type="password" id="globalApiKey" placeholder="Nhập API Key từ autocaptcha.pro">
+                            <button class="btn-toggle-visibility" onclick="toggleApiKeyVisibility()"
+                                title="Hiện/Ẩn API Key">
+                                <span id="toggleIcon">👁️</span>
+                            </button>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveGlobalApiKey()">💾 Lưu</button>
+                        </div>
+                        <div id="apiKeyInfo" class="api-info" style="display: none;">
+                            <div class="info-row">
+                                <span>Trạng thái:</span>
+                                <span id="keyStatus" class="status-active">✅ Active</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Số dư:</span>
+                                <span id="keyBalance" class="balance-amount">0 VNĐ</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: #718096; margin-top: 8px;">
+                            ℹ️ Bắt buộc cho cả 2 tools để giải captcha tự động<br>
+                            📝 Lấy API key tại: <a href="https://autocaptcha.pro" target="_blank"
+                                style="color: #667eea;">autocaptcha.pro</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIM API Key Section -->
+                <div class="resource-section">
+                    <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #4a5568;">📱 SIM API (codesim.net)</h3>
+                    <div class="api-usage-note">
+                        <span class="usage-badge usage-badge-hai2vip">🎲 HAI2VIP Tool</span>
+                    </div>
+                    <div class="api-key-panel">
+                        <div class="input-with-toggle">
+                            <input type="password" id="simApiKey" placeholder="Nhập API Key từ codesim.net">
+                            <button class="btn-toggle-visibility" onclick="toggleSimApiKeyVisibility()"
+                                title="Hiện/Ẩn API Key">
+                                <span id="toggleSimIcon">👁️</span>
+                            </button>
+                        </div>
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="saveSimApiKey()">💾 Lưu</button>
+                        </div>
+                        <div id="simApiKeyInfo" class="api-info" style="display: none;">
+                            <div class="info-row">
+                                <span>Trạng thái:</span>
+                                <span id="simKeyStatus" class="status-active">✅ Active</span>
+                            </div>
+                            <div class="info-row">
+                                <span>Số dư:</span>
+                                <span id="simKeyBalance" class="balance-amount">0 VNĐ</span>
+                            </div>
+                        </div>
+                        <div style="font-size: 11px; color: #718096; margin-top: 8px;">
+                            ℹ️ HAI2VIP Tool (xác thực SĐT)<br>
+                            📝 Lấy API key tại: <a href="https://codesim.net/APIIntegration" target="_blank"
+                                style="color: #667eea;">codesim.net/APIIntegration</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="dashboard-content">
+
+                <!-- Tools Section -->
+                <div id="toolsSection" class="tools-section">
+                    <div class="section-header">
+                        <h2>🎯 Available Tools</h2>
+                        <p>Chọn tool để bắt đầu automation</p>
+                    </div>
+
+                    <div id="toolsGrid" class="tools-grid">
+                        <!-- Tools will be loaded dynamically -->
+                        <div class="loading-state">
+                            <div class="spinner"></div>
+                            <p>Đang tải tools...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Management Section (Hidden by default) -->
+                <div id="profileManagementSection" class="profile-management-section" style="display: none;">
+                    <div class="section-header">
+                        <button class="btn btn-back" onclick="backToTools()">
+                            ← Quay lại Tools
+                        </button>
+                        <h2>📋 Quản Lý Profiles</h2>
+                        <p>Tạo, xóa, start/stop Hidemium profiles</p>
+                    </div>
+
+                    <!-- Profile Actions -->
+                    <div class="profile-actions-bar">
+                        <button class="btn btn-primary" onclick="openCreateProfileModal()">
+                            ➕ Tạo Profile
+                        </button>
+                        <button class="btn btn-secondary" onclick="loadProfilesForManagement()">
+                            🔄 Tải Lại
+                        </button>
+                    </div>
+
+                    <!-- Bulk Actions -->
+                    <div id="bulkActionsBar" class="bulk-actions-bar" style="display: none;">
+                        <div class="bulk-actions-left">
+                            <button class="btn btn-primary" onclick="startSelectedProfiles()">▶️ Start</button>
+                            <button class="btn btn-secondary" onclick="stopSelectedProfiles()">⏹️ Stop</button>
+                            <button class="btn btn-danger" onclick="deleteSelectedProfiles()">🗑️ Xóa</button>
+                            <button class="btn btn-sm" onclick="selectAllProfiles()">✅ Tất cả</button>
+                            <button class="btn btn-sm" onclick="deselectAllProfiles()">❌ Bỏ chọn</button>
+                        </div>
+                        <div class="bulk-actions-right">
+                            <span id="selectedCountMain" class="selected-count">Đã chọn: 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Profiles Grid -->
+                    <div id="profilesManagementGrid" class="profiles-management-grid">
+                        <p class="empty-state">Click "Tải Lại" để xem profiles</p>
+                    </div>
+                </div>
+
+                <!-- Tool Content Area (Hidden by default) -->
+                <div id="toolContent" class="tool-content" style="display: none;">
+                    <div class="tool-header">
+                        <button class="btn btn-back" onclick="backToTools()">
+                            ← Quay lại Tools
+                        </button>
+                        <h2 id="toolTitle"></h2>
+                    </div>
+                    <div id="toolBody" class="tool-body">
+                        <!-- Tool-specific UI will be loaded here -->
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Create Profile Modal -->
+    <div id="createProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Tạo Profile Mới</h2>
+                <button class="modal-close" onclick="closeCreateProfileModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: 15px;">
+                    <label>📝 Tên Profile</label>
+                    <div class="input-with-button">
+                        <input type="text" id="profilePrefix" placeholder="Nhập tên profile" value="Profile">
+                        <button class="btn-icon" onclick="generateProfileName()" title="Random tên profile">🎲</button>
+                    </div>
+                </div>
+
+                <div class="platform-browser-grid">
+                    <div>
+                        <label>💻 Hệ điều hành</label>
+                        <div class="option-buttons-compact">
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileOS" value="win" checked>
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🪟</span>
+                                    <span class="option-text-compact">Windows</span>
+                                </span>
+                            </label>
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileOS" value="mac">
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🍎</span>
+                                    <span class="option-text-compact">MacOS</span>
+                                </span>
+                            </label>
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileOS" value="linux">
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🐧</span>
+                                    <span class="option-text-compact">Linux</span>
+                                </span>
+                            </label>
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileOS" value="android">
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🤖</span>
+                                    <span class="option-text-compact">Android</span>
+                                </span>
+                            </label>
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileOS" value="ios">
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">📱</span>
+                                    <span class="option-text-compact">iOS</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label>🌐 Trình duyệt</label>
+                        <div class="option-buttons-compact">
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileBrowser" value="chrome" checked>
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🌐</span>
+                                    <span class="option-text-compact">Chrome</span>
+                                </span>
+                            </label>
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileBrowser" value="firefox">
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🦊</span>
+                                    <span class="option-text-compact">Firefox</span>
+                                </span>
+                            </label>
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileBrowser" value="edge">
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🔷</span>
+                                    <span class="option-text-compact">Edge</span>
+                                </span>
+                            </label>
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileBrowser" value="brave">
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🦁</span>
+                                    <span class="option-text-compact">Brave</span>
+                                </span>
+                            </label>
+                            <label class="option-button-compact">
+                                <input type="radio" name="profileBrowser" value="opera">
+                                <span class="option-button-content-compact">
+                                    <span class="option-icon-compact">🔴</span>
+                                    <span class="option-text-compact">Opera</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Proxy Section -->
+                <div class="settings-section">
+                    <h3 style="margin: 0 0 15px 0; font-size: 14px; color: #4a5568; font-weight: 600;">🌍 Proxy (Tùy
+                        chọn)</h3>
+
+                    <div id="proxyFields" class="collapsible-content" style="display: block;">
+                        <div style="margin-bottom: 10px;">
+                            <label
+                                style="font-size: 13px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">
+                                📋 Proxy String
+                            </label>
+                            <input type="text" id="proxyString" placeholder="ip:port:user:pass"
+                                oninput="parseProxyString()">
+                            <small style="color: #718096; display: block; margin-top: 6px; font-size: 12px;">
+                                💡 Ví dụ: 1.2.3.4:8080:username:password
+                            </small>
+                        </div>
+
+                        <div style="margin-top: 15px;">
+                            <label
+                                style="font-size: 13px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">
+                                🔌 Loại Proxy
+                            </label>
+                            <div class="proxy-type-buttons">
+                                <label class="proxy-type-button">
+                                    <input type="radio" name="proxyType" value="HTTP" checked>
+                                    <span class="proxy-type-content">
+                                        <span class="proxy-type-icon">🌐</span>
+                                        <span class="proxy-type-text">HTTP</span>
+                                    </span>
+                                </label>
+                                <label class="proxy-type-button">
+                                    <input type="radio" name="proxyType" value="SOCKS5">
+                                    <span class="proxy-type-content">
+                                        <span class="proxy-type-icon">🔒</span>
+                                        <span class="proxy-type-text">SOCKS5</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Hidden fields for parsed values -->
+                        <input type="hidden" id="proxyHost">
+                        <input type="hidden" id="proxyPort">
+                        <input type="hidden" id="proxyUsername">
+                        <input type="hidden" id="proxyPassword">
+                    </div>
+                </div>
+
+                <!-- Advanced Settings -->
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCreateProfileModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="createProfileFromModal()">➕ Tạo Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../core/api-key-manager.js"></script>
+    <script src="../core/sim-api-manager.js"></script>
+    <script src="../core/profile-manager.js"></script>
+    <!-- Confirm Modal -->
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-modal-overlay" onclick="closeConfirmModal()"></div>
+        <div class="confirm-modal-content">
+            <div class="confirm-modal-header">
+                <h3 id="confirmModalTitle">⚠️ Xác nhận</h3>
+            </div>
+            <div class="confirm-modal-body">
+                <p id="confirmModalMessage">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+            </div>
+            <div class="confirm-modal-footer">
+                <button class="btn btn-secondary" onclick="closeConfirmModal()">Hủy</button>
+                <button class="btn btn-danger" id="confirmModalButton" onclick="confirmModalAction()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../core/hidemium-api.js"></script>
+    <script src="dashboard.js"></script>
+</body>
+
+</html>

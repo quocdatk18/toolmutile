@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CSS Loading</title>
+    <link rel="stylesheet" href="nohu-tool.css">
+</head>
+
+<body style="padding: 20px; background: #f0f0f0;">
+    <h1>Test CSS Loading</h1>
+
+    <div class="nohu-tool-container">
+        <div class="info-banner">
+            <h3>🎰 NOHU Auto Tool</h3>
+            <p>Test CSS - Nếu thấy màu gradient tím thì CSS đã load</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active">Tab 1</div>
+            <div class="tab">Tab 2</div>
+            <div class="tab">Tab 3</div>
+        </div>
+
+        <div class="form-section">
+            <h3>📊 Test Bảng Kết Quả</h3>
+            <div class="results-table-wrapper">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Profile</th>
+                            <th>Tài Khoản</th>
+                            <th>Trang</th>
+                            <th>Trạng Thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Profile 1</td>
+                            <td>user123</td>
+                            <td>Go99</td>
+                            <td><span class="status-badge success">✅ Thành Công</span></td>
+                        </tr>
+                        <tr>
+                            <td>Profile 2</td>
+                            <td>user456</td>
+                            <td>NOHU</td>
+                            <td><span class="status-badge error">❌ Lỗi</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; padding: 20px; background: white; border-radius: 8px;">
+        <h3>Kiểm Tra CSS</h3>
+        <ul>
+            <li>✅ Nếu banner có màu gradient tím → CSS đã load</li>
+            <li>✅ Nếu tabs có style đẹp → CSS hoạt động</li>
+            <li>✅ Nếu bảng có header màu tím → CSS table OK</li>
+            <li>❌ Nếu tất cả đều trắng/xám → CSS chưa load</li>
+        </ul>
+        <p><strong>Đường dẫn CSS:</strong> <code>nohu-tool.css</code></p>
+        <p><strong>URL hiện tại:</strong> <code id="currentUrl"></code></p>
+    </div>
+
+    <script>
+        document.getElementById('currentUrl').textContent = window.location.href;
+
+        // Check if CSS loaded
+        const banner = document.querySelector('.info-banner');
+        const computedStyle = window.getComputedStyle(banner);
+        const bgColor = computedStyle.background;
+
+        console.log('Banner background:', bgColor);
+
+        if (bgColor.includes('gradient') || bgColor.includes('rgb(102, 126, 234)')) {
+            console.log('✅ CSS loaded successfully!');
+        } else {
+            console.error('❌ CSS not loaded!');
+        }
+    </script>
+</body>
+
+</html>

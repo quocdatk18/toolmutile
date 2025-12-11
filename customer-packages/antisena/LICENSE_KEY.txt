@@ -1,0 +1,11 @@
+
+License Key Record
+==================
+Generated: 20:41:45 10/12/2025
+Username: antisena
+Type: 7 days
+Machine Binding: YES
+Machine ID: 970c427fee10d052
+
+License Key:
+eyJ1c2VybmFtZSI6ImFudGlzZW5hIiwibWFjaGluZUlkIjoiOTcwYzQyN2ZlZTEwZDA1MiIsImV4cGlyeSI6MTc2NTk3ODkwNTIzMSwiY3JlYXRlZCI6MTc2NTM3NDEwNTIzMX0=.4d71bedfacb4e16dc6fddb91ccc01cf37671a2d15e1d8ce42ecf09d3466d9cdd

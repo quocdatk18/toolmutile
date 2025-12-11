@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Bảng Kết Quả</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="nohu-tool.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f7fafc;
+        }
+
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .demo-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+
+        .demo-header h1 {
+            margin: 0 0 10px 0;
+        }
+
+        .demo-actions {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="demo-container">
+        <div class="demo-header">
+            <h1>📊 Demo Bảng Kết Quả Automation</h1>
+            <p>Hiển thị kết quả automation với thông tin profile, tài khoản và ảnh chụp màn hình</p>
+        </div>
+
+        <div class="demo-actions">
+            <button class="btn btn-primary" onclick="addSampleResult('success')">
+                ✅ Thêm Kết Quả Thành Công
+            </button>
+            <button class="btn btn-secondary" onclick="addSampleResult('error')">
+                ❌ Thêm Kết Quả Lỗi
+            </button>
+            <button class="btn btn-secondary" onclick="addSampleResult('running')">
+                🔄 Thêm Đang Chạy
+            </button>
+            <button class="btn btn-danger" onclick="clearTable()">
+                🗑️ Xóa Tất Cả
+            </button>
+        </div>
+
+        <div class="form-section" id="resultsSection">
+            <h3>📊 Kết Quả Automation</h3>
+            <div class="results-table-wrapper">
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Profile</th>
+                            <th>Tài Khoản</th>
+                            <th>Trang</th>
+                            <th>Trạng Thái</th>
+                            <th>Ảnh Chụp</th>
+                            <th>Thời Gian</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                        <!-- Sample data will be added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const sampleProfiles = ['Profile 1', 'Profile 2', 'Profile 3', 'Profile VIP', 'Profile Test'];
+        const sampleUsernames = ['user123', 'player456', 'gamer789', 'winner999', 'lucky888'];
+        const sampleSites = ['Go99', 'NOHU', 'TT88', 'MMOO', '789P', '33WIN', '88VV'];
+        const sampleScreenshots = [
+            'https://via.placeholder.com/400x300/667eea/ffffff?text=Screenshot+1',
+            'https://via.placeholder.com/400x300/764ba2/ffffff?text=Screenshot+2',
+            'https://via.placeholder.com/400x300/48bb78/ffffff?text=Screenshot+3',
+            'https://via.placeholder.com/400x300/f56565/ffffff?text=Screenshot+4',
+            'https://via.placeholder.com/400x300/ed8936/ffffff?text=Screenshot+5'
+        ];
+
+        function addSampleResult(status) {
+            const tbody = document.getElementById('resultsTableBody');
+            const row = document.createElement('tr');
+
+            // Random data
+            const profile = sampleProfiles[Math.floor(Math.random() * sampleProfiles.length)];
+            const username = sampleUsernames[Math.floor(Math.random() * sampleUsernames.length)];
+            const site = sampleSites[Math.floor(Math.random() * sampleSites.length)];
+            const screenshot = sampleScreenshots[Math.floor(Math.random() * sampleScreenshots.length)];
+
+            // Status badge
+            let statusBadge = '';
+            if (status === 'success') {
+                statusBadge = '<span class="status-badge success">✅ Thành Công</span>';
+            } else if (status === 'error') {
+                statusBadge = '<span class="status-badge error">❌ Lỗi</span>';
+            } else if (status === 'running') {
+                statusBadge = '<span class="status-badge running">🔄 Đang Chạy</span>';
+            }
+
+            // Screenshot
+            const screenshotHtml = `<img src="${screenshot}" class="screenshot-thumb" 
+                                         onclick="window.open('${screenshot}', '_blank')" 
+                                         title="Click để xem ảnh lớn">`;
+
+            // Time
+            const time = new Date().toLocaleString('vi-VN');
+
+            row.innerHTML = `
+                <td>${profile}</td>
+                <td>${username}</td>
+                <td>${site}</td>
+                <td>${statusBadge}</td>
+                <td>${screenshotHtml}</td>
+                <td>${time}</td>
+            `;
+
+            // Add to top
+            tbody.insertBefore(row, tbody.firstChild);
+
+            // Limit to 20 rows
+            while (tbody.children.length > 20) {
+                tbody.removeChild(tbody.lastChild);
+            }
+        }
+
+        function clearTable() {
+            const tbody = document.getElementById('resultsTableBody');
+            tbody.innerHTML = '';
+        }
+
+        // Add some initial sample data
+        window.addEventListener('DOMContentLoaded', () => {
+            addSampleResult('success');
+            addSampleResult('success');
+            addSampleResult('error');
+            addSampleResult('running');
+        });
+    </script>
+</body>
+
+</html>

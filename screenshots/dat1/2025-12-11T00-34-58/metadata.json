@@ -1,0 +1,28 @@
+{
+  "profileId": "228e4034-162b-4928-a480-b9869e5889d4",
+  "profileName": "Profile 8",
+  "username": "dat1",
+  "sessionId": "2025-12-11T00-34-58",
+  "runNumber": 3,
+  "startTime": 1765413300919,
+  "sites": [
+    {
+      "name": "Go99",
+      "registerUrl": "https://go99code.store",
+      "loginUrl": "https://go99code.store",
+      "promoUrl": "https://go99code.store"
+    },
+    {
+      "name": "789P",
+      "registerUrl": "https://789pcode.store",
+      "loginUrl": "https://789pcode.store",
+      "promoUrl": "https://789pcode.store"
+    },
+    {
+      "name": "33WIN",
+      "registerUrl": "https://33wincode.com",
+      "loginUrl": "https://33wincode.com",
+      "promoUrl": "https://33wincode.com"
+    }
+  ]
+}

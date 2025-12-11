@@ -1,0 +1,52 @@
+{
+  "profileId": "228e3feb-e170-4ddc-9747-aff149090ae3",
+  "profileName": "Profile 5",
+  "username": "EaglePower99",
+  "sessionId": "2025-12-10T01-25-08",
+  "runNumber": 2,
+  "startTime": 1765329908432,
+  "sites": [
+    {
+      "name": "Go99",
+      "registerUrl": "https://go99code.store",
+      "loginUrl": "https://go99code.store",
+      "promoUrl": "https://go99code.store"
+    },
+    {
+      "name": "NOHU",
+      "registerUrl": "https://nohucode.shop",
+      "loginUrl": "https://nohucode.shop",
+      "promoUrl": "https://nohucode.shop"
+    },
+    {
+      "name": "TT88",
+      "registerUrl": "https://tt88code.win",
+      "loginUrl": "https://tt88code.win",
+      "promoUrl": "https://tt88code.win"
+    },
+    {
+      "name": "MMOO",
+      "registerUrl": "https://mmoocode.shop",
+      "loginUrl": "https://mmoocode.shop",
+      "promoUrl": "https://mmoocode.shop"
+    },
+    {
+      "name": "789P",
+      "registerUrl": "https://789pcode.store",
+      "loginUrl": "https://789pcode.store",
+      "promoUrl": "https://789pcode.store"
+    },
+    {
+      "name": "33WIN",
+      "registerUrl": "https://33wincode.com",
+      "loginUrl": "https://33wincode.com",
+      "promoUrl": "https://33wincode.com"
+    },
+    {
+      "name": "88VV",
+      "registerUrl": "https://88vvcode.com/",
+      "loginUrl": "https://88vvcode.com/",
+      "promoUrl": "https://88vvcode.com/"
+    }
+  ]
+}
