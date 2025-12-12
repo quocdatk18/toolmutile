@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Form Reset</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        .test-button:hover {
+            background: #0056b3;
+        }
+
+        .console-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .instructions {
+            background: #e7f3ff;
+            border: 1px solid #b3d9ff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧪 Test Form Reset Fix</h1>
+
+        <div class="instructions">
+            <h3>📋 Hướng dẫn test:</h3>
+            <ol>
+                <li>Mở dashboard trong tab khác: <a href="http://localhost:3000"
+                        target="_blank">http://localhost:3000</a></li>
+                <li>Mở Developer Console (F12)</li>
+                <li>Copy và paste code test bên dưới vào Console</li>
+                <li>Chạy các lệnh test</li>
+            </ol>
+        </div>
+
+        <h3>🔧 Test Commands (Copy vào Console):</h3>
+
+        <button class="test-button" onclick="copyToClipboard(testCode1)">
+            📋 Copy: Test Form Reset
+        </button>
+        <button class="test-button" onclick="copyToClipboard(testCode2)">
+            📋 Copy: Debug Elements
+        </button>
+        <button class="test-button" onclick="copyToClipboard(testCode3)">
+            📋 Copy: Manual Reset Test
+        </button>
+
+        <div class="console-output" id="codeDisplay">
+            // Click vào các button trên để copy code test
+        </div>
+    </div>
+
+    <script>
+        const testCode1 = `
+// Test 1: Kiểm tra form reset
+console.log('🧪 Testing form reset...');
+
+// Mở modal nếu chưa mở
+if (typeof openCreateProfileModal === 'function') {
+    openCreateProfileModal();
+}
+
+setTimeout(() => {
+    // Set test values
+    const profilePrefix = document.getElementById('profilePrefix');
+    const proxyString = document.getElementById('proxyString');
+    const proxyHost = document.getElementById('proxyHost');
+    
+    if (profilePrefix) profilePrefix.value = 'TestProfile123';
+    if (proxyString) proxyString.value = '192.168.1.100:8080:user:pass';
+    if (proxyHost) proxyHost.value = '192.168.1.100';
+    
+    console.log('📝 Set test values:');
+    console.log('  profilePrefix:', profilePrefix?.value);
+    console.log('  proxyString:', proxyString?.value);
+    console.log('  proxyHost:', proxyHost?.value);
+    
+    // Test reset
+    if (typeof resetCreateProfileForm === 'function') {
+        resetCreateProfileForm();
+        
+        console.log('🔄 After reset:');
+        console.log('  profilePrefix:', profilePrefix?.value);
+        console.log('  proxyString:', proxyString?.value);
+        console.log('  proxyHost:', proxyHost?.value);
+    } else {
+        console.error('❌ resetCreateProfileForm not found!');
+    }
+}, 1000);
+`;
+
+        const testCode2 = `
+// Test 2: Debug elements
+console.log('🔍 Debugging form elements...');
+
+const elements = [
+    'profilePrefix',
+    'proxyString', 
+    'proxyHost',
+    'proxyPort',
+    'proxyUsername',
+    'proxyPassword'
+];
+
+elements.forEach(id => {
+    const element = document.getElementById(id);
+    console.log(\`\${id}:\`, element ? \`✅ Found (value: "\${element.value}")\` : '❌ Not found');
+});
+
+// Check modal
+const modal = document.getElementById('createProfileModal');
+console.log('Modal:', modal ? \`✅ Found (display: \${modal.style.display})\` : '❌ Not found');
+`;
+
+        const testCode3 = `
+// Test 3: Manual reset test (sử dụng function có sẵn)
+if (typeof testFormResetManual === 'function') {
+    testFormResetManual();
+} else {
+    console.error('❌ testFormResetManual function not found!');
+    console.log('Available functions:', Object.keys(window).filter(key => key.includes('reset') || key.includes('form')));
+}
+`;
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                document.getElementById('codeDisplay').textContent = text;
+                alert('✅ Code đã copy! Paste vào Console của dashboard tab.');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                document.getElementById('codeDisplay').textContent = text;
+                alert('❌ Copy failed. Please copy manually from the text area.');
+            });
+        }
+
+        // Show first test by default
+        document.getElementById('codeDisplay').textContent = testCode1;
+    </script>
+</body>
+
+</html>

@@ -98,8 +98,8 @@ body {
 }
 
 .btn-create-profile:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+    background: linear-gradient(135deg, #38a169, #2f855a);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .btn-create-profile:active {
@@ -158,9 +158,11 @@ body {
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    height: fit-content;
+    height: calc(100vh - 180px);
     max-height: calc(100vh - 180px);
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
 }
 
 .dashboard-sidebar h2 {
@@ -170,15 +172,39 @@ body {
 }
 
 .resource-section {
-    margin-bottom: 25px;
-    padding-bottom: 25px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
     border-bottom: 2px solid #e2e8f0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Allow shrinking */
 }
 
 .resource-section:last-child {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
+    flex: 1;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-height: 800px) {
+    .resource-section {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+    
+    .resource-section h3 {
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+    
+    .api-key-panel input {
+        padding: 6px 10px;
+        padding-right: 40px;
+        font-size: 12px;
+    }
 }
 
 .resource-section h3 {
@@ -221,6 +247,15 @@ body {
 }
 
 /* API Key Panel */
+.api-key-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 0; /* Allow shrinking */
+    overflow: hidden; /* Prevent overflow */
+}
+
 .input-with-toggle {
     position: relative;
     margin-bottom: 10px;
@@ -228,13 +263,15 @@ body {
 
 .api-key-panel input {
     width: 100%;
-    padding: 12px;
+    min-width: 0; /* Allow shrinking */
+    padding: 8px 12px; /* Reduced padding for smaller screens */
     padding-right: 45px;
     border: 2px solid #e2e8f0;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 13px; /* Slightly smaller font */
     transition: all 0.3s;
     font-family: 'Courier New', monospace;
+    box-sizing: border-box;
 }
 
 .api-key-panel input:focus {
@@ -278,6 +315,7 @@ body {
     display: flex;
     gap: 8px;
     margin-bottom: 12px;
+    flex-wrap: wrap; /* Allow buttons to wrap on small screens */
 }
 
 .api-info {
@@ -407,8 +445,8 @@ body {
 }
 
 .btn-mini:hover:not(.disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a67d8, #667eea);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .btn-mini:active:not(.disabled) {
@@ -624,8 +662,8 @@ body {
 }
 
 .btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .btn-primary {
@@ -725,10 +763,14 @@ body {
     border-radius: 16px;
     width: 90%;
     max-width: 600px;
+    min-width: 500px;
     max-height: 90vh;
-    overflow-y: auto;
+    overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     animation: slideUp 0.3s ease-out;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 @keyframes slideUp {
@@ -750,6 +792,7 @@ body {
     align-items: center;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 16px 16px 0 0;
+    flex-shrink: 0;
 }
 
 .modal-header h2 {
@@ -782,6 +825,9 @@ body {
 
 .modal-body {
     padding: 30px;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .modal-body label {
@@ -822,8 +868,8 @@ body {
 }
 
 .option-buttons-compact {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
 }
 
@@ -893,13 +939,105 @@ body {
 }
 
 .modal-footer {
-    padding: 20px 30px;
+    padding: 20px 40px;
     border-top: 2px solid #e2e8f0;
     display: flex;
     gap: 12px;
-    justify-content: flex-end;
+    justify-content: center;
     background: #f7fafc;
     border-radius: 0 0 16px 16px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+
+.modal-footer .btn {
+    min-width: 120px;
+    white-space: nowrap;
+    margin: 0 5px;
+}
+
+/* ============================================
+   INPUT WITH BUTTON (Random button)
+   ============================================ */
+
+.input-with-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-button input {
+    padding-right: 48px !important;
+    flex: 1;
+}
+
+.btn-icon {
+    position: absolute;
+    right: 6px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 1;
+}
+
+.btn-icon:hover {
+    background: linear-gradient(135deg, #5a67d8, #7c3aed);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.btn-icon:active {
+    transform: scale(0.95) rotate(360deg);
+}
+
+/* ============================================
+   HIDE SCROLLBAR (but keep scroll functionality)
+   ============================================ */
+
+/* Hide scrollbar for all browsers */
+.hide-scrollbar {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+}
+
+/* Apply to ALL scroll areas - hide scrollbar everywhere */
+.modal-body,
+.results-table-wrapper,
+.profile-carousel,
+.api-key-panel,
+.tools-grid,
+.profiles-management-grid,
+.dashboard-sidebar,
+.dashboard-content,
+.tool-content,
+.profiles-list {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.modal-body::-webkit-scrollbar,
+.results-table-wrapper::-webkit-scrollbar,
+.profile-carousel::-webkit-scrollbar,
+.api-key-panel::-webkit-scrollbar,
+.tools-grid::-webkit-scrollbar,
+.profiles-management-grid::-webkit-scrollbar,
+.dashboard-sidebar::-webkit-scrollbar,
+.dashboard-content::-webkit-scrollbar,
+.tool-content::-webkit-scrollbar,
+.profiles-list::-webkit-scrollbar {
+    display: none;
 }
 
 /* ============================================
@@ -1081,24 +1219,7 @@ body {
     font-size: 12px;
 }
 
-/* Scrollbar styling */
-.profiles-list::-webkit-scrollbar {
-    width: 8px;
-}
 
-.profiles-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.profiles-list::-webkit-scrollbar-thumb {
-    background: #cbd5e0;
-    border-radius: 10px;
-}
-
-.profiles-list::-webkit-scrollbar-thumb:hover {
-    background: #a0aec0;
-}
 
 /* Animation for profile deletion */
 @keyframes slideOut {
@@ -1368,71 +1489,7 @@ body {
     animation: pulse 2s infinite;
 }
 
-/* ============================================
-   TOGGLE SWITCH (Modern iOS-style)
-   ============================================ */
 
-.settings-section {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 2px solid #e2e8f0;
-}
-
-.toggle-label {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.toggle-checkbox {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.toggle-switch {
-    position: relative;
-    width: 48px;
-    height: 26px;
-    background: #cbd5e0;
-    border-radius: 13px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.toggle-switch::before {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 3px;
-    width: 20px;
-    height: 20px;
-    background: white;
-    border-radius: 50%;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-}
-
-.toggle-checkbox:checked + .toggle-switch {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-}
-
-.toggle-checkbox:checked + .toggle-switch::before {
-    transform: translateX(22px);
-}
-
-.toggle-label:hover .toggle-switch {
-    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-}
-
-.toggle-text {
-    font-size: 15px;
-    font-weight: 600;
-    color: #2d3748;
-}
 
 /* Collapsible Content */
 .collapsible-content {
@@ -1650,10 +1707,52 @@ body {
 }
 
 .btn-danger:hover {
-    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-    transform: translateY(-2px);
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .btn-danger:active {
     transform: translateY(0);
+}
+
+/* Access Level Badges */
+.tool-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+}
+
+.tool-access {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tool-access.admin {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    box-shadow: 0 2px 4px rgba(238, 90, 36, 0.3);
+}
+
+.tool-access.customer {
+    background: linear-gradient(135deg, #4834d4, #686de0);
+    color: white;
+    box-shadow: 0 2px 4px rgba(72, 52, 212, 0.3);
+}
+
+/* Responsive tool header */
+.tool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.tool-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
 }

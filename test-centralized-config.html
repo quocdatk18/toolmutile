@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Centralized Config</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            margin: 10px 0;
+        }
+
+        .site-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .result {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Test Centralized Config Implementation</h1>
+
+    <div class="test-section">
+        <h2>📱 NOHU Tool - Cách 1 (Đã Hoàn Thành)</h2>
+        <p>Checkbox chỉ có <code>data-name</code>, URL được lấy từ optimized-automation.js</p>
+
+        <div class="checkbox-group">
+            <label class="site-card">
+                <input type="checkbox" class="nohu-check" data-name="Go99">
+                <span>Go99</span>
+            </label>
+            <label class="site-card">
+                <input type="checkbox" class="nohu-check" data-name="NOHU">
+                <span>NOHU</span>
+            </label>
+            <label class="site-card">
+                <input type="checkbox" class="nohu-check" data-name="TT88">
+                <span>TT88</span>
+            </label>
+        </div>
+
+        <button onclick="testNohuTool()">🧪 Test NOHU Tool</button>
+        <div id="nohu-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>📱 SMS Tool - Cách 1 (Đã Hoàn Thành)</h2>
+        <p>Checkbox chỉ có <code>data-name</code> và <code>data-category</code>, URL được lấy từ optimized-automation.js
+        </p>
+
+        <div class="checkbox-group">
+            <label class="site-card">
+                <input type="checkbox" class="sms-check" data-name="SHBET" data-category="okvip">
+                <span>SHBET (OKVIP)</span>
+            </label>
+            <label class="site-card">
+                <input type="checkbox" class="sms-check" data-name="J88" data-category="abcvip">
+                <span>J88 (ABCVIP)</span>
+            </label>
+            <label class="site-card">
+                <input type="checkbox" class="sms-check" data-name="QQ88" data-category="kjc">
+                <span>QQ88 (KJC)</span>
+            </label>
+        </div>
+
+        <button onclick="testSmsTool()">🧪 Test SMS Tool</button>
+        <div id="sms-result" class="result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>🔧 Site Configs trong optimized-automation.js</h2>
+        <p>Tất cả URL được quản lý tập trung tại đây:</p>
+        <pre id="site-configs" style="background: #f8f9fa; padding: 15px; border-radius: 6px; overflow-x: auto;"></pre>
+    </div>
+
+    <script>
+        // NOHU Tool Test (Cách 1)
+        function testNohuTool() {
+            const sites = [];
+            document.querySelectorAll('.nohu-check:checked').forEach(checkbox => {
+                const name = checkbox.getAttribute('data-name');
+                // Chỉ pass name, URL sẽ được lấy từ optimized-automation.js
+                sites.push({ name });
+            });
+
+            const result = {
+                tool: 'NOHU Tool',
+                method: 'Centralized Config (Cách 1)',
+                sites: sites,
+                note: 'URLs sẽ được lấy từ optimized-automation.js site configs'
+            };
+
+            document.getElementById('nohu-result').innerHTML = `
+                <h4>✅ NOHU Tool Result:</h4>
+                <pre>${JSON.stringify(result, null, 2)}</pre>
+            `;
+        }
+
+        // SMS Tool Test (Cách 1)
+        function testSmsTool() {
+            const sites = [];
+            document.querySelectorAll('.sms-check:checked').forEach(checkbox => {
+                const name = checkbox.getAttribute('data-name');
+                const category = checkbox.getAttribute('data-category');
+                // Chỉ pass name và category, URL sẽ được lấy từ optimized-automation.js
+                sites.push({ name, category });
+            });
+
+            const result = {
+                tool: 'SMS Tool',
+                method: 'Centralized Config (Cách 1)',
+                sites: sites,
+                note: 'URLs sẽ được lấy từ optimized-automation.js site configs'
+            };
+
+            document.getElementById('sms-result').innerHTML = `
+                <h4>✅ SMS Tool Result:</h4>
+                <pre>${JSON.stringify(result, null, 2)}</pre>
+            `;
+        }
+
+        // Display site configs
+        const siteConfigs = {
+            'NOHU Tool Sites': {
+                'Go99': {
+                    registerUrl: 'https://m.ghhdj-567dhdhhmm.asia/Account/Register?f=3528698&app=1',
+                    loginUrl: 'https://m.ghhdj-567dhdhhmm.asia/?app=1'
+                },
+                'NOHU': {
+                    registerUrl: 'https://m.88111188.com/Account/Register?f=6344995&app=1',
+                    loginUrl: 'https://m.88111188.com/?app=1'
+                },
+                'TT88': {
+                    registerUrl: 'https://m.1bedd-fb89bj53gg9hjs0bka.club/Account/Register?f=3535864&app=1',
+                    loginUrl: 'https://m.1bedd-fb89bj53gg9hjs0bka.club/?app=1'
+                }
+            },
+            'SMS Tool Sites': {
+                'SHBET': {
+                    type: 'okvip',
+                    registerUrl: 'https://shbet800.com/m/register?f=123456&app=1',
+                    loginUrl: 'https://shbet800.com/?app=1'
+                },
+                'J88': {
+                    type: 'abcvip',
+                    registerUrl: 'https://j859.xyz/Account/Register?f=123456&app=1',
+                    loginUrl: 'https://j859.xyz/?app=1'
+                },
+                'QQ88': {
+                    type: 'kjc',
+                    registerUrl: 'https://www.qq8886.com/Account/Register?f=123456&app=1',
+                    loginUrl: 'https://www.qq8886.com/?app=1'
+                }
+            }
+        };
+
+        document.getElementById('site-configs').textContent = JSON.stringify(siteConfigs, null, 2);
+    </script>
+</body>
+
+</html>

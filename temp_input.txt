@@ -1,3 +1,0 @@
-test_customer_v2  
-1  
-y 

@@ -1,183 +1,40 @@
 {
-  "antisena": {
-    "customerName": "antisena",
-    "machineId": "970c427fee10d052",
-    "notes": "Machine ID updated and locked by admin.",
-    "createdAt": "2025-12-10T14:25:30.315Z",
-    "updatedAt": "2025-12-10T15:26:39.755Z",
-    "updateCount": 2,
+  "quocdat": {
+    "customerName": "quocdat",
+    "machineId": "955ec3b88678edc4",
+    "notes": "Upgraded package. Machine ID and Secret Key preserved.",
+    "createdAt": "2025-12-11T13:24:36.606Z",
+    "updatedAt": "2025-12-12T17:46:34.105Z",
+    "updateCount": 6,
     "licenseHistory": [
       {
-        "licenseKey": "eyJ1c2VybmFtZSI6ImFudGlzZW5hIiwibWFjaGluZUlkIjoiOTcwYzQyN2ZlZTEwZDA1MiIsImV4cGlyeSI6MTc2NTQ2NDEzMTIxMCwiY3JlYXRlZCI6MTc2NTM3NzczMTIxMH0=.90b43753f6569374f5c9a7fa7d6f964a7fc16e7530426eb63cf7e7d0ea48df56",
-        "expiryDays": 1,
-        "notes": "Generated from package management. 1 days",
-        "createdAt": "2025-12-10T14:42:11.210Z",
-        "isActive": false
-      },
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6ImFudGlzZW5hIiwibWFjaGluZUlkIjoiOTcwYzQyN2ZlZTEwZDA1MiIsImV4cGlyeSI6MTc2NTk4NzIxMTc4NiwiY3JlYXRlZCI6MTc2NTM4MjQxMTc4Nn0=.a5e745ca6a09ce7c21d1eb094086225669d1fbf9234fbac8832bda162c7ca408",
-        "expiryDays": 7,
-        "notes": "Generated from Customer Manager. 7 days",
-        "createdAt": "2025-12-10T16:00:11.786Z",
+        "licenseKey": "eyJ1c2VybmFtZSI6InF1b2NkYXQiLCJtYWNoaW5lSWQiOiI5NTVlYzNiODg2NzhlZGM0IiwiZXhwaXJ5IjotMSwiY3JlYXRlZCI6MTc2NTQ1OTUxOTc1MiwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCIsInRvb2wtc21zIiwiaGFpMnZpcC10b29sIl19.2736ff4d75c034f21cb082629db0032ec9dac549c990829d2d04fde4353e0251",
+        "expiryDays": -1,
+        "notes": "Generated from Customer Manager. Lifetime. Tools: nohu-tool, tool-sms, hai2vip-tool",
+        "createdAt": "2025-12-11T13:25:19.752Z",
         "isActive": true
       }
     ],
     "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-10T15:26:39.755Z",
-    "machineIdUnlockedAt": "2025-12-10T15:03:31.445Z",
-    "unlockReason": "ddddddddddddddddddddddddddddddddd"
-  },
-  "bantest": {
-    "customerName": "bantest",
-    "machineId": "970c427fee10d055",
-    "notes": "Updated Machine ID from package management.",
-    "createdAt": "2025-12-10T14:25:30.315Z",
-    "updatedAt": "2025-12-10T14:45:14.434Z",
-    "updateCount": 2,
-    "licenseHistory": [],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-10T14:45:14.434Z"
+    "machineIdSetAt": "2025-12-11T13:24:36.606Z"
   },
   "legiabao": {
     "customerName": "legiabao",
     "machineId": "0aaec00a64557462",
-    "notes": "Machine ID updated and locked by admin.",
-    "createdAt": "2025-12-10T14:25:30.316Z",
-    "updatedAt": "2025-12-10T15:45:11.925Z",
-    "updateCount": 3,
+    "notes": "Upgraded package. Machine ID and Secret Key preserved.",
+    "createdAt": "2025-12-12T15:30:31.235Z",
+    "updatedAt": "2025-12-12T17:43:28.419Z",
+    "updateCount": 6,
     "licenseHistory": [
       {
-        "licenseKey": "eyJ1c2VybmFtZSI6ImxlZ2lhYmFvIiwibWFjaGluZUlkIjoiMGFhZWMwMGE2NDU1NzQ2MiIsImV4cGlyeSI6MTc2NjA3MjcyNTUyOSwiY3JlYXRlZCI6MTc2NTM4MTUyNTUyOX0=.bd7c90ece33b28cbd748d1998cb342bb52e040ca2ba0b193aa1e95d8fb686e0d",
-        "expiryDays": 8,
-        "notes": "Generated from Customer Manager. 8 days",
-        "createdAt": "2025-12-10T15:45:25.529Z",
-        "isActive": true
-      }
-    ],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-10T15:45:11.925Z",
-    "machineIdUnlockedAt": "2025-12-10T15:45:09.871Z",
-    "unlockReason": "Admin unlock for editing"
-  },
-  "minhnhat": {
-    "customerName": "minhnhat",
-    "machineId": "PLACEHOLDER_MACHINE_ID",
-    "notes": "Imported from package. Created: undefined. Size: 1.67 MB",
-    "createdAt": "2025-12-10T14:25:30.316Z",
-    "updatedAt": "2025-12-10T14:25:30.316Z",
-    "updateCount": 0,
-    "licenseHistory": [],
-    "machineIdLocked": false
-  },
-  "ngoclinh": {
-    "customerName": "ngoclinh",
-    "machineId": "bca8ae3a151ea642",
-    "notes": "Updated from package management. Package exists.",
-    "createdAt": "2025-12-10T14:25:30.317Z",
-    "updatedAt": "2025-12-10T14:52:01.730Z",
-    "updateCount": 1,
-    "licenseHistory": [],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-10T14:52:01.730Z"
-  },
-  "TEST_CUSTOMER": {
-    "customerName": "TEST_CUSTOMER",
-    "machineId": "bca8ae3a151ea643",
-    "notes": "Updated from package management. Package exists.",
-    "createdAt": "2025-12-10T14:25:30.317Z",
-    "updatedAt": "2025-12-10T14:59:03.510Z",
-    "updateCount": 1,
-    "licenseHistory": [],
-    "machineIdLocked": false,
-    "machineIdSetAt": "2025-12-10T14:59:03.510Z",
-    "machineIdUnlockedAt": "2025-12-10T15:16:31.278Z",
-    "unlockReason": "Admin unlock for editing"
-  },
-  "haoPg": {
-    "customerName": "haoPg",
-    "machineId": "e16f2465312a09df",
-    "notes": "Machine ID updated and locked by admin.",
-    "createdAt": "2025-12-10T15:19:30.320Z",
-    "updatedAt": "2025-12-10T15:27:50.166Z",
-    "updateCount": 2,
-    "licenseHistory": [
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6Imhhb1BnIiwibWFjaGluZUlkIjoiZTE2ZjI0NjUzMTJhMDlkZiIsImV4cGlyeSI6MTc2NTk4NDc4MzE5NSwiY3JlYXRlZCI6MTc2NTM3OTk4MzE5NX0=.70b730a4e71cb36b5d81e723746929af1633ad2e4416ded411e4789cc377e4c3",
+        "licenseKey": "eyJ1c2VybmFtZSI6ImxlZ2lhYmFvIiwibWFjaGluZUlkIjoiMGFhZWMwMGE2NDU1NzQ2MiIsImV4cGlyeSI6MTc2NjE1ODI0Mjc5NCwiY3JlYXRlZCI6MTc2NTU1MzQ0Mjc5NCwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCJdfQ==.2c59a87b9f9f83b2384da6f4fadf992aade3f0aad4d49a24c0369699a08a1d50",
         "expiryDays": 7,
-        "notes": "Generated from package management. 7 days",
-        "createdAt": "2025-12-10T15:19:43.196Z",
-        "isActive": false
-      },
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6Imhhb1BnIiwibWFjaGluZUlkIjoiZTE2ZjI0NjUzMTJhMDlkZiIsImV4cGlyeSI6MTc2NTk4Njk3MzEzMywiY3JlYXRlZCI6MTc2NTM4MjE3MzEzM30=.1ea8e2e5821910a5cdc449c163b36d5692df546b9bc29c1b92996cc97989a4a8",
-        "expiryDays": 7,
-        "notes": "Generated from Customer Manager. 7 days",
-        "createdAt": "2025-12-10T15:56:13.133Z",
+        "notes": "Generated from Customer Manager. 7 days. Tools: nohu-tool",
+        "createdAt": "2025-12-12T15:30:42.794Z",
         "isActive": true
       }
     ],
     "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-10T15:27:50.166Z",
-    "machineIdUnlockedAt": "2025-12-10T15:27:45.277Z",
-    "unlockReason": "Admin unlock for editing"
-  },
-  "test": {
-    "customerName": "test",
-    "machineId": "aaaaaaaaaaaaaaaa",
-    "notes": "Updated from package management. Package exists.",
-    "createdAt": "2025-12-10T16:01:56.563Z",
-    "updatedAt": "2025-12-10T16:01:56.563Z",
-    "updateCount": 0,
-    "licenseHistory": [
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6InRlc3QiLCJtYWNoaW5lSWQiOiJhYWFhYWFhYWFhYWFhYWFhIiwiZXhwaXJ5IjoxNzY3OTc0NTIwNzY5LCJjcmVhdGVkIjoxNzY1MzgyNTIwNzY5fQ==.9c9ba9c011cd57372410799160ffc7b0b05c98f9c601c1ec38158a98e14f2105",
-        "expiryDays": 30,
-        "notes": "Generated from Customer Manager. 30 days",
-        "createdAt": "2025-12-10T16:02:00.769Z",
-        "isActive": false
-      },
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6InRlc3QiLCJtYWNoaW5lSWQiOiJhYWFhYWFhYWFhYWFhYWFhIiwiZXhwaXJ5IjotMSwiY3JlYXRlZCI6MTc2NTM4MzM4MDMwNn0=.df95585a9c894e6770b8b2dc349261020322a6ca73abd5c009f88ad9ecd68a05",
-        "expiryDays": -1,
-        "notes": "Generated from Customer Manager. Lifetime",
-        "createdAt": "2025-12-10T16:16:20.306Z",
-        "isActive": false
-      },
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6InRlc3QiLCJtYWNoaW5lSWQiOiJhYWFhYWFhYWFhYWFhYWFhIiwiZXhwaXJ5IjoxNzk2OTE5NDA1NjQxLCJjcmVhdGVkIjoxNzY1MzgzNDA1NjQxfQ==.a684eecd9f710605ca836b1b76af502021ba9ab6178189bdeb09f15488c8ba1c",
-        "expiryDays": 365,
-        "notes": "Generated from Customer Manager. 365 days",
-        "createdAt": "2025-12-10T16:16:45.641Z",
-        "isActive": false
-      },
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6InRlc3QiLCJtYWNoaW5lSWQiOiJhYWFhYWFhYWFhYWFhYWFhIiwiZXhwaXJ5IjoxNzY1MzgzNDgwMjI3LjYsImNyZWF0ZWQiOjE3NjUzODM0MjAyNjZ9.4b724455e9b04767f1137a3d7f46d1cb1206f138192d0c48f384f0f0aa6430ef",
-        "expiryDays": 0.000694,
-        "notes": "Generated from Customer Manager. 1 minutes",
-        "createdAt": "2025-12-10T16:17:00.267Z",
-        "isActive": true
-      }
-    ],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-10T16:01:56.563Z"
-  },
-  "aaaaaa": {
-    "customerName": "aaaaaa",
-    "machineId": "970c427fee10d052",
-    "notes": "Updated from package management. Package exists.",
-    "createdAt": "2025-12-11T00:02:27.021Z",
-    "updatedAt": "2025-12-11T00:02:27.021Z",
-    "updateCount": 0,
-    "licenseHistory": [
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6ImFhYWFhYSIsIm1hY2hpbmVJZCI6Ijk3MGM0MjdmZWUxMGQwNTIiLCJleHBpcnkiOjE3NjgwMDMzNjQ0MzcsImNyZWF0ZWQiOjE3NjU0MTEzNjQ0Mzd9.3a5d291549c9a0c2ec8fa18217231d6299f61b85ec71ec523faa004f277007b8",
-        "expiryDays": 30,
-        "notes": "Generated from Customer Manager. 30 days",
-        "createdAt": "2025-12-11T00:02:44.438Z",
-        "isActive": true
-      }
-    ],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-11T00:02:27.021Z"
+    "machineIdSetAt": "2025-12-12T15:30:31.235Z"
   }
 }

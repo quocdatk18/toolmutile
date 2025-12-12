@@ -39,14 +39,15 @@ class LicenseManager {
 
     /**
      * Tạo license key mới
-     * @param {Object} options - { expiryDays, machineId, username }
+     * @param {Object} options - { expiryDays, machineId, username, allowedTools }
      * @returns {string} License key
      */
     generateKey(options = {}) {
         const {
             expiryDays = 30, // Mặc định 30 ngày
             machineId = null, // Nếu null thì không bind machine
-            username = 'user'
+            username = 'user',
+            allowedTools = ['nohu-tool'] // Mặc định chỉ cho phép NOHU tool
         } = options;
 
         const now = Date.now();
@@ -56,7 +57,8 @@ class LicenseManager {
             username,
             machineId,
             expiry,
-            created: now
+            created: now,
+            allowedTools // Danh sách tools được phép sử dụng
         };
 
         const dataString = JSON.stringify(data);
@@ -362,8 +364,52 @@ class LicenseManager {
             remainingDays: data.remainingDays,
             remainingTime: data.remainingTime,
             remainingText: remainingText,
-            isLifetime: data.isLifetime
+            isLifetime: data.isLifetime,
+            allowedTools: data.allowedTools || ['nohu-tool'] // Backward compatibility
         };
+    }
+
+    /**
+     * Check if license allows access to specific tool
+     * @param {string} toolId - Tool ID to check
+     * @returns {Object} { allowed, message }
+     */
+    checkToolPermission(toolId) {
+        const key = this.loadLicense();
+        if (!key) {
+            return { allowed: false, message: 'Không có license key' };
+        }
+
+        const validation = this.validateKey(key);
+        if (!validation.valid) {
+            return { allowed: false, message: validation.message };
+        }
+
+        const allowedTools = validation.data.allowedTools || ['nohu-tool'];
+
+        // Check if tool is allowed
+        if (allowedTools.includes(toolId) || allowedTools.includes('*')) {
+            return { allowed: true, message: 'Tool được phép sử dụng' };
+        } else {
+            return {
+                allowed: false,
+                message: `Tool "${toolId}" không có trong license. Được phép: ${allowedTools.join(', ')}`
+            };
+        }
+    }
+
+    /**
+     * Get list of allowed tools from current license
+     * @returns {Array} Array of allowed tool IDs
+     */
+    getAllowedTools() {
+        const key = this.loadLicense();
+        if (!key) return [];
+
+        const validation = this.validateKey(key);
+        if (!validation.valid) return [];
+
+        return validation.data.allowedTools || ['nohu-tool'];
     }
 }
 

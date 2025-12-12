@@ -420,7 +420,7 @@ function loadSimApiKeyInfo() {
 // PROFILE MANAGEMENT
 // ============================================
 
-async function loadProfiles() {
+async function loadProfiles(showNotification = false) {
     const container = document.getElementById('profilesList');
 
     // Check if container exists (may not exist on tool pages)
@@ -436,10 +436,15 @@ async function loadProfiles() {
 
     if (result.success) {
         displayProfiles(result.profiles);
-        showToast('success', 'Đã tải profiles', `${result.profiles.length} profiles`);
+        // Only show notification if explicitly requested (user action)
+        if (showNotification) {
+            showToast('success', 'Đã tải profiles', `${result.profiles.length} profiles`);
+        }
     } else {
         container.innerHTML = '<p class="error-state">Lỗi tải profiles</p>';
-        showToast('error', 'Lỗi', result.error);
+        if (showNotification) {
+            showToast('error', 'Lỗi', result.error);
+        }
     }
 }
 
@@ -593,7 +598,7 @@ async function startProfile(uuid) {
 
     if (result.success) {
         showToast('success', 'Đã start', 'Profile đã được khởi động');
-        await loadProfiles();
+        await loadProfiles(false); // Auto reload - no notification
     } else {
         showToast('error', 'Lỗi start', result.error);
     }
@@ -625,7 +630,7 @@ async function stopProfile(uuid) {
         }
 
         showToast('success', 'Đã stop', 'Profile đã được dừng và unmarked');
-        await loadProfiles();
+        await loadProfiles(false); // Auto reload - no notification
     } else {
         showToast('error', 'Lỗi stop', result.error);
     }
@@ -640,7 +645,7 @@ async function deleteProfile(uuid) {
 
     if (result.success) {
         showToast('success', 'Đã xóa', 'Profile đã được xóa');
-        await loadProfiles();
+        await loadProfiles(false); // Auto reload - no notification
     } else {
         showToast('error', 'Lỗi xóa', result.error);
     }
@@ -654,18 +659,8 @@ function openCreateProfileModal() {
     const modal = document.getElementById('createProfileModal');
     modal.style.display = 'flex';
 
-    // Reset form
-    document.getElementById('profilePrefix').value = 'Profile';
-    document.querySelector('input[name="profileOS"][value="win"]').checked = true;
-    document.querySelector('input[name="profileBrowser"][value="chrome"]').checked = true;
-    document.getElementById('useProxy').checked = false;
-    document.getElementById('proxyString').value = '';
-    document.querySelector('input[name="proxyType"][value="HTTP"]').checked = true;
-    document.getElementById('proxyHost').value = '';
-    document.getElementById('proxyPort').value = '';
-    document.getElementById('proxyUsername').value = '';
-    document.getElementById('proxyPassword').value = '';
-    // Proxy fields are always visible now
+    // Reset form sử dụng hàm chung
+    resetCreateProfileForm();
 
     // Add event listeners for OS change
     document.querySelectorAll('input[name="profileOS"]').forEach(radio => {
@@ -780,7 +775,148 @@ function updateAdvancedOptionsForOS() {
 function closeCreateProfileModal() {
     const modal = document.getElementById('createProfileModal');
     modal.style.display = 'none';
+
+    // Reset form để tránh giữ lại giá trị proxy từ lần tạo trước
+    resetCreateProfileForm();
 }
+
+function resetCreateProfileForm() {
+    console.log('🔄 Resetting create profile form...');
+
+    try {
+        // CRITICAL FIX: Force reset all form fields with multiple methods
+
+        // Method 1: Reset basic fields with force clear first
+        const profilePrefixInput = document.getElementById('profilePrefix');
+        if (profilePrefixInput) {
+            profilePrefixInput.value = '';
+            profilePrefixInput.value = 'Profile';
+            console.log('✅ Profile prefix reset to:', profilePrefixInput.value);
+        }
+
+        // Method 2: Reset radio buttons
+        const winRadio = document.querySelector('input[name="profileOS"][value="win"]');
+        const chromeRadio = document.querySelector('input[name="profileBrowser"][value="chrome"]');
+        if (winRadio) {
+            winRadio.checked = true;
+            console.log('✅ Windows OS selected');
+        }
+        if (chromeRadio) {
+            chromeRadio.checked = true;
+            console.log('✅ Chrome browser selected');
+        }
+
+        // Method 3: Force reset proxy fields with clear first
+        const proxyFields = [
+            { id: 'proxyString', defaultValue: '' },
+            { id: 'proxyHost', defaultValue: '' },
+            { id: 'proxyPort', defaultValue: '' },
+            { id: 'proxyUsername', defaultValue: '' },
+            { id: 'proxyPassword', defaultValue: '' }
+        ];
+
+        proxyFields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                element.value = '';
+                element.value = field.defaultValue;
+                console.log(`✅ ${field.id} reset to: "${element.value}"`);
+            }
+        });
+
+        // Reset proxy checkbox
+        const useProxyCheckbox = document.getElementById('useProxy');
+        if (useProxyCheckbox) {
+            useProxyCheckbox.checked = false;
+            console.log('✅ Use proxy unchecked');
+        }
+
+        // Reset proxy type radio
+        const httpRadio = document.querySelector('input[name="proxyType"][value="HTTP"]');
+        if (httpRadio) {
+            httpRadio.checked = true;
+            console.log('✅ HTTP proxy type selected');
+        }
+
+        // Reset advanced options to default (Auto)
+        const profileResolution = document.getElementById('profileResolution');
+        if (profileResolution) {
+            profileResolution.selectedIndex = 0; // Select first option (Auto Random)
+        }
+
+        const profileCPU = document.getElementById('profileCPU');
+        if (profileCPU) {
+            profileCPU.selectedIndex = 0; // Select first option (Auto)
+        }
+
+        const profileRAM = document.getElementById('profileRAM');
+        if (profileRAM) {
+            profileRAM.selectedIndex = 0; // Select first option (Auto)
+        }
+
+        // Reset language and timezone to default
+        const profileLanguage = document.getElementById('profileLanguage');
+        if (profileLanguage) {
+            profileLanguage.value = 'en-US'; // Default to English
+        }
+
+        const profileTimezone = document.getElementById('profileTimezone');
+        if (profileTimezone) {
+            profileTimezone.value = ''; // Auto timezone
+        }
+
+        // Reset canvas and webgl settings
+        const profileCanvas = document.getElementById('profileCanvas');
+        if (profileCanvas) {
+            profileCanvas.checked = true; // Default to enabled
+        }
+
+        const profileWebGL = document.getElementById('profileWebGL');
+        if (profileWebGL) {
+            profileWebGL.checked = false; // Default to disabled for safety
+        }
+
+        // Update advanced options for default OS (Windows)
+        if (typeof updateAdvancedOptionsForOS === 'function') {
+            updateAdvancedOptionsForOS();
+            console.log('✅ Advanced options updated');
+        }
+
+        console.log('✅ Form reset completed successfully');
+
+        // Force trigger change events to ensure UI updates
+        const allInputs = document.querySelectorAll('#createProfileModal input, #createProfileModal select');
+        allInputs.forEach(input => {
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+
+    } catch (error) {
+        console.error('❌ Error resetting form:', error);
+        console.error('Stack trace:', error.stack);
+    }
+}
+
+// Debug function for manual testing
+function testFormResetManual() {
+    console.log('🧪 Manual form reset test...');
+
+    // Check if modal is open
+    const modal = document.getElementById('createProfileModal');
+    if (!modal || modal.style.display !== 'flex') {
+        console.log('⚠️ Modal not open, opening it first...');
+        if (typeof openCreateProfileModal === 'function') {
+            openCreateProfileModal();
+        }
+        setTimeout(() => {
+            resetCreateProfileForm();
+        }, 500);
+    } else {
+        resetCreateProfileForm();
+    }
+}
+
+// Make function available globally for debugging
+window.testFormResetManual = testFormResetManual;
 
 function toggleProxyFields() {
     // Proxy fields are always visible now, no need to toggle
@@ -907,7 +1043,27 @@ async function createProfileFromModal() {
 
     if (result.success) {
         showToast('success', 'Tạo thành công', `Profile "${prefix}" đã được tạo`);
-        closeCreateProfileModal();
+
+        // CRITICAL FIX: Reset form immediately after success
+        console.log('✅ Profile created successfully - resetting form...');
+
+        // Debug: Check if elements exist before reset
+        console.log('🔍 Debug - Elements before reset:');
+        console.log('  profilePrefix:', document.getElementById('profilePrefix')?.value);
+        console.log('  proxyString:', document.getElementById('proxyString')?.value);
+        console.log('  proxyHost:', document.getElementById('proxyHost')?.value);
+
+        resetCreateProfileForm();
+
+        // Debug: Check if elements were reset
+        console.log('🔍 Debug - Elements after reset:');
+        console.log('  profilePrefix:', document.getElementById('profilePrefix')?.value);
+        console.log('  proxyString:', document.getElementById('proxyString')?.value);
+        console.log('  proxyHost:', document.getElementById('proxyHost')?.value);
+
+        // Don't close modal automatically - let user decide when to close
+        // This allows creating multiple profiles without reopening modal
+        console.log('ℹ️ Modal kept open for creating more profiles');
 
         // Check if any automation is running
         const hasRunningAutomation = profileManager.runningProfiles.size > 0;
@@ -943,6 +1099,35 @@ window.addEventListener('click', (event) => {
     }
 });
 
+// Theo dõi khi modal được mở để đảm bảo form được reset
+document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('createProfileModal');
+    if (modal) {
+        // Sử dụng MutationObserver để theo dõi khi modal được hiển thị
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const isVisible = modal.style.display === 'flex';
+                    if (isVisible) {
+                        console.log('🔄 Modal được mở - đảm bảo form được reset');
+                        // Đợi một chút để DOM cập nhật xong
+                        setTimeout(() => {
+                            resetCreateProfileForm();
+                        }, 100);
+                    }
+                }
+            });
+        });
+
+        observer.observe(modal, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+
+        console.log('✅ Modal observer đã được thiết lập để theo dõi việc reset form');
+    }
+});
+
 // ============================================
 // TOOLS MANAGEMENT
 // ============================================
@@ -952,7 +1137,14 @@ async function loadTools() {
 
     try {
         const response = await fetch('../config/tools.json');
-        tools = (await response.json()).tools;
+        const allTools = (await response.json()).tools;
+
+        // Check if admin features are available
+        const isAdmin = document.getElementById('adminBtn').style.display !== 'none';
+
+        // Always show all tools - check permission when opening
+        tools = allTools;
+        console.log('📋 Showing all tools - permission check on open');
 
         displayTools(tools);
     } catch (error) {
@@ -1033,6 +1225,8 @@ function createToolCard(tool) {
         statusBadge = '<span class="tool-status coming-soon">⏳ Coming Soon</span>';
     }
 
+    // Remove access level badges - show all tools
+
     let buttonHtml;
     if (tool.status === 'active') {
         buttonHtml = `<button class="btn btn-primary" onclick="openTool('${tool.id}')">🚀 Open Tool</button>`;
@@ -1086,6 +1280,54 @@ async function openTool(toolId) {
             showToast('warning', 'Tool không khả dụng', 'Tool này chưa được kích hoạt');
         }
         return;
+    }
+
+    // Check tool permission from license
+    const isAdmin = document.getElementById('adminBtn').style.display !== 'none';
+    if (!isAdmin) {
+        try {
+            const licenseResponse = await fetch('/api/license/allowed-tools');
+            const licenseData = await licenseResponse.json();
+
+            if (licenseData.success && licenseData.allowedTools) {
+                const allowedTools = licenseData.allowedTools;
+
+                if (!allowedTools.includes('*') && !allowedTools.includes(toolId)) {
+                    showToast('error', '🔒 Nâng cấp license để sử dụng',
+                        `${tool.name} không có trong gói license hiện tại.\n\n💎 Liên hệ admin để nâng cấp license và sử dụng tool này.`);
+                    return;
+                }
+            } else {
+                showToast('error', 'License không hợp lệ', 'Vui lòng kích hoạt license để sử dụng tool');
+                return;
+            }
+        } catch (error) {
+            showToast('error', 'Lỗi kiểm tra license', 'Không thể xác minh quyền truy cập tool');
+            return;
+        }
+    }
+
+    // Check if this is a fresh reload (to avoid infinite loop)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isFromReload = urlParams.get('tool') === toolId || sessionStorage.getItem('toolReloadFlag') === toolId;
+
+    if (!isFromReload) {
+        // First time opening tool - reload for clean state
+        console.log(`🔄 Opening tool ${toolId} - reloading page for clean state`);
+
+        // Set flag to prevent infinite reload
+        sessionStorage.setItem('toolReloadFlag', toolId);
+
+        // Save navigation state before reload
+        saveNavigationState('tool', toolId);
+
+        // Force reload with timestamp to bypass cache
+        window.location.href = window.location.href.split('?')[0] + '?t=' + Date.now() + '&tool=' + toolId;
+        return;
+    } else {
+        // This is after reload - clear flag and proceed normally
+        sessionStorage.removeItem('toolReloadFlag');
+        console.log(`✅ Loading tool ${toolId} after reload`);
     }
 
     currentTool = tool;
@@ -1145,13 +1387,38 @@ async function openTool(toolId) {
             toolBody.appendChild(script);
         });
 
+        // Clear previous tool data to prevent cross-contamination
+        if (window.resultsData) {
+            Object.keys(window.resultsData).forEach(key => delete window.resultsData[key]);
+            console.log('🧹 Cleared previous tool results data');
+        }
+        if (window.processedResults) {
+            window.processedResults.clear();
+            console.log('🧹 Cleared previous processed results');
+        }
+
+        // Clear results table immediately to show tool switching
+        const resultsTableBody = document.getElementById('resultsTableBody');
+        if (resultsTableBody) {
+            resultsTableBody.innerHTML = `<tr><td colspan="100%" class="text-center">🔄 Đang tải dữ liệu ${tool.name}...</td></tr>`;
+        }
+
         // Initialize tool-specific scripts
         setTimeout(() => {
+            // Set current tool globally for cross-contamination prevention
+            window.currentTool = tool;
+
             if (window.initToolUI) {
                 window.initToolUI(tool);
             }
             // Restore active tab if saved
             restoreActiveTab();
+
+            // Auto-refresh data when loading tool
+            if (window.refreshAllData) {
+                console.log('🔄 Auto-refreshing data for tool:', tool.name);
+                window.refreshAllData();
+            }
         }, 100);
     } catch (error) {
         console.error('Tool load error:', error);
@@ -1169,6 +1436,14 @@ function backToTools() {
 
     // Show tools section
     document.getElementById('toolsSection').style.display = 'block';
+
+    // Clear tool data to prevent cross-contamination
+    if (window.resultsData) {
+        Object.keys(window.resultsData).forEach(key => delete window.resultsData[key]);
+    }
+    if (window.processedResults) {
+        window.processedResults.clear();
+    }
 
     currentTool = null;
 
@@ -1738,10 +2013,10 @@ function startAutomationStatusPolling() {
                     if (lastStatus === 'running' && (status.status === 'completed' || status.status === 'error')) {
                         console.log(`🔄 Automation completed for ${status.username}, reloading profiles...`);
 
-                        // Reload profiles to update UI
-                        await loadProfiles();
+                        // Reload profiles to update UI (without notification)
+                        await loadProfiles(false);
 
-                        // Show toast notification
+                        // Show toast notification for automation completion only
                         if (status.status === 'completed') {
                             showToast('success', 'Hoàn thành', `Automation cho ${status.username} đã hoàn thành`);
                         } else {

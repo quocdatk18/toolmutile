@@ -1,7 +1,0 @@
-.git
-.gitignore
-node_modules
-license-records
-.license
-CREATE_CUSTOMER_PACKAGE.bat
-exclude-list.txt

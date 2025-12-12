@@ -346,6 +346,240 @@
             font-size: 14px;
         }
 
+        /* Obfuscation Section Styles */
+        .obfuscation-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .obfuscation-info .info-box {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .obfuscation-info h3 {
+            color: #92400e;
+            margin: 0 0 10px 0;
+            font-size: 18px;
+        }
+
+        .obfuscation-info p {
+            color: #78350f;
+            margin: 0 0 10px 0;
+        }
+
+        .obfuscation-info ul {
+            color: #78350f;
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .obfuscation-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .action-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .card-header {
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-header h4 {
+            margin: 0 0 5px 0;
+            color: #1f2937;
+            font-size: 16px;
+        }
+
+        .card-header p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .file-item {
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .security-levels {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .level-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .level-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .level-badge.high {
+            background: #dc2626;
+            color: white;
+        }
+
+        .level-badge.medium {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .level-badge.whitelist {
+            background: #6b7280;
+            color: white;
+        }
+
+        .obfuscation-progress {
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-header h4 {
+            margin: 0;
+            color: #1f2937;
+        }
+
+        .obfuscation-progress .progress-bar {
+            background: #e5e7eb;
+            border-radius: 8px;
+            height: 20px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .obfuscation-progress .progress-fill {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 0;
+        }
+
+        .progress-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .obfuscation-progress .progress-text {
+            color: #4b5563;
+            font-weight: 500;
+            text-align: left;
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .obfuscation-results {
+            background: #f0fdf4;
+            border: 2px solid #22c55e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .results-header h4 {
+            margin: 0;
+            color: #15803d;
+        }
+
+        .results-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .obfuscation-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .progress-stats {
+                flex-wrap: wrap;
+            }
+        }
+
         .packages-list {
             margin-top: 20px;
         }
@@ -597,6 +831,16 @@
         .btn-delete:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-upgrade {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+            color: white;
+        }
+
+        .btn-upgrade:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
         }
 
         .btn-edit-machine {
@@ -1062,7 +1306,6 @@
             </div>
         </div>
 
-
     </div>
 
     <!-- Add Customer Modal -->
@@ -1075,8 +1318,10 @@
 
             <div class="modal-body">
                 <div class="info-box">
-                    <strong>💡 Lưu ý:</strong> Package sẽ được tạo với code đã obfuscate và xóa dữ liệu nhạy cảm.
-                    License key sẽ được tạo sau khi khách hàng gửi Machine ID.
+                    <strong>💡 Lưu ý:</strong> Package sẽ được tạo với <strong>Advanced Obfuscation</strong> tự động và
+                    xóa dữ liệu nhạy cảm.
+                    Code sẽ được bảo vệ với HIGH security cho files quan trọng. License key sẽ được tạo sau khi khách
+                    hàng gửi Machine ID.
                 </div>
 
                 <form id="buildForm">
@@ -1203,6 +1448,67 @@
                     <small>Nhập số phút từ 1 đến 1440 (24 giờ) - Chỉ dùng để test</small>
                 </div>
 
+                <div class="form-group">
+                    <label>🛠️ Tools Được Phép Sử Dụng *</label>
+                    <div class="tools-selection">
+                        <div class="quick-select-buttons">
+                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('nohu-only')">
+                                🎰 NOHU Only
+                            </button>
+                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('sms-only')">
+                                📱 SMS Only
+                            </button>
+                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('hai2vip-only')">
+                                🎲 HAI2VIP Only
+                            </button>
+                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('premium')">
+                                ⭐ Premium (All)
+                            </button>
+                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('wildcard')">
+                                ♾️ Wildcard (*)
+                            </button>
+                        </div>
+
+                        <div class="checkbox-group">
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="tool-nohu" value="nohu-tool" checked
+                                    onchange="updateToolSelection()">
+                                <div>
+                                    <span>🎰 NOHU Auto Tool</span>
+                                    <small>Tự động đăng ký, đăng nhập, thêm bank, check khuyến mãi</small>
+                                </div>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="tool-sms" value="tool-sms" onchange="updateToolSelection()">
+                                <div>
+                                    <span>📱 SMS Auto Tool</span>
+                                    <small>OKVIP, ABCVIP, KJC, 78WIN với SMS verification</small>
+                                </div>
+                            </label>
+                            <label class="checkbox-item">
+                                <input type="checkbox" id="tool-hai2vip" value="hai2vip-tool"
+                                    onchange="updateToolSelection()">
+                                <div>
+                                    <span>🎲 HAI2VIP Auto Tool</span>
+                                    <small>22VIP sites với xác thực SĐT và nhận khuyến mãi</small>
+                                </div>
+                            </label>
+                            <label class="checkbox-item wildcard-option">
+                                <input type="checkbox" id="tool-wildcard" value="*" onchange="updateToolSelection()">
+                                <div>
+                                    <span>♾️ All Tools (Wildcard)</span>
+                                    <small>Cho phép sử dụng tất cả tools hiện tại và tương lai</small>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="selected-tools-preview">
+                            <strong>📋 Tools đã chọn:</strong>
+                            <span id="selectedToolsPreview">NOHU Auto Tool</span>
+                        </div>
+                    </div>
+                </div>
+
                 <input type="hidden" id="licenseMachineId">
 
                 <div id="licenseResult" style="display: none;">
@@ -1220,6 +1526,62 @@
                     <button type="button" onclick="generateLicenseKey()" class="btn btn-primary"
                         id="generateLicenseBtn">
                         🔑 Tạo License Key
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upgrade Package Modal -->
+    <div id="upgradePackageModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 550px;">
+            <div class="modal-header">
+                <h2>🔄 Nâng Cấp Package</h2>
+                <button onclick="closeUpgradeModal()" class="modal-close">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="customer-info">
+                    <p><strong>👤 Khách hàng:</strong> <span id="upgradeCustomerName"></span></p>
+                    <p><strong>🆔 Machine ID:</strong> <code id="upgradeMachineId"></code></p>
+                </div>
+
+                <div class="info-box" style="background: #dcfce7; border-color: #22c55e; margin-bottom: 20px;">
+                    <strong>✅ Những gì sẽ được GIỮ NGUYÊN:</strong>
+                    <ul style="margin: 10px 0 0 20px; padding: 0;">
+                        <li>Machine ID - <strong>GIỮ NGUYÊN</strong></li>
+                        <li>Secret Key - <strong>GIỮ NGUYÊN</strong></li>
+                        <li>License key cũ - <strong>VẪN HOẠT ĐỘNG</strong> ✅</li>
+                    </ul>
+                </div>
+
+                <div class="info-box" style="background: #e0e7ff; border-color: #6366f1;">
+                    <strong>🔄 Thao tác sẽ thực hiện:</strong>
+                    <ol style="margin: 10px 0 0 20px; padding: 0;">
+                        <li>Lưu Secret Key cũ</li>
+                        <li>Xóa package cũ</li>
+                        <li>Tạo package mới với code mới nhất</li>
+                        <li>Khôi phục Machine ID và Secret Key</li>
+                    </ol>
+                    <p style="margin-top: 10px; font-size: 13px; color: #4338ca;">
+                        💡 Khách hàng chỉ cần tải package mới, license key cũ vẫn dùng được!
+                    </p>
+                </div>
+
+                <div id="upgradeProgress" class="progress-container" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="upgradeProgressFill">0%</div>
+                    </div>
+                    <div class="progress-text" id="upgradeProgressText">Đang xử lý...</div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" onclick="closeUpgradeModal()" class="btn btn-secondary" id="upgradeCancelBtn">
+                        ❌ Hủy
+                    </button>
+                    <button type="button" onclick="confirmUpgradePackage()" class="btn btn-primary"
+                        id="upgradeConfirmBtn">
+                        🔄 Xác Nhận Nâng Cấp
                     </button>
                 </div>
             </div>
@@ -1585,6 +1947,9 @@
             document.getElementById('customMinutesGroup').style.display = 'none';
             document.getElementById('licenseResult').style.display = 'none';
 
+            // Reset tool selection to NOHU only and update preview
+            selectToolPreset('nohu-only');
+
             // Show modal
             document.getElementById('generateLicenseModal').style.display = 'flex';
         }
@@ -1651,6 +2016,116 @@
             } catch (error) {
                 showAlert('❌ Lỗi: ' + error.message, 'error');
             }
+        }
+
+        // Upgrade package - Mở modal xác nhận
+        let upgradeTargetCustomer = null;
+
+        function upgradePackage(name) {
+            // Tìm customer data để lấy Machine ID
+            const customerData = allCustomers.find(c => c.pkg.name === name);
+            if (!customerData) {
+                showAlert('❌ Không tìm thấy thông tin khách hàng', 'error');
+                return;
+            }
+
+            const { machineId, isPlaceholder } = customerData;
+
+            if (isPlaceholder) {
+                showAlert('❌ Khách hàng chưa có Machine ID. Vui lòng nhập Machine ID trước khi nâng cấp.', 'error');
+                return;
+            }
+
+            // Lưu thông tin để dùng khi confirm
+            upgradeTargetCustomer = customerData;
+
+            // Hiển thị thông tin trong modal
+            document.getElementById('upgradeCustomerName').textContent = name;
+            document.getElementById('upgradeMachineId').textContent = machineId;
+
+            // Reset progress
+            document.getElementById('upgradeProgress').style.display = 'none';
+            document.getElementById('upgradeConfirmBtn').disabled = false;
+            document.getElementById('upgradeCancelBtn').disabled = false;
+
+            // Mở modal
+            document.getElementById('upgradePackageModal').style.display = 'flex';
+        }
+
+        function closeUpgradeModal() {
+            document.getElementById('upgradePackageModal').style.display = 'none';
+            upgradeTargetCustomer = null;
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('upgradePackageModal').addEventListener('click', (e) => {
+            if (e.target.id === 'upgradePackageModal') {
+                closeUpgradeModal();
+            }
+        });
+
+        async function confirmUpgradePackage() {
+            if (!upgradeTargetCustomer) {
+                showAlert('❌ Không tìm thấy thông tin khách hàng', 'error');
+                closeUpgradeModal();
+                return;
+            }
+
+            const { pkg, machineId, customer } = upgradeTargetCustomer;
+            const name = pkg.name;
+
+            // Disable buttons và show progress
+            document.getElementById('upgradeConfirmBtn').disabled = true;
+            document.getElementById('upgradeCancelBtn').disabled = true;
+            document.getElementById('upgradeConfirmBtn').textContent = '⏳ Đang xử lý...';
+            document.getElementById('upgradeProgress').style.display = 'block';
+
+            try {
+                // Update progress
+                updateUpgradeProgress(20, 'Đang xóa package cũ...');
+
+                const response = await fetch(`/api/admin/upgrade-package/${name}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        machineId: machineId,
+                        licenseHistory: customer.licenseHistory || []
+                    })
+                });
+
+                updateUpgradeProgress(80, 'Đang hoàn tất...');
+
+                const data = await response.json();
+
+                if (data.success) {
+                    updateUpgradeProgress(100, 'Hoàn thành!');
+
+                    setTimeout(() => {
+                        closeUpgradeModal();
+                        // Hiển thị thông báo phù hợp dựa trên việc secret key có được giữ không
+                        if (data.secretKeyPreserved) {
+                            showAlert(`✅ Nâng cấp package "${name}" thành công!\n📦 Package mới: ${data.packagePath}\n\n🔑 License key cũ VẪN HOẠT ĐỘNG!\nKhách hàng chỉ cần tải package mới.`, 'success');
+                        } else {
+                            showAlert(`✅ Nâng cấp package "${name}" thành công!\n📦 Package mới: ${data.packagePath}\n\n⚠️ Cần tạo license key MỚI cho khách hàng!`, 'success');
+                        }
+                        refreshPackages();
+                    }, 500);
+                } else {
+                    closeUpgradeModal();
+                    showAlert('❌ Lỗi nâng cấp: ' + data.message, 'error');
+                }
+            } catch (error) {
+                closeUpgradeModal();
+                showAlert('❌ Lỗi: ' + error.message, 'error');
+            }
+        }
+
+        function updateUpgradeProgress(percent, text) {
+            document.getElementById('upgradeProgressFill').style.width = percent + '%';
+            document.getElementById('upgradeProgressFill').textContent = percent + '%';
+            document.getElementById('upgradeProgressText').textContent = text;
         }
 
         // Update progress
@@ -1850,6 +2325,9 @@
                                     <button class="btn-small btn-delete" onclick="deletePackage('${pkg.name}')">
                                         🗑️ Xóa
                                     </button>
+                                    <button class="btn-small btn-upgrade" onclick="upgradePackage('${pkg.name}')" title="Nâng cấp code mới, giữ Machine ID">
+                                        🔄 Nâng cấp
+                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -2000,10 +2478,70 @@
             }
         }
 
+        // Tool selection functions
+        function selectToolPreset(preset) {
+            // Uncheck all first
+            document.getElementById('tool-nohu').checked = false;
+            document.getElementById('tool-sms').checked = false;
+            document.getElementById('tool-hai2vip').checked = false;
+            document.getElementById('tool-wildcard').checked = false;
+
+            // Select based on preset
+            switch (preset) {
+                case 'nohu-only':
+                    document.getElementById('tool-nohu').checked = true;
+                    break;
+                case 'sms-only':
+                    document.getElementById('tool-sms').checked = true;
+                    break;
+                case 'hai2vip-only':
+                    document.getElementById('tool-hai2vip').checked = true;
+                    break;
+                case 'premium':
+                    document.getElementById('tool-nohu').checked = true;
+                    document.getElementById('tool-sms').checked = true;
+                    document.getElementById('tool-hai2vip').checked = true;
+                    break;
+                case 'wildcard':
+                    document.getElementById('tool-wildcard').checked = true;
+                    break;
+            }
+
+            updateToolSelection();
+        }
+
+        function updateToolSelection() {
+            const toolNames = {
+                'nohu-tool': 'NOHU Auto Tool',
+                'tool-sms': 'SMS Auto Tool',
+                'hai2vip-tool': 'HAI2VIP Auto Tool',
+                '*': 'All Tools (Wildcard)'
+            };
+
+            const selected = [];
+            const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked');
+
+            checkboxes.forEach(cb => {
+                selected.push(toolNames[cb.value] || cb.value);
+            });
+
+            const preview = document.getElementById('selectedToolsPreview');
+            if (selected.length === 0) {
+                preview.textContent = 'Chưa chọn tool nào';
+                preview.style.color = '#dc3545';
+            } else {
+                preview.textContent = selected.join(', ');
+                preview.style.color = '#388e3c';
+            }
+        }
+
         function closeLicenseModal() {
             document.getElementById('generateLicenseModal').style.display = 'none';
             document.getElementById('licenseResult').style.display = 'none';
             document.getElementById('licenseType').value = '30';
+
+            // Reset tool selection to NOHU only
+            selectToolPreset('nohu-only');
             toggleCustomFields();
         }
 
@@ -2033,6 +2571,17 @@
             btn.disabled = true;
             btn.textContent = '⏳ Đang tạo...';
 
+            // Get allowed tools from checkboxes
+            const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked');
+            const allowedTools = Array.from(checkboxes).map(cb => cb.value);
+
+            if (allowedTools.length === 0) {
+                showToast('error', 'Vui lòng chọn ít nhất một tool');
+                btn.disabled = false;
+                btn.textContent = '🔑 Tạo License Key';
+                return;
+            }
+
             try {
                 const response = await fetch(`/api/admin/customers/${customerName}/generate-license`, {
                     method: 'POST',
@@ -2041,7 +2590,8 @@
                     },
                     body: JSON.stringify({
                         expiryDays: parseFloat(licenseType),
-                        notes: `Generated from Customer Manager. ${licenseType == -1 ? 'Lifetime' : licenseType >= 1 ? licenseType + ' days' : (licenseType * 24 * 60).toFixed(0) + ' minutes'}`
+                        allowedTools: allowedTools,
+                        notes: `Generated from Customer Manager. ${licenseType == -1 ? 'Lifetime' : licenseType >= 1 ? licenseType + ' days' : (licenseType * 24 * 60).toFixed(0) + ' minutes'}. Tools: ${allowedTools.join(', ')}`
                     })
                 });
 
@@ -2218,7 +2768,417 @@
 
         // Load packages on page load
         refreshPackages();
+
+
+
+        let obfuscationProcess = null;
+
+        /**
+         * Obfuscate critical files only
+         */
+        async function obfuscateCriticalFiles() {
+            const btn = document.getElementById('btnObfuscateCritical');
+            const originalText = btn.innerHTML;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '🔄 Đang obfuscate...';
+
+                showObfuscationProgress();
+                updateObfuscationProgress(0, 'Khởi tạo obfuscation cho files quan trọng...');
+
+                const response = await fetch('/api/admin/obfuscate-critical', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showObfuscationResults(result);
+                    showAlert('success', '🎯 Obfuscate critical files thành công!');
+                } else {
+                    throw new Error(result.error || 'Unknown error');
+                }
+
+            } catch (error) {
+                console.error('Obfuscation error:', error);
+                showAlert('error', `❌ Lỗi obfuscation: ${error.message}`);
+                hideObfuscationProgress();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        /**
+         * Obfuscate full project
+         */
+        async function obfuscateFullProject() {
+            const btn = document.getElementById('btnObfuscateFull');
+            const originalText = btn.innerHTML;
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '🔄 Đang obfuscate...';
+
+                showObfuscationProgress();
+                updateObfuscationProgress(0, 'Khởi tạo obfuscation toàn bộ project...');
+
+                const response = await fetch('/api/admin/obfuscate-full', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                // Handle streaming response
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n').filter(line => line.trim());
+
+                    for (const line of lines) {
+                        try {
+                            const data = JSON.parse(line);
+
+                            if (data.type === 'progress') {
+                                updateObfuscationProgress(data.progress, data.message);
+                                updateObfuscationStats(data.stats);
+                            } else if (data.type === 'complete') {
+                                showObfuscationResults(data.result);
+                                showAlert('success', '🔒 Obfuscate full project thành công!');
+                            } else if (data.type === 'error') {
+                                throw new Error(data.error);
+                            }
+                        } catch (parseError) {
+                            console.warn('Failed to parse chunk:', line);
+                        }
+                    }
+                }
+
+            } catch (error) {
+                console.error('Full obfuscation error:', error);
+                showAlert('error', `❌ Lỗi obfuscation: ${error.message}`);
+                hideObfuscationProgress();
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        /**
+         * Show obfuscation progress
+         */
+        function showObfuscationProgress() {
+            document.getElementById('obfuscationProgress').style.display = 'block';
+            document.getElementById('obfuscationResults').style.display = 'none';
+
+            // Reset progress
+            updateObfuscationProgress(0, 'Đang khởi tạo...');
+            updateObfuscationStats({ success: 0, skipped: 0, failed: 0 });
+        }
+
+        /**
+         * Hide obfuscation progress
+         */
+        function hideObfuscationProgress() {
+            document.getElementById('obfuscationProgress').style.display = 'none';
+        }
+
+        /**
+         * Update obfuscation progress
+         */
+        function updateObfuscationProgress(progress, message) {
+            const progressFill = document.getElementById('obfuscationProgressFill');
+            const progressText = document.getElementById('obfuscationProgressText');
+
+            progressFill.style.width = `${progress}%`;
+            progressFill.textContent = `${Math.round(progress)}%`;
+            progressText.textContent = message;
+        }
+
+        /**
+         * Update obfuscation stats
+         */
+        function updateObfuscationStats(stats) {
+            document.getElementById('successCount').textContent = stats.success || 0;
+            document.getElementById('skippedCount').textContent = stats.skipped || 0;
+            document.getElementById('failedCount').textContent = stats.failed || 0;
+        }
+
+        /**
+         * Show obfuscation results
+         */
+        function showObfuscationResults(result) {
+            hideObfuscationProgress();
+
+            const resultsDiv = document.getElementById('obfuscationResults');
+            const summaryDiv = document.getElementById('resultsSummary');
+
+            // Create results summary
+            const summary = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                    <div style="text-align: center; padding: 15px; background: #dcfce7; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: 700; color: #166534;">${result.stats?.success || 0}</div>
+                        <div style="color: #166534;">Files Obfuscated</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #fef3c7; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: 700; color: #92400e;">${result.stats?.skipped || 0}</div>
+                        <div style="color: #92400e;">Files Skipped</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px; background: #fee2e2; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: 700; color: #991b1b;">${result.stats?.failed || 0}</div>
+                        <div style="color: #991b1b;">Files Failed</div>
+                    </div>
+                </div>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 13px;">
+                    <strong>Output:</strong> ${result.outputPath || 'obfuscated-project/'}<br>
+                    <strong>Duration:</strong> ${result.duration || 'N/A'}<br>
+                    <strong>Security Level:</strong> ${result.securityLevel || 'Mixed (HIGH + MEDIUM)'}
+                </div>
+            `;
+
+            summaryDiv.innerHTML = summary;
+            resultsDiv.style.display = 'block';
+
+            // Show action buttons if full project was obfuscated
+            if (result.type === 'full') {
+                document.getElementById('btnDownloadObfuscated').style.display = 'inline-flex';
+                document.getElementById('btnCreateFromObfuscated').style.display = 'inline-flex';
+            }
+        }
+
+        /**
+         * Clear obfuscation results
+         */
+        function clearObfuscationResults() {
+            document.getElementById('obfuscationResults').style.display = 'none';
+            document.getElementById('btnDownloadObfuscated').style.display = 'none';
+            document.getElementById('btnCreateFromObfuscated').style.display = 'none';
+        }
+
+        /**
+         * Cancel obfuscation process
+         */
+        async function cancelObfuscation() {
+            if (obfuscationProcess) {
+                try {
+                    await fetch('/api/admin/obfuscate-cancel', { method: 'POST' });
+                    showAlert('info', '🛑 Obfuscation đã được hủy');
+                } catch (error) {
+                    console.error('Cancel error:', error);
+                }
+            }
+            hideObfuscationProgress();
+        }
+
+        /**
+         * Download obfuscated project
+         */
+        async function downloadObfuscatedProject() {
+            try {
+                const response = await fetch('/api/admin/download-obfuscated');
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'obfuscated-project.zip';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showAlert('success', '📦 Tải xuống obfuscated project thành công!');
+            } catch (error) {
+                console.error('Download error:', error);
+                showAlert('error', `❌ Lỗi tải xuống: ${error.message}`);
+            }
+        }
+
+        /**
+         * Create customer package from obfuscated project
+         */
+        async function createCustomerPackageFromObfuscated() {
+            const customerName = prompt('Nhập tên khách hàng:');
+            if (!customerName) return;
+
+            try {
+                const response = await fetch('/api/admin/create-package-from-obfuscated', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ customerName })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showAlert('success', `👤 Tạo customer package thành công: ${customerName}`);
+                    refreshPackages(); // Refresh customer list
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('Create package error:', error);
+                showAlert('error', `❌ Lỗi tạo package: ${error.message}`);
+            }
+        }
     </script>
 </body>
 
 </html>
+<st yle>
+    /* Tool Selection Styles */
+    .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    }
+
+    .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    }
+
+    .checkbox-item:hover {
+    background: #e3f2fd;
+    border-color: #2196f3;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+    margin: 0;
+    transform: scale(1.2);
+    }
+
+    .checkbox-item span {
+    font-weight: 500;
+    color: #495057;
+    }
+
+    .checkbox-item input[type="checkbox"]:checked + span {
+    color: #2196f3;
+    font-weight: 600;
+    }
+    </style>
+    < style>
+        /* Enhanced Tool Selection Styles */
+        .tools-selection {
+        margin-top: 10px;
+        }
+
+        .quick-select-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        }
+
+        .quick-select-btn {
+        padding: 6px 12px;
+        border: 1px solid #dee2e6;
+        background: white;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        color: #495057;
+        }
+
+        .quick-select-btn:hover {
+        background: #e3f2fd;
+        border-color: #2196f3;
+        color: #2196f3;
+        }
+
+        .checkbox-group {
+        gap: 12px !important;
+        }
+
+        .checkbox-item {
+        align-items: flex-start !important;
+        gap: 12px !important;
+        padding: 12px 15px !important;
+        }
+
+        .checkbox-item > div {
+        flex: 1;
+        }
+
+        .checkbox-item span {
+        display: block;
+        margin-bottom: 4px;
+        }
+
+        .checkbox-item small {
+        color: #6c757d;
+        font-size: 11px;
+        line-height: 1.3;
+        }
+
+        .checkbox-item.wildcard-option {
+        border: 2px solid #ff9800 !important;
+        background: linear-gradient(135deg, #fff3e0, #ffffff) !important;
+        }
+
+        .checkbox-item.wildcard-option:hover {
+        background: linear-gradient(135deg, #ffe0b2, #fff3e0) !important;
+        border-color: #f57c00 !important;
+        }
+
+        .checkbox-item.wildcard-option input[type="checkbox"]:checked + div span {
+        color: #f57c00 !important;
+        }
+
+        .selected-tools-preview {
+        margin-top: 15px;
+        padding: 12px 15px;
+        background: #e8f5e8;
+        border-radius: 8px;
+        border: 1px solid #4caf50;
+        font-size: 13px;
+        }
+
+        .selected-tools-preview strong {
+        color: #2e7d32;
+        }
+
+        .selected-tools-preview span {
+        color: #388e3c;
+        font-weight: 500;
+        }
+        </style>

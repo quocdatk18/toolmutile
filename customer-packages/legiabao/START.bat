@@ -7,7 +7,7 @@ echo    HIDEMIUM MULTI-TOOL
 echo ========================================
 echo.
 echo Customer: legiabao
-echo License: 7 days
+echo License: 30 days
 echo.
 
 REM Check if Node.js is installed

@@ -140,7 +140,7 @@ class CustomerMachineManager {
      */
     getAllCustomers() {
         return Object.values(this.customers).sort((a, b) =>
-            new Date(b.updatedAt) - new Date(a.updatedAt)
+            new Date(b.createdAt) - new Date(a.createdAt)
         );
     }
 

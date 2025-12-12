@@ -130,6 +130,25 @@ app.post('/api/license/remove', (req, res) => {
     });
 });
 
+// Get allowed tools from license
+app.get('/api/license/allowed-tools', (req, res) => {
+    try {
+        const allowedTools = licenseManager.getAllowedTools();
+
+        res.json({
+            success: true,
+            allowedTools: allowedTools
+        });
+    } catch (error) {
+        console.error('Error getting allowed tools:', error);
+        res.json({
+            success: false,
+            allowedTools: [],
+            error: error.message
+        });
+    }
+});
+
 // Get tools list
 app.get('/api/tools', (req, res) => {
     res.json(toolsConfig);
@@ -680,20 +699,28 @@ app.post('/api/automation/status', (req, res) => {
 
         // If status is "completed" or "error", clear running flag
         if (status.status === 'completed' || status.status === 'error') {
-            console.log(`🔄 Clearing running flag for username: ${status.username}`);
+            console.log(`🔄 Clearing running flag for profile: ${status.profileId} (${status.profileName})`);
 
-            // Find and clear running profile by username
+            // Clear running profile by profileId (most accurate)
             let clearedCount = 0;
-            for (const [profileUuid, profileInfo] of global.runningProfiles.entries()) {
-                if (profileInfo.username === status.username) {
-                    global.runningProfiles.delete(profileUuid);
-                    clearedCount++;
-                    console.log(`✅ Cleared running flag for profile: ${profileUuid}`);
+            if (status.profileId && global.runningProfiles.has(status.profileId)) {
+                global.runningProfiles.delete(status.profileId);
+                clearedCount++;
+                console.log(`✅ Cleared running flag for profile: ${status.profileId} (${status.profileName})`);
+            } else {
+                // Fallback: clear by profileName if profileId not found
+                for (const [profileUuid, profileInfo] of global.runningProfiles.entries()) {
+                    if (profileInfo.profileName === status.profileName) {
+                        global.runningProfiles.delete(profileUuid);
+                        clearedCount++;
+                        console.log(`✅ Cleared running flag for profile: ${profileUuid} (${status.profileName})`);
+                        break; // Only clear first match
+                    }
                 }
             }
 
             if (clearedCount === 0) {
-                console.log(`⚠️  No running profile found for username: ${status.username}`);
+                console.log(`⚠️  No running profile found for: ${status.profileId} (${status.profileName})`);
             }
         }
 
@@ -715,6 +742,27 @@ app.get('/api/automation/statuses', (req, res) => {
         res.json({ success: true, statuses });
     } catch (error) {
         console.error('❌ Error getting statuses:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get current running profiles (for frontend sync)
+app.get('/api/profiles/running', (req, res) => {
+    try {
+        if (!global.runningProfiles) {
+            global.runningProfiles = new Map();
+        }
+
+        const runningProfiles = Array.from(global.runningProfiles.entries()).map(([profileId, info]) => ({
+            profileId,
+            username: info.username,
+            profileName: info.profileName,
+            startTime: info.startTime
+        }));
+
+        res.json({ success: true, runningProfiles });
+    } catch (error) {
+        console.error('❌ Error getting running profiles:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -764,6 +812,7 @@ app.post('/api/automation/refresh-results', (req, res) => {
 app.get('/api/automation/results', (req, res) => {
     try {
         const screenshotsDir = path.join(__dirname, '../screenshots');
+        const toolFilter = req.query.tool; // Filter by tool if provided
         const results = [];
 
         // Check if screenshots directory exists
@@ -771,101 +820,169 @@ app.get('/api/automation/results', (req, res) => {
             return res.json({ success: true, results: [] });
         }
 
-        // Read all username folders
-        const userFolders = fs.readdirSync(screenshotsDir, { withFileTypes: true })
+        // Check for new structure: screenshots/toolId/username/session/
+        // And old structure: screenshots/username/session/
+        const items = fs.readdirSync(screenshotsDir, { withFileTypes: true })
             .filter(dirent => dirent.isDirectory())
             .map(dirent => dirent.name);
 
-        // For each username folder, scan session subfolders
+        let userFolders = [];
+        let toolFolders = [];
+
+        // Detect structure type
+        items.forEach(item => {
+            const itemPath = path.join(screenshotsDir, item);
+            const subItems = fs.readdirSync(itemPath, { withFileTypes: true });
+
+            // If contains session folders (timestamp format), it's a username folder (old structure)
+            const hasSessionFolders = subItems.some(sub =>
+                sub.isDirectory() && /^\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}$/.test(sub.name)
+            );
+
+            if (hasSessionFolders) {
+                userFolders.push(item); // Old structure: screenshots/username/
+            } else {
+                toolFolders.push(item); // New structure: screenshots/toolId/
+            }
+        });
+
+        // Process new structure: screenshots/toolId/username/session/
+        toolFolders.forEach(toolId => {
+            // Skip if tool filter is specified and doesn't match
+            if (toolFilter && toolId !== toolFilter) {
+                return;
+            }
+
+            const toolDir = path.join(screenshotsDir, toolId);
+            const toolUserFolders = fs.readdirSync(toolDir, { withFileTypes: true })
+                .filter(dirent => dirent.isDirectory())
+                .map(dirent => dirent.name);
+
+            toolUserFolders.forEach(username => {
+                processUserFolder(username, path.join(toolDir, username), toolId, results);
+            });
+        });
+
+        // Process old structure: screenshots/username/session/ (for backward compatibility)
         userFolders.forEach(username => {
-            const userDir = path.join(screenshotsDir, username);
-
-            // Check if user has account info (for full automation vs promo check)
-            const accountsDir = path.join(__dirname, '../accounts');
-            const userAccountDir = path.join(accountsDir, username);
-            const hasAccountInfo = fs.existsSync(userAccountDir) &&
-                fs.readdirSync(userAccountDir).some(f => f.endsWith('.json'));
-
-            // Check if this is old structure (files directly) or new structure (session folders)
-            const items = fs.readdirSync(userDir, { withFileTypes: true });
-
-            // Get all session folders and PNG files
-            const sessionFolders = items.filter(item => item.isDirectory()).map(item => item.name);
-            const pngFiles = items.filter(item => item.isFile() && item.name.endsWith('.png'));
-
-            // Process session folders (new structure)
-            if (sessionFolders.length > 0) {
-                sessionFolders.forEach(sessionId => {
-                    const sessionDir = path.join(userDir, sessionId);
-                    const files = fs.readdirSync(sessionDir)
-                        .filter(file => file.endsWith('.png'));
-
-                    // Try to load metadata for profile name and run number
-                    let profileName = 'Profile'; // Default
-                    let runNumber = null;
-                    const metadataPath = path.join(sessionDir, 'metadata.json');
-                    if (fs.existsSync(metadataPath)) {
-                        try {
-                            const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-                            profileName = metadata.profileName || 'Profile';
-                            runNumber = metadata.runNumber || null;
-                        } catch (err) {
-                            console.warn('⚠️  Could not read metadata:', err.message);
-                        }
-                    }
-
-                    // Add each screenshot from this session
-                    if (files.length > 0) {
-                        files.forEach(file => {
-                            const stats = fs.statSync(path.join(sessionDir, file));
-                            const siteName = file.replace('.png', ''); // Filename is just sitename.png
-
-                            results.push({
-                                profileName: profileName, // Use profile name from metadata
-                                username: username,
-                                sessionId: sessionId, // Include session ID
-                                runNumber: runNumber, // Include run number from metadata
-                                siteName: siteName,
-                                timestamp: stats.mtimeMs,
-                                status: 'success',
-                                screenshot: `/screenshots/${username}/${sessionId}/${file}`,
-                                hasAccountInfo: hasAccountInfo // Flag to show account info button
-                            });
-                        });
-                    }
-                });
-            }
-
-            // Process PNG files directly (old structure) - can coexist with new structure
-            if (pngFiles.length > 0) {
-                pngFiles.forEach(fileItem => {
-                    const file = fileItem.name;
-                    const stats = fs.statSync(path.join(userDir, file));
-                    const siteName = file.split('-')[0];
-
-                    results.push({
-                        profileName: 'Profile',
-                        username: username,
-                        sessionId: null, // No session for old structure
-                        siteName: siteName,
-                        timestamp: stats.mtimeMs,
-                        status: 'success',
-                        screenshot: `/screenshots/${username}/${file}`,
-                        hasAccountInfo: hasAccountInfo // Flag to show account info button
-                    });
-                });
-            }
+            processUserFolder(username, path.join(screenshotsDir, username), null, results, toolFilter);
         });
 
         // Sort by timestamp (newest first)
         results.sort((a, b) => b.timestamp - a.timestamp);
 
-        res.json({ success: true, results: results });
+        res.json({ success: true, results });
     } catch (error) {
-        console.error('❌ Error getting results:', error);
+        console.error('❌ Error getting automation results:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
+
+// Helper function to process user folder
+function processUserFolder(username, userDir, toolId, results, toolFilter = null) {
+    // Check if user has account info (for full automation vs promo check)
+    const accountsDir = path.join(__dirname, '../accounts');
+    const userAccountDir = path.join(accountsDir, username);
+    const hasAccountInfo = fs.existsSync(userAccountDir) &&
+        fs.readdirSync(userAccountDir).some(f => f.endsWith('.json'));
+
+    // Check if this is old structure (files directly) or new structure (session folders)
+    const items = fs.readdirSync(userDir, { withFileTypes: true });
+
+    // Get all session folders and PNG files
+    const sessionFolders = items.filter(item => item.isDirectory()).map(item => item.name);
+    const pngFiles = items.filter(item => item.isFile() && item.name.endsWith('.png'));
+
+    // Process session folders (new structure)
+    if (sessionFolders.length > 0) {
+        sessionFolders.forEach(sessionId => {
+            const sessionDir = path.join(userDir, sessionId);
+            const files = fs.readdirSync(sessionDir)
+                .filter(file => file.endsWith('.png'));
+
+            // Try to load metadata for profile name, run number, and tool info
+            let profileName = 'Profile'; // Default
+            let runNumber = null;
+            let sessionToolId = toolId || 'nohu-tool'; // Use provided toolId or default
+            const metadataPath = path.join(sessionDir, 'metadata.json');
+            if (fs.existsSync(metadataPath)) {
+                try {
+                    const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+                    profileName = metadata.profileName || 'Profile';
+                    runNumber = metadata.runNumber || null;
+                    sessionToolId = metadata.toolId || sessionToolId; // Use metadata toolId if available
+                } catch (err) {
+                    console.warn('⚠️  Could not read metadata:', err.message);
+                }
+            }
+
+            // Skip if tool filter is specified and doesn't match
+            if (toolFilter && sessionToolId !== toolFilter) {
+                return; // Skip this session
+            }
+
+            // Add each screenshot from this session
+            if (files.length > 0) {
+                files.forEach(file => {
+                    const stats = fs.statSync(path.join(sessionDir, file));
+                    const siteName = file.replace('.png', ''); // Filename is just sitename.png
+
+                    // Determine screenshot path based on structure
+                    const screenshotPath = toolId
+                        ? `/screenshots/${toolId}/${username}/${sessionId}/${file}` // New structure
+                        : `/screenshots/${username}/${sessionId}/${file}`; // Old structure
+
+                    results.push({
+                        profileName: profileName, // Use profile name from metadata
+                        username: username,
+                        sessionId: sessionId, // Include session ID
+                        runNumber: runNumber, // Include run number from metadata
+                        toolId: sessionToolId, // Include tool ID
+                        siteName: siteName,
+                        timestamp: stats.mtimeMs,
+                        status: 'success',
+                        screenshot: screenshotPath,
+                        hasAccountInfo: hasAccountInfo // Flag to show account info button
+                    });
+                });
+            }
+        });
+    }
+
+    // Process PNG files directly (old structure) - can coexist with new structure
+    if (pngFiles.length > 0) {
+        pngFiles.forEach(fileItem => {
+            const file = fileItem.name;
+            const stats = fs.statSync(path.join(userDir, file));
+            const siteName = file.split('-')[0];
+
+            // For old structure, try to guess tool from site name or default to nohu-tool
+            const guessedToolId = toolId || 'nohu-tool'; // Use provided toolId or default
+
+            // Skip if tool filter is specified and doesn't match
+            if (toolFilter && guessedToolId !== toolFilter) {
+                return; // Skip this result
+            }
+
+            // Determine screenshot path based on structure
+            const screenshotPath = toolId
+                ? `/screenshots/${toolId}/${username}/${file}` // New structure
+                : `/screenshots/${username}/${file}`; // Old structure
+
+            results.push({
+                profileName: 'Profile',
+                username: username,
+                sessionId: null, // No session for old structure
+                toolId: guessedToolId, // Guessed tool ID for old structure
+                siteName: siteName,
+                timestamp: stats.mtimeMs,
+                status: 'success',
+                screenshot: screenshotPath,
+                hasAccountInfo: hasAccountInfo // Flag to show account info button
+            });
+        });
+    }
+}
 
 // Get account info for a specific site
 app.get('/api/accounts/:username/:siteName', (req, res) => {
@@ -874,27 +991,41 @@ app.get('/api/accounts/:username/:siteName', (req, res) => {
         const accountsDir = path.join(__dirname, '../accounts');
         const userAccountDir = path.join(accountsDir, username);
 
-        // Try to find account file by siteName
-        // siteName might be like "Go99" but file is "m-1go99-vip.json"
-        // So we need to search for files containing the siteName
-
         if (!fs.existsSync(userAccountDir)) {
             return res.json({ success: false, error: 'User account folder not found' });
         }
 
+        // Ưu tiên đọc file account.json (shared cho tất cả sites)
+        const sharedAccountFile = path.join(userAccountDir, 'account.json');
+        if (fs.existsSync(sharedAccountFile)) {
+            console.log(`📁 Found shared account file: account.json`);
+            const accountData = JSON.parse(fs.readFileSync(sharedAccountFile, 'utf8'));
+            return res.json({ success: true, account: accountData });
+        }
+
+        // Fallback: Tìm file theo site name (cho dữ liệu cũ)
         const files = fs.readdirSync(userAccountDir).filter(f => f.endsWith('.json'));
         console.log(`📁 Found ${files.length} account files:`, files);
 
         // Site name mapping (screenshot site name → register site keywords)
         // Screenshot uses promoUrl domain, but account file uses registerUrl domain
         const siteMapping = {
-            'go99code-store': ['go99', '1go99'],
-            'nohucode-shop': ['nohu', '8nohu'],
-            'tt88code-win': ['tt88', '1tt88'],
-            'mmoocode-shop': ['mmoo'],
-            '789pcode-store': ['789p'],
-            '33wincode-com': ['33win', '3333win'],
-            '88vvcode-com': ['88vv', '888vvv']
+            // Promo URL domain format
+            'go99code-store': ['go99', '1go99', 'ghhdj-567dhdhhmm'],
+            'nohucode-shop': ['nohu', '8nohu', '88111188'],
+            'tt88code-win': ['tt88', '1tt88', '1bedd-fb89bj53gg9hjs0bka'],
+            'mmoocode-shop': ['mmoo', '0mmoo'],
+            '789pcode-store': ['789p', 'jvdf76fd92jk87gfuj60o'],
+            '33wincode-com': ['33win', '3333win', '336049'],
+            '88vvcode-com': ['88vv', '888vvv', '88vv'],
+            // Simple site name format (from group.sites[0].name)
+            'go99': ['go99', '1go99', 'ghhdj-567dhdhhmm'],
+            'nohu': ['nohu', '8nohu', '88111188'],
+            'tt88': ['tt88', '1tt88', '1bedd-fb89bj53gg9hjs0bka'],
+            'mmoo': ['mmoo', '0mmoo'],
+            '789p': ['789p', 'jvdf76fd92jk87gfuj60o'],
+            '33win': ['33win', '3333win', '336049'],
+            '88vv': ['88vv', '888vvv', '88vv']
         };
 
         // Get mapped site keywords - normalize siteName first
@@ -1082,7 +1213,9 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
     try {
         const { toolId, profileId, config } = req.body;
 
-        console.log('🚀 Automation request:', { toolId, profileId, sites: config.sites?.length });
+        console.log('🚀 Automation request:', { toolId, profileId, sites: config?.sites?.length || 0 });
+        console.log('🔧 Execution Mode:', config?.executionMode);
+        console.log('🔧 Parallel Count:', config?.parallelCount);
 
         // Load tool's automation script
         const tool = toolsConfig.tools.find(t => t.id === toolId);
@@ -1096,7 +1229,7 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
             // Use AutoSequence (WORKING VERSION from hidemium-tool-cu)
             const AutoSequence = require('../tools/nohu-tool/auto-sequence');
 
-            // Read extension scripts
+            // Read extension scripts (using original content.js - has full checkPromotion logic like quocdat)
             const contentScript = fs.readFileSync(path.join(__dirname, '../tools/nohu-tool/extension/content.js'), 'utf8');
             const captchaSolver = fs.readFileSync(path.join(__dirname, '../tools/nohu-tool/extension/captcha-solver.js'), 'utf8');
             const banksScript = fs.readFileSync(path.join(__dirname, '../tools/nohu-tool/extension/banks.js'), 'utf8');
@@ -1132,12 +1265,49 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
             const autoSequence = new AutoSequence(config, scripts);
 
             // Run automation in background (don't wait)
-            runNohuAutomationInBackground(autoSequence, profileId, config);
+            runNohuAutomationInBackground(autoSequence, profileId, config, toolId);
 
             // Return immediately
             res.json({
                 success: true,
                 message: 'NOHU automation started in background (using proven working version)'
+            });
+        } else if (toolId === 'tool-sms') {
+            // SMS Tool automation (like nohu-tool)
+            console.log('📱 Starting SMS Tool automation...');
+
+            const SMSAutoSequence = require('../tools/sms-tool/auto-sequence');
+
+            // Validate config object for SMS tool
+            if (!config) {
+                throw new Error('Config object is required for SMS tool');
+            }
+
+            // Read extension scripts from SMS tool directory (using simplified content script)
+            const contentScript = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/content.js'), 'utf8');
+            const captchaSolver = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/captcha-solver.js'), 'utf8');
+            const banksScript = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/banks.js'), 'utf8');
+
+            const scripts = {
+                contentScript,
+                captchaSolver,
+                banksScript
+            };
+
+            // Add session ID to config (for organizing screenshots by run)
+            const sessionId = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19); // YYYY-MM-DDTHH-MM-SS
+            config.sessionId = sessionId;
+
+            // Create SMS automation instance
+            const smsAutoSequence = new SMSAutoSequence(config, scripts);
+
+            // Run SMS automation in background (like nohu-tool)
+            runSMSAutomationInBackground(smsAutoSequence, profileId, config, toolId);
+
+            // Return immediately
+            res.json({
+                success: true,
+                message: 'SMS automation started in background'
             });
         } else if (toolId === 'hai2vip-tool') {
             // Use Hai2vipAutomation from local tool folder
@@ -1201,8 +1371,167 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
 // AUTOMATION HELPERS
 // ============================================
 
+// SMS Tool automation function (like nohu-tool)
+async function runSMSAutomationInBackground(smsAutoSequence, profileId, config, toolId) {
+    const axios = require('axios');
+    const dashboardPort = global.DASHBOARD_PORT || 3000;
+    const username = config.username || 'Unknown';
+
+    try {
+        console.log('📱 Starting SMS automation...');
+
+        // Connect to Hidemium profile (same as nohu-tool)
+        const puppeteer = require('puppeteer-core');
+
+        // Open profile
+        console.log('📂 Opening profile:', profileId);
+        const openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
+            params: {
+                uuid: profileId,
+                command: '--remote-debugging-port=0'
+            }
+        });
+
+        console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
+
+        // Extract connection info
+        const data = openResponse.data.data || openResponse.data;
+        const webSocket = data.web_socket || data.webSocket;
+
+        if (!webSocket) {
+            throw new Error('Failed to get web_socket from Hidemium');
+        }
+
+        console.log('🔌 WebSocket URL:', webSocket);
+
+        // Connect puppeteer
+        const browser = await puppeteer.connect({
+            browserWSEndpoint: webSocket,
+            defaultViewport: null
+        });
+
+        console.log('✅ Connected to browser');
+
+        // Get profile name from Hidemium
+        let profileName = 'Profile'; // Default fallback
+        try {
+            const profileResponse = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
+                params: { is_local: false }
+            });
+            const profiles = profileResponse.data?.data?.content || [];
+            const profile = profiles.find(p => p.uuid === profileId);
+            if (profile && profile.name) {
+                profileName = profile.name;
+                console.log('📋 Profile name:', profileName);
+            }
+        } catch (err) {
+            console.warn('⚠️  Could not get profile name:', err.message);
+        }
+
+        // Track running profile in server memory (like nohu tool)
+        global.runningProfiles.set(profileId, {
+            username: config.username,
+            profileName: profileName,
+            startTime: Date.now()
+        });
+        console.log(`✅ Tracking SMS running profile: ${profileId} (${config.username})`);
+
+        // Send running status to dashboard
+        try {
+            await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                profileId: profileId,
+                profileName: profileName,
+                username: config.username, // Add username for clearing running flag
+                toolId: toolId,
+                sessionId: config.sessionId,
+                status: 'running',
+                sites: config.sites || [],
+                timestamp: Date.now()
+            });
+        } catch (statusError) {
+            console.warn('⚠️ Failed to send running status:', statusError.message);
+        }
+
+        // Prepare profile data for SMS (include bank info for auto-redirect)
+        const profileData = {
+            username: username,
+            password: config.password,
+            withdrawPassword: config.withdrawPassword,
+            fullname: config.fullname,
+            email: config.email,
+            phone: config.phone,
+            bankName: config.bankName,
+            bankBranch: config.bankBranch,
+            accountNumber: config.accountNumber,
+            apiKey: config.apiKey || 'default_api_key'
+        };
+
+        // Run SMS sequence (register with auto-redirect like nohu tool)
+        console.log('🤖 Running SMS sequence (Register → Auto-redirect → Keep open)...');
+        const smsResult = await smsAutoSequence.runSmsSequence(browser, profileData, config.sites || []);
+        console.log('✅ SMS sequence completed:', smsResult);
+
+        // Send success status to dashboard
+        if (smsResult.success) {
+            try {
+                await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    profileId: profileId,
+                    profileName: profileName,
+                    username: config.username, // Add username for clearing running flag
+                    toolId: toolId,
+                    sessionId: config.sessionId,
+                    status: 'completed',
+                    sites: config.sites || [],
+                    result: smsResult,
+                    timestamp: Date.now()
+                });
+            } catch (statusError) {
+                console.warn('⚠️ Failed to send success status:', statusError.message);
+            }
+        } else {
+            // Partial success or failure
+            try {
+                await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    profileId: profileId,
+                    profileName: profileName,
+                    username: config.username, // Add username for clearing running flag
+                    toolId: toolId,
+                    sessionId: config.sessionId,
+                    status: 'error',
+                    error: 'SMS automation incomplete - some steps failed',
+                    sites: config.sites || [],
+                    result: smsResult,
+                    timestamp: Date.now()
+                });
+            } catch (statusError) {
+                console.warn('⚠️ Failed to send partial status:', statusError.message);
+            }
+        }
+
+    } catch (error) {
+        console.error('❌ SMS automation failed:', error);
+
+        // Send error status to dashboard
+        try {
+            await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                profileId: profileId,
+                profileName: profileName || 'Profile',
+                username: config.username, // Add username for clearing running flag
+                toolId: toolId,
+                sessionId: config.sessionId || 'unknown',
+                status: 'error',
+                error: error.message,
+                sites: config.sites || [],
+                timestamp: Date.now()
+            });
+        } catch (statusError) {
+            console.warn('⚠️ Failed to send error status:', statusError.message);
+        }
+    }
+}
+
 // NOHU Tool - Using proven working version from hidemium-tool-cu
-async function runNohuAutomationInBackground(autoSequence, profileId, config) {
+async function runNohuAutomationInBackground(autoSequence, profileId, config, toolId) {
     // Get dashboard port and username for status updates (declare at function scope)
     const axios = require('axios');
     const dashboardPort = global.DASHBOARD_PORT || 3000;
@@ -1289,6 +1618,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config) {
             username: username,
             sessionId: config.sessionId,
             runNumber: config.runNumber || 1,
+            toolId: toolId, // Add tool ID to metadata
             startTime: Date.now(),
             sites: config.sites || []
         };
@@ -1314,53 +1644,90 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config) {
         switch (action) {
             case 'sms':
                 console.log('💬 Running SMS sequence (Register → Add Bank only)...');
-                const smsResult = await autoSequence.runSmsSequence(browser, config, config.sites);
+                const smsResult = await autoSequence.runSmsSequence(browser, config, config.sites || []);
                 console.log('✅ SMS sequence completed:', smsResult);
                 break;
 
             case 'checkPromoOnly':
                 console.log('🎁 Running standalone check promo...');
-                const promoResult = await autoSequence.runCheckPromoOnly(browser, config, config.sites);
+                const promoResult = await autoSequence.runCheckPromoOnly(browser, config, config.sites || []);
                 console.log('✅ Check promo completed:', promoResult);
                 break;
 
             case 'registerOnly':
                 console.log('📝 Running standalone register...');
-                const registerResult = await autoSequence.runRegisterOnly(browser, config, config.sites);
+                const registerResult = await autoSequence.runRegisterOnly(browser, config, config.sites || []);
                 console.log('✅ Register completed:', registerResult);
                 break;
 
             case 'loginOnly':
                 console.log('🔐 Running standalone login...');
-                const loginResult = await autoSequence.runLoginOnly(browser, config, config.sites);
+                const loginResult = await autoSequence.runLoginOnly(browser, config, config.sites || []);
                 console.log('✅ Login completed:', loginResult);
                 break;
 
             case 'addBankOnly':
                 console.log('💳 Running standalone add bank...');
-                const bankResult = await autoSequence.runAddBankOnly(browser, config, config.sites);
+                const bankResult = await autoSequence.runAddBankOnly(browser, config, config.sites || []);
                 console.log('✅ Add bank completed:', bankResult);
                 break;
 
             default:
                 // Run full AutoSequence (proven working version)
-                const result = await autoSequence.runSequence(browser, config, config.sites);
+                const result = await autoSequence.runSequence(browser, config, config.sites || []);
                 console.log('✅ NOHU automation completed:', result);
-                break;
-        }
 
-        // Send "complete" status to dashboard
-        try {
-            await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
-                username: username,
-                profileName: 'Profile',
-                status: 'completed',
-                sites: config.sites || [],
-                timestamp: Date.now()
-            });
-            console.log('📤 Sent "complete" status to dashboard');
-        } catch (err) {
-            console.error('⚠️  Failed to send complete status:', err.message);
+                // Check if automation truly completed all steps successfully
+                const isFullyCompleted = result && result.results && result.results.length > 0 &&
+                    result.results.every(siteResult =>
+                        siteResult.register?.success &&
+                        siteResult.login?.success &&
+                        siteResult.addBank?.success &&
+                        (siteResult.checkPromo?.success || siteResult.checkPromo?.skipped)
+                    );
+
+                if (isFullyCompleted) {
+                    // Send "complete" status to dashboard only if truly completed
+                    try {
+                        await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                            profileId: profileId,
+                            profileName: profileName,
+                            username: username,
+                            status: 'completed',
+                            sites: config.sites || [],
+                            timestamp: Date.now()
+                        });
+                        console.log('📤 Sent "complete" status to dashboard');
+                    } catch (err) {
+                        console.error('⚠️  Failed to send complete status:', err.message);
+                    }
+                } else {
+                    console.log('⚠️  Automation incomplete - not sending "complete" status');
+                    console.log('   Result summary:', result?.results?.map(r => ({
+                        site: r.site,
+                        register: r.register?.success,
+                        login: r.login?.success,
+                        addBank: r.addBank?.success,
+                        checkPromo: r.checkPromo?.success || r.checkPromo?.skipped
+                    })));
+
+                    // Send "error" status instead since automation didn't complete fully
+                    try {
+                        await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                            profileId: profileId,
+                            profileName: profileName,
+                            username: username,
+                            status: 'error',
+                            error: 'Automation incomplete - some steps failed',
+                            sites: config.sites || [],
+                            timestamp: Date.now()
+                        });
+                        console.log('📤 Sent "error" status for incomplete automation');
+                    } catch (err) {
+                        console.error('⚠️  Failed to send error status:', err.message);
+                    }
+                }
+                break;
         }
 
     } catch (error) {
@@ -1369,8 +1736,9 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config) {
         // Send "error" status to dashboard
         try {
             await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                profileId: profileId,
+                profileName: profileName,
                 username: username,
-                profileName: 'Profile',
                 status: 'error',
                 error: error.message,
                 sites: config.sites || [],
@@ -1432,11 +1800,12 @@ async function runAutomationInBackground(automation, profileId, config) {
         console.log('✅ Shared login context created');
 
         // Run automation for all sites in PARALLEL (faster)
-        console.log(`\n🚀 Starting ${config.sites.length} sites in parallel...`);
+        const sites = config.sites || [];
+        console.log(`\n🚀 Starting ${sites.length} sites in parallel...`);
 
         // STEP 1: ĐĂNG KÝ (parallel tất cả sites, trong main browser)
         console.log('\n📝 STEP 1: Registration for all sites (main browser)...');
-        const registrationPromises = config.sites.map(async (site) => {
+        const registrationPromises = sites.map(async (site) => {
             console.log(`📍 Registering ${site.name}...`);
 
             try {
@@ -1470,7 +1839,7 @@ async function runAutomationInBackground(automation, profileId, config) {
         const registrationResults = await Promise.all(registrationPromises);
         const successfulSites = registrationResults.filter(r => r.success);
 
-        console.log(`\n✅ Registration completed: ${successfulSites.length}/${config.sites.length} successful`);
+        console.log(`\n✅ Registration completed: ${successfulSites.length}/${sites.length} successful`);
 
         if (successfulSites.length === 0) {
             console.log('❌ No sites registered successfully, stopping automation');
@@ -1643,6 +2012,8 @@ if (adminAPI) {
         res.sendFile(path.join(__dirname, 'admin.html'));
     });
 
+
+
     // Build package
     app.post('/api/admin/build-package', async (req, res) => {
         try {
@@ -1686,6 +2057,324 @@ if (adminAPI) {
         }
     });
 
+    // Upgrade package - Tạo package mới với Machine ID cũ, GIỮ NGUYÊN SECRET KEY
+    app.post('/api/admin/upgrade-package/:name', async (req, res) => {
+        try {
+            const { machineId, licenseHistory } = req.body;
+            const customerName = req.params.name;
+
+            console.log(`🔄 Upgrading package: ${customerName} with Machine ID: ${machineId}`);
+
+            // Step 1: Read old secret key BEFORE deleting
+            console.log('📦 Step 1: Reading old secret key...');
+            const secretKeyFile = path.join(__dirname, '..', 'customer-packages', `${customerName}_SECRET_KEY.txt`);
+            let oldSecretKey = null;
+
+            if (fs.existsSync(secretKeyFile)) {
+                const secretKeyContent = fs.readFileSync(secretKeyFile, 'utf8');
+                const secretKeyMatch = secretKeyContent.match(/Secret Key: (.+)/);
+                if (secretKeyMatch) {
+                    oldSecretKey = secretKeyMatch[1].trim();
+                    console.log(`🔐 Found old secret key: ${oldSecretKey.substring(0, 20)}...`);
+                }
+            }
+
+            if (!oldSecretKey) {
+                console.warn('⚠️ Could not find old secret key, will generate new one');
+            }
+
+            // Step 2: Delete old package
+            console.log('📦 Step 2: Deleting old package...');
+            await adminAPI.deletePackage(customerName);
+
+            // Step 3: Build new package with latest code, REUSING OLD SECRET KEY
+            console.log('📦 Step 3: Building new package with latest code...');
+            const buildResult = await adminAPI.buildPackage({
+                customerName: customerName,
+                licenseType: 30,
+                machineBinding: true,
+                obfuscate: true,
+                secretKey: oldSecretKey // Pass old secret key to reuse
+            });
+
+            if (!buildResult.success) {
+                return res.json({ success: false, message: 'Lỗi tạo package mới: ' + buildResult.message });
+            }
+
+            // Step 4: Restore customer machine data with old Machine ID
+            console.log('📦 Step 4: Restoring Machine ID...');
+            const CustomerMachineManager = require('./customer-machine-manager');
+            const tempCustomerManager = new CustomerMachineManager();
+            tempCustomerManager.addOrUpdateCustomer(customerName, machineId, 'Upgraded package. Machine ID and Secret Key preserved.');
+
+            const keyStatus = oldSecretKey ? '✅ License key cũ vẫn hoạt động!' : '⚠️ Secret key mới, cần tạo license key mới.';
+            console.log(`✅ Package upgraded successfully: ${customerName}. ${keyStatus}`);
+
+            res.json({
+                success: true,
+                packagePath: buildResult.packagePath,
+                secretKey: buildResult.secretKey,
+                secretKeyPreserved: !!oldSecretKey,
+                message: oldSecretKey
+                    ? 'Package nâng cấp thành công! License key cũ vẫn hoạt động.'
+                    : 'Package nâng cấp thành công! Cần tạo license key mới.'
+            });
+
+        } catch (error) {
+            console.error('❌ Upgrade package error:', error);
+            res.json({ success: false, message: error.message });
+        }
+    });
+
+    // Customer Machine Management APIs
+    const CustomerMachineManager = require('./customer-machine-manager');
+    const customerManager = new CustomerMachineManager();
+
+    // Get all customers
+    app.get('/api/admin/customers', (req, res) => {
+        try {
+            const customers = customerManager.getAllCustomers();
+            const stats = customerManager.getStats();
+            res.json({ success: true, customers, stats });
+        } catch (error) {
+            console.error('❌ Error getting customers:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Add or update customer
+    app.post('/api/admin/customers', (req, res) => {
+        try {
+            const { customerName, machineId, notes } = req.body;
+
+            if (!customerName || !machineId) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Customer name and machine ID are required'
+                });
+            }
+
+            const customer = customerManager.addOrUpdateCustomer(customerName, machineId, notes);
+            res.json({ success: true, customer });
+        } catch (error) {
+            console.error('❌ Error adding customer:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Get specific customer
+    app.get('/api/admin/customers/:customerName', (req, res) => {
+        try {
+            const { customerName } = req.params;
+            const customer = customerManager.getCustomer(customerName);
+
+            if (!customer) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Customer not found'
+                });
+            }
+
+            res.json({ success: true, customer });
+        } catch (error) {
+            console.error('❌ Error getting customer:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Delete customer
+    app.delete('/api/admin/customers/:customerName', (req, res) => {
+        try {
+            const { customerName } = req.params;
+            const success = customerManager.removeCustomer(customerName);
+
+            if (!success) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Customer not found'
+                });
+            }
+
+            res.json({ success: true, message: 'Customer deleted successfully' });
+        } catch (error) {
+            console.error('❌ Error deleting customer:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Generate license for customer
+    app.post('/api/admin/customers/:customerName/generate-license', async (req, res) => {
+        try {
+            const { customerName } = req.params;
+            const { expiryDays, allowedTools, notes } = req.body;
+
+            const customer = customerManager.getCustomer(customerName);
+            if (!customer) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Customer not found'
+                });
+            }
+
+            // Generate license key using customer's package
+            const customerPackagePath = path.join(__dirname, '..', 'customer-packages', customerName);
+            const licenseManagerPath = path.join(customerPackagePath, 'core', 'license-manager.js');
+
+            if (!fs.existsSync(licenseManagerPath)) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Customer package not found. Please build package first.'
+                });
+            }
+
+            // Clear require cache and load customer's license manager
+            delete require.cache[require.resolve(licenseManagerPath)];
+            const LicenseManager = require(licenseManagerPath);
+            const licenseManager = new LicenseManager();
+
+            // Generate license key
+            const licenseKey = licenseManager.generateKey({
+                expiryDays: expiryDays || 30,
+                machineId: customer.machineId,
+                username: customerName,
+                allowedTools: allowedTools || ['nohu-tool'] // Default to NOHU only
+            });
+
+            // Add to license history
+            customerManager.addLicenseToHistory(customerName, licenseKey, expiryDays || 30, notes);
+
+            res.json({
+                success: true,
+                licenseKey,
+                customer: customerManager.getCustomer(customerName)
+            });
+        } catch (error) {
+            console.error('❌ Error generating license for customer:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Search customers
+    app.get('/api/admin/customers/search/:query', (req, res) => {
+        try {
+            const { query } = req.params;
+            const customers = customerManager.searchCustomers(query);
+            res.json({ success: true, customers });
+        } catch (error) {
+            console.error('❌ Error searching customers:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Unlock Machine ID (admin only, for special cases)
+    app.post('/api/admin/customers/:customerName/unlock-machine-id', (req, res) => {
+        try {
+            const { customerName } = req.params;
+            const { reason } = req.body;
+
+            if (!reason || reason.trim().length < 10) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Lý do unlock phải có ít nhất 10 ký tự'
+                });
+            }
+
+            const success = customerManager.unlockMachineId(customerName, reason.trim());
+
+            if (!success) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Customer not found'
+                });
+            }
+
+            res.json({
+                success: true,
+                message: 'Machine ID đã được unlock',
+                customer: customerManager.getCustomer(customerName)
+            });
+        } catch (error) {
+            console.error('❌ Error unlocking Machine ID:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Get license history for customer
+    app.get('/api/admin/customers/:customerName/license-history', (req, res) => {
+        try {
+            const { customerName } = req.params;
+            console.log(`📋 Getting license history for customer: ${customerName}`);
+
+            const customer = customerManager.getCustomer(customerName);
+
+            if (!customer) {
+                console.log(`❌ Customer not found: ${customerName}`);
+                return res.status(404).json({
+                    success: false,
+                    error: 'Customer not found'
+                });
+            }
+
+            const history = customerManager.getLicenseHistory(customerName);
+            const stats = customerManager.getLicenseStats(customerName);
+
+            console.log(`✅ License history loaded for ${customerName}: ${history.length} records`);
+
+            res.json({
+                success: true,
+                customer: customerName,
+                history,
+                stats
+            });
+        } catch (error) {
+            console.error('❌ Error getting license history:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Import customers from existing packages
+    app.post('/api/admin/customers/import-from-packages', async (req, res) => {
+        try {
+            const packagesResult = await adminAPI.listPackages();
+
+            if (!packagesResult.success) {
+                return res.json({ success: false, error: 'Cannot load packages' });
+            }
+
+            let importedCount = 0;
+            const errors = [];
+
+            for (const pkg of packagesResult.packages) {
+                try {
+                    // Check if customer already exists
+                    const existingCustomer = customerManager.getCustomer(pkg.name);
+
+                    if (!existingCustomer) {
+                        // Add customer with placeholder Machine ID
+                        customerManager.addOrUpdateCustomer(
+                            pkg.name,
+                            'PLACEHOLDER_MACHINE_ID', // Will be updated when customer provides real Machine ID
+                            `Imported from package. Created: ${pkg.createdAt}. Size: ${pkg.size}`
+                        );
+                        importedCount++;
+                    }
+                } catch (error) {
+                    errors.push(`${pkg.name}: ${error.message}`);
+                }
+            }
+
+            res.json({
+                success: true,
+                message: `Imported ${importedCount} customers from packages`,
+                importedCount,
+                errors: errors.length > 0 ? errors : null
+            });
+        } catch (error) {
+            console.error('❌ Error importing customers from packages:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
     // Download package (ZIP)
     app.get('/api/admin/download-package/:name', async (req, res) => {
         try {
@@ -1712,6 +2401,303 @@ if (adminAPI) {
             res.status(500).json({ success: false, message: error.message });
         }
     });
+
+    // ============================================
+    // ADVANCED OBFUSCATION API ROUTES
+    // ============================================
+
+    // Obfuscate critical files only
+    app.post('/api/admin/obfuscate-critical', async (req, res) => {
+        try {
+            console.log('🎯 Starting critical files obfuscation...');
+
+            const AdvancedObfuscator = require('../tools/advanced-obfuscate');
+            const obfuscator = new AdvancedObfuscator();
+
+            // Critical file patterns
+            const criticalPatterns = [
+                'core/license-manager.js',
+                'core/api-key-manager.js',
+                'core/hidemium-api.js',
+                'core/profile-manager.js',
+                'core/sim-api-manager.js',
+                'dashboard/server.js',
+                'tools/*/auto-sequence.js',
+                'tools/*/complete-automation.js',
+                'tools/*/automation*.js',
+                'tools/*/freelxb*.js'
+            ];
+
+            const startTime = Date.now();
+            await obfuscator.obfuscateSpecificFiles(criticalPatterns);
+            const duration = `${((Date.now() - startTime) / 1000).toFixed(1)}s`;
+
+            const result = {
+                success: true,
+                type: 'critical',
+                stats: {
+                    success: obfuscator.successCount,
+                    skipped: obfuscator.skippedCount,
+                    failed: obfuscator.failCount
+                },
+                outputPath: 'Current directory (*.obfuscated.js files)',
+                duration: duration,
+                securityLevel: 'HIGH'
+            };
+
+            console.log('✅ Critical files obfuscation completed:', result);
+            res.json(result);
+
+        } catch (error) {
+            console.error('❌ Critical obfuscation error:', error);
+            res.status(500).json({
+                success: false,
+                error: error.message
+            });
+        }
+    });
+
+    // Obfuscate full project with streaming progress
+    app.post('/api/admin/obfuscate-full', async (req, res) => {
+        try {
+            console.log('🔒 Starting full project obfuscation...');
+
+            // Set headers for streaming response
+            res.writeHead(200, {
+                'Content-Type': 'application/json',
+                'Transfer-Encoding': 'chunked',
+                'Cache-Control': 'no-cache',
+                'Connection': 'keep-alive'
+            });
+
+            const AdvancedObfuscator = require('../tools/advanced-obfuscate');
+            const obfuscator = new AdvancedObfuscator();
+
+            // Override progress reporting to stream to client
+            const originalLog = console.log;
+            let fileCount = 0;
+            let totalFiles = 0;
+
+            // Estimate total files first
+            const glob = require('glob');
+            const jsFiles = glob.sync('**/*.js', {
+                cwd: obfuscator.projectRoot,
+                ignore: ['node_modules/**', '**/*.obfuscated.js', '**/*.min.js']
+            });
+            totalFiles = jsFiles.length;
+
+            // Send initial progress
+            res.write(JSON.stringify({
+                type: 'progress',
+                progress: 0,
+                message: `Tìm thấy ${totalFiles} JavaScript files`,
+                stats: { success: 0, skipped: 0, failed: 0 }
+            }) + '\n');
+
+            // Override obfuscator methods to report progress
+            const originalObfuscateFile = obfuscator.obfuscateFile.bind(obfuscator);
+            obfuscator.obfuscateFile = function (inputFile, outputFile, options, securityLevel) {
+                fileCount++;
+                const progress = Math.round((fileCount / totalFiles) * 100);
+                const fileName = require('path').relative(this.projectRoot, inputFile);
+
+                // Send progress update
+                res.write(JSON.stringify({
+                    type: 'progress',
+                    progress: progress,
+                    message: `[${securityLevel}] ${fileName}`,
+                    stats: {
+                        success: this.successCount,
+                        skipped: this.skippedCount,
+                        failed: this.failCount
+                    }
+                }) + '\n');
+
+                // Call original method
+                return originalObfuscateFile(inputFile, outputFile, options, securityLevel);
+            };
+
+            const startTime = Date.now();
+            await obfuscator.obfuscateProject();
+            const duration = `${((Date.now() - startTime) / 1000).toFixed(1)}s`;
+
+            // Send completion
+            const result = {
+                type: 'complete',
+                result: {
+                    success: true,
+                    type: 'full',
+                    stats: {
+                        success: obfuscator.successCount,
+                        skipped: obfuscator.skippedCount,
+                        failed: obfuscator.failCount
+                    },
+                    outputPath: 'obfuscated-project/',
+                    duration: duration,
+                    securityLevel: 'Mixed (HIGH + MEDIUM)'
+                }
+            };
+
+            res.write(JSON.stringify(result) + '\n');
+            res.end();
+
+            console.log('✅ Full project obfuscation completed');
+
+        } catch (error) {
+            console.error('❌ Full obfuscation error:', error);
+
+            // Send error
+            res.write(JSON.stringify({
+                type: 'error',
+                error: error.message
+            }) + '\n');
+            res.end();
+        }
+    });
+
+    // Cancel obfuscation (placeholder)
+    app.post('/api/admin/obfuscate-cancel', (req, res) => {
+        console.log('🛑 Obfuscation cancel requested');
+        // TODO: Implement actual cancellation logic
+        res.json({ success: true, message: 'Cancel request received' });
+    });
+
+    // Download obfuscated project as ZIP
+    app.get('/api/admin/download-obfuscated', async (req, res) => {
+        try {
+            const path = require('path');
+            const archiver = require('archiver');
+            const fs = require('fs');
+
+            const obfuscatedDir = path.join(__dirname, '..', 'obfuscated-project');
+
+            if (!fs.existsSync(obfuscatedDir)) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Obfuscated project not found. Please run obfuscation first.'
+                });
+            }
+
+            console.log('📦 Creating obfuscated project ZIP...');
+
+            // Set response headers
+            res.setHeader('Content-Type', 'application/zip');
+            res.setHeader('Content-Disposition', 'attachment; filename="obfuscated-project.zip"');
+
+            // Create ZIP archive
+            const archive = archiver('zip', { zlib: { level: 9 } });
+
+            archive.on('error', (err) => {
+                console.error('❌ Archive error:', err);
+                res.status(500).json({ success: false, error: err.message });
+            });
+
+            // Pipe archive to response
+            archive.pipe(res);
+
+            // Add obfuscated project to archive
+            archive.directory(obfuscatedDir, false);
+
+            // Finalize archive
+            await archive.finalize();
+
+            console.log('✅ Obfuscated project ZIP created');
+
+        } catch (error) {
+            console.error('❌ Download error:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
+    });
+
+    // Create customer package from obfuscated project
+    app.post('/api/admin/create-package-from-obfuscated', async (req, res) => {
+        try {
+            const { customerName } = req.body;
+
+            if (!customerName) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Customer name is required'
+                });
+            }
+
+            console.log(`👤 Creating customer package from obfuscated project: ${customerName}`);
+
+            const path = require('path');
+            const fs = require('fs');
+
+            const obfuscatedDir = path.join(__dirname, '..', 'obfuscated-project');
+            const customerDir = path.join(__dirname, '..', 'customer-packages', customerName);
+
+            if (!fs.existsSync(obfuscatedDir)) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Obfuscated project not found. Please run obfuscation first.'
+                });
+            }
+
+            // Copy obfuscated project to customer directory
+            if (fs.existsSync(customerDir)) {
+                fs.rmSync(customerDir, { recursive: true, force: true });
+            }
+
+            // Use xcopy on Windows or cp on Unix
+            const { execSync } = require('child_process');
+            const isWindows = process.platform === 'win32';
+
+            if (isWindows) {
+                execSync(`xcopy /E /I /Y /Q "${obfuscatedDir}" "${customerDir}"`, { stdio: 'inherit' });
+            } else {
+                execSync(`cp -r "${obfuscatedDir}" "${customerDir}"`, { stdio: 'inherit' });
+            }
+
+            // Create README for customer
+            const readmeContent = `========================================
+HIDEMIUM MULTI-TOOL (OBFUSCATED)
+========================================
+
+Customer: ${customerName}
+Created: ${new Date().toLocaleString()}
+
+INSTALLATION:
+  1. Install Node.js (if not installed)
+  2. Run: npm install
+  3. Run: npm run dashboard
+
+ACTIVATION:
+  1. Open dashboard
+  2. Click "🔐 License" button
+  3. Paste your license key
+  4. Click "Activate License"
+
+SUPPORT:
+  Contact seller if you have any issues
+
+========================================
+CODE PROTECTION:
+This package contains obfuscated code for security.
+All critical files have been protected against reverse engineering.
+========================================`;
+
+            fs.writeFileSync(path.join(customerDir, 'README.txt'), readmeContent);
+
+            console.log(`✅ Customer package created: ${customerName}`);
+
+            res.json({
+                success: true,
+                message: `Customer package created successfully: ${customerName}`,
+                packagePath: `customer-packages/${customerName}`
+            });
+
+        } catch (error) {
+            console.error('❌ Create package error:', error);
+            res.status(500).json({
+                success: false,
+                error: error.message
+            });
+        }
+    });
+
 } else {
     // Customer version - Admin routes disabled
     app.get('/admin', (req, res) => {

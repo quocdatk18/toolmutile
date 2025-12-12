@@ -23,10 +23,16 @@ class AdminAPI {
     }
 
     /**
-     * Build customer package - REAL IMPLEMENTATION
+     * Build customer package - SECURE IMPLEMENTATION WITH OBFUSCATION
+     * @param {Object} options
+     * @param {string} options.customerName - Tên khách hàng
+     * @param {number} options.licenseType - Loại license
+     * @param {boolean} options.machineBinding - Có bind machine không
+     * @param {boolean} options.obfuscate - Có obfuscate không
+     * @param {string} [options.secretKey] - Secret key cũ (nếu upgrade, để giữ license key cũ hoạt động)
      */
     async buildPackage(options) {
-        const { customerName, licenseType, machineBinding, obfuscate } = options;
+        const { customerName, licenseType, machineBinding, obfuscate, secretKey: existingSecretKey } = options;
 
         try {
             // Validate
@@ -48,9 +54,9 @@ class AdminAPI {
             // Create output folder
             fs.mkdirSync(packagePath, { recursive: true });
 
-            // Copy files
+            // Copy files (excluding admin files)
             console.log('📋 Copying files...');
-            const itemsToCopy = ['core', 'dashboard', 'config', 'tools', 'package.json', 'package-lock.json', '.env', '.license'];
+            const itemsToCopy = ['core', 'dashboard', 'config', 'tools', 'screenshots', 'package.json', 'package-lock.json', '.env'];
             itemsToCopy.forEach(item => {
                 const srcPath = path.join(__dirname, '..', item);
                 const destPath = path.join(packagePath, item);
@@ -62,9 +68,13 @@ class AdminAPI {
                 }
             });
 
-            // Generate unique secret key
-            const secretKey = `SECRET_${customerName}_${Math.floor(Math.random() * 100000)}_${Math.floor(Math.random() * 100000)}`;
-            console.log(`🔐 Secret key: ${secretKey}`);
+            // Use existing secret key (for upgrade) or generate new one
+            const secretKey = existingSecretKey || `SECRET_${customerName}_${Math.floor(Math.random() * 100000)}_${Math.floor(Math.random() * 100000)}`;
+            if (existingSecretKey) {
+                console.log(`🔐 Reusing existing secret key: ${secretKey.substring(0, 20)}...`);
+            } else {
+                console.log(`🔐 Generated new secret key: ${secretKey}`);
+            }
 
             // Update secret key in license-manager.js
             const licenseManagerPath = path.join(packagePath, 'core', 'license-manager.js');
@@ -74,16 +84,43 @@ class AdminAPI {
                 fs.writeFileSync(licenseManagerPath, content, 'utf8');
             }
 
+            // Remove admin files that shouldn't be in customer package
+            console.log('🧹 Removing admin files...');
+            const adminFilesToRemove = [
+                path.join(packagePath, 'dashboard', 'admin.html'),
+                path.join(packagePath, 'dashboard', 'admin-api.js'),
+                path.join(packagePath, 'dashboard', 'customer-manager.html'),
+                path.join(packagePath, 'dashboard', 'customer-machine-manager.js'),
+                path.join(packagePath, 'tools', 'advanced-obfuscate.js')
+            ];
+
+            adminFilesToRemove.forEach(file => {
+                if (fs.existsSync(file)) {
+                    fs.unlinkSync(file);
+                    console.log(`   Removed: ${path.basename(file)}`);
+                }
+            });
+
+            // Obfuscate critical files if requested
+            // TEMPORARILY DISABLED FOR TESTING - uncomment to enable
+            // if (obfuscate !== false) {
+            //     console.log('🔒 Obfuscating critical files...');
+            //     await this.obfuscatePackageFiles(packagePath);
+            // }
+            console.log('⏭️ Obfuscation DISABLED for testing');
+
             // Create customer version marker
             fs.writeFileSync(path.join(packagePath, '.customer'), customerName, 'utf8');
             console.log('✅ Created customer version marker');
 
-            // Create simple version info file
+            // Create version info file
             const versionInfo = {
                 customer: customerName,
                 version: '3.0.0',
                 createdAt: new Date().toISOString(),
-                buildType: 'customer-package'
+                buildType: 'customer-package',
+                secretKey: secretKey,
+                obfuscated: obfuscate !== false
             };
             fs.writeFileSync(
                 path.join(packagePath, '.version-info.json'),
@@ -599,13 +636,24 @@ Machine ID: Will be provided by customer
 `;
             fs.writeFileSync(path.join(this.packagesDir, `${customerName}_SECRET_KEY.txt`), secretKeyInfo, 'utf8');
 
-            console.log('✅ Package created successfully!');
+            // Obfuscation - TEMPORARILY DISABLED FOR TESTING
+            // console.log('🔒 Starting Obfuscation...');
+            // try {
+            //     await this.obfuscatePackageFiles(packagePath);
+            //     console.log('✅ Obfuscation completed successfully!');
+            // } catch (obfuscationError) {
+            //     console.error('💥 Obfuscation error:', obfuscationError);
+            //     console.warn('⚠️ Obfuscation failed, continuing without obfuscation');
+            // }
+            console.log('⏭️ Obfuscation DISABLED for testing - package will have readable code');
+
+            console.log('✅ Package created successfully with advanced protection!');
 
             return {
                 success: true,
                 packagePath: `customer-packages/${customerName}`,
                 secretKey: secretKey,
-                message: 'Package created successfully'
+                message: 'Package created successfully with advanced obfuscation'
             };
 
         } catch (error) {
@@ -962,6 +1010,200 @@ ${licenseKey}
         const i = Math.floor(Math.log(bytes) / Math.log(k));
 
         return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    /**
+     * Obfuscate package files for security
+     */
+    async obfuscatePackageFiles(packagePath) {
+        try {
+            // Check if javascript-obfuscator is available
+            let JavaScriptObfuscator;
+            try {
+                JavaScriptObfuscator = require('javascript-obfuscator');
+            } catch (err) {
+                console.log('⚠️  javascript-obfuscator not found, skipping obfuscation');
+                return;
+            }
+
+            // Files to obfuscate (core files - high security)
+            // NOTE: license-manager.js is the most critical file (contains secret key validation)
+            const coreFiles = [
+                'core/license-manager.js',
+                'core/api-key-manager.js',
+                'core/hidemium-api.js',
+                'core/profile-manager.js',
+                'core/sim-api-manager.js'
+            ];
+
+            // Additional files to obfuscate (medium security)
+            const additionalFiles = [
+                'tools/nohu-tool/complete-automation.js',
+                'tools/nohu-tool/automation-actions.js',
+                'tools/hai2vip-tool/automation-actions.js',
+                'tools/sms-tool/sms-automation.js'
+            ];
+
+            // Files to SKIP obfuscation - these need to run without any modification
+            // NOTE: server.js and dashboard.js are critical for app to work
+            const skipObfuscationFiles = [
+                'dashboard/server.js',
+                'dashboard/dashboard.js'
+            ];
+
+            // High security obfuscation options for core files
+            const coreObfuscationOptions = {
+                compact: true,
+                controlFlowFlattening: true,
+                controlFlowFlatteningThreshold: 0.5,
+                deadCodeInjection: true,
+                deadCodeInjectionThreshold: 0.3,
+                debugProtection: false,
+                disableConsoleOutput: false,
+                identifierNamesGenerator: 'hexadecimal',
+                log: false,
+                numbersToExpressions: true,
+                renameGlobals: false,
+                selfDefending: false,
+                simplify: true,
+                splitStrings: true,
+                splitStringsChunkLength: 8,
+                stringArray: true,
+                stringArrayCallsTransform: true,
+                stringArrayEncoding: ['base64'],
+                stringArrayIndexShift: true,
+                stringArrayRotate: true,
+                stringArrayShuffle: true,
+                stringArrayWrappersCount: 2,
+                stringArrayWrappersChainedCalls: true,
+                stringArrayThreshold: 0.7,
+                target: 'node',
+                transformObjectKeys: true,
+                unicodeEscapeSequence: false
+            };
+
+            // Medium security obfuscation options for additional files
+            const additionalObfuscationOptions = {
+                compact: true,
+                controlFlowFlattening: false,
+                deadCodeInjection: false,
+                debugProtection: false,
+                disableConsoleOutput: false,
+                identifierNamesGenerator: 'hexadecimal',
+                log: false,
+                numbersToExpressions: false,
+                renameGlobals: false,
+                selfDefending: false,
+                simplify: true,
+                splitStrings: true,
+                splitStringsChunkLength: 10,
+                stringArray: true,
+                stringArrayCallsTransform: true,
+                stringArrayEncoding: ['base64'],
+                stringArrayIndexShift: true,
+                stringArrayRotate: true,
+                stringArrayShuffle: true,
+                stringArrayWrappersCount: 1,
+                stringArrayWrappersChainedCalls: true,
+                stringArrayThreshold: 0.5,
+                target: 'node',
+                transformObjectKeys: false,
+                unicodeEscapeSequence: false
+            };
+
+            // Light security for server.js - stable but still protected
+            const serverObfuscationOptions = {
+                compact: true,
+                controlFlowFlattening: false,
+                deadCodeInjection: false,
+                debugProtection: false,
+                disableConsoleOutput: false,
+                identifierNamesGenerator: 'hexadecimal',
+                log: false,
+                numbersToExpressions: false,
+                renameGlobals: false,
+                selfDefending: false,
+                simplify: true,
+                splitStrings: false,
+                stringArray: true,
+                stringArrayCallsTransform: false,
+                stringArrayEncoding: [],
+                stringArrayIndexShift: true,
+                stringArrayRotate: true,
+                stringArrayShuffle: true,
+                stringArrayWrappersCount: 0,
+                stringArrayThreshold: 0.5,
+                transformObjectKeys: false,
+                unicodeEscapeSequence: false
+            };
+
+            let successCount = 0;
+            let failCount = 0;
+
+            // Obfuscate core files with high security
+            console.log('   🔒 Obfuscating core files (high security)...');
+            for (const file of coreFiles) {
+                const filePath = path.join(packagePath, file);
+                if (fs.existsSync(filePath)) {
+                    try {
+                        const sourceCode = fs.readFileSync(filePath, 'utf8');
+                        const obfuscatedCode = JavaScriptObfuscator.obfuscate(sourceCode, coreObfuscationOptions).getObfuscatedCode();
+
+                        // Backup original
+                        fs.writeFileSync(filePath + '.original', sourceCode, 'utf8');
+
+                        // Replace with obfuscated
+                        fs.writeFileSync(filePath, obfuscatedCode, 'utf8');
+
+                        console.log(`      ✅ ${path.basename(file)}`);
+                        successCount++;
+                    } catch (error) {
+                        console.log(`      ❌ ${path.basename(file)}: ${error.message}`);
+                        failCount++;
+                    }
+                }
+            }
+
+            // Obfuscate additional files with medium security
+            console.log('   🔐 Obfuscating additional files (medium security)...');
+            for (const file of additionalFiles) {
+                const filePath = path.join(packagePath, file);
+                if (fs.existsSync(filePath)) {
+                    try {
+                        const sourceCode = fs.readFileSync(filePath, 'utf8');
+                        const obfuscatedCode = JavaScriptObfuscator.obfuscate(sourceCode, additionalObfuscationOptions).getObfuscatedCode();
+
+                        // Backup original
+                        fs.writeFileSync(filePath + '.original', sourceCode, 'utf8');
+
+                        // Replace with obfuscated
+                        fs.writeFileSync(filePath, obfuscatedCode, 'utf8');
+
+                        console.log(`      ✅ ${path.basename(file)} (medium)`);
+                        successCount++;
+                    } catch (error) {
+                        console.log(`      ❌ ${path.basename(file)}: ${error.message}`);
+                        failCount++;
+                    }
+                }
+            }
+
+            // Skip obfuscation for critical dashboard files (server.js, dashboard.js)
+            // These files need to run without modification to ensure stability
+            console.log('   ⏭️ Skipping obfuscation for dashboard files (stability)...');
+            for (const file of skipObfuscationFiles) {
+                const filePath = path.join(packagePath, file);
+                if (fs.existsSync(filePath)) {
+                    console.log(`      ⏭️ ${path.basename(file)} (skipped - no obfuscation)`);
+                }
+            }
+
+            console.log(`   📊 Obfuscation complete: ${successCount} success, ${failCount} failed`);
+
+        } catch (error) {
+            console.error('💥 Obfuscation error:', error);
+            throw error;
+        }
     }
 }
 

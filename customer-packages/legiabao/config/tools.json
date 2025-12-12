@@ -11,7 +11,7 @@
       "requiresExtension": true,
       "extensionPath": "tools/nohu-tool/extension",
       "automationScript": "tools/nohu-tool/automation.js",
-      "uiPath": "tools-ui/nohu-tool.html",
+      "uiPath": "tools-ui/nohu/nohu.html",
       "sites": [
         {
           "name": "Go99",
@@ -70,7 +70,7 @@
       "requiresExtension": true,
       "extensionPath": "tools/hai2vip-tool/extension",
       "automationScript": "tools/hai2vip-tool/automation.js",
-      "uiPath": "tools-ui/hai2vip-tool.html",
+      "uiPath": "tools-ui/hai2vip/hai2vip.html",
       "sites": [
         {
           "name": "28bet",
@@ -114,6 +114,54 @@
         "Thiết lập rút tiền & thêm bank",
         "Xác thực số điện thoại tự động",
         "Nhận khuyến mãi 58K tự động",
+        "Hỗ trợ nhiều profiles"
+      ]
+    },
+    {
+      "id": "tool-sms",
+      "name": "SMS Auto Tool",
+      "icon": "�",
+      "description": "Tự động đăng ký, đăng nhập, thêm bank, check khuyến mãi cho các trang game nhà okvip, abcvip",
+      "version": "1.0.0",
+      "status": "active",
+      "requiresApiKey": true,
+      "requiresExtension": false,
+      "extensionPath": "",
+      "automationScript": "",
+      "uiPath": "tools-ui/sms/sms.html",
+      "categories": [
+        {
+          "name": "OKVIP",
+          "icon": "🎰",
+          "color": "#ff6b35",
+          "sites": []
+        },
+        {
+          "name": "ABCVIP", 
+          "icon": "🎲",
+          "color": "#0066cc",
+          "sites": []
+        },
+        {
+          "name": "KJC",
+          "icon": "🃏", 
+          "color": "#00aa00",
+          "sites": []
+        },
+        {
+          "name": "78WIN",
+          "icon": "🎯",
+          "color": "#cc0000", 
+          "sites": []
+        }
+      ],
+      "features": [
+        "4 danh mục trang game: OKVIP, ABCVIP, KJC, 78WIN",
+        "Đăng ký tài khoản tự động",
+        "Đăng nhập tự động", 
+        "Thêm ngân hàng tự động",
+        "Hỗ trợ SMS verification tự động",
+        "Logic riêng biệt cho từng danh mục",
         "Hỗ trợ nhiều profiles"
       ]
     }

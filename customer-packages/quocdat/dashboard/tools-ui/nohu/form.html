@@ -1,0 +1,238 @@
+<!-- ============================================
+   NOHU TOOL - Form Content (Tool-specific)
+   This is the only part that differs between tools
+   ============================================ -->
+
+<!-- Tabs in Modal -->
+<div class="modal-tabs">
+    <div class="modal-tabs-left">
+        <div class="modal-tab active" data-tab="auto" onclick="switchModalTab('auto')">
+            🤖 Tự Động
+        </div>
+        <div class="modal-tab" data-tab="promo" onclick="switchModalTab('promo')">
+            🎁 Check KM
+        </div>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+        <button class="btn btn-warning btn-sm" onclick="clearAllRunningStatuses()"
+            title="Clear tất cả trạng thái running">
+            🔄 Clear Running
+        </button>
+        <button class="btn-run-action" id="btnRunAction" onclick="runCurrentTabAction()">
+            🚀 CHẠY
+        </button>
+    </div>
+</div>
+
+<!-- Modal Body - 2 Column Layout -->
+<div class="modal-body-form" id="modalBodyForm">
+    <!-- Warning Banner -->
+    <div
+        style="grid-column: 1 / -1; margin-bottom: 15px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; padding: 16px; border: 1px solid #f59e0b;">
+        <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <div style="font-size: 24px;">💡</div>
+            <div style="flex: 1;">
+                <div style="font-weight: 700; color: #92400e; font-size: 14px; margin-bottom: 8px;">Khuyến nghị sử dụng
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #78350f;">
+                    <div>● Nên <strong>mở profile cần chạy</strong> trong Hidemium trước</div>
+                    <div>● <strong>Song Song (3-5 sites)</strong>: Nhanh hơn, phù hợp máy mạnh</div>
+                    <div>● <strong>Tuần Tự</strong>: Ổn định hơn, phù hợp máy yếu</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEFT COLUMN: Sites Selection -->
+    <div class="modal-sites-column">
+        <!-- Sites Grid -->
+        <div style="margin-bottom: 12px;">
+            <h4 style="margin: 0 0 8px 0; color: #4a5568; font-size: 13px; font-weight: 600;">📱 Chọn Trang</h4>
+            <div class="sites-grid" id="appPromoSites">
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="Go99">
+                    <div class="site-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">GO</div>
+                    <div class="site-name">Go99</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="NOHU">
+                    <div class="site-icon" style="background: linear-gradient(135deg, #3b82f6, #2563eb);">NO</div>
+                    <div class="site-name">NOHU</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="TT88">
+                    <div class="site-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">TT</div>
+                    <div class="site-name">TT88</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="MMOO">
+                    <div class="site-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">MM</div>
+                    <div class="site-name">MMOO</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="789P">
+                    <div class="site-icon" style="background: linear-gradient(135deg, #a855f7, #9333ea);">789</div>
+                    <div class="site-name">789P</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="33WIN">
+                    <div class="site-icon" style="background: linear-gradient(135deg, #dc2626, #b91c1c);">33</div>
+                    <div class="site-name">33WIN</div>
+                </label>
+                <label class="site-card">
+                    <input type="checkbox" class="site-check" data-name="88VV">
+                    <div class="site-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">88</div>
+                    <div class="site-name">88VV</div>
+                </label>
+            </div>
+            <div class="site-actions">
+                <button class="btn btn-sm" onclick="selectAllSites()">✅ Chọn Tất Cả</button>
+                <button class="btn btn-sm" onclick="deselectAllSites()">❌ Bỏ Chọn</button>
+            </div>
+        </div>
+
+        <!-- Execution Mode -->
+        <div style="padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <h4 style="margin: 0 0 10px 0; color: #4a5568; font-size: 13px; font-weight: 600;">⚙️ Chế Độ Chạy</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <label
+                    style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #e2e8f0; flex: 1;">
+                    <input type="radio" name="executionMode" value="parallel" checked
+                        style="width: 16px; height: 16px;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 12px; color: #2d3748;">🚀 Song Song</div>
+                        <div style="font-size: 10px; color: #718096;">Nhanh hơn</div>
+                    </div>
+                </label>
+                <label
+                    style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #e2e8f0; flex: 1;">
+                    <input type="radio" name="executionMode" value="sequential" style="width: 16px; height: 16px;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 12px; color: #2d3748;">📋 Tuần Tự</div>
+                        <div style="font-size: 10px; color: #718096;">Ổn định hơn</div>
+                    </div>
+                </label>
+            </div>
+            <div id="parallelOptions" style="margin-top: 8px;">
+                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #4a5568;">
+                    <span>Số sites cùng lúc:</span>
+                    <select id="parallelCount"
+                        style="padding: 4px 8px; border-radius: 4px; border: 1px solid #e2e8f0; font-size: 12px;">
+                        <option value="0">Tất cả</option>
+                        <option value="3" selected>3</option>
+                        <option value="5">5</option>
+                        <option value="7">7</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Form Inputs -->
+    <div class="modal-form-column">
+        <!-- Tab Content: Auto -->
+        <div class="tab-content active" id="tab-auto">
+            <!-- Profile Selection -->
+            <div class="form-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">📋 Chọn Profile</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()"
+                        title="Tải lại profiles">🔄 Tải Lại</button>
+                </div>
+                <div class="profile-carousel-wrapper">
+                    <div class="profile-carousel-container">
+                        <button class="carousel-btn carousel-prev"
+                            onclick="scrollProfileCarousel('auto', -1)">‹</button>
+                        <div class="profile-carousel" id="autoProfileCarousel">
+                            <div class="profile-carousel-empty">
+                                <p>Click "Tải Lại" để xem profiles</p>
+                            </div>
+                        </div>
+                        <button class="carousel-btn carousel-next" onclick="scrollProfileCarousel('auto', 1)">›</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Info -->
+            <div class="form-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
+                    <button class="btn btn-secondary btn-sm" onclick="randomAllForm()" title="Random toàn bộ form">🎲
+                        Random</button>
+                </div>
+                <div class="form-grid">
+                    <input type="text" id="autoUsername" placeholder="Tên tài khoản">
+                    <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)">
+                    <input type="password" id="autoPassword" placeholder="Mật khẩu">
+                    <input type="password" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền">
+                </div>
+            </div>
+
+            <!-- Bank Info -->
+            <div class="form-section">
+                <h3>🏦 Thông Tin Ngân Hàng</h3>
+                <div class="form-grid">
+                    <select id="autoBankName">
+                        <option value="">-- Chọn ngân hàng --</option>
+                        <option value="VIETINBANK">VIETINBANK</option>
+                        <option value="TECHCOMBANK">TECHCOMBANK</option>
+                        <option value="BIDV">BIDV</option>
+                        <option value="VIETCOMBANK">VIETCOMBANK</option>
+                        <option value="MBBANK">MBBANK</option>
+                        <option value="TPBANK">TPBANK</option>
+                        <option value="VPBANK">VPBANK</option>
+                        <option value="SACOMBANK">SACOMBANK</option>
+                        <option value="ACB">ACB</option>
+                    </select>
+                    <input type="text" id="autoAccountNumber" placeholder="Số tài khoản ngân hàng">
+                </div>
+            </div>
+
+            <!-- API Key -->
+            <div class="form-section">
+                <h3>🔑 API Key (Captcha)</h3>
+                <input type="text" id="autoApiKey" placeholder="API Key từ autocaptcha.pro"
+                    style="width: 100%; padding: 10px; border: 2px solid #e5e7eb; border-radius: 8px;">
+            </div>
+
+            <!-- Options -->
+            <div class="form-section">
+                <h3>⚙️ Tùy Chọn</h3>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="autoCheckPromo" checked style="width: 18px; height: 18px;">
+                        <span style="font-size: 14px;">🎁 Check khuyến mãi sau khi đăng ký</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Check Promo -->
+        <div class="tab-content" id="tab-promo">
+            <div class="form-section">
+                <h3>📋 Chọn Profile</h3>
+                <div class="profile-carousel-wrapper">
+                    <div class="profile-carousel-container">
+                        <button class="carousel-btn carousel-prev"
+                            onclick="scrollProfileCarousel('promo', -1)">‹</button>
+                        <div class="profile-carousel" id="promoProfileCarousel">
+                            <div class="profile-carousel-empty">
+                                <p>Click "Tải Lại" để xem profiles</p>
+                            </div>
+                        </div>
+                        <button class="carousel-btn carousel-next"
+                            onclick="scrollProfileCarousel('promo', 1)">›</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3>👤 Thông Tin Check</h3>
+                <div class="form-grid">
+                    <input type="text" id="promoUsername" placeholder="Tên tài khoản đã đăng ký">
+                    <input type="text" id="promoApiKey" placeholder="API Key từ autocaptcha.pro">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

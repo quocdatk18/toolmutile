@@ -78,6 +78,29 @@ if (window.autoRegisterToolLoaded) {
   window.registerFormFilled = false;
   window.withdrawFormFilled = false; // Track if withdraw form has been filled
   window.withdrawFormFilling = false; // Track if currently filling
+
+  // FreeLXB-style: Handle tab visibility changes
+  // When tab becomes visible again, resume any pending operations
+  if (!window.visibilityHandlerInstalled) {
+    window.visibilityHandlerInstalled = true;
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        console.log('👁️ Tab became visible - resuming operations');
+        // Resume any pending captcha solving
+        if (window.pendingCaptchaSolve && window.currentApiKey) {
+          console.log('🔄 Resuming pending captcha solve...');
+          setTimeout(() => {
+            if (typeof solveCaptchaAuto === 'function') {
+              solveCaptchaAuto(window.currentApiKey);
+            }
+          }, 500);
+        }
+      } else {
+        console.log('😴 Tab hidden - operations may be throttled');
+      }
+    });
+    console.log('✅ Visibility change handler installed (FreeLXB-style)');
+  }
   sessionStorage.removeItem('captchaAttempted');
   sessionStorage.removeItem('captchaFailed');
   sessionStorage.removeItem('captchaCompleted');
@@ -378,22 +401,6 @@ if (!window.xhrIntercepted) {
   };
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'audioUrlCaptured') {
-    console.log('?? ? RECEIVED AUDIO URL FROM BACKGROUND:', request.url);
-    addAudioUrl(request.url);
-
-    // Auto-solve captcha if API key is available
-    if (window.currentApiKey && window.audioButtonClicked) {
-      console.log('?? Auto-solving captcha with received audio URL...');
-      solveAudioCaptchaAuto(request.url);
-    }
-
-    sendResponse({ received: true });
-    return true;
-  }
-});
-
 // Request any captured audio URLs from background when script loads
 // This handles the case where audio was captured before content script was ready
 setTimeout(() => {
@@ -421,8 +428,24 @@ setTimeout(() => {
   });
 }, 2000); // Wait 2 seconds after script loads
 
+// Single unified message listener to avoid duplicates
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   console.log('?? Message received:', request);
+
+  // Handle audioUrlCaptured action
+  if (request.action === 'audioUrlCaptured') {
+    console.log('?? ? RECEIVED AUDIO URL FROM BACKGROUND:', request.url);
+    addAudioUrl(request.url);
+
+    // Auto-solve captcha if API key is available
+    if (window.currentApiKey && window.audioButtonClicked) {
+      console.log('?? Auto-solving captcha with received audio URL...');
+      solveAudioCaptchaAuto(request.url);
+    }
+
+    sendResponse({ received: true });
+    return true;
+  }
 
   if (request.action === 'ping') {
     console.log('?? Ping received, responding...');
@@ -445,22 +468,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     return true;
   }
 
-  if (request.action === 'findAndClickWithdraw') {
-    console.log('Finding and clicking withdraw button/link...');
-
-    (async () => {
-      try {
-        const result = await findAndClickWithdrawButton();
-        console.log('Withdraw button clicked:', result);
-        sendResponse({ success: true, result: result });
-      } catch (error) {
-        console.error('Withdraw button error:', error);
-        sendResponse({ success: false, error: error.message });
-      }
-    })();
-
-    return true;
-  }
+  // findAndClickWithdraw action removed - now using direct redirect
 
   if (request.action === 'redirectToWithdrawAndFill') {
     console.log('Navigate to withdraw page and fill form...');
@@ -475,39 +483,29 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         }
 
         console.log('Current URL:', window.location.href);
-        console.log('Trying to click withdraw button...');
 
-        // Try to click withdraw button first
-        const result = await findAndClickWithdrawButton();
+        // Check if already on withdraw page
+        if (window.location.href.includes('/Financial') && window.location.href.includes('withdraw')) {
+          console.log('Already on withdraw page, filling form directly...');
 
-        if (result.success) {
-          console.log('Successfully clicked withdraw button');
-
-          // Reset form filled flag so it will fill again on new page
+          // Reset form filled flag
           window.withdrawFormFilled = false;
           window.withdrawFormFilling = false;
 
-          // Wait for page to load, then fill form
+          // Wait a bit for page to be ready, then fill form
           setTimeout(() => {
-            console.log('Attempting to fill withdraw form after navigation...');
+            console.log('Attempting to fill withdraw form...');
             fillWithdrawForm();
-          }, 3000);
+          }, 2000); // Reduced from 3000 to 2000
 
-          sendResponse({ success: true, method: 'click' });
-        } else {
-          // Fallback to redirect if button not found
-          console.log('Withdraw button not found, using redirect fallback...');
-
-          const currentUrl = window.location.href;
-          const baseUrl = currentUrl.split('/Financial')[0].split('?')[0].split('#')[0];
-          const withdrawUrl = baseUrl + '/Financial?type=withdraw';
-
-          console.log('Base URL:', baseUrl);
-          console.log('Redirecting to:', withdrawUrl);
-
-          window.location.href = withdrawUrl;
-          sendResponse({ success: true, method: 'redirect' });
+          sendResponse({ success: true, method: 'direct_fill' });
+          return;
         }
+
+        console.log('Not on withdraw page - this should not happen with direct redirect');
+        console.log('Automation should redirect directly to withdraw URL');
+
+        sendResponse({ success: false, error: 'Not on withdraw page - automation should redirect directly' });
       } catch (error) {
         console.error('Error:', error);
         sendResponse({ success: false, error: error.message });
@@ -750,61 +748,174 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         window.isCheckingPromo = true; // Flag for auto-solving audio captcha
         window.promoButtonClicked = false; // Reset flag to allow clicking
 
-        // Wait for page to be ready
+        // 🔥 Wait for page to be fully ready (critical for setValue)
+        console.log('⏳ Waiting 2 seconds for page to fully render...');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
         // STEP 1: Fill username in form
         console.log('Step 1: Filling username...');
+        console.log('🔍 DEBUG: username received =', username);
+
+        // Mở rộng selector để tìm nhiều loại input username (như phiên bản cũ hoạt động tốt)
         const usernameInput = document.querySelector('input[placeholder*="tên người dùng"]') ||
           document.querySelector('input[placeholder*="Tên Tài Khoản"]') ||
-          document.querySelector('input[type="text"]');
+          document.querySelector('input[placeholder*="tên đăng nhập"]') ||
+          document.querySelector('input[placeholder*="Tên đăng nhập"]') ||
+          document.querySelector('input[placeholder*="Username"]') ||
+          document.querySelector('input[placeholder*="username"]') ||
+          document.querySelector('input[placeholder*="Tài khoản"]') ||
+          document.querySelector('input[placeholder*="tài khoản"]') ||
+          document.querySelector('input[name*="username"]') ||
+          document.querySelector('input[name*="account"]') ||
+          document.querySelector('input[id*="username"]') ||
+          document.querySelector('input[id*="account"]') ||
+          document.querySelector('input[type="text"]:first-of-type');
+
+        console.log('🔍 Found username input:', usernameInput ? (usernameInput.placeholder || usernameInput.name || usernameInput.id || 'no identifier') : 'NOT FOUND');
 
         if (usernameInput && username) {
+          console.log('📝 Filling username:', username);
           await fillInputAdvanced(usernameInput, username, true); // Fast mode
-          console.log('Username filled');
-          await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 300ms to 100ms
+          console.log('✅ Username filled');
+          await new Promise(resolve => setTimeout(resolve, 300)); // Tăng delay để đảm bảo value được set
         } else {
-          console.log('Username input not found or no username provided');
+          console.log('❌ Username input not found or no username provided');
+          console.log('🔍 DEBUG: username =', username);
+          console.log('🔍 DEBUG: All text inputs on page:', document.querySelectorAll('input[type="text"]').length);
         }
 
         // STEP 2: Click "Chọn Khuyến Mãi" button
         console.log('Step 2: Looking for promo button...');
-        const promoButton = findAndClickPromoButton();
+
+        // Đợi và retry tìm promo button (tab có thể bị throttle)
+        let promoButton = false;
+        let promoSearchAttempts = 0;
+        const maxPromoSearchAttempts = 10; // 10 x 500ms = 5 seconds max
+
+        while (!promoButton && promoSearchAttempts < maxPromoSearchAttempts) {
+          promoSearchAttempts++;
+
+          // Log tất cả elements để debug
+          const allElements = document.querySelectorAll('button, a, div, span');
+          const visibleCount = Array.from(allElements).filter(el => el.offsetParent !== null).length;
+          console.log(`🔍 [${promoSearchAttempts}/${maxPromoSearchAttempts}] Found ${visibleCount} visible elements`);
+
+          promoButton = findAndClickPromoButton();
+
+          if (promoButton) {
+            console.log(`✅ Promo button found after ${promoSearchAttempts * 500}ms`);
+            break;
+          }
+
+          console.log(`⏳ Promo button not found yet, waiting 500ms...`);
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
 
         if (promoButton) {
           console.log('Promo button clicked, waiting for popup...');
 
-          // Smart wait: Check if popup appeared (max 3 seconds)
+          // Smart wait: Check if popup appeared (max 5 seconds - increased from 3s)
           let popupReady = false;
           let popupWaitAttempts = 0;
-          const maxPopupWaitAttempts = 6; // 6 x 500ms = 3 seconds max
+          const maxPopupWaitAttempts = 10; // 10 x 500ms = 5 seconds max
 
           while (!popupReady && popupWaitAttempts < maxPopupWaitAttempts) {
             popupWaitAttempts++;
 
-            // Check if promo options are visible
+            // Check if promo options are visible (more selectors)
             const testPromo = document.querySelector('[class*="promo"]') ||
               document.querySelector('[class*="promotion"]') ||
-              document.querySelector('[class*="khuyen-mai"]');
+              document.querySelector('[class*="khuyen-mai"]') ||
+              document.querySelector('[class*="km-"]') ||
+              document.querySelector('.popup') ||
+              document.querySelector('.modal');
 
             if (testPromo && testPromo.offsetParent !== null) {
               popupReady = true;
-              console.log(`✅ Popup ready after ${popupWaitAttempts * 500}ms`);
+              console.log(`✅ Popup detected after ${popupWaitAttempts * 500}ms`);
               break;
             }
 
             await new Promise(resolve => setTimeout(resolve, 500));
           }
 
-          // STEP 3: Find and select TAIAPP promo
+          if (!popupReady) {
+            console.log('⚠️ Popup not detected after 5 seconds, continuing anyway...');
+          }
+
+          // STEP 3: Find and select TAIAPP promo (with retry)
           console.log('Step 3: Looking for TAIAPP promo...');
-          const taiappSelected = findAndSelectTaiappPromo();
+
+          let taiappSelected = false;
+          let taiappAttempts = 0;
+          const maxTaiappAttempts = 6; // 6 x 500ms = 3 seconds
+
+          while (!taiappSelected && taiappAttempts < maxTaiappAttempts) {
+            taiappAttempts++;
+            taiappSelected = findAndSelectTaiappPromo();
+
+            if (taiappSelected) {
+              console.log(`✅ TAIAPP promo selected after ${taiappAttempts * 500}ms`);
+              break;
+            }
+
+            console.log(`⏳ [${taiappAttempts}/${maxTaiappAttempts}] TAIAPP not found, waiting...`);
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
 
           if (taiappSelected) {
             console.log('TAIAPP promo selected');
-            await new Promise(resolve => setTimeout(resolve, 300)); // Reduced from 1000ms to 300ms
+            console.log('⏳ Waiting for "Xác thực tại đây" button to be rendered in DOM...');
 
-            // STEP 4: Click "Xác Thực Tại Đây" button
+            // Wait specifically for "Xác thực tại đây" button to appear
+            let verifyButtonExists = false;
+            let waitAttempts = 0;
+            const maxWaitAttempts = 10; // 10 x 500ms = 5 seconds
+
+            while (!verifyButtonExists && waitAttempts < maxWaitAttempts) {
+              waitAttempts++;
+              await new Promise(resolve => setTimeout(resolve, 500));
+
+              // Check specifically for "Xác thực tại đây" button
+              const verifyButton = document.querySelector('.audio-captcha-btn') ||
+                document.querySelector('#showAudioCaptcha') ||
+                document.querySelector('button[class*="audio-captcha"]');
+
+              if (verifyButton && verifyButton.offsetParent !== null) {
+                const buttonText = verifyButton.textContent.trim();
+                verifyButtonExists = true;
+                console.log(`✅ "Xác thực tại đây" button appeared after ${waitAttempts * 500}ms`);
+                console.log(`   Button text: "${buttonText}"`);
+                console.log(`   Button class: "${verifyButton.className}"`);
+                break;
+              }
+
+              console.log(`⏳ Waiting for verify button (attempt ${waitAttempts}/${maxWaitAttempts})...`);
+            }
+
+            if (!verifyButtonExists) {
+              console.log('⚠️ "Xác thực tại đây" button not found after 5s, but continuing search...');
+            }
+
+            // STEP 4: Click "Xác Thực Tại Đây" button (with retry)
             console.log('Step 4: Looking for "Xác Thực Tại Đây" button...');
-            const verifyClicked = await findAndClickVerifyButton();
+
+            let verifyClicked = false;
+            let verifyAttempts = 0;
+            const maxVerifyAttempts = 6; // 6 x 500ms = 3 seconds
+
+            while (!verifyClicked && verifyAttempts < maxVerifyAttempts) {
+              verifyAttempts++;
+              verifyClicked = await findAndClickVerifyButton();
+
+              if (verifyClicked) {
+                console.log(`✅ Verify button clicked after ${verifyAttempts * 500}ms`);
+                break;
+              }
+
+              console.log(`⏳ [${verifyAttempts}/${maxVerifyAttempts}] Verify button not found, waiting...`);
+              await new Promise(resolve => setTimeout(resolve, 500));
+            }
 
             if (verifyClicked) {
               console.log('Verify button clicked, waiting for captcha modal...');
@@ -1214,15 +1325,27 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
               return;
             }
 
-            // If we found NO login form AND page has loaded (notFoundFormCount > 0) = Already logged in
+            // If we found NO login form AND page has loaded (notFoundFormCount > 0) = Maybe already logged in
             if (notFoundFormCount > 0 && unknownCount < maxChecks) {
-              console.log('Page loaded but no login form = Already logged in!');
-              console.log('Skipping login, going directly to withdraw page...');
-              showNotification('✅ Đã đăng nhập rồi!\n\n💰 Chuyển thẳng đến trang rút tiền...');
-              console.log('Login completed. Use "Thêm Ngân Hàng" button if needed.');
-              window.autoLoginRunning = false;
-              sendResponse({ success: true, alreadyLoggedIn: true });
-              return;
+              console.log('Page loaded but no login form found...');
+
+              // Verify if truly logged in by checking for auth tokens
+              console.log('🔍 Verifying login status by checking auth tokens...');
+              const hasToken = checkLoginStatus();
+
+              if (hasToken) {
+                console.log('✅ Auth token found - truly already logged in!');
+                console.log('Skipping login, going directly to withdraw page...');
+                showNotification('✅ Đã đăng nhập rồi!\n\n💰 Chuyển thẳng đến trang rút tiền...');
+                console.log('Login completed. Use "Thêm Ngân Hàng" button if needed.');
+                window.autoLoginRunning = false;
+                sendResponse({ success: true, alreadyLoggedIn: true });
+                return;
+              } else {
+                console.log('❌ No auth token found - not actually logged in!');
+                console.log('🔄 Will try to find login form again or show error...');
+                // Continue to error handling below
+              }
             }
 
             // If all checks returned null (page never loaded) = ERROR
@@ -1541,38 +1664,157 @@ async function autoFillForm(username, password, withdrawPassword, fullname) {
     });
   }, 500);
 
-  console.log('?? Fill result:', filled);
+  console.log('📊 Fill result:', filled);
 
-  const autoSubmit = window.autoSubmitRegister || false;
-  console.log('?? Auto Submit Mode:', autoSubmit ? 'ENABLED ?' : 'DISABLED ?');
+  // FIXED: Always auto-submit when API key is available (like content-fixed.js)
+  const apiKey = window.currentApiKey || '';
+  const hasApiKey = apiKey && apiKey.trim() !== '';
 
-  if (autoSubmit) {
-    // Auto mode: Solve captcha and submit
-    console.log('?? Auto mode: Will solve captcha and submit automatically');
+  // Auto submit if API key available OR autoSubmitRegister flag is set
+  const autoSubmit = hasApiKey || window.autoSubmitRegister || false;
+  console.log('🔧 Auto Submit Mode:', autoSubmit ? 'ENABLED ✅' : 'DISABLED ❌');
+  console.log('🔑 API Key available:', hasApiKey ? 'YES' : 'NO');
 
-    setTimeout(() => {
-      console.log('?? Looking for captcha in register form (after delay)...');
+  // Handle captcha if present and API key available
+  const captchaInput = document.querySelector('input[formcontrolname="checkCode"]') ||
+    document.querySelector('input[placeholder*="xác minh"]') ||
+    document.querySelector('input[placeholder*="captcha"]') ||
+    document.querySelector('input[placeholder*="Captcha"]');
 
-      // Use API key if available (same as login)
-      const apiKey = window.currentApiKey || '';
-      console.log('?? API key available:', apiKey ? 'YES' : 'NO');
+  if (captchaInput && captchaInput.offsetParent !== null && hasApiKey) {
+    console.log('🔐 Captcha input found, attempting auto-solve');
 
-      if (apiKey && apiKey.trim() !== '') {
-        console.log('? API key available, will use for auto-solve');
-        solveCaptchaAuto(apiKey);
-      } else {
-        console.log('?? No API key provided, cannot solve captcha automatically');
-        showNotification('⚠️ Không có API key!\n\n⚠️ Vui lòng tự điền captcha và click "Đăng Ký"');
+    try {
+      const captchaSolved = await solveCaptchaAuto(apiKey);
+      filled.captcha = captchaSolved;
+
+      if (captchaSolved) {
+        console.log('✅ Captcha solved, preparing for submit...');
+
+        // Wait for captcha to be processed
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Verify captcha input still has value
+        const captchaValue = captchaInput.value;
+        console.log(`🔍 Captcha verification - Input value: "${captchaValue}"`);
+
+        if (captchaValue && captchaValue.length > 0) {
+          console.log('🚀 Captcha verified, attempting submit...');
+
+          // Find submit button
+          const submitButton = document.querySelector('button[type="submit"]') ||
+            document.querySelector('.submit-btn') ||
+            document.querySelector('.btn-submit') ||
+            document.querySelector('button.btn-primary') ||
+            document.querySelector('input[type="submit"]');
+
+          if (submitButton && submitButton.offsetParent !== null) {
+            console.log('✅ Found submit button, clicking...');
+
+            // Click submit button
+            submitButton.click();
+            submitButton.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+            // Also try form submit
+            const form = submitButton.closest('form');
+            if (form) {
+              form.dispatchEvent(new Event('submit', { bubbles: true }));
+            }
+
+            filled.submitted = true;
+            console.log('✅ Submit triggered successfully');
+
+            // Wait for server to process
+            console.log('⏳ Waiting for server to process registration...');
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            // Check token every 500ms for 10 seconds after submit
+            console.log('🔍 Starting token monitoring (500ms x 20 = 10s)...');
+
+            let tokenFound = false;
+            let attempts = 0;
+            const maxAttempts = 20; // 20 x 500ms = 10 seconds
+
+            const initialUrl = window.location.href;
+
+            const tokenMonitor = setInterval(() => {
+              attempts++;
+
+              const cookies = document.cookie;
+              const hasToken = cookies.includes('token=') ||
+                cookies.includes('_pat=') ||
+                localStorage.getItem('token');
+
+              const currentUrl = window.location.href;
+              const urlChanged = currentUrl !== initialUrl;
+              const stillOnRegister = currentUrl.includes('/Register');
+
+              console.log(`🔍 Check ${attempts}/${maxAttempts}: token=${hasToken ? 'YES' : 'NO'}, urlChanged=${urlChanged}, stillOnRegister=${stillOnRegister}`);
+
+              // Priority 1: Token found - immediate redirect
+              if (hasToken) {
+                tokenFound = true;
+                clearInterval(tokenMonitor);
+
+                console.log('🎉 TOKEN FOUND! Redirecting immediately...');
+                filled.submitSuccessful = true;
+
+                const withdrawUrl = window.location.origin + '/Financial?type=withdraw';
+                console.log('🚀 Redirect to:', withdrawUrl);
+
+                window.location.href = withdrawUrl;
+                filled.autoRedirected = true;
+                return;
+              }
+
+              // Priority 2: URL changed away from Register page (backup method)
+              if (urlChanged && !stillOnRegister) {
+                tokenFound = true;
+                clearInterval(tokenMonitor);
+
+                console.log('🔄 URL CHANGED away from Register page - assuming success');
+                filled.submitSuccessful = true;
+
+                const withdrawUrl = window.location.origin + '/Financial?type=withdraw';
+                console.log('🚀 Redirect to:', withdrawUrl);
+
+                window.location.href = withdrawUrl;
+                filled.autoRedirected = true;
+                return;
+              }
+
+              // Timeout after 10 seconds
+              if (attempts >= maxAttempts) {
+                clearInterval(tokenMonitor);
+                console.warn('⚠️ No token or URL change after 10 seconds - registration may have failed');
+                filled.submitMayHaveFailed = true;
+              }
+            }, 500); // Check every 500ms
+          } else {
+            console.warn('⚠️ Submit button not found');
+            filled.submitError = 'Submit button not found';
+          }
+        } else {
+          console.warn('⚠️ Captcha input lost value');
+          filled.captchaLost = true;
+        }
       }
-    }, 1000); // Reduced from 2000 to 1000 since we now await all fills
+    } catch (captchaError) {
+      console.error('❌ Captcha solve error:', captchaError);
+      filled.captchaError = captchaError.message;
+    }
+  } else if (autoSubmit && !hasApiKey) {
+    console.log('⚠️ Auto submit enabled but no API key - cannot solve captcha');
+    showNotification('⚠️ Không có API key!\n\n⚠️ Vui lòng tự điền captcha và click "Đăng Ký"');
   } else {
-    // Manual mode: Only fill form, user does the rest
-    console.log('?? Manual mode: Form filled, user will handle captcha and submit');
+    console.log('📝 Manual mode: Form filled, user will handle captcha and submit');
   }
 
-  // Show success notification
-  if (autoSubmit) {
-    showNotification('✅ Đã điền form!\n\n⏳ Tool sẽ tự động giải captcha và submit...');
+  // Show notification
+  if (filled.submitted) {
+    showNotification('✅ Đã điền form và submit!\n\n⏳ Đang xử lý...');
+  } else if (hasApiKey) {
+    showNotification('✅ Đã điền form!\n\n⏳ Đang giải captcha...');
   } else {
     showNotification('✅ Đã điền form!\n\n⚠️ Vui lòng tự điền captcha và click "Đăng Ký"');
   }
@@ -1723,18 +1965,30 @@ async function fillInputAdvanced(input, value, fastMode = false, noFocus = false
       await new Promise(resolve => setTimeout(resolve, 50));
     }
 
-    if (input.value !== '') {
-      console.log('   Clearing existing value:', input.value);
-      input.value = '';
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
+    // CRITICAL FIX: Always clear input first to reset proxy state
+    console.log('🔄 Clearing input to reset proxy state...');
 
+    // Method 1: Clear using native setter (resets proxy)
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       window.HTMLInputElement.prototype,
       'value'
     ).set;
 
-    // Set value directly (no typing simulation)
+    if (nativeInputValueSetter) {
+      // First clear to empty string to reset proxy
+      nativeInputValueSetter.call(input, '');
+      console.log('   ✅ Cleared using native setter');
+    } else {
+      input.value = '';
+      console.log('   ✅ Cleared using direct assignment');
+    }
+
+    // Method 2: Trigger input event after clearing to notify frameworks
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 50));
+
+    // Method 3: Now set the new value
+    console.log('📝 Setting new value:', value);
     if (nativeInputValueSetter) {
       nativeInputValueSetter.call(input, value.toString());
     } else {
@@ -1746,7 +2000,15 @@ async function fillInputAdvanced(input, value, fastMode = false, noFocus = false
     input.dispatchEvent(new Event('change', { bubbles: true }));
     input.dispatchEvent(new Event('blur', { bubbles: true }));
 
-    console.log('✅ Value set successfully:', input.value);
+    // Verify the value was set correctly
+    const finalValue = input.value;
+    console.log('✅ Value set successfully:', finalValue);
+
+    if (finalValue !== value.toString()) {
+      console.warn('⚠️ Warning: Final value differs from expected!');
+      console.warn('   Expected:', value.toString());
+      console.warn('   Actual:', finalValue);
+    }
 
     return true;
   } catch (e) {
@@ -2449,127 +2711,133 @@ function findAndClickRegisterButton() {
   return { success: false };
 }
 
-// Find and click withdraw button - PRIORITY: Use attributes, handle "Nạp - Rút" submenu
+// findAndClickWithdrawButton function removed - now using direct redirect
 async function findAndClickWithdrawButton() {
-  console.log('🔍 Searching for withdraw button...');
-  console.log('📍 Current URL:', window.location.href);
-
-  const currentUrl = window.location.href.toLowerCase();
-  if (currentUrl.includes('/financial') && currentUrl.includes('withdraw')) {
-    console.log('✅ Already on withdraw page');
-    return { success: true, method: 'already-on-page' };
-  }
-
-  // STEP 1: Check if "Nạp - Rút" menu needs to be clicked first
-  console.log('🔍 Step 1: Checking for "Nạp - Rút" menu...');
-  const walletIcon = document.querySelector('i.icon.wallet');
-  let napRutElement = null;
-
-  if (walletIcon && walletIcon.offsetParent !== null) {
-    console.log('✅ Found wallet icon');
-    let parent = walletIcon.parentElement;
-    let depth = 0;
-    while (parent && depth < 5) {
-      if (parent.tagName === 'LI' || parent.tagName === 'DIV') {
-        napRutElement = parent;
-        console.log('  → Found parent:', parent.tagName);
-        break;
-      }
-      parent = parent.parentElement;
-      depth++;
-    }
-  }
-
-  if (!napRutElement) {
-    const allElements = document.querySelectorAll('span, div, li');
-    for (const el of allElements) {
-      if (el.textContent.trim() === 'Nạp - Rút' && el.offsetParent !== null) {
-        console.log('✅ Found "Nạp - Rút" by text');
-        napRutElement = el.closest('li') || el.closest('div') || el;
-        break;
-      }
-    }
-  }
-
-  if (napRutElement) {
-    const submenu = document.querySelector('ul.subFinancial, .subFinancial');
-    if (!submenu || submenu.offsetParent === null) {
-      console.log('  → Opening submenu...');
-      napRutElement.click();
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-  }
-
-  // STEP 2: Find withdraw button
-  console.log('🔍 Step 2: Looking for withdraw button...');
-
-  // PRIORITY 1: href="/Financial?type=withdraw"
-  let el = document.querySelector('a[href="/Financial?type=withdraw"], a[href*="Financial?type=withdraw"]');
-  if (el && el.offsetParent !== null) {
-    console.log('✅ Found by href');
-    el.click();
-    return { success: true, method: 'href' };
-  }
-
-  // PRIORITY 2: translate="Shared_Withdraw"
-  el = document.querySelector('[translate="Shared_Withdraw"]');
-  if (el && el.offsetParent !== null) {
-    console.log('✅ Found by translate');
-    (el.closest('a') || el.closest('li') || el).click();
-    return { success: true, method: 'translate' };
-  }
-
-  // PRIORITY 3: icon class "icon withdraw"
-  el = document.querySelector('i.icon.withdraw');
-  if (el && el.offsetParent !== null) {
-    console.log('✅ Found by icon class');
-    (el.closest('a') || el.closest('li') || el.parentElement).click();
-    return { success: true, method: 'icon' };
-  }
-
-  // PRIORITY 4: withdrawal/withdraw class
-  el = document.querySelector('i.withdrawal, i.withdraw, .withdrawal, .withdraw');
-  if (el && el.offsetParent !== null) {
-    console.log('✅ Found by class');
-    (el.closest('a') || el.closest('li') || el.parentElement).click();
-    return { success: true, method: 'class' };
-  }
-
-  // PRIORITY 5: fas fa-hand-holding-usd
-  el = document.querySelector('i.fas.fa-hand-holding-usd');
-  if (el && el.offsetParent !== null) {
-    console.log('✅ Found by FA icon');
-    (el.closest('a') || el.closest('li') || el.parentElement).click();
-    return { success: true, method: 'fa-icon' };
-  }
-
-  // PRIORITY 6: routerlink/href
-  const selectors = ['[routerlink*="withdraw"]', '[routerlink*="Withdraw"]', 'a[href*="withdraw"]', 'a[href*="Withdraw"]', 'a[href*="rut-tien"]'];
-  for (const sel of selectors) {
-    el = document.querySelector(sel);
-    if (el && el.offsetParent !== null) {
-      console.log('✅ Found by attribute:', sel);
-      el.click();
-      return { success: true, method: 'attribute' };
-    }
-  }
-
-  // PRIORITY 7: Text fallback
-  console.log('⚠️ Trying text search...');
-  const clickable = document.querySelectorAll('button, a, li, div[tabindex], span[tabindex]');
-  for (const el of clickable) {
-    if (el.offsetParent === null) continue;
-    const text = el.textContent.trim().toUpperCase();
-    if (text === 'RÚT TIỀN' || text === 'RÚT TIỀN NGAY' || text === 'WITHDRAW') {
-      console.log('✅ Found by text');
-      el.click();
-      return { success: true, method: 'text' };
-    }
-  }
-
-  console.log('❌ Not found');
-  return { success: false };
+  console.log('⚠️ DEPRECATED: findAndClickWithdrawButton() - now using direct redirect');
+  return { success: false, method: 'deprecated' };
 }
+
+// REMOVED OLD IMPLEMENTATION:
+/*
+console.log('🔍 Searching for withdraw button...');
+console.log('📍 Current URL:', window.location.href);
+
+const currentUrl = window.location.href.toLowerCase();
+if (currentUrl.includes('/financial') && currentUrl.includes('withdraw')) {
+  console.log('✅ Already on withdraw page');
+  return { success: true, method: 'already-on-page' };
+}
+
+// STEP 1: Check if "Nạp - Rút" menu needs to be clicked first
+console.log('🔍 Step 1: Checking for "Nạp - Rút" menu...');
+const walletIcon = document.querySelector('i.icon.wallet');
+let napRutElement = null;
+
+if (walletIcon && walletIcon.offsetParent !== null) {
+  console.log('✅ Found wallet icon');
+  let parent = walletIcon.parentElement;
+  let depth = 0;
+  while (parent && depth < 5) {
+    if (parent.tagName === 'LI' || parent.tagName === 'DIV') {
+      napRutElement = parent;
+      console.log('  → Found parent:', parent.tagName);
+      break;
+    }
+    parent = parent.parentElement;
+    depth++;
+  }
+}
+
+if (!napRutElement) {
+  const allElements = document.querySelectorAll('span, div, li');
+  for (const el of allElements) {
+    if (el.textContent.trim() === 'Nạp - Rút' && el.offsetParent !== null) {
+      console.log('✅ Found "Nạp - Rút" by text');
+      napRutElement = el.closest('li') || el.closest('div') || el;
+      break;
+    }
+  }
+}
+
+if (napRutElement) {
+  const submenu = document.querySelector('ul.subFinancial, .subFinancial');
+  if (!submenu || submenu.offsetParent === null) {
+    console.log('  → Opening submenu...');
+    napRutElement.click();
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+}
+
+// STEP 2: Find withdraw button
+console.log('🔍 Step 2: Looking for withdraw button...');
+
+// PRIORITY 1: href="/Financial?type=withdraw"
+let el = document.querySelector('a[href="/Financial?type=withdraw"], a[href*="Financial?type=withdraw"]');
+if (el && el.offsetParent !== null) {
+  console.log('✅ Found by href');
+  el.click();
+  return { success: true, method: 'href' };
+}
+
+// PRIORITY 2: translate="Shared_Withdraw"
+el = document.querySelector('[translate="Shared_Withdraw"]');
+if (el && el.offsetParent !== null) {
+  console.log('✅ Found by translate');
+  (el.closest('a') || el.closest('li') || el).click();
+  return { success: true, method: 'translate' };
+}
+
+// PRIORITY 3: icon class "icon withdraw"
+el = document.querySelector('i.icon.withdraw');
+if (el && el.offsetParent !== null) {
+  console.log('✅ Found by icon class');
+  (el.closest('a') || el.closest('li') || el.parentElement).click();
+  return { success: true, method: 'icon' };
+}
+
+// PRIORITY 4: withdrawal/withdraw class
+el = document.querySelector('i.withdrawal, i.withdraw, .withdrawal, .withdraw');
+if (el && el.offsetParent !== null) {
+  console.log('✅ Found by class');
+  (el.closest('a') || el.closest('li') || el.parentElement).click();
+  return { success: true, method: 'class' };
+}
+
+// PRIORITY 5: fas fa-hand-holding-usd
+el = document.querySelector('i.fas.fa-hand-holding-usd');
+if (el && el.offsetParent !== null) {
+  console.log('✅ Found by FA icon');
+  (el.closest('a') || el.closest('li') || el.parentElement).click();
+  return { success: true, method: 'fa-icon' };
+}
+
+// PRIORITY 6: routerlink/href
+const selectors = ['[routerlink*="withdraw"]', '[routerlink*="Withdraw"]', 'a[href*="withdraw"]', 'a[href*="Withdraw"]', 'a[href*="rut-tien"]'];
+for (const sel of selectors) {
+  el = document.querySelector(sel);
+  if (el && el.offsetParent !== null) {
+    console.log('✅ Found by attribute:', sel);
+    el.click();
+    return { success: true, method: 'attribute' };
+  }
+}
+
+// PRIORITY 7: Text fallback
+console.log('⚠️ Trying text search...');
+const clickable = document.querySelectorAll('button, a, li, div[tabindex], span[tabindex]');
+for (const el of clickable) {
+  if (el.offsetParent === null) continue;
+  const text = el.textContent.trim().toUpperCase();
+  if (text === 'RÚT TIỀN' || text === 'RÚT TIỀN NGAY' || text === 'WITHDRAW') {
+    console.log('✅ Found by text');
+    el.click();
+    return { success: true, method: 'text' };
+  }
+}
+
+console.log('❌ Not found');
+return { success: false };
+*/
 
 
 // Wrapper function that accepts apiKey parameter
@@ -3079,7 +3347,7 @@ async function clickTaiappPromo(element) {
  * Find and click "X�c Th?c T?i ��y" button
  */
 function findAndClickVerifyButton() {
-  console.log('?? Finding "X�c Th?c T?i ��y" button...');
+  console.log('🔍 Finding verify button (ENHANCED for 88vv/33win)...');
 
   const allElements = [
     ...document.querySelectorAll('button'),
@@ -3087,119 +3355,151 @@ function findAndClickVerifyButton() {
     ...document.querySelectorAll('div[role="button"]'),
     ...document.querySelectorAll('[onclick]'),
     ...document.querySelectorAll('div'),
-    ...document.querySelectorAll('span')
+    ...document.querySelectorAll('span'),
+    ...document.querySelectorAll('input[type="button"]'),
+    ...document.querySelectorAll('input[type="submit"]')
   ];
 
-  console.log(`?? Found ${allElements.length} total elements`);
+  console.log(`🔍 Found ${allElements.length} total elements`);
 
   const visibleElements = allElements.filter(el => {
     return el.offsetParent !== null && el.clientHeight > 0 && el.clientWidth > 0;
   });
 
-  console.log(`??? Visible elements: ${visibleElements.length}`);
+  console.log(`👁️ Visible elements: ${visibleElements.length}`);
 
-  console.log('?? Listing all button-like elements:');
-  const buttons = visibleElements.filter(el => {
-    return el.tagName === 'BUTTON' ||
-      el.tagName === 'A' ||
-      el.getAttribute('role') === 'button' ||
-      el.onclick ||
-      el.style.cursor === 'pointer';
+  // ENHANCED: Log ALL visible text elements for 88vv/33win debugging
+  console.log('📋 ALL visible text elements (for debugging):');
+  visibleElements.slice(0, 50).forEach((el, i) => {
+    const text = el.textContent.trim();
+    if (text && text.length < 100) {
+      console.log(`  ${i}: "${text}" (${el.tagName}.${el.className})`);
+    }
   });
 
-  buttons.slice(0, 20).forEach((btn, i) => {
-    const text = btn.textContent.trim();
-    console.log(`  ${i}: "${text}" (${btn.tagName}.${btn.className})`);
-  });
-
-  // Keywords for verify button
+  // FOCUSED: Only verify button keywords (NOT submit button)
   const verifyKeywords = [
-    'xác thực tại đây',
-    'xac thuc tai day',
-    'xác thực',
-    'xac thuc',
-    'verify',
-    'confirm',
-    'xác nhận',
-    'xac nhan'
+    // Primary verify button keywords - EXACT MATCH ONLY
+    'xác thực tại đây', 'xac thuc tai day', 'xác thực', 'xac thuc',
+    'verify', 'confirm', 'xác nhận', 'xac nhan'
+    // NOTE: 'nhận khuyến mãi' is for SUBMIT button, not verify button
   ];
 
-  console.log('?? Method 1: Searching by exact text...');
-  for (let element of visibleElements) {
-    const text = element.textContent.trim().toLowerCase();
+  console.log('🎯 Method 0: Direct ID/Class search (88vv/33win specific)...');
+  // Priority search for the exact button you found
+  const directSelectors = [
+    '#showAudioCaptcha',
+    '.audio-captcha-btn',
+    'button[id="showAudioCaptcha"]',
+    'button.audio-captcha-btn',
+    'button[class*="audio-captcha"]'
+  ];
 
-    // Skip if too long
-    if (text.length > 100) continue;
-
-    for (let keyword of verifyKeywords) {
-      if (text === keyword) {
-        console.log('? Found verify button by exact text:', text);
+  for (let selector of directSelectors) {
+    const element = document.querySelector(selector);
+    console.log(`🔍 Checking selector "${selector}": ${element ? 'FOUND' : 'NOT FOUND'}`);
+    if (element) {
+      console.log(`   - Visible: ${element.offsetParent !== null}`);
+      console.log(`   - Text: "${element.textContent.trim()}"`);
+      if (element.offsetParent !== null) {
+        const text = element.textContent.trim();
+        console.log(`✅ Found verify button by direct selector "${selector}": "${text}"`);
         clickVerifyButton(element);
         return true;
       }
     }
   }
 
-  console.log('?? Method 2: Searching by partial text...');
+  console.log('❌ Method 0 failed - no direct selectors found');
+
+  console.log('🎯 Method 1: EXACT keyword search (no partial matches)...');
   for (let element of visibleElements) {
     const text = element.textContent.trim().toLowerCase();
 
-    // Skip if too long
-    if (text.length > 100) continue;
+    if (!text || text.length > 100) continue;
 
-    if (text.includes('xác thực tại đây') ||
-      text.includes('xac thuc tai day') ||
-      text.includes('xác thực')) {
-      console.log('? Found verify button by partial text:', text);
-      clickVerifyButton(element);
-      return true;
+    // EXACT MATCH ONLY - no partial matches to avoid confusion
+    for (let keyword of verifyKeywords) {
+      if (text === keyword) {
+        console.log(`✅ Found verify button by EXACT keyword: "${text}"`);
+        clickVerifyButton(element);
+        return true;
+      }
     }
   }
 
-  console.log('?? Method 3: Searching for red button...');
+  console.log('🎯 Method 2: Button-like elements with action words...');
+  const actionWords = ['xác', 'verify', 'confirm', 'nhận', 'get', 'apply', 'submit', 'ok', 'lấy'];
+
+  for (let element of visibleElements) {
+    const isButtonLike = element.tagName === 'BUTTON' ||
+      element.tagName === 'A' ||
+      element.getAttribute('role') === 'button' ||
+      element.onclick ||
+      element.style.cursor === 'pointer' ||
+      element.className.includes('btn') ||
+      element.className.includes('button');
+
+    if (isButtonLike) {
+      const text = element.textContent.trim().toLowerCase();
+
+      for (let word of actionWords) {
+        if (text.includes(word) && text.length < 50 && text.length > 0) {
+          console.log(`✅ Found action button: "${text}" (contains: ${word})`);
+          clickVerifyButton(element);
+          return true;
+        }
+      }
+    }
+  }
+
+  console.log('🎯 Method 3: Colored buttons (red/orange/green)...');
   for (let element of visibleElements) {
     const style = window.getComputedStyle(element);
     const bgColor = style.backgroundColor;
     const text = element.textContent.trim().toLowerCase();
 
-    if (bgColor.includes('rgb(') && text.length < 100) {
+    if (bgColor.includes('rgb(') && text && text.length < 100 && text.length > 0) {
       const rgb = bgColor.match(/\d+/g);
       if (rgb && rgb.length >= 3) {
         const r = parseInt(rgb[0]);
         const g = parseInt(rgb[1]);
         const b = parseInt(rgb[2]);
 
-        // Red button: R > 200, G < 100, B < 100
-        if (r > 200 && g < 100 && b < 100) {
-          if (text.includes('xác') || text.includes('verify') || text.includes('thực')) {
-            console.log('? Found red verify button:', text);
-            clickVerifyButton(element);
-            return true;
-          }
+        // Any prominent colored button
+        if ((r > 150 && g < 150) || (r > 150 && g > 150 && b < 100) || (g > 150 && r < 100)) {
+          console.log(`🎨 Found colored button: "${text}" (color: ${bgColor})`);
+          clickVerifyButton(element);
+          return true;
         }
       }
     }
   }
 
-  console.log('?? Method 4: Searching by class name...');
-  const verifyClassElements = document.querySelectorAll(
-    '[class*="verify"], [class*="Verify"], [class*="confirm"], [class*="Confirm"], ' +
-    '[class*="xac-thuc"], [class*="xacthuc"]'
-  );
+  console.log('🎯 Method 4: Class-based search (enhanced)...');
+  const verifySelectors = [
+    '[class*="verify"]', '[class*="Verify"]', '[class*="confirm"]', '[class*="Confirm"]',
+    '[class*="submit"]', '[class*="Submit"]', '[class*="btn"]', '[class*="button"]',
+    '[class*="apply"]', '[class*="Apply"]', '[class*="xac-thuc"]', '[class*="xacthuc"]',
+    '[class*="nhan"]', '[class*="get"]', '[class*="action"]', '[class*="primary"]'
+  ];
 
-  for (let element of verifyClassElements) {
-    if (element.offsetParent !== null) {
-      const text = element.textContent.trim();
-      console.log('? Found verify button by class:', element.className);
-      console.log('   Text:', text);
-      clickVerifyButton(element);
-      return true;
+  for (let selector of verifySelectors) {
+    const elements = document.querySelectorAll(selector);
+    for (let element of elements) {
+      if (element.offsetParent !== null) {
+        const text = element.textContent.trim();
+        if (text && text.length < 100 && text.length > 0) {
+          console.log(`✅ Found by class "${selector}": "${text}"`);
+          clickVerifyButton(element);
+          return true;
+        }
+      }
     }
   }
 
-  console.log('No "Xác Thực Tại Đây" button found');
-  console.log('User may need to click manually');
-  showNotification('⚠️ Không tìm thấy nút!');
+  console.log('❌ No verify button found after ENHANCED search');
+  console.log('💡 This might be normal for 88vv/33win - some sites may not have this step');
 
   return false;
 }
@@ -3226,7 +3526,7 @@ async function clickVerifyButton(element) {
   // Click immediately with minimal delay (just for scroll to complete)
   await new Promise(resolve => setTimeout(resolve, 200));
 
-  console.log('??? Clicking verify button with natural simulation...');
+  console.log('🎯 Using simple click method (like working package)...');
 
   const clickSuccess = await clickElementNaturally(element);
 
@@ -3240,8 +3540,12 @@ async function clickVerifyButton(element) {
     showNotification('✅ Đã xác thực (fallback)!');
   }
 
-  // Click audio button immediately after verify (minimal delay)
+  // After clicking verify button, wait and check for captcha modal
+  // Simple delay like working package (antisena)
   await new Promise(resolve => setTimeout(resolve, 300));
+
+  // Now click "TẠO AUDIO CAPTCHA" button in the modal
+  console.log('🎵 Looking for "TẠO AUDIO CAPTCHA" button in modal...');
   findAndClickCreateAudioButton();
 }
 
@@ -4431,8 +4735,8 @@ function startLoginSuccessMonitor() {
       // Click withdraw button instead of redirect
       console.log('Finding and clicking withdraw button in 2 seconds...');
       setTimeout(async () => {
-        console.log('NOW calling findAndClickWithdrawButton()...');
-        const result = await findAndClickWithdrawButton();
+        console.log('REMOVED: findAndClickWithdrawButton() - now using direct redirect');
+        const result = { success: false, method: 'removed' };
         if (result.success) {
           console.log('Successfully clicked withdraw button');
         } else {
@@ -4456,7 +4760,7 @@ function startLoginSuccessMonitor() {
         console.log('No token found, but have withdraw info');
         console.log('Will try to click withdraw button anyway (maybe login successful but no token yet)...');
         setTimeout(async () => {
-          const result = await findAndClickWithdrawButton();
+          const result = { success: false, method: 'removed' }; // REMOVED: findAndClickWithdrawButton()
           if (!result.success) {
             console.log('Could not find withdraw button, trying redirect...');
             redirectToWithdrawPage();
@@ -4549,39 +4853,78 @@ function fillWithdrawForm() {
   const { bankName, bankBranch, accountNumber } = window.withdrawInfo;
   console.log('Withdraw info:', { bankName, bankBranch, accountNumber });
 
-  // EARLY CHECK: See if bank already exists
+  // EARLY CHECK: See if bank already exists (FIXED logic)
   console.log('Early check: Does bank already exist?');
-  const hasFullNameLabel = Array.from(document.querySelectorAll('div, span, p, td, th, label')).some(el => {
-    const text = (el.textContent || '').trim().toLowerCase();
-    return (text === 'họ và tên thật' || text === 'họ và tên') &&
-      text.length < 50 &&
-      !el.querySelector('input');
-  });
 
-  if (hasFullNameLabel) {
-    console.log('Bank already exists! Stopping.');
-    showNotification('✅ Đã có ngân hàng rồi!\n\n💳 Tài khoản đã được thêm trước đó.\n\n🛑 Dừng tool.');
-    window.withdrawFormFilled = true;
-    sessionStorage.removeItem('shouldRedirectToWithdraw');
-    return;
+  // QUAN TRỌNG: Kiểm tra xem có FORM input không trước
+  // Nếu có form input thì CHƯA thêm bank (form chỉ hiển thị khi chưa có bank)
+  const bankFormExists = document.querySelector('mat-select[formcontrolname="bankName"]') ||
+    document.querySelector('[formcontrolname="bankName"]') ||
+    document.querySelector('[formcontrolname="city"]') ||
+    document.querySelector('[formcontrolname="account"]') ||
+    document.querySelector('input[placeholder*="thành phố"]') ||
+    document.querySelector('input[placeholder*="9704"]') ||
+    document.querySelector('input[placeholder*="chi nhánh"]');
+
+  if (bankFormExists) {
+    console.log('Bank form input found - bank NOT added yet, proceeding to fill...');
+    // Không return, tiếp tục fill form
+  } else {
+    // Chỉ kiểm tra bank-detail khi KHÔNG có form
+    const bankDetailDiv = document.querySelector('.bank-detail, .px-4.bank-detail');
+    let hasBankInfo = false;
+
+    if (bankDetailDiv) {
+      // Verify bank-detail có chứa value thực sự
+      const rows = bankDetailDiv.querySelectorAll('.block.w-full');
+      rows.forEach(row => {
+        const valueSpan = row.querySelector('span.text-right, span:last-child');
+        if (valueSpan) {
+          const value = valueSpan.textContent.trim();
+          if (value && value.length > 2 && !value.includes('Vui lòng') && !value.includes('Ví dụ')) {
+            hasBankInfo = true;
+          }
+        }
+      });
+    }
+
+    if (hasBankInfo) {
+      console.log('Bank already exists! Stopping.');
+      showNotification('✅ Đã có ngân hàng rồi!\n\n💳 Tài khoản đã được thêm trước đó.\n\n🛑 Dừng tool.');
+      window.withdrawFormFilled = true;
+      sessionStorage.removeItem('shouldRedirectToWithdraw');
+      return;
+    }
   }
 
   console.log('No existing bank found, proceeding to fill form...');
 
   let attempts = 0;
-  const maxAttempts = 10;
+  const maxAttempts = 15; // Increased from 10 to 15
 
   const fillInterval = setInterval(() => {
     attempts++;
     console.log(`[${attempts}/${maxAttempts}] Looking for withdraw form...`);
 
-    // PRIORITY: Find by formcontrolname (Angular forms)
+    // ENHANCED: Multiple selector strategies
     const bankDropdown = document.querySelector('[formcontrolname="bankName"]') ||
-      document.querySelector('[formcontrolname="bank"]');
+      document.querySelector('[formcontrolname="bank"]') ||
+      document.querySelector('select[name*="bank"]') ||
+      document.querySelector('select') ||
+      document.querySelector('mat-select');
+
     const branchInput = document.querySelector('[formcontrolname="city"]') ||
-      document.querySelector('[formcontrolname="branch"]');
+      document.querySelector('[formcontrolname="branch"]') ||
+      document.querySelector('input[placeholder*="chi nhánh"]') ||
+      document.querySelector('input[placeholder*="thành phố"]') ||
+      document.querySelector('input[name*="branch"]') ||
+      document.querySelector('input[name*="city"]');
+
     const accountInput = document.querySelector('[formcontrolname="account"]') ||
-      document.querySelector('[formcontrolname="accountNumber"]');
+      document.querySelector('[formcontrolname="accountNumber"]') ||
+      document.querySelector('input[placeholder*="tài khoản"]') ||
+      document.querySelector('input[placeholder*="số tài khoản"]') ||
+      document.querySelector('input[name*="account"]');
 
     console.log('Found elements:', {
       bankDropdown: !!bankDropdown,
@@ -4613,12 +4956,17 @@ function fillWithdrawForm() {
           await clickElementNaturally(bankDropdown);
           await new Promise(resolve => setTimeout(resolve, 300)); // Reduced from 1000ms to 300ms
 
-          // Find bank option in dropdown
+          // Find bank option in dropdown với mapping chính xác
           const dropdownOptions = document.querySelectorAll('mat-option, [role="option"]');
           console.log(`Found ${dropdownOptions.length} options`);
 
           let found = false;
-          const searchName = bankName.toUpperCase();
+
+          // Sử dụng mapping từ banks.js
+          const mappedBankName = window.mapBankName ? window.mapBankName(bankName) : bankName;
+          console.log(`🏦 Original bank: ${bankName} → Mapped: ${mappedBankName}`);
+
+          const searchName = mappedBankName.toUpperCase();
 
           for (const option of dropdownOptions) {
             // PRIORITY 1: Check value attribute
@@ -4629,20 +4977,22 @@ function fillWithdrawForm() {
             // PRIORITY 2: Check text content
             const text = option.textContent.trim().toUpperCase();
 
-            const isMatch = value === searchName ||
-              value.includes(searchName) ||
+            // Exact match trước, sau đó mới includes
+            const isExactMatch = value === searchName ||
               dataValue === searchName ||
-              dataValue.includes(searchName) ||
               ngReflectValue === searchName ||
+              text === searchName;
+
+            const isPartialMatch = value.includes(searchName) ||
+              dataValue.includes(searchName) ||
               ngReflectValue.includes(searchName) ||
-              text === searchName ||
               text.includes(searchName);
 
-            if (isMatch) {
-              console.log(`Found bank: "${text}"`);
+            if (isExactMatch || isPartialMatch) {
+              console.log(`✅ Found bank match: "${text}" (${isExactMatch ? 'exact' : 'partial'})`);
               await clickElementNaturally(option);
               found = true;
-              await new Promise(resolve => setTimeout(resolve, 200)); // Reduced from 500ms to 200ms
+              await new Promise(resolve => setTimeout(resolve, 200));
               break;
             }
           }
@@ -4687,10 +5037,17 @@ function fillWithdrawForm() {
         window.withdrawFormFilled = true;
         window.withdrawFormFilling = false;
 
-        // Look for submit button
+        // Look for submit button (enhanced selectors)
         console.log('Looking for submit button...');
         const submitButton = document.querySelector('button[type="submit"]') ||
-          document.querySelector('[translate="Common_Submit"]');
+          document.querySelector('[translate="Common_Submit"]') ||
+          document.querySelector('button:contains("Gửi đi")') ||
+          document.querySelector('button:contains("Submit")') ||
+          Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.trim().includes('Gửi đi') ||
+            btn.textContent.trim().includes('Submit') ||
+            btn.textContent.trim().includes('Xác nhận')
+          );
 
         if (submitButton && submitButton.offsetParent !== null) {
           console.log('Found submit button');
@@ -4722,15 +5079,24 @@ function fillWithdrawForm() {
       clearInterval(fillInterval);
       console.log('Timeout - could not find withdraw form');
 
-      // Check if bank already exists
-      const hasFullNameLabel = Array.from(document.querySelectorAll('div, span, p, td, th, label')).some(el => {
-        const text = (el.textContent || '').trim().toLowerCase();
-        return (text === 'họ và tên thật' || text === 'họ và tên') &&
-          text.length < 50 &&
-          !el.querySelector('input');
-      });
+      // Check if bank already exists (FIXED logic - only check bank-detail div)
+      const bankDetailDiv = document.querySelector('.bank-detail, .px-4.bank-detail');
+      let hasBankInfo = false;
 
-      if (hasFullNameLabel) {
+      if (bankDetailDiv) {
+        const rows = bankDetailDiv.querySelectorAll('.block.w-full');
+        rows.forEach(row => {
+          const valueSpan = row.querySelector('span.text-right, span:last-child');
+          if (valueSpan) {
+            const value = valueSpan.textContent.trim();
+            if (value && value.length > 2 && !value.includes('Vui lòng') && !value.includes('Ví dụ')) {
+              hasBankInfo = true;
+            }
+          }
+        });
+      }
+
+      if (hasBankInfo) {
         console.log('Bank already exists! No need to add.');
         showNotification('✅ Đã có ngân hàng rồi!\n\n💳 Tài khoản đã được thêm trước đó.\n\n🛑 Dừng tool.');
         window.withdrawFormFilled = true;

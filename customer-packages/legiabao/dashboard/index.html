@@ -21,10 +21,6 @@
                 <button class="btn btn-create-profile" onclick="openCreateProfileModal()" title="Tạo profile mới">
                     ➕ Tạo Profile
                 </button>
-                <button class="btn btn-secondary" onclick="clearAllRunningStatuses()"
-                    title="Clear tất cả trạng thái running">
-                    🔄 Clear Running
-                </button>
                 <a href="/license.html" class="btn btn-secondary" id="licenseBtn" title="Kích hoạt bản quyền"
                     style="text-decoration: none;">
                     🔑 Nhập Key
@@ -72,7 +68,6 @@
                         </div>
                         <div class="button-group">
                             <button class="btn btn-primary" onclick="saveGlobalApiKey()">💾 Lưu</button>
-                            <button class="btn btn-secondary" onclick="checkGlobalBalance()">💰 Kiểm Tra</button>
                         </div>
                         <div id="apiKeyInfo" class="api-info" style="display: none;">
                             <div class="info-row">
@@ -97,7 +92,6 @@
                     <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #4a5568;">📱 SIM API (codesim.net)</h3>
                     <div class="api-usage-note">
                         <span class="usage-badge usage-badge-hai2vip">🎲 HAI2VIP Tool</span>
-                        <span class="usage-badge-optional">⚠️ Chỉ HAI2VIP</span>
                     </div>
                     <div class="api-key-panel">
                         <div class="input-with-toggle">
@@ -109,7 +103,6 @@
                         </div>
                         <div class="button-group">
                             <button class="btn btn-primary" onclick="saveSimApiKey()">💾 Lưu</button>
-                            <button class="btn btn-secondary" onclick="checkSimBalance()">💰 Kiểm Tra</button>
                         </div>
                         <div id="simApiKeyInfo" class="api-info" style="display: none;">
                             <div class="info-row">
@@ -122,7 +115,7 @@
                             </div>
                         </div>
                         <div style="font-size: 11px; color: #718096; margin-top: 8px;">
-                            ℹ️ Chỉ cần cho HAI2VIP Tool (xác thực SĐT)<br>
+                            ℹ️ HAI2VIP Tool (xác thực SĐT)<br>
                             📝 Lấy API key tại: <a href="https://codesim.net/APIIntegration" target="_blank"
                                 style="color: #667eea;">codesim.net/APIIntegration</a>
                         </div>
@@ -219,7 +212,10 @@
             <div class="modal-body">
                 <div style="margin-bottom: 15px;">
                     <label>📝 Tên Profile</label>
-                    <input type="text" id="profilePrefix" placeholder="Nhập tên profile" value="Profile">
+                    <div class="input-with-button">
+                        <input type="text" id="profilePrefix" placeholder="Nhập tên profile" value="Profile">
+                        <button class="btn-icon" onclick="generateProfileName()" title="Random tên profile">🎲</button>
+                    </div>
                 </div>
 
                 <div class="platform-browser-grid">
@@ -233,13 +229,7 @@
                                     <span class="option-text-compact">Windows</span>
                                 </span>
                             </label>
-                            <label class="option-button-compact">
-                                <input type="radio" name="profileOS" value="mac">
-                                <span class="option-button-content-compact">
-                                    <span class="option-icon-compact">🍎</span>
-                                    <span class="option-text-compact">MacOS</span>
-                                </span>
-                            </label>
+
                             <label class="option-button-compact">
                                 <input type="radio" name="profileOS" value="linux">
                                 <span class="option-button-content-compact">
@@ -274,13 +264,7 @@
                                     <span class="option-text-compact">Chrome</span>
                                 </span>
                             </label>
-                            <label class="option-button-compact">
-                                <input type="radio" name="profileBrowser" value="firefox">
-                                <span class="option-button-content-compact">
-                                    <span class="option-icon-compact">🦊</span>
-                                    <span class="option-text-compact">Firefox</span>
-                                </span>
-                            </label>
+
                             <label class="option-button-compact">
                                 <input type="radio" name="profileBrowser" value="edge">
                                 <span class="option-button-content-compact">
@@ -308,13 +292,10 @@
 
                 <!-- Proxy Section -->
                 <div class="settings-section">
-                    <label class="toggle-label">
-                        <input type="checkbox" id="useProxy" class="toggle-checkbox" onchange="toggleProxyFields()">
-                        <span class="toggle-switch"></span>
-                        <span class="toggle-text">🌍 Sử dụng Proxy</span>
-                    </label>
+                    <h3 style="margin: 0 0 15px 0; font-size: 14px; color: #4a5568; font-weight: 600;">🌍 Proxy (Tùy
+                        chọn)</h3>
 
-                    <div id="proxyFields" class="collapsible-content" style="display: none;">
+                    <div id="proxyFields" class="collapsible-content" style="display: block;">
                         <div style="margin-bottom: 10px;">
                             <label
                                 style="font-size: 13px; color: #4a5568; font-weight: 600; display: block; margin-bottom: 8px;">
@@ -359,61 +340,7 @@
                 </div>
 
                 <!-- Advanced Settings -->
-                <div class="settings-section">
-                    <label class="toggle-label">
-                        <input type="checkbox" id="showAdvanced" class="toggle-checkbox"
-                            onchange="toggleAdvancedSettings()">
-                        <span class="toggle-switch"></span>
-                        <span class="toggle-text">⚙️ Cài đặt nâng cao (Anti-Detect)</span>
-                    </label>
-                    <small
-                        style="color: #718096; display: block; margin-top: 8px; font-size: 12px; padding-left: 52px;">
-                        💡 Để trống = Tự động random (khuyến nghị)
-                    </small>
 
-                    <div id="advancedFields"
-                        style="display: none; margin-top: 10px; background: #f5f5f5; padding: 15px; border-radius: 8px;">
-                        <div style="margin-bottom: 10px;">
-                            <label style="font-size: 13px; color: #666;">📱 Screen Resolution</label>
-                            <select id="profileResolution">
-                                <option value="">🎲 Auto Random</option>
-                            </select>
-                        </div>
-
-                        <div class="form-grid">
-                            <div>
-                                <label style="font-size: 13px; color: #666;">💻 CPU Cores</label>
-                                <select id="profileCPU">
-                                    <option value="">🎲 Auto</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="font-size: 13px; color: #666;">🧠 RAM</label>
-                                <select id="profileRAM">
-                                    <option value="">🎲 Auto</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 10px;">
-                            <label style="font-size: 13px; color: #666;">🎨 Canvas & WebGL</label>
-                            <select id="profileCanvas">
-                                <option value="noise">🎲 Noise (Khuyến nghị)</option>
-                                <option value="off">Off</option>
-                                <option value="block">Block</option>
-                            </select>
-                        </div>
-
-                        <div style="margin-top: 10px;">
-                            <label style="font-size: 13px; color: #666;">🔒 WebRTC</label>
-                            <select id="profileWebRTC">
-                                <option value="altered">🔒 Altered (Khuyến nghị)</option>
-                                <option value="disabled">Disabled</option>
-                                <option value="real">Real</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeCreateProfileModal()">Hủy</button>

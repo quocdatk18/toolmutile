@@ -1,0 +1,1703 @@
+
+:root {
+    --primary: #2563eb;
+    --primary-600: #2563eb;
+    --primary-700: #1d4ed8;
+    --primary-50: #eff6ff;
+    --success: #16a34a;
+    --text: #0f172a;
+    --muted: #475569;
+    --bg: #eef2f7;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --stroke: #e2e8f0;
+    --radius: 14px;
+    --shadow-sm: 0 1px 2px rgba(2, 6, 23, 0.08);
+    --shadow-md: 0 8px 24px rgba(2, 6, 23, 0.10);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0b1220;
+        --surface: #0f1629;
+        --surface-2: #0c1324;
+        --stroke: #1f2a44;
+        --text: #e5e7eb;
+        --muted: #94a3b8;
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 360px;
+    min-height: 100%;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    color: var(--text);
+    background: var(--bg);
+}
+
+.pad {
+    background: var(--surface);
+    margin: 10px;
+    padding: 14px;
+    border: 1px solid var(--stroke);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+}
+
+h3 {
+    margin: 14px 2px 10px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+
+.sites-toolbar {
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.sites-toolbar .ghost.small {
+    padding: 7px 10px;
+    font-size: 12px;
+    border-radius: 10px;
+}
+
+.sites {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+#sites label {
+    --chip: var(--primary-600);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--stroke);
+    border-radius: 999px;
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: .18s ease;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+}
+
+#sites label:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+#sites input[type=checkbox] {
+    width: 14px;
+    height: 14px;
+    margin: 0 2px 0 0;
+    accent-color: var(--chip);
+}
+
+#sites label:has(input:checked) {
+    border-color: var(--chip);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--chip) 28%, transparent), var(--shadow-sm);
+    background: color-mix(in oklab, var(--chip) 12%, #fff);
+}
+
+/* --- Màu thương hiệu cho từng site --- */
+#sites label[data-site="shbet"]  { --chip: #c52828; }
+#sites label[data-site="f8bet"]  { --chip: #1e40af; }
+#sites label[data-site="new88"]  { --chip: #f97316; }
+#sites label[data-site="hi88"]   { --chip: #db2777; }
+#sites label[data-site="789bet"] { --chip: #16a34a; }
+#sites label[data-site="mb66"]   { --chip: #ca8a04; }
+.sites label[data-site="jun88"]  { --chip: #8b5cf6; }
+.sites label[data-site="78win"]  { --chip: #0891b2; }
+
+
+.row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+
+.controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.ghost {
+    background: var(--surface-2);
+    border: 1px solid var(--stroke);
+    color: var(--text);
+    padding: 9px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    flex: 1;
+    font-weight: 600;
+    font-size: 12px;
+    transition: .18s ease;
+}
+
+.ghost:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.ghost:active { transform: translateY(0); }
+
+.btn {
+    width: 100%;
+    border: 0;
+    padding: 12px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 800;
+    letter-spacing: .02em;
+    color: #fff;
+    background: linear-gradient(180deg, var(--primary-600), var(--primary-700));
+    box-shadow: 0 6px 16px rgba(37, 99, 235, .35);
+    transition: transform .06s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+.btn:hover {
+    filter: brightness(1.03);
+    box-shadow: 0 8px 18px rgba(37, 99, 235, .4);
+}
+
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .6; cursor: not-allowed; box-shadow: none; }
+
+label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 700;
+    user-select: none;
+}
+
+.small {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+#status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--stroke);
+    border-radius: 10px;
+}
+
+/* --- CSS CHO Ô GỢI Ý ĐỘNG --- */
+.textarea-container {
+    position: relative;
+    width: 100%;
+}
+
+.textarea-container textarea,
+.textarea-container .placeholder-overlay {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.textarea-container .placeholder-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #94a3b8;
+    pointer-events: none;
+    z-index: 1;
+    border: 1px solid transparent;
+}
+
+.textarea-container textarea {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    border: 1px solid var(--stroke);
+    color: var(--text);
+    caret-color: var(--text);
+    resize: none;
+}
+
+.textarea-container textarea:focus {
+    border-color: var(--primary-600);
+    box-shadow: 0 0 0 3px #2563eb2a;
+    outline: none;
+}
+
+.textarea-container textarea,
+.textarea-container .placeholder-overlay {
+    height: 130px;
+}
+
+@keyframes warning-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(2px, 2px); }
+}
+
+.warning {
+    font-size: 11px;
+    color: #ef4444;
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin: -5px 0 15px 0;
+    text-align: center;
+    cursor: help; 
+    position: relative; 
+    transition: box-shadow 0.3s ease;
+}
+
+.warning:hover {
+    animation: warning-shake 0.25s linear infinite;
+    box-shadow: 0 0 8px 1px rgba(239, 68, 68, 0.5);
+}
+
+.textarea-container {
+    position: relative;
+    width: 100%;
+}
+
+.textarea-container textarea,
+.textarea-container .placeholder-overlay {
+    width: 100%;
+    height: 130px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.4;
+    box-sizing: border-box;
+    margin: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.textarea-container .placeholder-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #94a3b8;
+    pointer-events: none;
+    z-index: 1;
+    border: 1px solid transparent;
+}
+
+.textarea-container textarea {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    border: 1px solid var(--stroke);
+    color: var(--text);
+    caret-color: var(--text);
+    resize: none;
+}
+
+.textarea-container textarea:focus {
+    border-color: var(--primary-600);
+    box-shadow: 0 0 0 3px #2563eb2a;
+    outline: none;
+}
+
+
+/* === THAY ĐỔI BẮT ĐẦU TẠI ĐÂY === */
+/* Bỏ màu và căn trái cho các tiêu đề Giao diện */
+.sub-heading,
+.sub-heading2,
+.sub-heading3 {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 18px 2px 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Thêm đường kẻ cho các tiêu đề Giao diện */
+.sub-heading::after,
+.sub-heading2::after,
+.sub-heading3::after {
+    content: "";
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(90deg, var(--stroke), transparent);
+    border-radius: 1px;
+}
+/* === THAY ĐỔI KẾT THÚC TẠI ĐÂY === */
+
+
+.sites label[data-site="jun1"]   { --chip: #8b5cf6; } 
+#sites label[data-site="78win"]  { --chip: #0891b2; } 
+
+#sites-2 label[data-site="jun1"] {
+    --chip: #8b5cf6; 
+}
+
+#sites-2 label[data-site="78win"] {
+    --chip: #0891b2; 
+}
+
+.sites {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 12px 0 0 0;
+}
+
+.sites label {
+    --chip: var(--primary-600);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border: 1px solid var(--stroke);
+    border-radius: 999px;
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: .18s ease;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+}
+
+.sites label:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+}
+
+.sites input[type=checkbox] {
+    width: 14px;
+    height: 14px;
+    margin: 0 2px 0 0;
+    accent-color: var(--chip);
+}
+
+.sites label:has(input:checked) {
+    border-color: var(--chip);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--chip) 28%, transparent), var(--shadow-sm);
+    background: color-mix(in oklab, var(--chip) 12%, #fff);
+}
+
+.sites label[data-site="shbet"]  { --chip: #c52828; }
+.sites label[data-site="f8bet"]  { --chip: #1e40af; }
+.sites label[data-site="new88"]  { --chip: #f97316; }
+.sites label[data-site="hi88"]   { --chip: #db2777; }
+.sites label[data-site="789bet"] { --chip: #16a34a; }
+.sites label[data-site="mb66"]   { --chip: #ca8a04; }
+.sites label[data-site="jun1"]   { --chip: #8b5cf6; }
+.sites label[data-site="78win"]  { --chip: #0891b2; }
+
+
+
+.hint-overlay {
+    position: absolute;
+    top: 1px; 
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    padding: 8px 12px; 
+    font-size: 14px; 
+    font-family: inherit;
+    color: var(--muted); 
+    pointer-events: none; 
+    z-index: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 1.5; 
+}
+
+
+
+.input-container-with-hint input {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+}
+
+.hint-overlay .hint-text {
+    font-weight: 400; 
+    color: var(--muted);
+    transition: color 0.15s ease; 
+}
+
+.textarea-container textarea,
+.textarea-container .placeholder-overlay {
+    height: 58px; 
+}
+
+.input-container-with-hint {
+    position: relative;
+    width: 100%;
+}
+
+.hint-overlay {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--muted);
+    pointer-events: none;
+    z-index: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+.hint-overlay .mirror-text {
+    visibility: visible;
+}
+.input-container-with-hint input {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+}
+
+.sites label[data-site="qq88"]  { --chip: #10b981; } 
+.sites label[data-site="rr88"]  { --chip: #f59e0b; } 
+.sites label[data-site="xx88"]  { --chip: #ec4899; } 
+.sites label[data-site="mm88"]  { --chip: #6366f1; } 
+
+.sites label.placeholder {
+    background: transparent;
+    border: 1px dashed var(--stroke);
+    box-shadow: none;
+    cursor: default;
+    opacity: 0.5;
+}
+
+.sites label.placeholder:hover {
+    transform: none;
+    border-color: var(--stroke);
+}
+
+.sites label.placeholder input {
+    display: none;
+}
+
+
+.input-container-with-hint.is-focused .hint-text {
+    color: var(--text); 
+}
+
+.tab-nav {
+    display: flex;
+    gap: 8px;
+    margin: -4px 0 14px;
+    padding: 6px;
+    background: var(--surface-2);
+    border-radius: 12px;
+}
+
+.tab-button {
+    flex: 1;
+    display: flex;
+    flex-direction: column; /* Hướng cột (Icon trên, chữ dưới) */
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 4px;
+
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    white-space: nowrap; /* <-- THÊM DÒNG NÀY ĐỂ KHÔNG XUỐNG HÀNG */
+}
+
+.tab-button .icon {
+    width: 24px; 
+    height: 24px;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+    transition: filter 0.2s ease; 
+}
+.tab-button .icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    filter: grayscale(1) opacity(0.5); 
+}
+
+.tab-button.active {
+    background: var(--surface);
+    color: var(--primary-600);
+    box-shadow: var(--shadow-sm);
+}
+
+.tab-button.active .icon img {
+    filter: none; 
+}
+
+.page-content {
+    display: none; 
+}
+
+.page-content.active {
+    display: block; 
+}
+
+.custom-select {
+    width: 100%;
+    height: 40px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--stroke);
+    background-color: #fff;
+    outline: none;
+    font-size: 14px;
+    color: var(--text);
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23475569%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22/%3E%3C/svg%3E');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 8px 10px;
+}
+
+.custom-select:focus {
+    border-color: var(--primary-600);
+    box-shadow: 0 0 0 3px #2563eb2a;
+}
+/* Style cho dropdown khi bị vô hiệu hóa */
+.custom-select:disabled {
+    cursor: not-allowed;
+    background-color: var(--surface-2);
+    opacity: 0.7;
+}
+
+/* Animation rung lắc khi nhập sai key */
+@keyframes shake-horizontal {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake-error {
+    animation: shake-horizontal 0.5s ease-in-out;
+    border-color: #ef4444 !important; /* Màu đỏ cho viền */
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important; /* Thêm shadow đỏ */
+}
+.custom-select:disabled {
+    cursor: not-allowed;
+    background-color: var(--surface-2);
+    opacity: 0.7;
+}
+
+/* Animation rung lắc khi nhập sai key */
+@keyframes shake-horizontal {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.shake-error {
+    animation: shake-horizontal 0.5s ease-in-out;
+    border-color: #ef4444 !important; /* Màu đỏ cho viền */
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important; /* Thêm shadow đỏ */
+}
+/* Thêm các style mới này vào cuối file style.css của bạn */
+
+/* === CSS MỚI CHO ANIMATION CON CHIM (ĐÃ TÙY CHỈNH) === */
+
+/* 1. Tạo một cái "lồng" để giữ con chim không bay lung tung */
+.animation-container {
+  position: relative;
+  height: 130px; /* Chiều cao bạn muốn (tôi thấy 130px là vừa) */
+  width: 100%; /* Sửa lại 100% (của bạn đang là 130%) */
+  overflow: hidden;
+  margin-bottom: 10px;
+
+  /* --- THÊM 4 DÒNG QUAN TRỌNG NÀY --- */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  --sz-avatar: 120px; /* Đây là kích thước con khỉ (120px) */
+}
+
+/* === CSS MỚI CHO NGƯỜI NHỆN === */
+.center {
+  position: absolute;
+  transform: translateX(-50%);
+  left: 50%;
+}
+
+.container {
+  font-size: 6.5px; /* <-- TĂNG GIÁ TRỊ NÀY LÊN */
+  height: 45.25em;
+  width: 21.87em;
+  top: 0px; /* <-- Căn chỉnh lại vị trí để nó không bị tụt xuống */
+  margin-top: -10px; /* Điều chỉnh thêm để cân đối */
+}
+
+.rope {
+  height: 13.62em;
+  width: 0.15em;
+  background-color: var(--text); /* <-- Đổi màu dây cho dễ thấy */
+  animation: swing 2s infinite;
+}
+
+@keyframes swing {
+  50% {
+    transform: translateY(-4em);
+  }
+}
+
+.legs {
+  height: 1.12em;
+  width: 7.5em;
+  background-color: transparent;
+  box-shadow: 0 0 0 0.12em #140243, 0 0 0 1.06em #1b1676, 0 0 0 1.18em #140243;
+  top: 12.5em;
+  border-radius: 3.12em;
+}
+
+.boot-l,
+.boot-r {
+  height: 1.25em;
+  width: 2.5em;
+  background-color: #e32832;
+  position: absolute;
+  border: 0.12em solid #140243;
+  bottom: 1.12em;
+}
+
+.boot-l {
+  left: 1em;
+}
+
+.boot-r {
+  transform: rotateY(180deg);
+  left: 3.81em;
+}
+
+.boot-l:before,
+.boot-r:before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-bottom: 1.12em solid #140243;
+  border-left: 1.18em solid transparent;
+  bottom: 1.31em;
+  left: 1.46em;
+}
+
+.boot-l:after,
+.boot-r:after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-bottom: 1.12em solid #e32832;
+  border-left: 1em solid transparent;
+  right: 0;
+  top: -0.93em;
+}
+
+.costume {
+  height: 6.25em;
+  width: 5.62em;
+  background: linear-gradient(
+    to right,
+    #1b1676 20%,
+    #e32832 20%,
+    #e32832 80%,
+    #1b1676 80%
+  );
+  border: 0.12em solid #140243;
+  top: 14.68em;
+}
+
+.spider {
+  height: 1.87em;
+  width: 0.93em;
+  background-color: #140243;
+  border-radius: 45%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: calc(50% + 0.93em);
+  left: 50%;
+}
+
+.s1,
+.s3 {
+  height: 7.5em;
+  width: 2.5em;
+  border-radius: 0 0 1.37em 1.37em;
+  border-bottom: 0.12em solid #140243;
+  position: absolute;
+}
+
+.s2,
+.s4 {
+  height: 7.5em;
+  width: 3.12em;
+  border-radius: 0 0 1.56em 1.56em;
+  border-bottom: 0.12em solid #140243;
+  position: absolute;
+}
+
+.s1,
+.s2,
+.s3,
+.s4 {
+  left: 50%;
+}
+
+.s1 {
+  bottom: 1.43em;
+}
+
+.s2 {
+  bottom: 0.93em;
+}
+
+.s3,
+.s4 {
+  transform: translateX(-50%) rotateX(180deg);
+}
+
+.s3 {
+  top: 1.43em;
+}
+
+.s4 {
+  top: 0.93em;
+}
+
+.belt {
+  height: 0.43em;
+  width: 5.87em;
+  background-color: #e32832;
+  border: 0.12em solid #140243;
+  top: -0.12em;
+}
+
+.hand-r,
+.hand-l {
+  height: 8.12em;
+  background: linear-gradient(
+    #e32832 4.6em,
+    #140243 4.6em,
+    #140243 4.75em,
+    #1b1676 4.75em,
+    #1b1676 8.12em
+  );
+  width: 1.12em;
+  border: 0.12em solid #140243;
+  border-radius: 1.25em;
+  position: absolute;
+  transform-origin: bottom;
+  bottom: -0.12em;
+}
+
+.hand-r {
+  right: -0.75em;
+  transform: rotate(-22deg);
+}
+
+.hand-l {
+  left: -0.75em;
+  transform: rotate(22deg);
+}
+
+.neck {
+  height: 0.37em;
+  width: 1.25em;
+  background-color: #e32832;
+  bottom: -0.62em;
+  border: 0.12em solid #140243;
+}
+
+.mask {
+  height: 4.65em;
+  width: 4.06em;
+  background-color: #e32832;
+  border-radius: 50% 50% 50% 50% / 54% 54% 46% 46%;
+  border: 0.12em solid #140243;
+  top: 6.56em;
+}
+
+.eye-l,
+.eye-r {
+  height: 0.68em;
+  width: 1.37em;
+  background-color: #ffffff;
+  border-radius: 1.37em 1.37em 0 0;
+  border: 0.12em solid #140243;
+  position: absolute;
+  top: 2.1em;
+}
+
+.eye-l {
+  left: 0.3em;
+}
+
+.eye-r {
+  right: 0.3em;
+}
+
+.cover {
+  height: 3.12em;
+  width: 0.15em;
+  background-color: var(--text); /* <-- Đổi màu dây cho dễ thấy */
+  bottom: 8.12em;
+}
+/* === BỐ CỤC 2 CỘT CHO FORM === */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Chia 2 cột bằng nhau */
+    gap: 10px;
+    margin-bottom: 10px;
+}
+/* Cái .row là để bọc ô Gmail full-width, nó đã có style rồi, ko cần thêm */
+
+
+/* === CSS CHO INPUT KIỂU NHÃN NỔI (Floating Label) === */
+.inputGroup {
+  font-family: 'Segoe UI', sans-serif;
+  position: relative;
+  width: 100%;
+}
+
+.inputGroup input {
+  font-size: 15px; /* <- Chữ to */
+  padding: 0.8em;
+  outline: none;
+  border: 2px solid var(--stroke);
+  background-color: transparent; /* Nền trong suốt */
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--text); /* <- Màu chữ rõ ràng */
+}
+
+.inputGroup label {
+  font-size: 100%;
+  position: absolute;
+  left: 0;
+  padding: 0.8em;
+  margin-left: 0.5em;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  color: var(--muted);
+  z-index: 3; /* Đảm bảo label luôn ở trên */
+}
+
+/* Khi focus hoặc có chữ */
+.inputGroup input:is(:focus, :autofill) ~ label,
+.inputGroup input:not(:placeholder-shown) ~ label {
+  transform: translateY(-50%) scale(.9);
+  margin: 0em;
+  margin-left: 1.3em;
+  padding: 0 0.4em; /* <- Ôm khít chữ */
+  background-color: var(--surface); /* <- "Ăn" viền */
+  color: var(--muted);
+}
+
+.inputGroup input:is(:focus, :autofill),
+.inputGroup input:not(:placeholder-shown) {
+  border-color: var(--primary); /* Viền xanh khi focus */
+}
+
+/* Sửa lỗi autofill */
+.inputGroup input:-webkit-autofill {
+    color: var(--text);
+}
+datalist {
+    background-color: var(--surface);
+    color: var(--text);
+}
+
+/* === CSS CHO NÚT ẨN/HIỆN MẬT KHẨU === */
+.inputGroup .password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    z-index: 3;
+    background: none;
+    border: none;
+    padding: 4px;
+    margin: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+}
+.inputGroup .password-toggle:hover {
+    background-color: var(--surface-2);
+}
+.inputGroup .password-toggle svg {
+    width: 20px;
+    height: 20px;
+}
+.inputGroup .password-toggle .icon-eye-off {
+    display: none;
+}
+.inputGroup .password-toggle.toggled .icon-eye {
+    display: none;
+}
+.inputGroup .password-toggle.toggled .icon-eye-off {
+    display: inline;
+}
+/* Bó hẹp padding của input có nút, tránh chữ đè lên nút */
+.inputGroup input[type=password] {
+    padding-right: 40px;
+}
+
+
+/* === CSS CHO GMAIL HINT (KIỂU NHÃN NỔI) === */
+.inputGroup.has-hint .hint-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.8em;
+    padding-left: calc(0.8em + 2px); 
+    font-size: 15px; /* Giống font-size của input */
+    line-height: 1.4; /* Giống line-height của input */
+    color: var(--muted);
+    pointer-events: none;
+    z-index: 1; /* Nằm dưới input */
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.inputGroup.has-hint .hint-overlay .mirror-text {
+color: var(--text);
+}
+
+.inputGroup.has-hint .hint-overlay .hint-text {
+    color: var(--muted);
+    display: none; /* JS sẽ bật/tắt cái này */
+}
+
+.inputGroup.has-hint input {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  caret-color: var(--text);
+  color: transparent; /* <-- THÊM DÒNG NÀY */
+}
+/* Khi focus vào ô Gmail, JS sẽ thêm class này */
+.inputGroup.has-hint.is-focused .hint-overlay .hint-text {
+    color: var(--muted); 
+}
+/* ... (TOÀN BỘ CODE CSS CŨ CỦA BẠN GIỮ NGUYÊN) ... */
+/* ... (hãy kéo xuống cuối file và dán code mới này vào) ... */
+
+/* === CSS MỚI CHO BẢN ĐỒ === */
+
+/*************/
+/* Variables */
+/*************/
+.map-container {
+  /* Biến màu mặc định, sẽ bị ghi đè bởi style nội tuyến trong HTML */
+  --city-sign-color-back: #00c080; 
+  --city-sign-color-font: #fff;
+  
+  /* Biến kích thước ghim */
+  --city-radius: 1.5rem; /* Giảm kích thước vùng click 1 chút */
+  --city-pin-size-font: 1.2rem;
+}
+
+/**********/
+/* Styles */
+/**********/
+
+/* Container */
+.map-container {
+  border-radius: 0.5em;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--stroke);
+  line-height: 1;
+  width: 100%; /* Vừa vặn với popup */
+  position: relative;
+  aspect-ratio: 1.5; /* Làm cho nó bớt vuông, giống chữ nhật hơn */
+  margin: 14px 0; /* Thêm khoảng cách */
+  overflow: hidden; /* Đảm bảo mọi thứ nằm trong viền */
+}
+
+/* Map - Background */
+.map-background {
+  border-radius: inherit;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%; /* Đảm bảo SVG lấp đầy */
+}
+
+/* Map - Cities */
+.map-cities {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.map-city {
+  border-radius: var(--city-radius);
+  left: calc(var(--x) * 1% - var(--city-radius));
+  padding: var(--city-radius);
+  position: absolute;
+  top: calc(var(--y) * 1% - var(--city-radius));
+  cursor: pointer; /* Thêm con trỏ chuột */
+}
+.map-city::after,
+.map-city::before {
+  font-size: var(--city-pin-size-font);
+}
+.map-city::before {
+  content: "•";
+  left: calc(-50% + var(--city-radius));
+  position: absolute;
+  top: calc(-0.65em + var(--city-radius));
+  text-align: center;
+  text-shadow: 0 1px 1px #000;
+  width: 100%;
+  color: var(--city-sign-color-back); /* Chấm tròn có màu của ghim */
+}
+.map-city::after {
+  content: "📍";
+  left: calc(-50% + var(--city-radius));
+  position: absolute;
+  top: calc(-1em + var(--city-radius));
+  text-align: center;
+  transition: all 300ms ease-out;
+  width: 100%;
+  z-index: var(--y);
+  clip-path: inset(-0.5em 0 0.5em 0); /* Luôn hiển thị ghim */
+  opacity: 0.7; /* Làm mờ ghim không active */
+}
+
+/* Style cho ghim ĐƯỢC CHỌN (active) */
+.map-city.active::after {
+  opacity: 1;
+  transform: translateY(-0.3em) scale(1.1); /* Nhô cao lên và to ra */
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+}
+
+/* Map - Sign (Bảng tên) */
+.map-city__label {
+  display: none;
+  left: calc(-5em + 50%);
+  position: absolute;
+  text-align: center;
+  width: 10em;
+  z-index: 999;
+}
+.map-city__sign {
+  align-items: center;
+  background-color: var(--city-sign-color-back);
+  border-radius: 0.2rem;
+  border: 0.15em solid var(--city-sign-color-font);
+  box-shadow: 0 0 3px #000;
+  color: var(--city-sign-color-font);
+  column-gap: 0.3em;
+  display: flex;
+  font-weight: 700;
+  font-size: 11px; /* Chữ nhỏ lại 1 chút */
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 0.4em 0.6em; /* Bỏ padding icon */
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  width: max-content;
+}
+/* Xóa icon :before vì chúng ta không dùng data-icon */
+.map-city__sign::before {
+  content: none; 
+}
+
+/************/
+/* Tracking */
+/************/
+
+/* Hiệu ứng khi HOVER (khác với active) */
+.map-city:hover::after {
+  transform: translateY(-0.5em); /* Chỉ nhô lên khi hover */
+  opacity: 1;
+}
+.map-city.active:hover::after {
+   transform: translateY(-0.3em) scale(1.1); /* Giữ nguyên hiệu ứng active */
+}
+
+/* Map - Sign */
+.map-city:hover .map-city__label {
+  animation: fadein 300ms forwards ease-out;
+  display: block;
+}
+
+/**************/
+/* Animations */
+/**************/
+@keyframes fadein {
+  0% {
+    opacity: 0;
+    top: calc(var(--city-radius));
+  }
+  100% {
+    opacity: 1;
+    top: calc(var(--city-radius) + var(--city-pin-size-font) / 2);
+  }
+}
+/* Style cho logo trong bảng tên */
+.map-logo {
+  height: 2.5em; /* Chiều cao của logo, bạn có thể điều chỉnh */
+  width: auto; /* Giữ tỷ lệ khung hình */
+  display: block; /* Đảm bảo hình ảnh không bị dính văn bản */
+  margin: 0; /* Xóa khoảng trống thừa */
+}
+/* .cut{
+    
+    height: 50px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+} */
+
+/* Điều chỉnh lại padding của sign khi có logo */
+.map-city__sign {
+    padding: 0.2em 0.5em; /* Giảm padding để logo vừa vặn hơn */
+}
+/* === MÀU THƯƠNG HIỆU CHO CÁC NHÓM MỚI === */
+
+/* --- NHÓM ABCVIP (GROUP 3) --- */
+.sites label[data-site="j88"]    { --chip: #6d28d9; } /* Tím đậm */
+.sites label[data-site="u888"]   { --chip: #0d9488; } /* Xanh mòng két */
+.sites label[data-site="abc8"]   { --chip: #be185d; } /* Hồng đậm */
+.sites label[data-site="88clb"]  { --chip: #0284c7; } /* Xanh da trời */
+
+/* --- NHÓM X88 (GROUP 5) --- */
+.sites label[data-site="x88"]     { --chip: #166534; } /* Xanh lá đậm */
+.sites label[data-site="89bet"]   { --chip: #a16207; } /* Vàng đậm */
+.sites label[data-site="hubet"]   { --chip: #c2410c; } /* Cam đậm */
+.sites label[data-site="king88"]  { --chip: #2563eb; } /* Xanh dương (màu chính) */
+.sites label[data-site="cwin"]    { --chip: #e11d48; } /* Đỏ hồng */
+.sites label[data-site="hello88"] { --chip: #4338ca; } /* Chàm */
+.sites label[data-site="win55"]   { --chip: #0e7490; } /* Xanh mòng két đậm */
+/* === CSS MỚI CHO CON KHỈ === */
+.avatar {
+  order: 0;
+  width: var(--sz-avatar);
+  min-width: var(--sz-avatar);
+  max-width: var(--sz-avatar);
+  height: var(--sz-avatar);
+  min-height: var(--sz-avatar);
+  max-height: var(--sz-avatar);
+  border: 1px solid var(--stroke); /* Dùng màu viền của bạn */
+  border-radius: 9999px;
+  overflow: hidden;
+  cursor: pointer;
+  z-index: 2;
+  perspective: 80px;
+  position: relative;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  --sz-svg: calc(var(--sz-avatar) - 10px);
+}
+.avatar svg {
+  position: absolute;
+  transition:
+    transform 0.2s ease-in,
+    opacity 0.1s;
+  transform-origin: 50% 100%;
+  height: var(--sz-svg);
+  width: var(--sz-svg);
+  pointer-events: none;
+}
+.avatar svg#monkey {
+  z-index: 1;
+}
+.avatar svg#monkey-hands {
+  z-index: 2;
+  transform-style: preserve-3d;
+  transform: translateY(calc(var(--sz-avatar) / 1.25)) rotateX(-21deg);
+}
+
+.avatar::before {
+  content: "";
+  border-radius: 45%;
+  width: calc(var(--sz-svg) / 3.889);
+  height: calc(var(--sz-svg) / 5.833);
+  border: 0;
+  border-bottom: calc(var(--sz-svg) * (4 / 100)) solid #3c302a;
+  bottom: 20%;
+  position: absolute;
+  transition: all 0.2s ease;
+  z-index: 3;
+}
+.blind-check:checked ~ .avatar::before {
+  width: calc(var(--sz-svg) * (9 / 100));
+  height: 0;
+  border-radius: 50%;
+  border-bottom: calc(var(--sz-svg) * (10 / 100)) solid #3c302a;
+}
+.avatar svg#monkey .monkey-eye-r,
+.avatar svg#monkey .monkey-eye-l {
+  animation: blink 10s 1s infinite;
+  transition: all 0.2s ease;
+}
+@keyframes blink {
+  0%,
+  2%,
+  4%,
+  26%,
+  28%,
+  71%,
+  73%,
+  100% {
+    ry: 4.5;
+    cy: 31.7;
+  }
+  1%,
+  3%,
+  27%,
+  72% {
+    ry: 0.5;
+    cy: 30;
+  }
+}
+.blind-check:checked ~ .avatar svg#monkey .monkey-eye-r,
+.blind-check:checked ~ .avatar svg#monkey .monkey-eye-l {
+  ry: 0.5;
+  cy: 30;
+}
+.blind-check:checked ~ .avatar svg#monkey-hands {
+  transform: translate3d(0, 0, 0) rotateX(0deg);
+}
+.avatar svg#monkey,
+.avatar::before,
+.avatar svg#monkey .monkey-eye-nose,
+.avatar svg#monkey .monkey-eye-r,
+.avatar svg#monkey .monkey-eye-l {
+  transition: all 0.2s ease;
+}
+
+/* Bỏ animation khi focus, vì chúng ta sẽ tự control */
+.form:focus-within ~ .avatar svg#monkey {
+  animation: none;
+}
+.form:focus-within ~ .avatar::before,
+.form:focus-within ~ .avatar svg#monkey .monkey-eye-nose,
+.blind-check:not(:checked)
+  ~ .form:focus-within
+  ~ .avatar
+  svg#monkey
+  .monkey-eye-r,
+.blind-check:not(:checked)
+  ~ .form:focus-within
+  ~ .avatar
+  svg#monkey
+  .monkey-eye-l {
+  animation: none;
+}
+
+.sites label[data-site="39bet"]  { --chip: #22c55e; } /* Xanh lá */
+.sites label[data-site="okking"] { --chip: #f59e0b; } /* Vàng cam */
+.sites label[data-site="kl99"]   { --chip: #a855f7; } /* Tím */
+.sites label[data-site="kuwin"]  { --chip: #0d9488; } /* Xanh mòng két */
+.sites label[data-site="okvnd"]  { --chip: #38bdf8; } /* Xanh da trời */
+.sites label[data-site="ffok"]   { --chip: #84cc16; } /* Xanh chanh */
+.sites label[data-site="xin88"]  { --chip: #f43f5e; } /* Hồng đậm */
+.sites label[data-site="gk88"]   { --chip: #6366f1; } /* Chàm */
+.sites label[data-site="go99"]  { --chip: #4f46e5; } /* Tím đậm (Indigo) */
+.sites label[data-site="nohu"]  { --chip: #059669; } /* Xanh lá đậm (Emerald) */
+.sites label[data-site="tt88"]  { --chip: #ca8a04; } /* Vàng sậm (Lime) */
+.sites label[data-site="mmoo"]  { --chip: #64748b; } /* Xám (Slate) */
+.sites label[data-site="789p"]  { --chip: #c2410c; } /* Cam đậm (Orange) */
+.sites label[data-site="pg66"]  { --chip: #db2777; } /* Hồng (Pink) */
+.sites label[data-site="8kbet"]  { --chip: #b45309; } /* Màu đồng (Amber) */
+/* === CSS TRANG CHỨC NĂNG === */
+#page-chucnang h3 {
+  text-align: center; /* Căn giữa tiêu đề */
+  justify-content: center;
+}
+
+.chucnang-subtext {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: -5px;
+  margin-bottom: 20px;
+  font-style: italic;
+  text-align: center;
+}
+
+.chucnang-container {
+  display: flex; /* Dùng flexbox để căn giữa */
+  flex-direction: column; /* Xếp theo cột */
+  justify-content: center; /* Căn giữa theo chiều dọc */
+  align-items: center; /* Căn giữa theo chiều ngang (cho nút) */
+  margin-top: 10px;
+  padding: 20px;
+  border: 1px dashed var(--stroke);
+  border-radius: var(--radius);
+}
+
+.chucnang-status {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary); /* Màu xanh cho nổi bật */
+  margin-top: 15px;
+  text-align: center;
+}
+
+/* === CSS NÚT TELEGRAM (Đã sửa - Đảo ngược hiệu ứng) === */
+#telegram-btn {
+  /* Trạng thái bình thường (Ảnh 1) */
+  background: rgb(36, 161, 222); /* Nền xanh solid */
+  color: #fff;                   /* Chữ trắng */
+  border: 1px solid rgb(36, 161, 222); /* Viền xanh */
+  
+  position: relative;
+  padding: 5px 15px;
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 25px;
+  outline: none;
+  overflow: hidden;
+  text-align: center;
+  
+  /* Hiệu ứng transition cho cả 2 thuộc tính */
+  transition: background-color 0.3s ease-out, color 0.3s ease-out;
+}
+
+#telegram-btn span {
+  margin: 10px;
+  /* Đảm bảo icon SVG cũng đổi màu theo chữ */
+  fill: currentColor; 
+}
+
+/* Xóa ::before, không cần nữa */
+#telegram-btn::before {
+  display: none;
+}
+
+/* Trạng thái Hover (Ảnh 2) */
+#telegram-btn:hover {
+  background: transparent;        /* Nền trong suốt */
+  color: rgb(36, 161, 222); /* Chữ xanh */
+  border-color: rgb(36, 161, 222); /* Viền vẫn giữ màu xanh */
+}
+
+#telegram-btn:hover::before {
+  box-shadow: none;
+}
+/* === CSS CHỨC NĂNG 2: LINK INPUT === */
+
+.link-input-container {
+  display: flex;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+  width: 100%; /* Đổi thành 100% */
+  height: 45px; /* Chiều cao vừa phải */
+  border-radius: 25px; /* <-- BO TRÒN THEO YÊU CẦU */
+  border: 1px solid var(--stroke); /* Dùng màu viền của theme */
+  background-color: var(--surface); /* Nền trắng */
+  overflow: hidden; /* Quan trọng để bo góc các phần tử con */
+}
+
+.link-prefix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted); /* Dùng màu chữ mờ của theme */
+  font-size: 14px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  height: 100%;
+  font-weight: 600;
+  padding: 0 15px;
+  background-color: var(--surface-2); /* Nền xám nhạt */
+  border-right: 1px solid var(--stroke);
+}
+
+.link-input {
+  flex: 1; /* Tự động co giãn */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  font-weight: 500;
+  border: none;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  padding: 0px 10px;
+  height: 100%;
+  background-color: transparent; /* Nền trong suốt (vì cha đã có nền) */
+  font-size: 14px;
+  color: var(--text); /* Dùng màu chữ của theme */
+}
+
+.link-copy-btn {
+  font-size: 16px;
+  height: 100%;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-left: 1px solid var(--stroke);
+  background-color: var(--surface-2); /* Giống prefix */
+  color: var(--muted);
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.link-copy-btn:hover {
+  background-color: var(--stroke); /* Hiệu ứng hover */
+}
+
+.link-tooltip {
+  position: absolute;
+  top: -35px; /* Hiện tooltip ở trên */
+  right: 0px;
+  opacity: 0;
+  background-color: var(--text); /* Nền đen/trắng (theo theme) */
+  color: var(--surface); /* Chữ trắng/đen (theo theme) */
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.link-tooltip::before {
+  position: absolute;
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-color: var(--text); /* Giống nền tooltip */
+  transform: rotate(45deg);
+  bottom: -5px; /* Mũi tên chỉ xuống */
+  right: 15px;
+}
+
+.link-copy-btn:hover .link-tooltip {
+  opacity: 1;
+}
+/* === CSS CHO LỰA CHỌN GIAO DIỆN (CHỨC NĂNG 2) === */
+.interface-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+.interface-choices input[type="radio"] {
+  display: none; /* Ẩn radio button gốc */
+}
+.interface-choices label {
+  display: block;
+  padding: 10px 5px;
+  border: 1px solid var(--stroke);
+  border-radius: 10px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.interface-choices label:hover {
+  border-color: #cbd5e1;
+}
+.interface-choices input[type="radio"]:checked + label {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-50);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 28%, transparent);
+}
+/* === CSS CHO NÚT SAVE & CONTAINER === */
+
+/* 1. CSS GỐC CỦA NÚT SAVE (ĐÃ SỬA) */
+.save-btn {
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; /* <-- Font đẹp */
+  font-size: 14px;      /* <-- Chữ nhỏ lại */
+  background: #212121;
+  color: white;
+  fill: rgb(155, 153, 153);
+  padding: 8px 12px;    /* <-- LÀM NÚT BÉ LẠI */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;  /* <-- Bo góc ít lại */
+  font-weight: 700;     /* <-- Chữ bớt đậm */
+}
+
+.save-btn span {
+  display: block;
+  margin-left: 0.3em;
+  transition: all 0.3s ease-in-out;
+}
+
+.save-btn svg {
+  display: block;
+  transform-origin: center center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.save-btn:hover {
+  background: #000;
+}
+
+.save-btn:hover .svg-wrapper {
+  transform: scale(1.25);
+  transition: 0.5s linear;
+}
+
+.save-btn:hover svg {
+  transform: translateX(1.2em) scale(1.1);
+  fill: #fff;
+}
+
+.save-btn:hover span {
+  opacity: 0;
+  transition: 0.5s linear;
+}
+
+.save-btn:active {
+  transform: scale(0.95);
+}
+
+/* 2. CONTAINER ĐỂ XẾP 2 NÚT NẰM NGANG */
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+/* 3. NÚT TẠO TÀI KHOẢN (CHIẾM 7 PHẦN) (ĐÃ SỬA) */
+.button-container #startBtn {
+  flex: 8;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial; /* <-- Font đẹp */
+  font-size: 14px;      /* <-- Chữ nhỏ lại */
+  font-weight: 700;     /* <-- Chữ bớt đậm */
+  border-radius: 10px;  /* <-- Bo góc ít lại */
+  padding: 8px 12px;    /* <-- LÀM NÚT BÉ LẠI */
+  
+  border: none;
+  width: auto;
+  margin-top: 0;
+}
+
+/* 4. NÚT SAVE (CHIẾM 3 PHẦN) */
+.button-container .save-btn {
+  flex: 2;
+  justify-content: center;
+}
+
+/* 5. THU NHỎ ICON ĐÁM MÂY (ĐÃ SỬA) */
+.button-container .save-btn svg {
+  width: 18px;
+  height: 18px;
+}
+#run-custom-link-btn {
+    /* Đảm bảo chữ đẹp và rõ ràng trên nền xanh */
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    
+    /* Giảm kích thước và padding để nhỏ hơn */
+    padding: 12px 20px;       /* Giảm padding dọc */
+    font-size: 16px;          /* Giảm cỡ chữ về 16px (chuẩn UI) */
+    font-weight: 800;         /* Độ đậm chữ */
+    border-radius: 12px;      /* Bo góc tương tự */
+    
+    /* Căn chỉnh text */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+#run-custom-link-btn:hover {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.7), 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.sites label[data-site="789win"] { --chip: #1e40af; } /* Xanh dương đậm */
+.sites label[data-site="88vv"]   { --chip: #f59e0b; } /* Vàng cam */
+.sites label[data-site="98win"]  { --chip: #ef4444; } /* Đỏ */
+.sites label[data-site="33win"]  { --chip: #22c55e; } /* Xanh lá */
+.sites label[data-site="vswin"]  { --chip: #a855f7; } /* Tím */

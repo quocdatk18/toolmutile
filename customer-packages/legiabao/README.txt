@@ -3,7 +3,7 @@ HIDEMIUM MULTI-TOOL
 ========================================
 
 Customer: legiabao
-License: 7 ngày
+License: 30 ngày
 
 CÀI ĐẶT & CHẠY:
   

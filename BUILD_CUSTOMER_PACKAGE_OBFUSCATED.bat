@@ -76,23 +76,27 @@ powershell -Command "(Get-Content '%OUTPUT_DIR%\core\license-manager.js') -repla
 
 echo ✅ Secret key updated: %SECRET_KEY%
 
-REM Obfuscate all critical files
-echo 🔒 Obfuscating critical files...
-node tools/obfuscate-all.js
+REM Advanced obfuscation is now MANDATORY for all customer packages
+echo 🔒 Running MANDATORY Advanced Obfuscation (this may take a few minutes)...
+echo    ⚡ HIGH security for critical files (license, API, automation)
+echo    ⚡ MEDIUM security for regular files
+echo    ⚡ Whitelist protection for essential files
+echo.
+
+node tools/advanced-obfuscate.js
 if errorlevel 1 (
-    echo ⚠️  Obfuscation failed, using original files
+    echo ❌ CRITICAL ERROR: Advanced obfuscation failed!
+    echo    This is required for customer security.
+    echo    Please check the error and try again.
+    pause
+    exit /b 1
 ) else (
-    echo ✅ Obfuscation completed
-    REM Replace with obfuscated versions
-    copy /Y core\license-manager.obfuscated.js "%OUTPUT_DIR%\core\license-manager.js" >nul 2>&1
-    copy /Y core\api-key-manager.obfuscated.js "%OUTPUT_DIR%\core\api-key-manager.js" >nul 2>&1
-    copy /Y core\hidemium-api.obfuscated.js "%OUTPUT_DIR%\core\hidemium-api.js" >nul 2>&1
-    copy /Y core\profile-manager.obfuscated.js "%OUTPUT_DIR%\core\profile-manager.js" >nul 2>&1
-    copy /Y core\sim-api-manager.obfuscated.js "%OUTPUT_DIR%\core\sim-api-manager.js" >nul 2>&1
-    copy /Y dashboard\server.obfuscated.js "%OUTPUT_DIR%\dashboard\server.js" >nul 2>&1
-    REM Clean up obfuscated files
-    del core\*.obfuscated.js 2>nul
-    del dashboard\*.obfuscated.js 2>nul
+    echo ✅ Advanced obfuscation completed successfully!
+    echo ✅ Code protection: MAXIMUM SECURITY
+    REM Remove original package and use obfuscated version
+    rmdir /S /Q "%OUTPUT_DIR%" 2>nul
+    move obfuscated-project "%OUTPUT_DIR%" >nul 2>&1
+    echo ✅ Obfuscated project moved to: %OUTPUT_DIR%
 )
 
 REM Remove sensitive files
@@ -100,6 +104,7 @@ echo 🗑️  Removing sensitive files...
 del /Q "%OUTPUT_DIR%\tools\generate-license.js" 2>nul
 del /Q "%OUTPUT_DIR%\tools\obfuscate-license.js" 2>nul
 del /Q "%OUTPUT_DIR%\tools\obfuscate-all.js" 2>nul
+del /Q "%OUTPUT_DIR%\tools\advanced-obfuscate.js" 2>nul
 del /Q "%OUTPUT_DIR%\tools\activate-license.js" 2>nul
 rmdir /S /Q "%OUTPUT_DIR%\license-records" 2>nul
 rmdir /S /Q "%OUTPUT_DIR%\customer-packages" 2>nul
@@ -109,6 +114,7 @@ del /Q "%OUTPUT_DIR%\.license" 2>nul
 del /Q "%OUTPUT_DIR%\BUILD_*.bat" 2>nul
 del /Q "%OUTPUT_DIR%\CREATE_*.bat" 2>nul
 del /Q "%OUTPUT_DIR%\OBFUSCATE_*.bat" 2>nul
+del /Q "%OUTPUT_DIR%\ADVANCED_*.bat" 2>nul
 del /Q "%OUTPUT_DIR%\TEST_*.bat" 2>nul
 del /Q "%OUTPUT_DIR%\GEN_*.bat" 2>nul
 del /Q "%OUTPUT_DIR%\CLEAN_*.bat" 2>nul
@@ -184,7 +190,15 @@ echo.
 echo 📦 Package location: %OUTPUT_DIR%
 echo 🔑 License key: See LICENSE_KEY.txt in package
 echo 🔐 Secret key: %SECRET_KEY%
-echo 🔒 Code: OBFUSCATED (protected)
+echo 🔒 Code: ADVANCED OBFUSCATED (maximum protection)
+echo.
+echo SECURITY FEATURES:
+echo   🛡️  HIGH security obfuscation for critical files
+echo   🛡️  MEDIUM security for regular files  
+echo   🛡️  Whitelist protection for essential files
+echo   🛡️  Anti-reverse engineering protection
+echo   🛡️  Debug protection enabled
+echo   🛡️  String encryption with Base64 + RC4
 echo.
 echo NEXT STEPS:
 echo   1. Zip the folder: %OUTPUT_DIR%
@@ -194,7 +208,10 @@ echo.
 echo ⚠️  IMPORTANT: Save the secret key for your records!
 echo    Secret: %SECRET_KEY%
 echo.
-echo 🔒 The code has been obfuscated for security
-echo    Customer cannot read or modify the license system
+echo 🔒 ADVANCED OBFUSCATION APPLIED
+echo    ✅ License system: MAXIMUM PROTECTION
+echo    ✅ API keys: ENCRYPTED
+echo    ✅ Automation logic: OBFUSCATED
+echo    ✅ Reverse engineering: EXTREMELY DIFFICULT
 echo.
 pause

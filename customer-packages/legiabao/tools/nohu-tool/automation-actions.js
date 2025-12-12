@@ -212,10 +212,13 @@ class AutomationActions {
      */
     async completeCheckPromotion(username, apiKey) {
         console.log('    🎁 Starting complete check promotion workflow...');
+        console.log('    📊 Username received:', username);
+        console.log('    📊 API Key received:', apiKey ? 'YES' : 'NO');
 
-        // IMPORTANT: Bring tab to front to prevent throttling
+        // IMPORTANT: Bring tab to front to prevent throttling (như phiên bản cũ)
         console.log('    👁️  Bringing tab to front...');
         await this.page.bringToFront();
+        await wait(1000); // Wait for tab to fully activate (critical for setValue)
 
         // Validate API key first
         try {
@@ -226,6 +229,11 @@ class AutomationActions {
             console.log('    ❌ API key validation failed:', error.message);
             return { success: false, message: error.message, promotions: [] };
         }
+
+        // 🔥 Focus again right before checkPromotion
+        console.log('    🎯 Re-focusing tab before checkPromotion...');
+        await this.page.bringToFront();
+        await wait(500);
 
         const promotions = await this.checkPromotion(username, apiKey);
 
