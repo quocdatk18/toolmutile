@@ -403,6 +403,11 @@ class LicenseManager {
      * @returns {Array} Array of allowed tool IDs
      */
     getAllowedTools() {
+        // Admin/Master version has access to all tools
+        if (this.isAdminVersion()) {
+            return ['*']; // Wildcard = all tools
+        }
+
         const key = this.loadLicense();
         if (!key) return [];
 

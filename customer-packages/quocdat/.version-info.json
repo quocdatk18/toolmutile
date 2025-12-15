@@ -1,8 +1,0 @@
-{
-  "customer": "quocdat",
-  "version": "3.0.0",
-  "createdAt": "2025-12-12T17:46:32.820Z",
-  "buildType": "customer-package",
-  "secretKey": "SECRET_quocdat_33212_54110",
-  "obfuscated": true
-}

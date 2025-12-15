@@ -67,7 +67,7 @@ class CustomerMachineManager {
     /**
      * Thêm hoặc cập nhật customer
      */
-    addOrUpdateCustomer(customerName, machineId, notes = '') {
+    addOrUpdateCustomer(customerName, machineId, notes = '', displayName = '') {
         const now = new Date().toISOString();
 
         if (this.customers[customerName]) {
@@ -98,6 +98,9 @@ class CustomerMachineManager {
             }
 
             this.customers[customerName].notes = notes;
+            if (displayName) {
+                this.customers[customerName].displayName = displayName.trim();
+            }
             this.customers[customerName].updatedAt = now;
             this.customers[customerName].updateCount = (this.customers[customerName].updateCount || 0) + 1;
         } else {
@@ -107,6 +110,7 @@ class CustomerMachineManager {
                 customerName,
                 machineId,
                 notes,
+                displayName: displayName ? displayName.trim() : '',
                 createdAt: now,
                 updatedAt: now,
                 updateCount: 0,
@@ -142,6 +146,21 @@ class CustomerMachineManager {
         return Object.values(this.customers).sort((a, b) =>
             new Date(b.createdAt) - new Date(a.createdAt)
         );
+    }
+
+    /**
+     * Cập nhật Display Name của customer
+     */
+    updateCustomerDisplayName(customerName, displayName) {
+        const customer = this.getCustomer(customerName);
+        if (!customer) {
+            throw new Error('Customer not found');
+        }
+
+        customer.displayName = displayName.trim();
+        customer.updatedAt = new Date().toISOString();
+        this.saveCustomers();
+        return customer;
     }
 
     /**

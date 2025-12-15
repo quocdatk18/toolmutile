@@ -1,0 +1,63 @@
+[
+  {
+    "site": "U888",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '4187CD2A4B921EE1BA2299F9CB814324'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "J88",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": false,
+      "error": "Attempted to use detached Frame '1D1D70C3871882643CF4667EAA08C0A0'."
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "ABC8",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": false,
+      "error": "Attempted to use detached Frame '88FB42BB70B801AF99E5373934793FFC'."
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "888clb",
+    "error": "Connection closed."
+  }
+]

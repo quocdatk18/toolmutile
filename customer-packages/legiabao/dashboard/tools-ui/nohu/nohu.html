@@ -2533,8 +2533,8 @@
             const siteName = firstSite.name;
 
             try {
-                console.log('🔍 Fetching account info:', { username, siteName, url: `/api/accounts/${username}/${siteName}` });
-                const response = await fetch(`/api/accounts/${username}/${siteName}`);
+                console.log('🔍 Fetching account info:', { username, url: `/api/accounts/nohu/${username}` });
+                const response = await fetch(`/api/accounts/nohu/${username}`);
                 console.log('📡 Response status:', response.status, response.statusText);
 
                 if (!response.ok) {

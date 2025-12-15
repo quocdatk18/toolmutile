@@ -1,0 +1,87 @@
+[
+  {
+    "site": "Hi88",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame 'D70A94959EF788D8F59832633557DB3D'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "F8BET",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame 'EC08A857ECDD6EE854A7D3726C88C4AF'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "SHBET",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '188E0E2E0C6F03EE2E4CED1AC0627D30'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "NEW88",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame 'E519A6EF67F1FE7BDE6BD9A27FFDE2DE'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "789BET",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame 'C8361E2B0DDE66B89E0D5845458F8585'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  }
+]

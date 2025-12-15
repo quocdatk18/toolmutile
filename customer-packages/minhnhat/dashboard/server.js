@@ -781,10 +781,11 @@ app.get('/api/automation/results', (req, res) => {
             const userDir = path.join(screenshotsDir, username);
 
             // Check if user has account info (for full automation vs promo check)
-            const accountsDir = path.join(__dirname, '../accounts');
+            // New path: ../accounts/nohu/username
+            const accountsDir = path.join(__dirname, '../accounts/nohu');
             const userAccountDir = path.join(accountsDir, username);
             const hasAccountInfo = fs.existsSync(userAccountDir) &&
-                fs.readdirSync(userAccountDir).some(f => f.endsWith('.json'));
+                fs.readdirSync(userAccountDir).some(f => f.endsWith('.txt') || f.endsWith('.json'));
 
             // Check if this is old structure (files directly) or new structure (session folders)
             const items = fs.readdirSync(userDir, { withFileTypes: true });
@@ -868,6 +869,102 @@ app.get('/api/automation/results', (req, res) => {
 });
 
 // Get account info for a specific site
+// Get NOHU account info (new path: /api/accounts/nohu/:username)
+app.get('/api/accounts/nohu/:username', (req, res) => {
+    try {
+        const { username } = req.params;
+        // New path: ../../accounts/nohu/username (from dashboard folder)
+        const accountsDir = path.join(__dirname, '../../accounts/nohu');
+        const userAccountDir = path.join(accountsDir, username);
+
+        if (!fs.existsSync(userAccountDir)) {
+            return res.json({ success: false, error: 'User account folder not found' });
+        }
+
+        // Try to read account.json first (shared for all sites)
+        const accountJsonPath = path.join(userAccountDir, 'account.json');
+        if (fs.existsSync(accountJsonPath)) {
+            try {
+                const accountData = JSON.parse(fs.readFileSync(accountJsonPath, 'utf8'));
+                return res.json({ success: true, account: accountData });
+            } catch (err) {
+                console.warn('⚠️ Failed to parse account.json:', err.message);
+            }
+        }
+
+        // Fallback: read account.txt (text format)
+        const accountTxtPath = path.join(userAccountDir, 'account.txt');
+        if (fs.existsSync(accountTxtPath)) {
+            const accountText = fs.readFileSync(accountTxtPath, 'utf8');
+            // Parse text format to JSON
+            const account = {
+                username: username,
+                text: accountText
+            };
+            return res.json({ success: true, account: account });
+        }
+
+        return res.json({ success: false, error: 'No account file found' });
+    } catch (error) {
+        console.error('❌ Error getting NOHU account info:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Save NOHU account info (POST /api/accounts/nohu/:username)
+app.post('/api/accounts/nohu/:username', (req, res) => {
+    try {
+        const { username } = req.params;
+        const accountData = req.body;
+
+        // New path: ../accounts/nohu/username
+        const accountsDir = path.join(__dirname, '../accounts/nohu');
+        const userAccountDir = path.join(accountsDir, username);
+
+        // Create directory if not exists
+        if (!fs.existsSync(userAccountDir)) {
+            fs.mkdirSync(userAccountDir, { recursive: true });
+            console.log(`📁 Created account directory: ${userAccountDir}`);
+        }
+
+        // Save as JSON
+        const accountJsonPath = path.join(userAccountDir, 'account.json');
+        fs.writeFileSync(accountJsonPath, JSON.stringify(accountData, null, 2));
+        console.log(`✅ Saved account info (JSON): ${accountJsonPath}`);
+
+        // Also save as text format for readability
+        const accountTxtPath = path.join(userAccountDir, 'account.txt');
+        const accountText = `
+═══════════════════════════════════════════════════════════
+                    THÔNG TIN TÀI KHOẢN NOHU
+═══════════════════════════════════════════════════════════
+
+👤 THÔNG TIN ĐĂNG NHẬP
+   • Tên đăng nhập: ${accountData.username}
+   • Mật khẩu: ${accountData.password}
+   • Mật khẩu rút tiền: ${accountData.withdrawPassword}
+   • Họ và tên: ${accountData.fullname}
+
+💳 THÔNG TIN NGÂN HÀNG
+   • Ngân hàng: ${accountData.bank?.name || 'N/A'}
+   • Chi nhánh: ${accountData.bank?.branch || 'N/A'}
+   • Số tài khoản: ${accountData.bank?.accountNumber || 'N/A'}
+
+📅 Ngày đăng ký: ${accountData.registeredAt}
+
+═══════════════════════════════════════════════════════════
+`;
+        fs.writeFileSync(accountTxtPath, accountText);
+        console.log(`✅ Saved account info (TXT): ${accountTxtPath}`);
+
+        res.json({ success: true, message: 'Account info saved successfully' });
+    } catch (error) {
+        console.error('❌ Error saving NOHU account info:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get account info for a specific site (old path - kept for backward compatibility)
 app.get('/api/accounts/:username/:siteName', (req, res) => {
     try {
         const { username, siteName } = req.params;

@@ -1,23 +1,4 @@
 {
-  "quocdat": {
-    "customerName": "quocdat",
-    "machineId": "955ec3b88678edc4",
-    "notes": "Upgraded package. Machine ID and Secret Key preserved.",
-    "createdAt": "2025-12-11T13:24:36.606Z",
-    "updatedAt": "2025-12-12T17:46:34.105Z",
-    "updateCount": 6,
-    "licenseHistory": [
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6InF1b2NkYXQiLCJtYWNoaW5lSWQiOiI5NTVlYzNiODg2NzhlZGM0IiwiZXhwaXJ5IjotMSwiY3JlYXRlZCI6MTc2NTQ1OTUxOTc1MiwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCIsInRvb2wtc21zIiwiaGFpMnZpcC10b29sIl19.2736ff4d75c034f21cb082629db0032ec9dac549c990829d2d04fde4353e0251",
-        "expiryDays": -1,
-        "notes": "Generated from Customer Manager. Lifetime. Tools: nohu-tool, tool-sms, hai2vip-tool",
-        "createdAt": "2025-12-11T13:25:19.752Z",
-        "isActive": true
-      }
-    ],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-11T13:24:36.606Z"
-  },
   "legiabao": {
     "customerName": "legiabao",
     "machineId": "0aaec00a64557462",
@@ -31,10 +12,29 @@
         "expiryDays": 7,
         "notes": "Generated from Customer Manager. 7 days. Tools: nohu-tool",
         "createdAt": "2025-12-12T15:30:42.794Z",
+        "isActive": false
+      },
+      {
+        "licenseKey": "eyJ1c2VybmFtZSI6ImxlZ2lhYmFvIiwibWFjaGluZUlkIjoiMGFhZWMwMGE2NDU1NzQ2MiIsImV4cGlyeSI6MTc2NjIzODY3ODk4MiwiY3JlYXRlZCI6MTc2NTYzMzg3ODk4MiwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCJdfQ==.463279e0190e4ecef61d089d12baf0ddecd3d1ac5adbe3b7623da4d4d247d83a",
+        "expiryDays": 7,
+        "notes": "Generated from Customer Manager. 7 days. Tools: nohu-tool",
+        "createdAt": "2025-12-13T13:51:18.982Z",
         "isActive": true
       }
     ],
     "machineIdLocked": true,
     "machineIdSetAt": "2025-12-12T15:30:31.235Z"
+  },
+  "file1": {
+    "customerName": "file1",
+    "machineId": "aac0e145466757ba",
+    "notes": "Upgraded package. Machine ID and Secret Key preserved.",
+    "displayName": "",
+    "createdAt": "2025-12-15T05:23:04.769Z",
+    "updatedAt": "2025-12-15T05:23:04.769Z",
+    "updateCount": 0,
+    "licenseHistory": [],
+    "machineIdLocked": true,
+    "machineIdSetAt": "2025-12-15T05:23:04.769Z"
   }
 }

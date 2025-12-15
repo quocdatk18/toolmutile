@@ -722,6 +722,41 @@
             font-family: monospace;
         }
 
+        .display-name-display {
+            background: #f1f5f9;
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 4px;
+            color: #334155;
+            font-size: 13px;
+        }
+
+        .display-name-input-cell {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .display-name-input-cell input {
+            padding: 4px 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+            flex: 1;
+            min-width: 100px;
+            max-width: 120px;
+        }
+
+        .display-name-input-cell input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
         .machine-id-cell {
             font-family: 'Courier New', monospace;
             font-size: 12px;
@@ -1257,13 +1292,13 @@
                 <table class="customer-table" id="customerTable">
                     <thead>
                         <tr>
-                            <th>👤 Tên Khách Hàng</th>
-                            <th>📅 Ngày Tạo</th>
-                            <th>💾 Dung Lượng</th>
-                            <th>🆔 Machine ID</th>
-                            <th>📊 Trạng Thái</th>
-                            <th>⏰ Thời Gian Còn Lại</th>
-                            <th>⚡ Thao Tác</th>
+                            <th style="width: 120px; text-align: center;">👤 Tên Khách Hàng</th>
+                            <th style="width: 110px; text-align: center;">📅 Ngày Tạo</th>
+                            <th style="width: 200px; text-align: center;">🏷️ Tên Phụ</th>
+                            <th style="width: 150px; text-align: center;">🆔 Machine ID</th>
+                            <th style="width: 100px; text-align: center;">📊 Trạng Thái</th>
+                            <th style="width: 80px; text-align: center;">⏰ Thời Gian</th>
+                            <th style="width: 200px;">⚡ Thao Tác</th>
                         </tr>
                     </thead>
                     <tbody id="customerTableBody">
@@ -1452,59 +1487,25 @@
                     <label>🛠️ Tools Được Phép Sử Dụng *</label>
                     <div class="tools-selection">
                         <div class="quick-select-buttons">
-                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('nohu-only')">
-                                🎰 NOHU Only
+                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('all')">
+                                ⭐ Select All
                             </button>
-                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('sms-only')">
-                                📱 SMS Only
-                            </button>
-                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('hai2vip-only')">
-                                🎲 HAI2VIP Only
-                            </button>
-                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('premium')">
-                                ⭐ Premium (All)
+                            <button type="button" class="quick-select-btn" onclick="selectToolPreset('none')">
+                                ❌ Clear All
                             </button>
                             <button type="button" class="quick-select-btn" onclick="selectToolPreset('wildcard')">
                                 ♾️ Wildcard (*)
                             </button>
                         </div>
 
-                        <div class="checkbox-group">
-                            <label class="checkbox-item">
-                                <input type="checkbox" id="tool-nohu" value="nohu-tool" checked
-                                    onchange="updateToolSelection()">
-                                <div>
-                                    <span>🎰 NOHU Auto Tool</span>
-                                    <small>Tự động đăng ký, đăng nhập, thêm bank, check khuyến mãi</small>
-                                </div>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" id="tool-sms" value="tool-sms" onchange="updateToolSelection()">
-                                <div>
-                                    <span>📱 SMS Auto Tool</span>
-                                    <small>OKVIP, ABCVIP, KJC, 78WIN với SMS verification</small>
-                                </div>
-                            </label>
-                            <label class="checkbox-item">
-                                <input type="checkbox" id="tool-hai2vip" value="hai2vip-tool"
-                                    onchange="updateToolSelection()">
-                                <div>
-                                    <span>🎲 HAI2VIP Auto Tool</span>
-                                    <small>22VIP sites với xác thực SĐT và nhận khuyến mãi</small>
-                                </div>
-                            </label>
-                            <label class="checkbox-item wildcard-option">
-                                <input type="checkbox" id="tool-wildcard" value="*" onchange="updateToolSelection()">
-                                <div>
-                                    <span>♾️ All Tools (Wildcard)</span>
-                                    <small>Cho phép sử dụng tất cả tools hiện tại và tương lai</small>
-                                </div>
-                            </label>
+                        <div class="checkbox-group" id="toolsCheckboxGroup">
+                            <!-- Dynamically loaded from config/tools.json -->
+                            <p style="color: #999; text-align: center; padding: 20px;">Loading tools...</p>
                         </div>
 
                         <div class="selected-tools-preview">
                             <strong>📋 Tools đã chọn:</strong>
-                            <span id="selectedToolsPreview">NOHU Auto Tool</span>
+                            <span id="selectedToolsPreview">Chưa chọn tool nào</span>
                         </div>
                     </div>
                 </div>
@@ -1865,6 +1866,84 @@
             }
         }
 
+        // Update Display Name
+        async function updateDisplayName(customerName) {
+            const input = document.getElementById(`displayName_${customerName}`);
+            const displayName = input.value.trim();
+
+            if (!displayName) {
+                showToast('error', 'Vui lòng nhập tên phụ');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerName,
+                        displayName,
+                        notes: `Updated display name: ${displayName}`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('success', 'Lưu tên phụ thành công!');
+                    setTimeout(() => {
+                        refreshPackages(); // Reload to show updated display name
+                    }, 500);
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
+        // Edit Display Name
+        async function editDisplayName(customerName, currentDisplayName) {
+            const newDisplayName = prompt('Nhập tên phụ mới:', currentDisplayName);
+
+            if (newDisplayName === null) return; // User cancelled
+
+            const trimmedName = newDisplayName.trim();
+            if (!trimmedName) {
+                showToast('error', 'Tên phụ không được để trống');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        customerName,
+                        displayName: trimmedName,
+                        notes: `Updated display name: ${trimmedName}`
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('success', 'Cập nhật tên phụ thành công!');
+                    setTimeout(() => {
+                        refreshPackages(); // Reload to show updated display name
+                    }, 500);
+                } else {
+                    showToast('error', 'Lỗi: ' + data.error);
+                }
+            } catch (error) {
+                showToast('error', 'Lỗi kết nối: ' + error.message);
+            }
+        }
+
         // Update Machine ID directly (original function for first-time setup)
         async function updateMachineIdDirect(customerName, machineId) {
             try {
@@ -1928,7 +2007,7 @@
         }
 
         // Generate license for customer - Open modal
-        function generateLicenseForCustomer(customerName) {
+        async function generateLicenseForCustomer(customerName) {
             // Find customer data to get Machine ID
             const customerData = allCustomers.find(c => c.pkg.name === customerName);
             if (!customerData || customerData.isPlaceholder) {
@@ -1947,8 +2026,8 @@
             document.getElementById('customMinutesGroup').style.display = 'none';
             document.getElementById('licenseResult').style.display = 'none';
 
-            // Reset tool selection to NOHU only and update preview
-            selectToolPreset('nohu-only');
+            // Load tools from config
+            await loadToolsForLicense();
 
             // Show modal
             document.getElementById('generateLicenseModal').style.display = 'flex';
@@ -2269,20 +2348,27 @@
 
                     return `
                         <tr>
-                            <td>
+                            <td style="width: 120px; text-align: center;">
                                 <div class="customer-name">
                                     👤 ${pkg.name}
                                 </div>
                             </td>
-                            <td>
+                            <td style="width: 110px; text-align: center;">
                                 <div class="customer-date" title="${customerData.customer.createdAt ? new Date(customerData.customer.createdAt).toLocaleString('vi-VN') : 'Thời gian tạo package: ' + customerData.pkg.created}">
                                     📅 ${formatCustomerDate(customerData.customer, customerData.pkg)}
                                 </div>
                             </td>
-                            <td>
-                                <div class="customer-size">💾 ${pkg.size}</div>
+                            <td style="width: 200px; text-align: center;">
+                                ${customer.displayName ?
+                            `<div class="display-name-display">${customer.displayName}</div>
+                                    <button class="btn-small btn-edit-machine" onclick="editDisplayName('${pkg.name}', '${customer.displayName}')">✏️ Sửa</button>` :
+                            `<div class="display-name-input-cell">
+                                        <input type="text" id="displayName_${pkg.name}" placeholder="Nhập tên phụ..." maxlength="50">
+                                        <button class="btn-small btn-save" onclick="updateDisplayName('${pkg.name}')">💾 Lưu</button>
+                                    </div>`
+                        }
                             </td>
-                            <td class="machine-id-cell">
+                            <td style="width: 150px; text-align: center;" class="machine-id-cell">
                                 ${isPlaceholder ?
                             `<div class="machine-id-input-cell">
                                         <input type="text" id="machineId_${pkg.name}" placeholder="Nhập Machine ID..." maxlength="16">
@@ -2295,18 +2381,18 @@
                             }`
                         }
                             </td>
-                            <td>
+                            <td style="width: 100px; text-align: center;">
                                 <span class="status-badge ${!isPlaceholder ? 'status-has-machine' : 'status-no-machine'}">
                                     ${!isPlaceholder ? '✅ Có Machine ID' : '❌ Chưa có Machine ID'}
                                 </span>
                             </td>
-                            <td>
+                            <td style="width: 80px; text-align: center;">
                                 ${(() => {
                             const timeRemaining = calculateLicenseTimeRemaining(customerData.customer);
-                            return `<span class="license-time ${timeRemaining.class}">${timeRemaining.text}</span>`;
+                            return `<span class="license-time ${timeRemaining.class}" style="font-size: 12px;">${timeRemaining.text}</span>`;
                         })()}
                             </td>
-                            <td>
+                            <td style="width: 200px;">
                                 <div class="action-buttons">
                                     ${!isPlaceholder ?
                             `<button class="btn-small btn-create-key" onclick="generateLicenseForCustomer('${pkg.name}')">
@@ -2478,31 +2564,89 @@
             }
         }
 
+        // Load tools from config/tools.json
+        async function loadToolsForLicense() {
+            try {
+                const response = await fetch('/api/tools');
+                const data = await response.json();
+
+                if (!data.tools || data.tools.length === 0) {
+                    console.warn('No tools found in config');
+                    return;
+                }
+
+                const container = document.getElementById('toolsCheckboxGroup');
+                container.innerHTML = '';
+
+                // Create checkbox for each tool
+                data.tools.forEach((tool, index) => {
+                    const label = document.createElement('label');
+                    label.className = 'checkbox-item';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = tool.id;
+                    checkbox.id = `tool-${tool.id}`;
+                    if (index === 0) checkbox.checked = true; // Check first tool by default
+                    checkbox.onchange = updateToolSelection;
+
+                    const div = document.createElement('div');
+                    const span = document.createElement('span');
+                    span.textContent = `${tool.icon || '🛠️'} ${tool.name}`;
+
+                    const small = document.createElement('small');
+                    small.textContent = tool.description || '';
+
+                    div.appendChild(span);
+                    div.appendChild(small);
+                    label.appendChild(checkbox);
+                    label.appendChild(div);
+                    container.appendChild(label);
+                });
+
+                // Add wildcard option
+                const wildcardLabel = document.createElement('label');
+                wildcardLabel.className = 'checkbox-item wildcard-option';
+
+                const wildcardCheckbox = document.createElement('input');
+                wildcardCheckbox.type = 'checkbox';
+                wildcardCheckbox.value = '*';
+                wildcardCheckbox.id = 'tool-wildcard';
+                wildcardCheckbox.onchange = updateToolSelection;
+
+                const wildcardDiv = document.createElement('div');
+                const wildcardSpan = document.createElement('span');
+                wildcardSpan.textContent = '♾️ All Tools (Wildcard)';
+
+                const wildcardSmall = document.createElement('small');
+                wildcardSmall.textContent = 'Cho phép sử dụng tất cả tools hiện tại và tương lai';
+
+                wildcardDiv.appendChild(wildcardSpan);
+                wildcardDiv.appendChild(wildcardSmall);
+                wildcardLabel.appendChild(wildcardCheckbox);
+                wildcardLabel.appendChild(wildcardDiv);
+                container.appendChild(wildcardLabel);
+
+                updateToolSelection();
+            } catch (error) {
+                console.error('Error loading tools:', error);
+                document.getElementById('toolsCheckboxGroup').innerHTML = '<p style="color: red;">Lỗi tải tools</p>';
+            }
+        }
+
         // Tool selection functions
         function selectToolPreset(preset) {
-            // Uncheck all first
-            document.getElementById('tool-nohu').checked = false;
-            document.getElementById('tool-sms').checked = false;
-            document.getElementById('tool-hai2vip').checked = false;
-            document.getElementById('tool-wildcard').checked = false;
+            const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]');
 
-            // Select based on preset
             switch (preset) {
-                case 'nohu-only':
-                    document.getElementById('tool-nohu').checked = true;
+                case 'all':
+                    checkboxes.forEach(cb => cb.checked = true);
                     break;
-                case 'sms-only':
-                    document.getElementById('tool-sms').checked = true;
-                    break;
-                case 'hai2vip-only':
-                    document.getElementById('tool-hai2vip').checked = true;
-                    break;
-                case 'premium':
-                    document.getElementById('tool-nohu').checked = true;
-                    document.getElementById('tool-sms').checked = true;
-                    document.getElementById('tool-hai2vip').checked = true;
+                case 'none':
+                    checkboxes.forEach(cb => cb.checked = false);
                     break;
                 case 'wildcard':
+                    checkboxes.forEach(cb => cb.checked = false);
                     document.getElementById('tool-wildcard').checked = true;
                     break;
             }
@@ -2511,18 +2655,18 @@
         }
 
         function updateToolSelection() {
-            const toolNames = {
-                'nohu-tool': 'NOHU Auto Tool',
-                'tool-sms': 'SMS Auto Tool',
-                'hai2vip-tool': 'HAI2VIP Auto Tool',
-                '*': 'All Tools (Wildcard)'
-            };
-
             const selected = [];
             const checkboxes = document.querySelectorAll('.checkbox-group input[type="checkbox"]:checked');
 
             checkboxes.forEach(cb => {
-                selected.push(toolNames[cb.value] || cb.value);
+                if (cb.value === '*') {
+                    selected.push('All Tools (Wildcard)');
+                } else {
+                    // Find tool name from checkbox label
+                    const label = cb.closest('label');
+                    const toolName = label.querySelector('span').textContent;
+                    selected.push(toolName);
+                }
             });
 
             const preview = document.getElementById('selectedToolsPreview');
@@ -2540,8 +2684,8 @@
             document.getElementById('licenseResult').style.display = 'none';
             document.getElementById('licenseType').value = '30';
 
-            // Reset tool selection to NOHU only
-            selectToolPreset('nohu-only');
+            // Reset tool selection
+            selectToolPreset('none');
             toggleCustomFields();
         }
 

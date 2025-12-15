@@ -930,7 +930,17 @@ ${licenseKey}
                 fs.unlinkSync(secretKeyFile);
             }
 
-            return { success: true, message: 'Đã xóa package' };
+            // Delete from customer-machines.json
+            const machinesFile = path.join(process.cwd(), 'customer-machines.json');
+            if (fs.existsSync(machinesFile)) {
+                const machines = JSON.parse(fs.readFileSync(machinesFile, 'utf8'));
+                if (machines[packageName]) {
+                    delete machines[packageName];
+                    fs.writeFileSync(machinesFile, JSON.stringify(machines, null, 2));
+                }
+            }
+
+            return { success: true, message: 'Đã xóa package và customer record' };
 
         } catch (error) {
             return { success: false, message: error.message };

@@ -1,1 +1,313 @@
-const _0x227d53=_0x5bbe;(function(_0x285bca,_0x397d7a){const _0x19def7=_0x5bbe,_0x5910d5=_0x285bca();while(!![]){try{const _0x31b663=parseInt(_0x19def7(0x175))/(-0xf4*0x18+-0xd8d+0x246e)+parseInt(_0x19def7(0x155))/(-0x151*-0xb+0x750+0x15c9*-0x1)*(-parseInt(_0x19def7(0x121))/(0xb77+-0x312*-0x5+0x2f*-0x92))+-parseInt(_0x19def7(0x16e))/(-0x1*0xc72+0xfb+0xb7b)+parseInt(_0x19def7(0xfa))/(0x24d*0x2+0x3*0xad3+0x99*-0x3e)+-parseInt(_0x19def7(0x194))/(0x24af+0xc2c+-0x30d5)+parseInt(_0x19def7(0x14a))/(-0x1*-0xbfa+-0x5*0xff+-0x37c*0x2)*(parseInt(_0x19def7(0x184))/(0xfa3+0x11e1*-0x1+0x6*0x61))+parseInt(_0x19def7(0x180))/(0x10a*0x17+-0x5*0xcc+-0x7*0x2d7);if(_0x31b663===_0x397d7a)break;else _0x5910d5['push'](_0x5910d5['shift']());}catch(_0xef2661){_0x5910d5['push'](_0x5910d5['shift']());}}}(_0x2124,0x57*-0x19c8+-0x1b486f+-0x509*-0xa21));function _0x2124(){const _0x178fa4=['8k138sj.to','860724Snwjws','key','bc2a6xl4d4','ister','423152nFdwRz','Network\x20re','uKVRn','jk87gfuj60','sponse\x20was','ghhdj-567d','then','unt/Regist','fj7xswc.vi','jsdujkg8dj','Vehuo','kl99.cooki','?fixed.isw','ster','imageUrl','iRCGe','6230286CrpgEi','0sftd.fun/','djifshuie8','app=1','89bet6.com','https://ww','ont.net/78','cnjiufkxuu','egister','Account/Re','urls','2591335BXjOeg','88clb2jt.b','BASE_64','ter','gister','3imxjuufle','RUN_BATCH_','blob','j859.xyz/A','ng/Account','NvBzw','OPEN','local','TrEiA','YAdUv','co/Account','5win33.com','/Register?','in.cloudfr','o.xyz/Acco','9shjdhsdxb','gmgkiow3i.','jvdf76fd92','https://55','78king88.c','JAkHj','message','w.2mm88.co','koopfcmbpw','?f=889534&','hdhhmm.asi','https://d1','ister?f=45','dxiidnc84g','SAVE_ANTIC','URL','ffok.com/A','gk88vip2.x','m/Account/','237gLxxJR','Register?f','pp=1','u888qj.lin','984798.com','uzz/Accoun','.com/Accou','result','kuwin2.co/','vckrgio.co','sa2.xn--88','onloadend','\x20error','FileReader','https://sa','/m/registe','m-vn-com.c','w.xx88.fun','pg66.com/A','hsgf.com/A','storage','APTCHA_KEY','Register','om/m/regis','a/Account/','39bet16.co','er?app=1','w.qq8886.c','gister?app','addListene','wtyurfuijk','bj53gg9hjs','okking72.c','create','yz/Account','runtime','1bedd-fb89','type','vswin.org/','t/Register','wvg.com/Ac','168MgLwzt','onerror','56781&app=','w.x88004.c','0mmoo.com/','nt/Registe','RUN_PROMO_','tabs','88111188.c','GET_IMAGE_','17hello88.','1884nqwZcd','p/Account/','cwin59.com','om/Account','split','xcvklrhyli','hubet36.co','onMessage','lTTmp','190789.com','Register?a','=2551606&a','count/Regi','\x20not\x20ok.','readAsData','win.html','wJUxw','w.rr3311.c','jkuqw8czbm','xin88.com.','catch','887750.com','ccount/Reg','m/signup','/Account/R','1937320XnuNnn','66-um1g.co','sites','com/Accoun','reject','www-24h-co','ebclip=2','693932KkSQSF','length','https://m.','m/m/regist','k/Account/','/Register','win55www.c','set','0bka.club/','hsdh99hjsb'];_0x2124=function(){return _0x178fa4;};return _0x2124();}const SITE_URL={'j88':_0x227d53(0x177)+_0x227d53(0x102)+_0x227d53(0x16b)+_0x227d53(0x11a)+_0x227d53(0x14c)+'1','u888':_0x227d53(0x177)+_0x227d53(0x124)+_0x227d53(0x179)+_0x227d53(0x122)+_0x227d53(0x160)+_0x227d53(0x123),'abc8':_0x227d53(0x177)+_0x227d53(0x195)+_0x227d53(0xf8)+_0x227d53(0x13d)+'=1','88clb':_0x227d53(0x177)+_0x227d53(0xfb)+_0x227d53(0x126)+_0x227d53(0x148)+_0x227d53(0x117)+_0x227d53(0xf2),'hi88':_0x227d53(0x177)+_0x227d53(0x173)+_0x227d53(0x131)+_0x227d53(0x158)+_0x227d53(0x17a),'f8bet':_0x227d53(0x177)+_0x227d53(0x18d)+_0x227d53(0x167)+_0x227d53(0x127)+_0x227d53(0x14f)+'r','shbet':_0x227d53(0x177)+_0x227d53(0x196)+_0x227d53(0x10e)+_0x227d53(0x12a)+_0x227d53(0x120)+_0x227d53(0x137),'new88':_0x227d53(0x177)+_0x227d53(0x11b)+_0x227d53(0x116)+_0x227d53(0x134)+_0x227d53(0x16b)+_0x227d53(0x183),'mb66':_0x227d53(0x177)+_0x227d53(0x13f)+_0x227d53(0x15a)+_0x227d53(0xff)+_0x227d53(0x10f)+_0x227d53(0x171)+_0x227d53(0x148),'789bet':_0x227d53(0x177)+_0x227d53(0x17e)+_0x227d53(0xf6)+_0x227d53(0x149)+_0x227d53(0x161)+_0x227d53(0x191),'qq88':_0x227d53(0xf4)+_0x227d53(0x13c)+_0x227d53(0x138)+_0x227d53(0xfd),'rr88':_0x227d53(0xf4)+_0x227d53(0x166)+_0x227d53(0x138)+_0x227d53(0xfd),'xx88':_0x227d53(0xf4)+_0x227d53(0x132)+_0x227d53(0x130)+'r','mm88':_0x227d53(0xf4)+_0x227d53(0x115)+_0x227d53(0x178)+'er','go99':_0x227d53(0x177)+_0x227d53(0x189)+_0x227d53(0x118)+_0x227d53(0x139)+_0x227d53(0x15f)+_0x227d53(0x123),'nohu':_0x227d53(0x177)+_0x227d53(0x152)+_0x227d53(0x158)+_0x227d53(0x10b)+_0x227d53(0xf2),'tt88':_0x227d53(0x177)+_0x227d53(0x145)+_0x227d53(0x140)+_0x227d53(0x17d)+_0x227d53(0xf8)+_0x227d53(0x13d)+'=1','mmoo':_0x227d53(0x177)+_0x227d53(0x14e)+_0x227d53(0xf8)+_0x227d53(0x13d)+'=1','789p':_0x227d53(0x177)+_0x227d53(0x110)+_0x227d53(0x187)+_0x227d53(0x10d)+_0x227d53(0x18b)+_0x227d53(0x13b),'jun88':_0x227d53(0x12f)+_0x227d53(0x12b)+_0x227d53(0x16f)+_0x227d53(0x16c),'78win':_0x227d53(0x119)+_0x227d53(0x182)+_0x227d53(0x10c)+_0x227d53(0xf5)+_0x227d53(0x164),'x88':_0x227d53(0xf4)+_0x227d53(0x14d)+_0x227d53(0x138)+_0x227d53(0xfd),'89bet':_0x227d53(0x177)+_0x227d53(0xf3)+_0x227d53(0x16d)+_0x227d53(0xf7),'hubet':_0x227d53(0x177)+_0x227d53(0x15b)+_0x227d53(0x120)+_0x227d53(0x137),'king88':_0x227d53(0x177)+_0x227d53(0x112)+_0x227d53(0x158)+_0x227d53(0x17a),'cwin':_0x227d53(0x177)+_0x227d53(0x157)+_0x227d53(0x16d)+_0x227d53(0xf7),'hello88':_0x227d53(0x177)+_0x227d53(0x154)+_0x227d53(0x171)+_0x227d53(0x148),'win55':_0x227d53(0x177)+_0x227d53(0x17b)+_0x227d53(0x158)+_0x227d53(0x17a),'39bet':_0x227d53(0x177)+_0x227d53(0x13a)+_0x227d53(0x120)+_0x227d53(0x137),'okking':_0x227d53(0x177)+_0x227d53(0x141)+_0x227d53(0x158)+_0x227d53(0x17a),'kl99':_0x227d53(0x177)+_0x227d53(0x18f)+_0x227d53(0x103)+_0x227d53(0x17a),'kuwin':_0x227d53(0x177)+_0x227d53(0x129)+_0x227d53(0xf8)+_0x227d53(0xfe),'okvnd':_0x227d53(0x177)+_0x227d53(0x18c)+_0x227d53(0x156)+_0x227d53(0x137),'ffok':_0x227d53(0x177)+_0x227d53(0x11e)+_0x227d53(0x16b)+_0x227d53(0x183),'xin88':_0x227d53(0x177)+_0x227d53(0x168)+_0x227d53(0x109)+_0x227d53(0x17a),'gk88':_0x227d53(0x177)+_0x227d53(0x11f)+_0x227d53(0x143)+_0x227d53(0x17a),'pg66':_0x227d53(0x177)+_0x227d53(0x133)+_0x227d53(0x16b)+_0x227d53(0x183),'8kbet':_0x227d53(0x177)+_0x227d53(0x17f)+_0x227d53(0x156)+_0x227d53(0x137),'789win':_0x227d53(0x177)+_0x227d53(0x15e)+_0x227d53(0x16d)+_0x227d53(0xf7),'88vv':_0x227d53(0x177)+_0x227d53(0x16a)+_0x227d53(0x16d)+_0x227d53(0xf7),'98win':_0x227d53(0x177)+_0x227d53(0x125)+_0x227d53(0x16d)+_0x227d53(0xf7),'33win':_0x227d53(0x111)+_0x227d53(0x10a)+_0x227d53(0x190)+_0x227d53(0x174),'vswin':_0x227d53(0x177)+_0x227d53(0x147)+_0x227d53(0xf8)+_0x227d53(0xfe)};async function runBatchOpen({sites:sites=[]}){const _0x439b62=_0x227d53;if(!sites[_0x439b62(0x176)])return;for(const _0x1949c7 of sites){const _0x23f83b=SITE_URL[_0x1949c7];_0x23f83b&&chrome[_0x439b62(0x151)][_0x439b62(0x142)]({'url':_0x23f83b,'active':![]});}}function _0x5bbe(_0x576548,_0x13e977){const _0x506276=_0x2124();return _0x5bbe=function(_0x48d53,_0x3db5b1){_0x48d53=_0x48d53-(-0x8b+-0x98*0x1d+0x12b5);let _0x47f04e=_0x506276[_0x48d53];return _0x47f04e;},_0x5bbe(_0x576548,_0x13e977);}async function runPromoOpen({urls:urls=[]}){const _0x4e04ec=_0x227d53;if(!urls[_0x4e04ec(0x176)])return;for(const _0x32b042 of urls){chrome[_0x4e04ec(0x151)][_0x4e04ec(0x142)]({'url':_0x32b042,'active':![]});}}chrome[_0x227d53(0x144)][_0x227d53(0x15c)][_0x227d53(0x13e)+'r']((_0x4cc51c,_0x7df871,_0x27fe1e)=>{const _0x509047=_0x227d53,_0x40370f={'JAkHj':function(_0x32edcb,_0x48e10e){return _0x32edcb===_0x48e10e;},'uKVRn':_0x509047(0x153)+_0x509047(0xfc),'iRCGe':function(_0x4a02d9,_0x46914c){return _0x4a02d9(_0x46914c);},'Vehuo':function(_0x213173,_0x43033d){return _0x213173===_0x43033d;},'TrEiA':_0x509047(0x100)+_0x509047(0x105),'lTTmp':function(_0x493f55,_0x57bf9c){return _0x493f55(_0x57bf9c);},'NvBzw':_0x509047(0x150)+_0x509047(0x105),'YAdUv':function(_0x5cb37d,_0x233d70){return _0x5cb37d===_0x233d70;},'wJUxw':_0x509047(0x11c)+_0x509047(0x136)};if(_0x40370f[_0x509047(0x113)](_0x4cc51c[_0x509047(0x146)],_0x40370f[_0x509047(0x186)])&&_0x4cc51c[_0x509047(0x192)])return _0x40370f[_0x509047(0x193)](fetch,_0x4cc51c[_0x509047(0x192)])[_0x509047(0x18a)](_0x93ad35=>_0x93ad35['ok']?_0x93ad35[_0x509047(0x101)]():Promise[_0x509047(0x172)](_0x509047(0x185)+_0x509047(0x188)+_0x509047(0x162)))[_0x509047(0x18a)](_0x145e86=>{const _0x1576d3=_0x509047,_0x2920e7=new FileReader();_0x2920e7[_0x1576d3(0x12c)]=()=>_0x27fe1e({'success':!![],'base64':_0x2920e7[_0x1576d3(0x128)][_0x1576d3(0x159)](',')[-0x1750+0x11a1+0x7*0xd0]}),_0x2920e7[_0x1576d3(0x14b)]=()=>_0x27fe1e({'success':![],'error':_0x1576d3(0x12e)+_0x1576d3(0x12d)}),_0x2920e7[_0x1576d3(0x163)+_0x1576d3(0x11d)](_0x145e86);})[_0x509047(0x169)](_0x42431e=>_0x27fe1e({'success':![],'error':_0x42431e[_0x509047(0x114)]})),!![];if(_0x40370f[_0x509047(0x18e)](_0x4cc51c[_0x509047(0x146)],_0x40370f[_0x509047(0x107)]))return _0x40370f[_0x509047(0x15d)](runBatchOpen,{'sites':_0x4cc51c[_0x509047(0x170)]})[_0x509047(0x18a)](()=>_0x27fe1e({'ok':!![]})),!![];if(_0x40370f[_0x509047(0x18e)](_0x4cc51c[_0x509047(0x146)],_0x40370f[_0x509047(0x104)]))return _0x40370f[_0x509047(0x193)](runPromoOpen,{'urls':_0x4cc51c[_0x509047(0xf9)]})[_0x509047(0x18a)](()=>_0x27fe1e({'ok':!![]})),!![];if(_0x40370f[_0x509047(0x108)](_0x4cc51c[_0x509047(0x146)],_0x40370f[_0x509047(0x165)]))return chrome[_0x509047(0x135)][_0x509047(0x106)][_0x509047(0x17c)]({'anticaptchaApiKey':_0x4cc51c[_0x509047(0x181)]},()=>_0x27fe1e({'ok':!![]})),!![];});
+// Service Worker - xử lý background tasks
+
+const SITE_URL = {
+    'shbet': 'https://shbet800.com/Account/Register',
+    'f8bet': 'https://f8beta2.com/Account/Register',
+    'new88': 'https://new88okvip.com/Account/Register',
+    'hi88': 'https://17hello88.com/Account/Register',
+    '789bet': 'https://789b77.com/Account/Register',
+    'mb66': 'https://ttkm-mb66okvip.com/Account/Register',
+    'j88': 'https://u888qj.link/Account/Register',
+    'u888': 'https://u888qj.link/Account/Register',
+    'abc8': 'https://abc29.ink/Account/Register',
+    '88clb': 'https://88clb2jt.bio/Account/Register',
+    'qq88': 'https://w.qq8886.com/Account/Register',
+    'rr88': 'https://w.rr3311.com/Account/Register',
+    'xx88': 'https://w.xx88.fun/Account/Register',
+    'mm88': 'https://w.2mm88.com/Account/Register',
+    'x88': 'https://x88004.com/Account/Register',
+    '89bet': 'https://89bet6.com/Account/Register',
+    'hubet': 'https://hubet36.com/Account/Register',
+    'king88': 'https://78king88.com/Account/Register',
+    'cwin': 'https://cwin59.com/Account/Register',
+    'hello88': 'https://17hello88.com/Account/Register',
+    'win55': 'https://win55www.com/Account/Register',
+    'go99': 'https://go99.com/Account/Register',
+    'nohu': 'https://nohu.com/Account/Register',
+    'tt88': 'https://tt88.com/Account/Register',
+    'mmoo': 'https://0mmoo.com/Account/Register',
+    '789p': 'https://789p.com/Account/Register',
+    'jun88': 'https://jun88.com/Account/Register',
+    '78win': 'https://78win8.pro/Account/Register',
+    'pg66': 'https://pg66.com/Account/Register',
+    '8kbet': 'https://8kbet.com/Account/Register',
+    '789win': 'https://789win.com/Account/Register',
+    '88vv': 'https://88vv.com/Account/Register',
+    '98win': 'https://98win.com/Account/Register',
+    '33win': 'https://33win.com/Account/Register',
+    'vswin': 'https://vswin.org/Account/Register',
+    'ffok': 'https://ffok.com/Account/Register',
+    'xin88': 'https://xin88.com.vn/Account/Register',
+    'gk88': 'https://gk88vip2.xyz/Account/Register',
+    'kuwin': 'https://kuwin2.co/Account/Register',
+    'okvnd': 'https://okvnd.com/Account/Register',
+    'kl99': 'https://kl99.cookie.vn/Account/Register',
+    'okking': 'https://okking72.com/Account/Register',
+    '39bet': 'https://39bet16.com/Account/Register'
+};
+
+// Promo URLs - chia thành 2 loại: deposit (nạp đầu) và experience (trải nghiệm)
+const PROMO_URL = {
+    // Khuyến mãi nạp đầu (deposit)
+    deposit: {
+        'shbet': 'https://khuyenmai-shbet02.pages.dev/?promo_id=SH57K2',
+        'f8bet': 'https://f8beta2.com/Promo/Deposit',
+        'new88': 'https://new88okvip.com/Promo/Deposit',
+        'hi88': 'https://17hello88.com/Promo/Deposit',
+        '789bet': 'https://789b77.com/Promo/Deposit',
+        'mb66': 'https://ttkm-mb66okvip.com/Promo/Deposit',
+        'j88': 'https://u888qj.link/Promo/Deposit',
+        'u888': 'https://u888qj.link/Promo/Deposit',
+        'abc8': 'https://abc29.ink/Promo/Deposit',
+        '88clb': 'https://88clb2jt.bio/Promo/Deposit',
+        'qq88': 'https://w.qq8886.com/Promo/Deposit',
+        'rr88': 'https://w.rr3311.com/Promo/Deposit',
+        'xx88': 'https://w.xx88.fun/Promo/Deposit',
+        'mm88': 'https://w.2mm88.com/Promo/Deposit',
+        'x88': 'https://x88004.com/Promo/Deposit'
+    },
+    // Khuyến mãi trải nghiệm (experience)
+    experience: {
+        'shbet': 'https://khuyenmai-shbet02.pages.dev/?promo_id=SH57K',
+        'f8bet': 'https://f8beta2.com/Promo/Experience',
+        'new88': 'https://new88okvip.com/Promo/Experience',
+        'hi88': 'https://17hello88.com/Promo/Experience',
+        '789bet': 'https://789b77.com/Promo/Experience',
+        'mb66': 'https://ttkm-mb66okvip.com/Promo/Experience',
+        'j88': 'https://u888qj.link/Promo/Experience',
+        'u888': 'https://u888qj.link/Promo/Experience',
+        'abc8': 'https://abc29.ink/Promo/Experience',
+        '88clb': 'https://88clb2jt.bio/Promo/Experience',
+        'qq88': 'https://w.qq8886.com/Promo/Experience',
+        'rr88': 'https://w.rr3311.com/Promo/Experience',
+        'xx88': 'https://w.xx88.fun/Promo/Experience',
+        'mm88': 'https://w.2mm88.com/Promo/Experience',
+        'x88': 'https://x88004.com/Promo/Experience'
+    }
+};
+
+// Mở nhiều trang web cùng lúc
+async function runBatchOpen({ sites = [] }) {
+    if (!sites.length) return;
+
+    for (const site of sites) {
+        const url = SITE_URL[site];
+        if (url) {
+            chrome.tabs.create({ url, active: false });
+        }
+    }
+}
+
+// Mở trang xin khuyến mãi
+async function runPromoOpen({ sites = [], payload = {} }) {
+    if (!sites.length) return;
+
+    const promoType = payload.promoType || 'deposit'; // Default: deposit
+    console.log('[bg] Opening promo pages for type:', promoType);
+
+    // Lưu payload vào storage
+    chrome.storage.local.set({ lastPromoPayload: payload }, () => {
+        for (const site of sites) {
+            const url = PROMO_URL[promoType]?.[site];
+            if (url) {
+                console.log('[bg] Opening promo URL:', url);
+                chrome.tabs.create({ url, active: false });
+            } else {
+                console.warn('[bg] Promo URL not found for site:', site, 'type:', promoType);
+            }
+        }
+    });
+}
+
+const CAPTCHA_API_BASE = 'https://autocaptcha.pro/apiv3';
+
+// Xử lý API call từ content script (bypass CORS)
+async function handleApiCall(endpoint, method, body, apiKey) {
+    try {
+        const options = {
+            method: method || 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
+        if (body) {
+            options.body = JSON.stringify(body);
+        }
+
+        console.log('[bg] API Call:', endpoint, method);
+
+        const response = await fetch(endpoint, options);
+        const data = await response.json();
+
+        console.log('[bg] API Response:', data);
+
+        return data;
+    } catch (error) {
+        console.error('[bg] API Error:', error);
+        throw error;
+    }
+}
+
+// Giải image captcha
+async function solveImageCaptcha(base64Image, apiKey) {
+    try {
+        console.log('[bg] Solving image captcha...');
+
+        const cleanBase64 = base64Image.replace(/^data:image\/[a-z]+;base64,/, '');
+
+        const requestBody = {
+            type: "ImageToTextTask",
+            body: cleanBase64,
+            key: apiKey
+        };
+
+        const response = await fetch(`${CAPTCHA_API_BASE}/process`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        const submitData = await response.json();
+        console.log('[bg] Submit response:', submitData);
+
+        // Handle direct response format {success: true, captcha: "text"}
+        if (submitData.success && submitData.captcha) {
+            console.log('[bg] Direct captcha result:', submitData.captcha);
+            return submitData.captcha;
+        }
+
+        // Handle error
+        if (submitData.errorId !== undefined && submitData.errorId !== 0) {
+            throw new Error(submitData.message || 'Failed to submit');
+        }
+
+        // Handle polling format {errorId: 0, taskId: "xxx"}
+        if (submitData.taskId) {
+            const taskId = submitData.taskId;
+            const result = await pollCaptchaResult(taskId, apiKey);
+            return result;
+        }
+
+        throw new Error('Unknown API response format');
+
+    } catch (error) {
+        console.error('[bg] Image captcha solve error:', error);
+        throw error;
+    }
+}
+
+// Poll for captcha result
+async function pollCaptchaResult(taskId, apiKey, maxAttempts = 20) {
+    for (let i = 0; i < maxAttempts; i++) {
+        await sleep(3000); // Wait 3 seconds
+
+        try {
+            console.log(`[bg] Polling attempt ${i + 1}/${maxAttempts}...`);
+
+            const endpoint = `${CAPTCHA_API_BASE}/result?key=${apiKey}&taskId=${taskId}`;
+            const response = await fetch(endpoint);
+            const data = await response.json();
+
+            console.log('[bg] Poll response:', data);
+
+            // Check if resolved
+            if (data.resolved !== null && data.resolved !== undefined) {
+                console.log('[bg] Captcha resolved:', data.resolved);
+                return data.resolved;
+            } else if (data.errorId === 0 && data.resolved === null) {
+                console.log('[bg] Still processing...');
+                continue;
+            } else if (data.errorId !== 0) {
+                throw new Error(data.message || 'Failed to get result');
+            } else {
+                continue;
+            }
+        } catch (error) {
+            console.error('[bg] Poll error:', error);
+            if (i === maxAttempts - 1) {
+                throw error;
+            }
+        }
+    }
+
+    throw new Error('Timeout waiting for captcha result');
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Lắng nghe message từ popup và content script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === 'RUN_BATCH_OPEN') {
+        runBatchOpen({ sites: request.sites }).then(() => {
+            sendResponse({ ok: true });
+        });
+        return true;
+    }
+
+    if (request.type === 'RUN_PROMO_OPEN') {
+        runPromoOpen({ sites: request.sites, payload: request.payload }).then(() => {
+            sendResponse({ ok: true });
+        });
+        return true;
+    }
+
+    if (request.action === 'navigate') {
+        const { url } = request.data;
+        const fullUrl = new URL(url, sender.url).href;
+
+        chrome.tabs.update(sender.tab.id, { url: fullUrl }, () => {
+            sendResponse({ success: true, url: fullUrl });
+        });
+
+        return true;
+    }
+
+    if (request.action === 'solveCaptcha') {
+        const { base64Image, apiKey } = request.data;
+
+        solveImageCaptcha(base64Image, apiKey)
+            .then(result => {
+                sendResponse({ success: true, result });
+            })
+            .catch(error => {
+                sendResponse({ success: false, error: error.message });
+            });
+
+        return true; // Giữ channel mở cho async response
+    }
+
+    if (request.action === 'getCookies') {
+        const { url } = request.data;
+
+        chrome.cookies.getAll({ url }, (cookies) => {
+            const cookieMap = {};
+            cookies.forEach(cookie => {
+                cookieMap[cookie.name] = cookie.value;
+            });
+
+            console.log('[bg] Cookies retrieved:', Object.keys(cookieMap));
+            sendResponse({ success: true, cookies: cookieMap });
+        });
+
+        return true; // Giữ channel mở cho async response
+    }
+
+    if (request.action === 'apiCall') {
+        const { endpoint, method, body, apiKey } = request.data;
+
+        handleApiCall(endpoint, method, body, apiKey)
+            .then(data => {
+                sendResponse({ success: true, data });
+            })
+            .catch(error => {
+                sendResponse({ success: false, error: error.message });
+            });
+
+        return true; // Giữ channel mở cho async response
+    }
+});

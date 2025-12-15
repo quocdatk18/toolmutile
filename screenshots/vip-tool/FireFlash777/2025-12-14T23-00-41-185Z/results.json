@@ -1,0 +1,70 @@
+[
+  {
+    "site": "U888",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '0A1FBC06C974C9B608321C1B10F331BC'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "J88",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '367BCD4545F5E9CFF324FE34B2635A8E'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "ABC8",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '8CC6FEBB50BC599AE238165FC0DFE679'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  },
+  {
+    "site": "888clb",
+    "register": {
+      "success": false,
+      "error": "net::ERR_ABORTED at https://m.88clb2jt.buzz/Account/Register"
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  }
+]

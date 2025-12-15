@@ -881,10 +881,11 @@ app.get('/api/automation/results', (req, res) => {
 // Helper function to process user folder
 function processUserFolder(username, userDir, toolId, results, toolFilter = null) {
     // Check if user has account info (for full automation vs promo check)
-    const accountsDir = path.join(__dirname, '../accounts');
+    // New path: ../accounts/nohu/username
+    const accountsDir = path.join(__dirname, '../accounts/nohu');
     const userAccountDir = path.join(accountsDir, username);
     const hasAccountInfo = fs.existsSync(userAccountDir) &&
-        fs.readdirSync(userAccountDir).some(f => f.endsWith('.json'));
+        fs.readdirSync(userAccountDir).some(f => f.endsWith('.txt') || f.endsWith('.json'));
 
     // Check if this is old structure (files directly) or new structure (session folders)
     const items = fs.readdirSync(userDir, { withFileTypes: true });
@@ -988,7 +989,8 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
 app.get('/api/accounts/:username/:siteName', (req, res) => {
     try {
         const { username, siteName } = req.params;
-        const accountsDir = path.join(__dirname, '../accounts');
+        // New path: ../accounts/nohu/username
+        const accountsDir = path.join(__dirname, '../accounts/nohu');
         const userAccountDir = path.join(accountsDir, username);
 
         if (!fs.existsSync(userAccountDir)) {

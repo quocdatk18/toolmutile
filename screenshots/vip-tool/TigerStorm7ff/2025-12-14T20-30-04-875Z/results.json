@@ -1,0 +1,40 @@
+[
+  {
+    "site": "Hi88",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - assume bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "SHBET",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - assume bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  }
+]

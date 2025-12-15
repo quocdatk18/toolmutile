@@ -1,0 +1,8 @@
+{
+  "customer": "file1",
+  "version": "3.0.0",
+  "createdAt": "2025-12-15T05:23:04.578Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_file1_92462_98771",
+  "obfuscated": true
+}

@@ -1,0 +1,78 @@
+[
+  {
+    "site": "U888",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - assume bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "J88",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - assume bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "ABC8",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - assume bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "888clb",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - assume bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  }
+]
