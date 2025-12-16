@@ -93,12 +93,25 @@ app.get('/api/license/info', (req, res) => {
     const info = licenseManager.getLicenseInfo();
     const machineId = licenseManager.getMachineId();
 
+    // Get customer display name if available
+    let customerDisplayName = null;
+    try {
+        const customerConfigPath = path.join(__dirname, '../.customer-config.json');
+        if (fs.existsSync(customerConfigPath)) {
+            const config = JSON.parse(fs.readFileSync(customerConfigPath, 'utf8'));
+            customerDisplayName = config.displayName;
+        }
+    } catch (err) {
+        console.log('ℹ️ No customer config found');
+    }
+
     res.json({
         success: true,
         licensed: info !== null || checkResult.isMaster,
         isMaster: checkResult.isMaster || false,
         info,
-        machineId
+        machineId,
+        customerDisplayName
     });
 });
 
@@ -187,17 +200,84 @@ app.get('/api/hidemium/status', async (req, res) => {
 app.get('/api/profiles/all', async (req, res) => {
     try {
         const axios = require('axios');
+
+        // Get limit and offset from query params (for pagination)
+        // Default: load ALL profiles (use very high limit)
+        const limit = parseInt(req.query.limit) || 10000; // Default 10000 profiles (load all)
+        const offset = parseInt(req.query.offset) || 0;
+
+        console.log(`📂 Loading profiles: limit=${limit}, offset=${offset}`);
+
         const response = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
-            params: { is_local: false }
+            params: {
+                is_local: false,
+                limit: limit,
+                offset: offset
+            }
         });
 
         const profiles = response.data?.data?.content || [];
+        const total = response.data?.data?.total || profiles.length;
+
+        console.log(`✅ Loaded ${profiles.length} profiles (total: ${total})`);
+        console.log(`📊 Hidemium response:`, {
+            contentLength: profiles.length,
+            total: total,
+            requestedLimit: limit,
+            offset: offset,
+            hasMore: profiles.length < total
+        });
+
+        // If Hidemium has pagination limit, load all profiles in batches
+        let allProfiles = [...profiles];
+        if (profiles.length < total && profiles.length > 0) {
+            console.log(`⚠️ Hidemium returned ${profiles.length} but total is ${total}. Loading remaining profiles...`);
+
+            // Load remaining profiles in batches
+            let currentOffset = offset + profiles.length;
+            while (currentOffset < total) {
+                try {
+                    const batchResponse = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
+                        params: {
+                            is_local: false,
+                            limit: limit,
+                            offset: currentOffset
+                        }
+                    });
+
+                    const batchProfiles = batchResponse.data?.data?.content || [];
+                    console.log(`📦 Batch ${currentOffset}: loaded ${batchProfiles.length} profiles`);
+
+                    if (batchProfiles.length === 0) break;
+
+                    allProfiles = [...allProfiles, ...batchProfiles];
+                    currentOffset += batchProfiles.length;
+                } catch (batchError) {
+                    console.error(`❌ Error loading batch at offset ${currentOffset}:`, batchError.message);
+                    break;
+                }
+            }
+
+            console.log(`✅ Total profiles loaded: ${allProfiles.length}`);
+        }
+
+        // Add running status from server's global.runningProfiles
+        const profilesWithStatus = allProfiles.map(profile => ({
+            ...profile,
+            isRunning: global.runningProfiles && global.runningProfiles.has(profile.uuid)
+        }));
 
         res.json({
             success: true,
-            data: profiles
+            data: profilesWithStatus,
+            total: total,
+            limit: limit,
+            offset: offset,
+            count: allProfiles.length,
+            loadedAll: allProfiles.length === total
         });
     } catch (error) {
+        console.error('❌ Error loading profiles:', error.message);
         res.json({
             success: false,
             error: error.message
@@ -985,88 +1065,261 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     }
 }
 
-// Get account info for a specific site
-app.get('/api/accounts/:username/:siteName', (req, res) => {
+// Get NOHU account info (MUST be before generic :username/:siteName route)
+app.get('/api/accounts/nohu/:username', (req, res) => {
     try {
-        const { username, siteName } = req.params;
-        // New path: ../accounts/nohu/username
-        const accountsDir = path.join(__dirname, '../accounts/nohu');
-        const userAccountDir = path.join(accountsDir, username);
+        const { username } = req.params;
+        // Try multiple paths to find accounts folder
+        let nohuAccountDir = null;
+        const possiblePaths = [
+            path.join(__dirname, '../accounts/nohu', username),
+            path.join(__dirname, 'accounts/nohu', username),
+            path.join(process.cwd(), 'accounts/nohu', username)
+        ];
 
-        if (!fs.existsSync(userAccountDir)) {
+        for (const tryPath of possiblePaths) {
+            if (fs.existsSync(tryPath)) {
+                nohuAccountDir = tryPath;
+                console.log(`✅ Found account folder: ${tryPath}`);
+                break;
+            }
+        }
+
+        if (!nohuAccountDir) {
+            console.error(`❌ Account folder not found for ${username}. Tried paths:`, possiblePaths);
             return res.json({ success: false, error: 'User account folder not found' });
         }
 
-        // Ưu tiên đọc file account.json (shared cho tất cả sites)
-        const sharedAccountFile = path.join(userAccountDir, 'account.json');
+        // Read shared account file (account.json)
+        const sharedAccountFile = path.join(nohuAccountDir, 'account.json');
+        console.log(`🔍 Looking for: ${sharedAccountFile}`);
+
         if (fs.existsSync(sharedAccountFile)) {
-            console.log(`📁 Found shared account file: account.json`);
+            console.log(`✅ Found shared account file for NOHU: account.json`);
             const accountData = JSON.parse(fs.readFileSync(sharedAccountFile, 'utf8'));
             return res.json({ success: true, account: accountData });
         }
 
-        // Fallback: Tìm file theo site name (cho dữ liệu cũ)
-        const files = fs.readdirSync(userAccountDir).filter(f => f.endsWith('.json'));
-        console.log(`📁 Found ${files.length} account files:`, files);
+        // Fallback: Try to find any account file (for legacy data)
+        const files = fs.readdirSync(nohuAccountDir).filter(f => f.endsWith('.json'));
+        console.log(`📁 Files in folder:`, files);
 
-        // Site name mapping (screenshot site name → register site keywords)
-        // Screenshot uses promoUrl domain, but account file uses registerUrl domain
-        const siteMapping = {
-            // Promo URL domain format
-            'go99code-store': ['go99', '1go99', 'ghhdj-567dhdhhmm'],
-            'nohucode-shop': ['nohu', '8nohu', '88111188'],
-            'tt88code-win': ['tt88', '1tt88', '1bedd-fb89bj53gg9hjs0bka'],
-            'mmoocode-shop': ['mmoo', '0mmoo'],
-            '789pcode-store': ['789p', 'jvdf76fd92jk87gfuj60o'],
-            '33wincode-com': ['33win', '3333win', '336049'],
-            '88vvcode-com': ['88vv', '888vvv', '88vv'],
-            // Simple site name format (from group.sites[0].name)
-            'go99': ['go99', '1go99', 'ghhdj-567dhdhhmm'],
-            'nohu': ['nohu', '8nohu', '88111188'],
-            'tt88': ['tt88', '1tt88', '1bedd-fb89bj53gg9hjs0bka'],
-            'mmoo': ['mmoo', '0mmoo'],
-            '789p': ['789p', 'jvdf76fd92jk87gfuj60o'],
-            '33win': ['33win', '3333win', '336049'],
-            '88vv': ['88vv', '888vvv', '88vv']
-        };
+        if (files.length > 0) {
+            console.log(`📁 No shared account file, using first available: ${files[0]}`);
+            const accountPath = path.join(nohuAccountDir, files[0]);
+            const accountData = JSON.parse(fs.readFileSync(accountPath, 'utf8'));
+            return res.json({ success: true, account: accountData });
+        }
 
-        // Get mapped site keywords - normalize siteName first
-        const normalizedSiteName = siteName.toLowerCase().trim();
-        const siteKeywords = siteMapping[normalizedSiteName] || [siteName];
-        console.log(`🔄 Searching for site: ${siteName} (normalized: ${normalizedSiteName})`);
-        console.log(`🔄 Site keywords:`, siteKeywords);
+        console.error(`❌ No account file found in: ${nohuAccountDir}`);
+        return res.json({ success: false, error: 'No account file found' });
+    } catch (error) {
+        console.error('❌ Error getting NOHU account info:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
 
-        // Try to find matching file
-        let accountFile = null;
-        for (const file of files) {
-            const fileNameLower = file.toLowerCase();
-            console.log(`   Checking file: ${file}`);
+// Save NOHU account info (POST /api/accounts/nohu/:username)
+app.post('/api/accounts/nohu/:username', (req, res) => {
+    try {
+        const { username } = req.params;
+        const accountData = req.body;
 
-            // Check if filename contains any of the keywords
-            for (const keyword of siteKeywords) {
-                const keywordLower = keyword.toLowerCase();
-                if (fileNameLower.includes(keywordLower)) {
-                    accountFile = file;
-                    console.log(`✅ Found matching file: ${file} (matched keyword: ${keyword})`);
-                    break;
-                }
+        if (!accountData || !accountData.username) {
+            return res.status(400).json({ success: false, error: 'Account data required' });
+        }
+
+        // Try multiple paths
+        let nohuAccountDir = null;
+        const possiblePaths = [
+            path.join(__dirname, '../accounts/nohu', username),
+            path.join(__dirname, 'accounts/nohu', username),
+            path.join(process.cwd(), 'accounts/nohu', username)
+        ];
+
+        // Use first existing path or create in first path
+        nohuAccountDir = possiblePaths[0];
+
+        // Create directory if not exists
+        if (!fs.existsSync(nohuAccountDir)) {
+            fs.mkdirSync(nohuAccountDir, { recursive: true });
+            console.log(`📁 Created NOHU account directory: ${nohuAccountDir}`);
+        }
+
+        // Save as account.json (shared for all sites)
+        const accountJsonFile = path.join(nohuAccountDir, 'account.json');
+        fs.writeFileSync(accountJsonFile, JSON.stringify(accountData, null, 2));
+        console.log(`✅ Saved NOHU account info: ${accountJsonFile}`);
+
+        // Also save as readable text file
+        const accountTextFile = path.join(nohuAccountDir, 'account.txt');
+        const accountText = `
+═══════════════════════════════════════════════════════════
+                    THÔNG TIN TÀI KHOẢN NOHU
+═══════════════════════════════════════════════════════════
+
+👤 THÔNG TIN ĐĂNG NHẬP
+   • Tên đăng nhập: ${accountData.username}
+   • Mật khẩu: ${accountData.password}
+   • Mật khẩu rút tiền: ${accountData.withdrawPassword}
+   • Họ và tên: ${accountData.fullname}
+
+💳 THÔNG TIN NGÂN HÀNG
+   • Ngân hàng: ${accountData.bank?.name || 'N/A'}
+   • Chi nhánh: ${accountData.bank?.branch || 'N/A'}
+   • Số tài khoản: ${accountData.bank?.accountNumber || 'N/A'}
+
+📅 Ngày đăng ký: ${accountData.registeredAt}
+
+═══════════════════════════════════════════════════════════
+`;
+        fs.writeFileSync(accountTextFile, accountText);
+        console.log(`✅ Saved account info (TXT): ${accountTextFile}`);
+
+        res.json({ success: true, message: 'Account info saved successfully' });
+    } catch (error) {
+        console.error('❌ Error saving NOHU account info:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Get account info for VIP (any category)
+app.get('/api/accounts/vip/:username', (req, res) => {
+    try {
+        const { username } = req.params;
+        const accountsDir = path.join(__dirname, '../accounts');
+        const vipDir = path.join(accountsDir, 'vip');
+
+        if (!fs.existsSync(vipDir)) {
+            return res.json({ success: false, error: 'VIP accounts folder not found' });
+        }
+
+        // Try to find any VIP category file (okvip, abcvip, jun88, kjc)
+        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        let accountData = null;
+
+        for (const category of validCategories) {
+            const userCategoryDir = path.join(vipDir, category, username);
+            const accountFile = path.join(userCategoryDir, `${category}.json`);
+            if (fs.existsSync(accountFile)) {
+                console.log(`📁 Found ${category} account file for VIP`);
+                accountData = JSON.parse(fs.readFileSync(accountFile, 'utf8'));
+                break;
             }
-            if (accountFile) break;
         }
 
-        if (!accountFile) {
-            console.log(`❌ No matching file found for site: ${siteName}`);
-            console.log(`   Tried keywords:`, siteKeywords);
-            console.log(`   Available files:`, files);
-            return res.json({ success: false, error: 'Account file not found' });
+        // If not found in standard categories, search recursively
+        if (!accountData) {
+            console.log(`🔍 Searching recursively for ${username} in VIP folder...`);
+
+            function searchRecursive(dir) {
+                try {
+                    const items = fs.readdirSync(dir, { withFileTypes: true });
+
+                    for (const item of items) {
+                        const fullPath = path.join(dir, item.name);
+
+                        if (item.isDirectory()) {
+                            // Check if this is the username folder
+                            if (item.name === username) {
+                                // Look for any .json file in this folder
+                                const files = fs.readdirSync(fullPath);
+                                const jsonFile = files.find(f => f.endsWith('.json'));
+
+                                if (jsonFile) {
+                                    const filePath = path.join(fullPath, jsonFile);
+                                    console.log(`📁 Found account file: ${filePath}`);
+                                    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                                }
+                            }
+
+                            // Recurse into subdirectories
+                            const result = searchRecursive(fullPath);
+                            if (result) return result;
+                        }
+                    }
+                } catch (err) {
+                    // Ignore errors in recursive search
+                }
+                return null;
+            }
+
+            accountData = searchRecursive(vipDir);
         }
 
-        const accountPath = path.join(userAccountDir, accountFile);
-        const accountData = JSON.parse(fs.readFileSync(accountPath, 'utf8'));
+        if (!accountData) {
+            return res.json({ success: false, error: 'No VIP account file found' });
+        }
 
         res.json({ success: true, account: accountData });
     } catch (error) {
-        console.error('❌ Error getting account info:', error);
+        console.error('❌ Error getting VIP account info:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Save account info for VIP categories (okvip, abcvip, jun88, kjc)
+app.post('/api/accounts/:category/:username', (req, res) => {
+    try {
+        const { category, username } = req.params;
+        const accountData = req.body;
+
+        if (!accountData || !accountData.username) {
+            return res.status(400).json({ success: false, error: 'Account data required' });
+        }
+
+        // Validate category
+        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        if (!validCategories.includes(category.toLowerCase())) {
+            return res.status(400).json({ success: false, error: 'Invalid category' });
+        }
+
+        const accountsDir = path.join(__dirname, '../accounts');
+        const vipCategoryDir = path.join(accountsDir, 'vip', category);
+        const userAccountDir = path.join(vipCategoryDir, username);
+
+        // Create directory if not exists
+        if (!fs.existsSync(userAccountDir)) {
+            fs.mkdirSync(userAccountDir, { recursive: true });
+            console.log(`📁 Created VIP account directory: ${userAccountDir}`);
+        }
+
+        // Save as category-specific JSON file
+        const categoryUpper = category.toUpperCase();
+        const accountJsonFile = path.join(userAccountDir, `${category}.json`);
+        fs.writeFileSync(accountJsonFile, JSON.stringify(accountData, null, 2));
+        console.log(`✅ Saved ${categoryUpper} account info: ${accountJsonFile}`);
+
+        // Also save as readable text file
+        const accountTextFile = path.join(userAccountDir, `${category}.txt`);
+        const accountText = `
+═══════════════════════════════════════════════════════════
+                    THÔNG TIN TÀI KHOẢN ${categoryUpper}
+═══════════════════════════════════════════════════════════
+
+👤 THÔNG TIN ĐĂNG NHẬP
+   • Tên đăng nhập: ${accountData.username || 'N/A'}
+   • Mật khẩu: ${accountData.password || 'N/A'}
+   • Mật khẩu rút tiền: ${accountData.withdrawPassword || 'N/A'}
+   • Họ và tên: ${accountData.fullname || 'N/A'}
+
+💳 THÔNG TIN NGÂN HÀNG
+   • Ngân hàng: ${accountData.bank?.name || 'N/A'}
+   • Chi nhánh: ${accountData.bank?.branch || 'N/A'}
+   • Số tài khoản: ${accountData.bank?.accountNumber || 'N/A'}
+
+📅 Ngày đăng ký: ${accountData.registeredAt || new Date().toLocaleString('vi-VN')}
+📍 Danh mục: ${accountData.category || category}
+🎮 Site: ${accountData.site || 'N/A'}
+
+═══════════════════════════════════════════════════════════
+`;
+        fs.writeFileSync(accountTextFile, accountText);
+        console.log(`✅ Saved ${categoryUpper} account text: ${accountTextFile}`);
+
+        res.json({ success: true, message: `Account info saved successfully for ${categoryUpper}` });
+    } catch (error) {
+        console.error('❌ Error saving account info:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -1090,34 +1343,62 @@ app.delete('/api/results/clear-selected', (req, res) => {
 
         // Delete specific sessions
         sessions.forEach(session => {
-            const { username, sessionId } = session;
+            const { username, sessionId, toolId } = session;
 
             if (!username) return;
 
-            const userDir = path.join(screenshotsDir, username);
-
-            if (!fs.existsSync(userDir)) return;
-
             if (sessionId) {
-                // New structure: Delete specific session folder
-                const sessionDir = path.join(userDir, sessionId);
+                // Try new structure first: screenshots/{toolId}/{username}/{sessionId}/
+                let sessionDir = null;
 
-                if (fs.existsSync(sessionDir)) {
+                if (toolId) {
+                    const toolUserDir = path.join(screenshotsDir, toolId, username);
+                    const newSessionDir = path.join(toolUserDir, sessionId);
+                    if (fs.existsSync(newSessionDir)) {
+                        sessionDir = newSessionDir;
+                    }
+                }
+
+                // Fallback to old structure: screenshots/{username}/{sessionId}/
+                if (!sessionDir) {
+                    const userDir = path.join(screenshotsDir, username);
+                    const oldSessionDir = path.join(userDir, sessionId);
+                    if (fs.existsSync(oldSessionDir)) {
+                        sessionDir = oldSessionDir;
+                    }
+                }
+
+                if (sessionDir) {
                     try {
                         // Count files before deletion
                         const files = fs.readdirSync(sessionDir);
-                        const imageFiles = files.filter(f => /\.(png|jpg|jpeg|gif|webp)$/i.test(f));
+                        const imageFiles = files.filter(f => /\.(png|jpg|jpeg|gif|webp|json)$/i.test(f));
                         deletedCount += imageFiles.length;
 
                         // Delete session folder
                         fs.rmSync(sessionDir, { recursive: true, force: true });
-                        console.log(`🗑️  Deleted session: ${username}/${sessionId} (${imageFiles.length} files)`);
+                        console.log(`🗑️  Deleted session: ${sessionDir} (${imageFiles.length} files)`);
 
                         // If user folder is now empty, delete it too
-                        const remainingItems = fs.readdirSync(userDir);
-                        if (remainingItems.length === 0) {
-                            fs.rmdirSync(userDir);
-                            console.log(`🗑️  Deleted empty user folder: ${username}`);
+                        const userDir = path.dirname(sessionDir);
+                        if (fs.existsSync(userDir)) {
+                            const remainingItems = fs.readdirSync(userDir);
+                            if (remainingItems.length === 0) {
+                                fs.rmdirSync(userDir);
+                                console.log(`🗑️  Deleted empty user folder: ${userDir}`);
+
+                                // If toolId folder is now empty, delete it too
+                                if (toolId) {
+                                    const toolDir = path.dirname(userDir);
+                                    if (fs.existsSync(toolDir)) {
+                                        const toolItems = fs.readdirSync(toolDir);
+                                        if (toolItems.length === 0) {
+                                            fs.rmdirSync(toolDir);
+                                            console.log(`🗑️  Deleted empty tool folder: ${toolDir}`);
+                                        }
+                                    }
+                                }
+                            }
                         }
                     } catch (err) {
                         console.error(`❌ Failed to delete session ${username}/${sessionId}:`, err.message);
@@ -1219,6 +1500,16 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
         console.log('🔧 Execution Mode:', config?.executionMode);
         console.log('🔧 Parallel Count:', config?.parallelCount);
 
+        // Check if user has permission to use this tool
+        const allowedTools = licenseManager.getAllowedTools();
+        if (!allowedTools.includes('*') && !allowedTools.includes(toolId)) {
+            console.warn(`❌ Unauthorized: User does not have permission to use ${toolId}`);
+            return res.status(403).json({
+                success: false,
+                error: `Bạn không có quyền sử dụng tool này. Vui lòng nâng cấp license.`
+            });
+        }
+
         // Load tool's automation script
         const tool = toolsConfig.tools.find(t => t.id === toolId);
 
@@ -1278,39 +1569,67 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
             // SMS Tool automation (like nohu-tool)
             console.log('📱 Starting SMS Tool automation...');
 
-            const SMSAutoSequence = require('../tools/sms-tool/auto-sequence');
+            // Check if promo mode
+            if (config.mode === 'promo') {
+                console.log('🎁 SMS Tool - Promo check mode');
 
-            // Validate config object for SMS tool
-            if (!config) {
-                throw new Error('Config object is required for SMS tool');
+                const SmsToolOptimized = require('../tools/sms-tool/optimized-automation');
+                const smsToolOptimized = new SmsToolOptimized();
+
+                // Run promo check in background (don't await, let it run async)
+                runSMSPromoCheckInBackground(smsToolOptimized, profileId, config, toolId)
+                    .catch(err => {
+                        console.error('❌ Background promo check error:', err);
+                        // Send error status
+                        const axios = require('axios');
+                        axios.post(`http://localhost:${global.DASHBOARD_PORT || 3000}/api/automation/status`, {
+                            status: 'error',
+                            profileId: profileId,
+                            error: err.message,
+                            tool: toolId,
+                            mode: 'promo'
+                        }).catch(e => console.warn('Could not send error status:', e.message));
+                    });
+
+                res.json({
+                    success: true,
+                    message: 'SMS promo check started in background'
+                });
+            } else {
+                // Auto mode - full automation
+                const SMSAutoSequence = require('../tools/sms-tool/auto-sequence');
+
+                // Validate config object for SMS tool
+                if (!config) {
+                    throw new Error('Config object is required for SMS tool');
+                }
+
+                // Read extension scripts from SMS tool directory (using simplified content script)
+                const contentScript = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/content.js'), 'utf8');
+                const captchaSolver = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/captcha-solver.js'), 'utf8');
+                const banksScript = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/banks.js'), 'utf8');
+
+                const scripts = {
+                    contentScript,
+                    captchaSolver,
+                    banksScript
+                };
+
+                // Add session ID to config (for organizing screenshots by run)
+                const sessionId = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19); // YYYY-MM-DDTHH-MM-SS
+                config.sessionId = sessionId;
+
+                // Create SMS automation instance
+                const smsAutoSequence = new SMSAutoSequence(config, scripts);
+
+                // Run SMS automation in background (like nohu-tool)
+                runSMSAutomationInBackground(smsAutoSequence, profileId, config, toolId);
+
+                res.json({
+                    success: true,
+                    message: 'SMS automation started in background'
+                });
             }
-
-            // Read extension scripts from SMS tool directory (using simplified content script)
-            const contentScript = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/content.js'), 'utf8');
-            const captchaSolver = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/captcha-solver.js'), 'utf8');
-            const banksScript = fs.readFileSync(path.join(__dirname, '../tools/sms-tool/extension/banks.js'), 'utf8');
-
-            const scripts = {
-                contentScript,
-                captchaSolver,
-                banksScript
-            };
-
-            // Add session ID to config (for organizing screenshots by run)
-            const sessionId = new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19); // YYYY-MM-DDTHH-MM-SS
-            config.sessionId = sessionId;
-
-            // Create SMS automation instance
-            const smsAutoSequence = new SMSAutoSequence(config, scripts);
-
-            // Run SMS automation in background (like nohu-tool)
-            runSMSAutomationInBackground(smsAutoSequence, profileId, config, toolId);
-
-            // Return immediately
-            res.json({
-                success: true,
-                message: 'SMS automation started in background'
-            });
         } else if (toolId === 'hai2vip-tool') {
             // Use Hai2vipAutomation from local tool folder
             const Hai2vipAutomation = require('../tools/hai2vip-tool/automation');
@@ -1372,6 +1691,146 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
 // ============================================
 // AUTOMATION HELPERS
 // ============================================
+
+// SMS Tool promo check function - open checkUrl for selected sites
+async function runSMSPromoCheckInBackground(smsToolOptimized, profileId, config, toolId) {
+    const axios = require('axios');
+    const dashboardPort = global.DASHBOARD_PORT || 3000;
+
+    try {
+        console.log('🎁 [BACKGROUND] Starting SMS promo check...');
+        console.log('🎁 [BACKGROUND] ProfileId:', profileId);
+        console.log('🎁 [BACKGROUND] Sites:', config.sites);
+        console.log('🎁 [BACKGROUND] Username:', config.username);
+
+        // Connect to Hidemium profile
+        const puppeteer = require('puppeteer-core');
+
+        // Open profile
+        console.log('🎁 [BACKGROUND] 📂 Opening profile:', profileId);
+        const openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
+            params: {
+                uuid: profileId,
+                command: '--remote-debugging-port=0'
+            }
+        });
+
+        console.log('🎁 [BACKGROUND] ✅ Got response from Hidemium');
+        const data = openResponse.data.data || openResponse.data;
+        const webSocket = data.web_socket || data.webSocket;
+
+        if (!webSocket) {
+            throw new Error('Failed to get web_socket from Hidemium');
+        }
+
+        console.log('🎁 [BACKGROUND] 🔌 WebSocket URL:', webSocket);
+
+        // Connect puppeteer
+        console.log('🎁 [BACKGROUND] 🔗 Connecting to browser...');
+        const browser = await puppeteer.connect({
+            browserWSEndpoint: webSocket,
+            defaultViewport: null
+        });
+
+        console.log('🎁 [BACKGROUND] ✅ Connected to browser');
+
+        // Get profile name
+        let profileName = 'Profile';
+        try {
+            const profileResponse = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
+                params: { is_local: false }
+            });
+            const profiles = profileResponse.data?.data?.content || [];
+            const profile = profiles.find(p => p.uuid === profileId);
+            if (profile && profile.name) {
+                profileName = profile.name;
+            }
+        } catch (err) {
+            console.warn('⚠️ Could not get profile name:', err.message);
+        }
+
+        // Track running profile
+        global.runningProfiles.set(profileId, {
+            username: config.username,
+            profileName: profileName,
+            tool: toolId,
+            mode: 'promo',
+            startTime: new Date()
+        });
+
+        // Run promo check for each selected site
+        const results = [];
+        for (const siteName of config.sites) {
+            try {
+                console.log(`🎁 [BACKGROUND] Checking promo for: ${siteName}`);
+
+                const siteUrls = smsToolOptimized.getSiteUrls(siteName);
+                const siteConfig = smsToolOptimized.siteConfigs[siteName];
+
+                if (!siteUrls || !siteConfig) {
+                    console.warn(`🎁 [BACKGROUND] ⚠️ No config found for site: ${siteName}`);
+                    continue;
+                }
+
+                console.log(`🎁 [BACKGROUND] 📍 Site URLs:`, siteUrls);
+                const site = { name: siteName };
+                // Pass userData with mode: 'promo' so checkPromo knows it's promo mode
+                const userData = {
+                    mode: 'promo',
+                    username: config.username || ''
+                };
+                console.log(`🎁 [BACKGROUND] 🚀 Calling checkPromo for ${siteName}...`);
+                const result = await smsToolOptimized.checkPromo(browser, site, siteUrls, siteConfig, userData, {});
+                results.push(result);
+
+                console.log(`🎁 [BACKGROUND] ✅ Promo check completed for ${siteName}:`, result);
+            } catch (error) {
+                console.error(`🎁 [BACKGROUND] ❌ Error checking promo for ${siteName}:`, error);
+                results.push({
+                    success: false,
+                    site: siteName,
+                    error: error.message
+                });
+            }
+        }
+
+        console.log('🎁 [BACKGROUND] ✅ SMS promo check completed');
+
+        // Send completion status
+        try {
+            await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                status: 'complete',
+                profileId: profileId,
+                username: config.username,
+                profileName: profileName,
+                tool: toolId,
+                mode: 'promo',
+                results: results
+            });
+        } catch (err) {
+            console.warn('⚠️ Could not send completion status:', err.message);
+        }
+
+    } catch (error) {
+        console.error('❌ SMS promo check error:', error);
+
+        // Send error status
+        try {
+            await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                status: 'error',
+                profileId: profileId,
+                error: error.message,
+                tool: toolId,
+                mode: 'promo'
+            });
+        } catch (err) {
+            console.warn('⚠️ Could not send error status:', err.message);
+        }
+    } finally {
+        // Remove from running profiles
+        global.runningProfiles.delete(profileId);
+    }
+}
 
 // SMS Tool automation function (like nohu-tool)
 async function runSMSAutomationInBackground(smsAutoSequence, profileId, config, toolId) {
@@ -1456,17 +1915,25 @@ async function runSMSAutomationInBackground(smsAutoSequence, profileId, config, 
 
         // Prepare profile data for SMS (include bank info for auto-redirect)
         const profileData = {
+            profileId: profileId,
             username: username,
             password: config.password,
             withdrawPassword: config.withdrawPassword,
             fullname: config.fullname,
             email: config.email,
             phone: config.phone,
-            bankName: config.bankName,
-            bankBranch: config.bankBranch,
-            accountNumber: config.accountNumber,
+            bankName: config.bankName || 'Vietcombank', // Default for testing
+            bankBranch: config.bankBranch || 'Thành phố Hồ Chí Minh', // Default for testing
+            accountNumber: config.accountNumber || '9704361234567890', // Default for testing
             apiKey: config.apiKey || 'default_api_key'
         };
+
+        console.log('📊 Profile data prepared:', {
+            username: profileData.username,
+            bankName: profileData.bankName,
+            bankBranch: profileData.bankBranch,
+            accountNumber: profileData.accountNumber
+        });
 
         // Run SMS sequence (register with auto-redirect like nohu tool)
         console.log('🤖 Running SMS sequence (Register → Auto-redirect → Keep open)...');
@@ -2003,6 +2470,209 @@ async function runAutomationInBackground(automation, profileId, config) {
 
 // ============================================
 // ADMIN ROUTES - Package Management
+// ============================================
+// VIP AUTOMATION API
+// ============================================
+
+// Get category config (sites list)
+app.get('/api/vip-automation/category/:category', (req, res) => {
+    try {
+        const VIPAutomation = require('../tools/vip-tool/vip-automation');
+        const vipAutomation = new VIPAutomation();
+        const categoryConfig = vipAutomation.getSitesByCategory(req.params.category);
+
+        if (categoryConfig) {
+            res.json({ success: true, data: categoryConfig });
+        } else {
+            res.status(404).json({ success: false, error: 'Category not found' });
+        }
+    } catch (error) {
+        console.error('❌ Error getting category config:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Run VIP automation
+app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
+    try {
+        const { category, sites, profile, profileData, mode, executionMode, parallelCount } = req.body;
+
+        // Check if user has permission to use VIP tool
+        const allowedTools = licenseManager.getAllowedTools();
+        if (!allowedTools.includes('*') && !allowedTools.includes('vip-tool')) {
+            console.warn('❌ Unauthorized: User does not have permission to use VIP tool');
+            return res.status(403).json({
+                success: false,
+                error: 'Bạn không có quyền sử dụng VIP Tool. Vui lòng nâng cấp license.'
+            });
+        }
+
+        console.log('🚀 VIP Automation started:', {
+            category,
+            sites: sites.length,
+            profile: profile.name,
+            mode,
+            executionMode
+        });
+
+        // Import VIPAutomation
+        const VIPAutomation = require('../tools/vip-tool/vip-automation');
+        const fs = require('fs');
+        const path = require('path');
+
+        // Read extension scripts (like nohu-tool)
+        const captchaSolver = fs.readFileSync(path.join(__dirname, '../tools/nohu-tool/extension/captcha-solver.js'), 'utf8');
+
+        const scripts = {
+            captchaSolver
+        };
+
+        // Get API key from profileData (like nohu-tool) or environment
+        const apiKey = profileData?.apiKey || process.env.CAPTCHA_API_KEY;
+
+        const settings = {
+            captchaApiKey: apiKey
+        };
+
+        console.log('🔑 API Key available:', apiKey ? 'YES' : 'NO');
+        console.log('📊 profileData received:', {
+            username: profileData?.username,
+            apiKey: profileData?.apiKey ? `${profileData.apiKey.substring(0, 5)}...` : 'MISSING'
+        });
+
+        const vipAutomation = new VIPAutomation(settings, scripts);
+
+        // Get Puppeteer browser instance
+        const puppeteer = require('puppeteer-core');
+        const axios = require('axios');
+
+        // Get Hidemium browser connection
+        let browser = null;
+        try {
+            // Connect to Hidemium Local API
+            const response = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
+                params: { is_local: false }
+            });
+
+            if (!response.data?.data?.content || response.data.data.content.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'No Hidemium profiles available'
+                });
+            }
+
+            // Get first available profile or use specified one
+            const hidemiumProfile = response.data.data.content[0];
+            console.log(`📱 Using Hidemium profile: ${hidemiumProfile.name}`);
+
+            // Open profile in Hidemium
+            const openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
+                params: {
+                    uuid: hidemiumProfile.uuid,
+                    command: '--remote-debugging-port=0'
+                }
+            });
+
+            console.log('📋 Hidemium openProfile response:', JSON.stringify(openResponse.data, null, 2));
+
+            // Get WebSocket endpoint from Hidemium response
+            const wsEndpoint = openResponse.data?.data?.web_socket;
+            const remotePort = openResponse.data?.data?.remote_port;
+
+            if (!wsEndpoint && !remotePort) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Failed to get connection info from Hidemium',
+                    response: openResponse.data
+                });
+            }
+
+            console.log(`🔗 Connecting to Hidemium WebSocket: ${wsEndpoint}`);
+
+            // Connect Puppeteer to Hidemium via WebSocket
+            browser = await puppeteer.connect({
+                browserWSEndpoint: wsEndpoint,
+                defaultViewport: null
+            });
+
+            console.log('✅ Connected to Hidemium browser');
+
+            // Run automation
+            const results = await vipAutomation.runVIPAutomation(
+                browser,
+                category,
+                sites,
+                profileData,
+                mode,
+                executionMode,
+                parallelCount
+            );
+
+            console.log('✅ VIP Automation completed:', results);
+
+            // Save results to file (like NOHU tool)
+            const screenshotsDir = path.join(__dirname, '../screenshots');
+            const toolDir = path.join(screenshotsDir, 'vip-tool');
+            const username = profileData?.username || 'unknown';
+            const sessionId = new Date().toISOString().replace(/[:.]/g, '-');
+            const sessionDir = path.join(toolDir, username, sessionId);
+
+            // Create directories
+            if (!fs.existsSync(sessionDir)) {
+                fs.mkdirSync(sessionDir, { recursive: true });
+            }
+
+            // Save metadata
+            const metadata = {
+                profileName: profile?.name || 'Profile',
+                runNumber: 1,
+                toolId: 'vip-tool',
+                category: category,
+                sites: sites,
+                mode: mode,
+                executionMode: executionMode,
+                timestamp: new Date().toISOString()
+            };
+            fs.writeFileSync(path.join(sessionDir, 'metadata.json'), JSON.stringify(metadata, null, 2));
+
+            // Save results as JSON
+            fs.writeFileSync(path.join(sessionDir, 'results.json'), JSON.stringify(results, null, 2));
+
+            // Create dummy screenshot files for each site (for UI display)
+            results.forEach(result => {
+                const screenshotFile = path.join(sessionDir, `${result.site}.png`);
+                // Create empty file (UI will use this to detect results)
+                fs.writeFileSync(screenshotFile, '');
+            });
+
+            console.log(`✅ Results saved to: ${sessionDir}`);
+
+            res.json({ success: true, results });
+
+        } catch (error) {
+            console.error('❌ VIP Automation Error:', error.message);
+            res.status(500).json({ success: false, error: error.message });
+        } finally {
+            // Close browser connection
+            if (browser) {
+                try {
+                    await browser.disconnect();
+                    console.log('🔌 Disconnected from Hidemium');
+                } catch (err) {
+                    console.error('Error disconnecting:', err.message);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('❌ VIP Automation Error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// ============================================
+// ADMIN API
+// ============================================
+
 // Only available if admin-api.js exists (master version)
 // ============================================
 
@@ -2067,8 +2737,25 @@ if (adminAPI) {
 
             console.log(`🔄 Upgrading package: ${customerName} with Machine ID: ${machineId}`);
 
-            // Step 1: Read old secret key BEFORE deleting
-            console.log('📦 Step 1: Reading old secret key...');
+            const oldPackagePath = path.join(__dirname, '..', 'customer-packages', customerName);
+            const oldLicenseFile = path.join(oldPackagePath, '.license');
+            let oldLicenseContent = null;
+
+            // Step 1: Read old license file BEFORE deleting
+            console.log('📦 Step 1: Reading old license file...');
+            if (fs.existsSync(oldLicenseFile)) {
+                try {
+                    oldLicenseContent = fs.readFileSync(oldLicenseFile, 'utf8').trim();
+                    console.log(`✅ Found old license file`);
+                } catch (err) {
+                    console.warn(`⚠️ Could not read old license file: ${err.message}`);
+                }
+            } else {
+                console.log('ℹ️  No old license file found');
+            }
+
+            // Step 2: Read old secret key BEFORE deleting
+            console.log('📦 Step 2: Reading old secret key...');
             const secretKeyFile = path.join(__dirname, '..', 'customer-packages', `${customerName}_SECRET_KEY.txt`);
             let oldSecretKey = null;
 
@@ -2085,12 +2772,12 @@ if (adminAPI) {
                 console.warn('⚠️ Could not find old secret key, will generate new one');
             }
 
-            // Step 2: Delete old package
-            console.log('📦 Step 2: Deleting old package...');
+            // Step 3: Delete old package
+            console.log('📦 Step 3: Deleting old package...');
             await adminAPI.deletePackage(customerName);
 
-            // Step 3: Build new package with latest code, REUSING OLD SECRET KEY
-            console.log('📦 Step 3: Building new package with latest code...');
+            // Step 4: Build new package with latest code, REUSING OLD SECRET KEY
+            console.log('📦 Step 4: Building new package with latest code...');
             const buildResult = await adminAPI.buildPackage({
                 customerName: customerName,
                 licenseType: 30,
@@ -2103,13 +2790,27 @@ if (adminAPI) {
                 return res.json({ success: false, message: 'Lỗi tạo package mới: ' + buildResult.message });
             }
 
-            // Step 4: Restore customer machine data with old Machine ID
-            console.log('📦 Step 4: Restoring Machine ID...');
+            // Step 5: Restore old license file if it existed
+            console.log('📦 Step 5: Restoring old license file...');
+            if (oldLicenseContent) {
+                const newLicenseFile = path.join(buildResult.packagePath, '.license');
+                try {
+                    fs.writeFileSync(newLicenseFile, oldLicenseContent, 'utf8');
+                    console.log(`✅ Old license file restored to new package`);
+                } catch (err) {
+                    console.warn(`⚠️ Could not restore license file: ${err.message}`);
+                }
+            }
+
+            // Step 6: Restore customer machine data with old Machine ID
+            console.log('📦 Step 6: Restoring Machine ID...');
             const CustomerMachineManager = require('./customer-machine-manager');
             const tempCustomerManager = new CustomerMachineManager();
-            tempCustomerManager.addOrUpdateCustomer(customerName, machineId, 'Upgraded package. Machine ID and Secret Key preserved.');
+            tempCustomerManager.addOrUpdateCustomer(customerName, machineId, 'Upgraded package. Machine ID, Secret Key, and License preserved.');
 
-            const keyStatus = oldSecretKey ? '✅ License key cũ vẫn hoạt động!' : '⚠️ Secret key mới, cần tạo license key mới.';
+            const keyStatus = oldLicenseContent && oldSecretKey
+                ? '✅ License key cũ VẪN HOẠT ĐỘNG!'
+                : '⚠️ Cần tạo license key mới.';
             console.log(`✅ Package upgraded successfully: ${customerName}. ${keyStatus}`);
 
             res.json({
@@ -2117,7 +2818,8 @@ if (adminAPI) {
                 packagePath: buildResult.packagePath,
                 secretKey: buildResult.secretKey,
                 secretKeyPreserved: !!oldSecretKey,
-                message: oldSecretKey
+                licensePreserved: !!oldLicenseContent,
+                message: oldLicenseContent && oldSecretKey
                     ? 'Package nâng cấp thành công! License key cũ vẫn hoạt động.'
                     : 'Package nâng cấp thành công! Cần tạo license key mới.'
             });
@@ -2147,16 +2849,31 @@ if (adminAPI) {
     // Add or update customer
     app.post('/api/admin/customers', (req, res) => {
         try {
-            const { customerName, machineId, notes } = req.body;
+            const { customerName, machineId, displayName, notes } = req.body;
 
-            if (!customerName || !machineId) {
+            // Allow displayName update without machineId
+            if (!customerName) {
                 return res.status(400).json({
                     success: false,
-                    error: 'Customer name and machine ID are required'
+                    error: 'Customer name is required'
                 });
             }
 
-            const customer = customerManager.addOrUpdateCustomer(customerName, machineId, notes);
+            // If only updating displayName (no machineId)
+            if (displayName && !machineId) {
+                const customer = customerManager.updateCustomerDisplayName(customerName, displayName);
+                return res.json({ success: true, customer });
+            }
+
+            // If updating machineId
+            if (!machineId) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Machine ID is required'
+                });
+            }
+
+            const customer = customerManager.addOrUpdateCustomer(customerName, machineId, notes, displayName);
             res.json({ success: true, customer });
         } catch (error) {
             console.error('❌ Error adding customer:', error);

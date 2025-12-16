@@ -143,9 +143,34 @@ class CustomerMachineManager {
      * Lấy danh sách tất cả customers
      */
     getAllCustomers() {
-        return Object.values(this.customers).sort((a, b) =>
-            new Date(b.createdAt) - new Date(a.createdAt)
-        );
+        const customers = Object.values(this.customers);
+
+        // Lấy thời gian tạo từ package folder
+        const packagesDir = path.join(__dirname, '..', 'customer-packages');
+
+        customers.forEach(customer => {
+            try {
+                const packagePath = path.join(packagesDir, customer.customerName);
+                if (fs.existsSync(packagePath)) {
+                    const stat = fs.statSync(packagePath);
+                    // Dùng birthtime nếu có, nếu không dùng mtime
+                    const createdTime = stat.birthtime && stat.birthtime.getTime() > 0
+                        ? stat.birthtime.getTime()
+                        : stat.mtime.getTime();
+                    customer.packageCreatedTime = createdTime;
+                    console.log(`📦 ${customer.customerName}: birthtime=${stat.birthtime}, mtime=${stat.mtime}`);
+                } else {
+                    // Nếu package không tồn tại, dùng createdAt từ JSON
+                    customer.packageCreatedTime = new Date(customer.createdAt).getTime();
+                }
+            } catch (err) {
+                // Nếu có lỗi, dùng createdAt từ JSON
+                customer.packageCreatedTime = new Date(customer.createdAt).getTime();
+            }
+        });
+
+        // Sắp xếp theo thời gian tạo package (mới nhất trước)
+        return customers.sort((a, b) => b.packageCreatedTime - a.packageCreatedTime);
     }
 
     /**

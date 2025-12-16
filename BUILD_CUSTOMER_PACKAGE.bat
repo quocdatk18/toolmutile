@@ -50,6 +50,17 @@ REM Copy all files
 echo 📋 Copying files...
 xcopy /E /I /Y /Q . "%OUTPUT_DIR%" >nul 2>&1
 
+REM Preserve old license if upgrading
+echo 📋 Checking for existing license...
+set OLD_LICENSE_FILE=customer-packages\%CUSTOMER_NAME%\.license
+if exist "%OLD_LICENSE_FILE%" (
+    echo ✅ Found existing license - will preserve it
+    copy "%OLD_LICENSE_FILE%" "%OUTPUT_DIR%\.license" >nul
+    echo ✅ Old license preserved in new package
+) else (
+    echo ℹ️  No existing license found (new package)
+)
+
 REM Remove sensitive files
 echo 🗑️  Removing sensitive files...
 del /Q "%OUTPUT_DIR%\tools\generate-license.js" 2>nul
@@ -57,7 +68,6 @@ del /Q "%OUTPUT_DIR%\tools\obfuscate-license.js" 2>nul
 del /Q "%OUTPUT_DIR%\tools\activate-license.js" 2>nul
 rmdir /S /Q "%OUTPUT_DIR%\license-records" 2>nul
 rmdir /S /Q "%OUTPUT_DIR%\customer-packages" 2>nul
-del /Q "%OUTPUT_DIR%\.license" 2>nul
 del /Q "%OUTPUT_DIR%\BUILD_CUSTOMER_PACKAGE.bat" 2>nul
 del /Q "%OUTPUT_DIR%\CREATE_CUSTOMER_PACKAGE.bat" 2>nul
 del /Q "%OUTPUT_DIR%\exclude-list.txt" 2>nul

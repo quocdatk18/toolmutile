@@ -1,0 +1,16 @@
+{
+  "username": "Moonower7m",
+  "password": "Quocdat123",
+  "withdrawPassword": "1",
+  "fullname": "VU QUANG QUAN",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10366048105554969"
+  },
+  "registeredAt": "2025-12-16T03:22:54.840Z",
+  "firstSite": "Go99-SMS",
+  "sites": [
+    "Go99-SMS"
+  ]
+}

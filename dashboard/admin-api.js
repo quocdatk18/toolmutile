@@ -33,6 +33,8 @@ class AdminAPI {
      */
     async buildPackage(options) {
         const { customerName, licenseType, machineBinding, obfuscate, secretKey: existingSecretKey } = options;
+        // NOTE: machineId should NOT be set when creating new package
+        // Customer will provide machineId later, admin will generate key based on it
 
         try {
             // Validate
@@ -67,6 +69,17 @@ class AdminAPI {
                     console.log(`⚠️  Not found: ${item}`);
                 }
             });
+
+            // Remove any old .license file from copied files (ensure fresh package)
+            const copiedLicenseFile = path.join(packagePath, '.license');
+            if (fs.existsSync(copiedLicenseFile)) {
+                fs.unlinkSync(copiedLicenseFile);
+                console.log('🧹 Removed old .license file from copied files');
+            }
+
+            // DO NOT preserve old license file - always create fresh package
+            // This ensures new package is completely independent from old one
+            console.log('📋 Creating fresh package (no old license file preservation)');
 
             // Use existing secret key (for upgrade) or generate new one
             const secretKey = existingSecretKey || `SECRET_${customerName}_${Math.floor(Math.random() * 100000)}_${Math.floor(Math.random() * 100000)}`;
@@ -114,12 +127,14 @@ class AdminAPI {
             console.log('✅ Created customer version marker');
 
             // Create version info file
+            // NOTE: machineId is NOT set here - customer will provide it later
             const versionInfo = {
                 customer: customerName,
                 version: '3.0.0',
                 createdAt: new Date().toISOString(),
                 buildType: 'customer-package',
                 secretKey: secretKey,
+                machineId: null,  // Will be set by admin after customer provides their machine ID
                 obfuscated: obfuscate !== false
             };
             fs.writeFileSync(
@@ -815,10 +830,12 @@ Machine ID: Will be provided by customer
                     if (stat.isDirectory()) {
                         const size = this.getDirectorySize(itemPath);
                         const created = stat.birthtime.toLocaleString('vi-VN');
+                        const createdTime = stat.birthtime.getTime(); // Lưu timestamp để sắp xếp
 
                         packages.push({
                             name: item,
                             created: created,
+                            createdTime: createdTime, // Timestamp để sắp xếp
                             size: this.formatBytes(size)
                         });
                     }
@@ -826,6 +843,9 @@ Machine ID: Will be provided by customer
                     // Skip if error
                 }
             }
+
+            // Sắp xếp theo thời gian tạo (mới nhất trước)
+            packages.sort((a, b) => b.createdTime - a.createdTime);
 
             return { success: true, packages };
 

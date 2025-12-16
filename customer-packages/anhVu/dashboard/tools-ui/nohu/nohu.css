@@ -1,0 +1,211 @@
+/* ============================================
+   NOHU TOOL - Specific Styles
+   Primary Color: Purple (#6366f1)
+   ============================================ */
+
+/* Main Container */
+.nohu-tool-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    gap: 16px;
+}
+
+/* Header Banner */
+.nohu-tool-container .info-banner {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    padding: 16px 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+    flex-shrink: 0;
+}
+
+.nohu-tool-container .info-banner h3 {
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.nohu-tool-container .info-banner p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Focus Colors */
+.nohu-tool-container .form-grid input:focus,
+.nohu-tool-container .form-grid select:focus,
+.nohu-tool-container .full-width:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Site Card Hover */
+.nohu-tool-container .site-card:hover {
+    border-color: #6366f1;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.nohu-tool-container .site-card input[type="checkbox"] {
+    accent-color: #6366f1;
+}
+
+/* Sites Grid - 4 columns for NOHU */
+.nohu-tool-container .sites-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+/* Site Icons */
+.site-icon.go99 { background: linear-gradient(135deg, #f97316, #ea580c); }
+.site-icon.nohu { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+.site-icon.tt88 { background: linear-gradient(135deg, #22c55e, #16a34a); }
+.site-icon.mmoo { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.site-icon.p789 { background: linear-gradient(135deg, #a855f7, #9333ea); }
+.site-icon.win33 { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+.site-icon.vv88 { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+/* Profile Carousel */
+.nohu-tool-container .profile-carousel-card:hover {
+    border-color: #6366f1;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+}
+
+.nohu-tool-container .profile-carousel-card.selected {
+    border-color: #6366f1;
+    background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+}
+
+.nohu-tool-container .profile-avatar {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.nohu-tool-container .selected-badge {
+    background: #6366f1;
+}
+
+.nohu-tool-container .carousel-btn {
+    color: #6366f1;
+}
+
+.nohu-tool-container .carousel-btn:hover {
+    border-color: #6366f1;
+}
+
+/* Buttons */
+.nohu-tool-container .btn-primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.nohu-tool-container .btn-primary:hover {
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+.nohu-tool-container .btn-start {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.nohu-tool-container .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.nohu-tool-container .btn-warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: white;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.nohu-tool-container .btn-icon {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.nohu-tool-container .btn-run-action {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.nohu-tool-container .btn-run-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* Results Table */
+.nohu-tool-container .results-table thead {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+/* Modal Tab */
+.nohu-tool-container .modal-tab:hover {
+    color: #6366f1;
+}
+
+.nohu-tool-container .modal-tab.active {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Screenshot Preview */
+.nohu-tool-container .screenshot-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.nohu-tool-container .screenshot-preview:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+/* Check Times Badge */
+.nohu-tool-container .check-times-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+}

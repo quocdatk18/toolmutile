@@ -14,7 +14,7 @@ class LicenseManager {
         // ⚠️ QUAN TRỌNG: Thay đổi secret key này trước khi gửi cho khách hàng!
         // Mỗi bản gửi khách nên có secret key khác nhau
         // Ví dụ: 'SECRET_CUSTOMER_001', 'SECRET_CUSTOMER_002', v.v.
-        this.secretKey = 'SECRET_legiabao_93928_26814'; // Thay đổi secret này
+        this.secretKey = 'SECRET_legiabao_14235_5375'; // Thay đổi secret này
     }
 
     /**
@@ -403,6 +403,11 @@ class LicenseManager {
      * @returns {Array} Array of allowed tool IDs
      */
     getAllowedTools() {
+        // Admin/Master version has access to all tools
+        if (this.isAdminVersion()) {
+            return ['*']; // Wildcard = all tools
+        }
+
         const key = this.loadLicense();
         if (!key) return [];
 

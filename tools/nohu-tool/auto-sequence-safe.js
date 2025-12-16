@@ -251,23 +251,29 @@ class AutoSequenceSafe {
      * Save account info once (shared for all sites)
      * Lưu 1 file duy nhất vì tất cả sites dùng chung account
      */
-    async saveAccountInfoOnce(profileData, firstSiteName) {
+    async saveAccountInfoOnce(profileData, firstSiteName, allSites = []) {
         try {
             console.log('    💾 Saving shared account info via API...');
 
-            // Prepare account info
+            // Prepare account info (giống taiapp)
             const accountInfo = {
                 username: profileData.username,
                 password: profileData.password,
                 withdrawPassword: profileData.withdrawPassword,
                 fullname: profileData.fullname,
+                email: profileData.email || '',
+                phone: profileData.phone || '',
                 bank: {
                     name: profileData.bankName,
                     branch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
-                    accountNumber: profileData.accountNumber
+                    accountNumber: profileData.accountNumber,
+                    accountHolder: profileData.fullname
                 },
                 registeredAt: new Date().toISOString(),
-                firstSite: firstSiteName
+                firstSite: firstSiteName,
+                sites: allSites.map(s => s.name || s), // Lưu danh sách tất cả sites
+                status: 'active',
+                tool: 'nohu-sms'
             };
 
             // Get dashboard port (dynamic)
@@ -298,51 +304,51 @@ class AutoSequenceSafe {
     }
 
     /**
-     * Get site URLs by name - complete config with checkKM links
+     * Get site URLs by name - fetch from server (centralized config)
+     * URLs are managed in server.js for both app and SMS
      */
     getSiteUrls(siteName) {
-        const siteConfigs = {
-            'Go99': {
-                registerUrl: 'https://m.ghhdj-567dhdhhmm.asia/Account/Register?f=3528698&app=1',
-                promoUrl: 'https://go99code.store'
-            },
-            'NOHU': {
-                registerUrl: 'https://m.88111188.com/Account/Register?f=6344995&app=1',
-                promoUrl: 'https://nohucode.shop'
-            },
-            'TT88': {
-                registerUrl: 'https://m.1bedd-fb89bj53gg9hjs0bka.club/Account/Register?f=3535864&app=1',
-                promoUrl: 'https://tt88code.win'
-            },
-            'MMOO': {
-                registerUrl: 'https://m.0mmoo.com/Account/Register?f=394579&app=1',
-                promoUrl: 'https://mmoocode.shop'
-            },
-            '789P': {
-                registerUrl: 'https://m.jvdf76fd92jk87gfuj60o.xyz/Account/Register?f=784461&app=1',
-                promoUrl: 'https://789pcode.store'
-            },
-            '33WIN': {
-                registerUrl: 'https://m.336049.com/Account/Register?f=3115867&app=1',
-                promoUrl: 'https://33wincode.com'
-            },
-            '88VV': {
-                registerUrl: 'https://m.88vv.my/Account/Register?f=1054152&app=1',
-                promoUrl: 'https://88vvcode.com'
-            }
-        };
 
-        const config = siteConfigs[siteName];
-        if (!config) return null;
+        // Check if this is SMS promo site (has -SMS suffix)
+        let cleanSiteName = siteName;
+        let isSmsPromo = false;
+        if (siteName.endsWith('-SMS')) {
+            cleanSiteName = siteName.replace('-SMS', '');
+            isSmsPromo = true;
+        }
+
+        // Get URLs from global config (set by server.js on startup)
+        let registerUrl = null;
+        let promoUrl = null;
+
+        // Try to get from global cache first
+        if (global.nohuSitesConfig && global.nohuSitesConfig[cleanSiteName]) {
+            const siteConfig = global.nohuSitesConfig[cleanSiteName];
+            registerUrl = siteConfig.registerUrl;
+            promoUrl = siteConfig.checkPromoUrl;
+        }
+
+        // For SMS promo, use SMS URL if available
+        if (isSmsPromo && global.nohuSmsSiteConfigs && global.nohuSmsSiteConfigs[cleanSiteName]) {
+            const smsUrl = global.nohuSmsSiteConfigs[cleanSiteName].registerSmsUrl;
+            if (smsUrl) {
+                registerUrl = smsUrl;
+            }
+        }
+
+        if (!registerUrl) {
+            console.warn(`⚠️ No URL found for site: ${siteName}`);
+            return null;
+        }
 
         // Extract origin from registerUrl for withdrawUrl
-        const url = new URL(config.registerUrl);
+        const url = new URL(registerUrl);
         const origin = url.origin;
 
         return {
-            registerUrl: config.registerUrl,
+            registerUrl: registerUrl,
             withdrawUrl: origin + '/Financial?type=withdraw',
-            promoUrl: config.promoUrl
+            promoUrl: promoUrl
         };
     }
 
@@ -559,7 +565,7 @@ class AutoSequenceSafe {
                     withdrawPassword: profileData.withdrawPassword,
                     fullname: profileData.fullname,
                     apiKey: profileData.apiKey,
-                    captchaDelay: profileData.captchaDelay || 10000
+                    captchaDelay: profileData.captchaDelay !== undefined ? profileData.captchaDelay : 10000
                 });
 
                 if (extensionResult.success) {
@@ -582,7 +588,9 @@ class AutoSequenceSafe {
                 if (!this.accountSaved) {
                     console.log(`💾 Saving account info (shared for all sites)...`);
                     this.accountSaved = true;
-                    await this.saveAccountInfoOnce(profileData, siteName).catch(err => {
+                    // Lấy danh sách sites từ profileData nếu có
+                    const allSites = profileData.sites || [];
+                    await this.saveAccountInfoOnce(profileData, siteName, allSites).catch(err => {
                         console.warn(`⚠️ Account save failed:`, err.message);
                         this.accountSaved = false; // Cho phép thử lại nếu lỗi
                     });
@@ -776,7 +784,7 @@ class AutoSequenceSafe {
                             console.log(`🔍 Verify attempt ${verifyAttempts}/${maxVerifyAttempts}...`);
 
                             verifyResult = await page.evaluate((verifyData) => {
-                                const { urlBefore, expectedFullname, expectedBranch } = verifyData;
+                                const { urlBefore, expectedFullname, expectedBranch, expectedAccountNumber } = verifyData;
                                 const currentUrl = window.location.href;
 
                                 // 1. Kiểm tra có modal lỗi không (thất bại = hiện modal)
@@ -822,6 +830,7 @@ class AutoSequenceSafe {
                                 if (bankDetailDiv) {
                                     // Tìm tất cả các row trong bank-detail
                                     const rows = bankDetailDiv.querySelectorAll('.block.w-full');
+                                    let displayedAccountNumber = '';
 
                                     rows.forEach(row => {
                                         const labelSpan = row.querySelector('span:first-child');
@@ -831,10 +840,10 @@ class AutoSequenceSafe {
                                             const label = labelSpan.textContent.trim().toUpperCase();
                                             const value = valueSpan.textContent.trim().toUpperCase();
 
-                                            // Kiểm tra Họ và Tên
-                                            if (label.includes('HỌ VÀ TÊN') || label.includes('REAL_NAME')) {
+                                            // Kiểm tra Họ và Tên (hỗ trợ cả "Họ tên thật" và "Họ và tên")
+                                            if (label.includes('HỌ') && (label.includes('TÊN') || label.includes('REAL_NAME'))) {
                                                 displayedFullname = value;
-                                                // So sánh với expected fullname (normalize để so sánh)
+                                                // So sánh với expected fullname (trim để loại bỏ space thừa)
                                                 const normalizedExpected = (expectedFullname || '').toUpperCase().trim();
                                                 fullnameMatch = value === normalizedExpected ||
                                                     value.includes(normalizedExpected) ||
@@ -858,6 +867,17 @@ class AutoSequenceSafe {
                                                 branchMatch = normalizedDisplayedBranch.includes(normalizedExpectedBranch) ||
                                                     normalizedExpectedBranch.includes(normalizedDisplayedBranch) ||
                                                     value === normalizedExpectedBranch;
+                                            }
+
+                                            // Kiểm tra Số tài khoản (chỉ check 4 số cuối vì trang che)
+                                            if (label.includes('SỐ TÀI KHOẢN')) {
+                                                displayedAccountNumber = value;
+                                                // Chỉ check 4 số cuối vì trang che số
+                                                const last4Digits = (expectedAccountNumber || '').slice(-4);
+                                                // Nếu không có last4Digits thì skip check này
+                                                if (last4Digits && !value.includes(last4Digits)) {
+                                                    // Account number không match - nhưng vẫn tiếp tục check fullname + branch
+                                                }
                                             }
                                         }
                                     });
@@ -916,7 +936,8 @@ class AutoSequenceSafe {
                             }, {
                                 urlBefore: urlBeforeSubmit,
                                 expectedFullname: profileData.fullname,
-                                expectedBranch: profileData.bankBranch || 'Thành phố Hồ Chí Minh'
+                                expectedBranch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
+                                expectedAccountNumber: profileData.accountNumber || ''
                             });
 
                             console.log(`📊 Bank verification result (attempt ${verifyAttempts}):`, verifyResult);
@@ -981,14 +1002,14 @@ class AutoSequenceSafe {
                             };
                         }
 
-                        // Trường hợp 4: Có bank display nhưng không exact match → cần kiểm tra thêm
+                        // Trường hợp 4: Có bank display → check fullname + branch (giống VIP logic)
                         if (verifyResult.hasBankDisplay) {
-                            // Nếu có fullname match hoặc branch match thì vẫn coi là thành công
-                            if (verifyResult.fullnameMatch || verifyResult.branchMatch) {
+                            // Cần cả fullname match VÀ branch match để coi là verified
+                            if (verifyResult.fullnameMatch && verifyResult.branchMatch) {
                                 return {
                                     success: true,
                                     verified: true,
-                                    message: `Bank added - partial match (Fullname: ${verifyResult.fullnameMatch}, Branch: ${verifyResult.branchMatch})`,
+                                    message: `Bank added - verified (Fullname: ${verifyResult.fullnameMatch}, Branch: ${verifyResult.branchMatch})`,
                                     verifyResult
                                 };
                             }
@@ -1043,9 +1064,13 @@ class AutoSequenceSafe {
                 console.log(`🔍 DEBUG: addBank.success = ${results.addBank?.success}`);
                 console.log(`🔍 DEBUG: addBank.verified = ${results.addBank?.verified}`);
 
-                // Sửa logic: Cho phép checkPromo chạy ngay cả khi addBank fail
-                // Vì user có thể muốn check KM dù bank chưa add được
-                const shouldRunCheckPromo = profileData.checkPromo;
+                // Quyết định chạy checkPromo dựa trên:
+                // 1. profileData.checkPromo phải enabled
+                // 2. addBank phải thành công (success = true)
+                // 3. addBank phải được verified
+                const shouldRunCheckPromo = profileData.checkPromo &&
+                    results.addBank?.success &&
+                    results.addBank?.verified;
 
                 if (shouldRunCheckPromo) {
                     // Cảnh báo nếu bank chưa được verify
@@ -1313,7 +1338,7 @@ class AutoSequenceSafe {
         // Tóm tắt kết quả checkPromo
         const promoSummary = results.map(r => ({
             site: r.site,
-            checkPromo: r.checkPromo?.success ? '✅' : (r.checkPromo?.skipped ? '⏭️' : '❌')
+            checkPromo: r.checkPromo?.skipped ? '⏭️' : (r.checkPromo?.success ? '✅' : '❌')
         }));
         console.log(`📊 CheckPromo Summary:`, promoSummary);
 
@@ -1321,6 +1346,34 @@ class AutoSequenceSafe {
 
         // Stop promo tab rotation khi automation hoàn thành
         this.stopPromoTabActivation();
+
+        // Gửi status hoàn thành để dừng profile
+        try {
+            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+            const completionStatus = {
+                profileId: profileData.profileId,
+                username: profileData.username,
+                status: 'completed',
+                timestamp: new Date().toISOString(),
+                totalSites: sites.length,
+                successCount: results.filter(r => r.register?.success).length
+            };
+
+            console.log(`📤 Sending completion status to dashboard...`);
+            const response = await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(completionStatus)
+            });
+
+            if (response.ok) {
+                console.log(`✅ Completion status sent successfully`);
+            } else {
+                console.warn(`⚠️ Failed to send completion status: ${response.status}`);
+            }
+        } catch (error) {
+            console.warn(`⚠️ Error sending completion status:`, error.message);
+        }
 
         return { success: true, results };
     }

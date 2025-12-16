@@ -1,0 +1,118 @@
+[
+  {
+    "site": "Hi88",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - assume bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "F8BET",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - assume bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "SHBET",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "verified": true,
+      "message": "Bank info verified successfully",
+      "data": {
+        "Họ tên thật": "BUI VAN BINH",
+        "Ngân hàng": "VIETCOMBANK",
+        "Chi nhánh ngân hàng": "TP. Hồ Chí Minh",
+        "Số tài khoản": "************37854"
+      }
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "NEW88",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "verified": true,
+      "message": "Bank info verified successfully",
+      "data": {
+        "Họ tên thật": "BUI VAN BINH",
+        "Ngân hàng": "VIETCOMBANK",
+        "Chi nhánh ngân hàng": "TP. Hồ Chí Minh",
+        "Số tài khoản": "************37854"
+      }
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "MB66",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "verified": true,
+      "message": "Bank info verified successfully",
+      "data": {
+        "Họ tên thật": "BUI VAN BINH",
+        "Ngân hàng": "VIETCOMBANK",
+        "Chi nhánh ngân hàng": "TP. Hồ Chí Minh",
+        "Số tài khoản": "************37854"
+      }
+    },
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  }
+]

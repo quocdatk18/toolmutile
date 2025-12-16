@@ -57,9 +57,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return true;
     }
 
-    // Mark as running
-    runningAutoSequences.add(sequenceKey);
-    console.log('✅ Marked sequence as running:', sequenceKey.substring(0, 50) + '...');
+    // ⚠️ DO NOT mark as running here - only mark when registration actually completes
+    // This prevents dashboard from showing "running" before registration is done
+    console.log('⏳ Sequence queued (not marked running yet):', sequenceKey.substring(0, 50) + '...');
 
     // Validate unique sites
     const uniqueRegisterUrls = new Set(request.data.sites.map(s => s.registerUrl));
@@ -69,7 +69,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 
     // Run sequence and clean up when done
-    handleAutoSequence(request.data).finally(() => {
+    handleAutoSequence(request.data, sequenceKey).finally(() => {
       runningAutoSequences.delete(sequenceKey);
       console.log('✅ Removed sequence from running set');
     });
@@ -1053,7 +1053,7 @@ async function handleAddBankToMultipleSites(data) {
 
 
 // Handle auto sequence: Register → Login → Add Bank for each site
-async function handleAutoSequence(data) {
+async function handleAutoSequence(data, sequenceKey) {
   const { sites, username, password, withdrawPassword, fullname, bankName, bankBranch, accountNumber, apiKey } = data;
 
   console.log(`\n🤖🤖🤖 AUTO SEQUENCE MODE: ${sites.length} sites`);
@@ -1069,6 +1069,10 @@ async function handleAutoSequence(data) {
 
   const totalSteps = sites.length * 4; // 4 steps per site (register, login, add bank, check promo)
   let currentStep = 0;
+
+  // ✅ Mark as running NOW (when sequence actually starts processing)
+  runningAutoSequences.add(sequenceKey);
+  console.log('✅ Marked sequence as running:', sequenceKey.substring(0, 50) + '...');
 
   // Create login window ONCE before parallel processing
   // IMPORTANT: Declare outside of map() so all parallel tasks share the same variables
