@@ -929,9 +929,19 @@ class VIPAutomation {
             }, pageReloaded);
 
             console.log(`✅ Bank result:`, result);
+
+            // Mark tab as completed in rotator
+            if (result.success) {
+                tabRotator.complete(page);
+            }
+
             return result;
         } catch (error) {
             console.error(`❌ OKVIP Add Bank Error:`, error.message);
+
+            // Mark tab as completed even on error
+            tabRotator.complete(page);
+
             return { success: false, error: error.message };
         }
         // Note: Keep page open for inspection/debugging
@@ -1158,9 +1168,19 @@ class VIPAutomation {
             }, pageReloaded);
 
             console.log(`✅ Bank result:`, result);
+
+            // Mark tab as completed in rotator
+            if (result.success) {
+                tabRotator.complete(page);
+            }
+
             return result;
         } catch (error) {
             console.error(`❌ ABCVIP Add Bank Error:`, error.message);
+
+            // Mark tab as completed even on error
+            tabRotator.complete(page);
+
             return { success: false, error: error.message };
         }
     }

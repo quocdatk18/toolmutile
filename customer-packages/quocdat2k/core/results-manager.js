@@ -149,4 +149,3 @@ setInterval(() => {
     resultsManager.updateUI();
 }, 3000);
 
-console.log('✅ Results Manager initialized');

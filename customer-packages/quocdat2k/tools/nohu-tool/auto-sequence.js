@@ -19,7 +19,6 @@ class AutoSequence {
         if (!this.isInitialized) {
             // Safe Mode doesn't need separate initialization
             this.isInitialized = true;
-            console.log('✅ Safe Mode Auto Sequence initialized');
         }
     }
 
@@ -30,7 +29,6 @@ class AutoSequence {
     async runSequenceForSite(browser, site, profileData, profileId = null) {
         await this.initialize(profileId);
 
-        console.log(`\n🛡️ Using Safe Mode for: ${site.name}`);
         return await this.safeSequence.runSequenceForSite(browser, site, profileData);
     }
 
@@ -40,7 +38,6 @@ class AutoSequence {
     async runBatchSequence(browser, sites, profileData, profileId = null) {
         await this.initialize(profileId);
 
-        console.log(`\n🛡️ Using Safe Mode for batch processing: ${sites.length} sites`);
         return await this.safeSequence.runSequence(browser, profileData, sites);
     }
 
@@ -48,14 +45,12 @@ class AutoSequence {
      * Cleanup resources
      */
     async cleanup() {
-        console.log('🧹 Safe Mode Auto Sequence cleaned up');
     }
 
     /**
      * Main entry point for dashboard compatibility
      */
     async runSequence(browser, profileData, sites) {
-        console.log('🛡️ Running Safe Mode NOHU sequence...');
 
         // Use Safe Mode for all processing
         return await this.safeSequence.runSequence(browser, profileData, sites);
@@ -65,7 +60,6 @@ class AutoSequence {
      * SMS sequence using Safe Mode
      */
     async runSmsSequence(browser, profileData, sites) {
-        console.log('🛡️ Running Safe Mode SMS sequence...');
 
         return await this.safeSequence.runSmsSequence(browser, profileData, sites);
     }
@@ -74,7 +68,6 @@ class AutoSequence {
      * Run check promo only (standalone)
      */
     async runCheckPromoOnly(browser, profileData, sites) {
-        console.log('🎁 Running Safe Mode Check Promo Only...');
 
         return await this.safeSequence.runCheckPromoOnly(browser, profileData, sites);
     }

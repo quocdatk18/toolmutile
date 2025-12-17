@@ -1,5 +1,4 @@
 // Background service worker
-console.log('🔧 Background service worker started');
 
 // Keep service worker alive (prevent Chrome from terminating it)
 let keepAliveInterval;
@@ -10,18 +9,15 @@ function startKeepAlive() {
   keepAliveInterval = setInterval(() => {
     chrome.runtime.getPlatformInfo(() => {
       // Just a dummy call to keep service worker alive
-      console.log('💓 Keep-alive ping');
     });
   }, 20000); // Every 20 seconds
 
-  console.log('✅ Keep-alive started');
 }
 
 function stopKeepAlive() {
   if (keepAliveInterval) {
     clearInterval(keepAliveInterval);
     keepAliveInterval = null;
-    console.log('⏹️ Keep-alive stopped');
   }
 }
 
@@ -34,12 +30,11 @@ async function retryWithReload(tabId, url, operation, maxRetries = 2) {
 
   while (attempt <= maxRetries) {
     try {
-      console.log(`🔄 [Tab ${tabId}] Attempt ${attempt + 1}/${maxRetries + 1}`);
 
       const result = await operation();
 
       if (result !== false) {
-        console.log(`✅ [Tab ${tabId}] Success on attempt ${attempt + 1}`);
+        
         return true;
       }
 
@@ -49,12 +44,11 @@ async function retryWithReload(tabId, url, operation, maxRetries = 2) {
       attempt++;
 
       if (attempt <= maxRetries) {
-        console.log(`⚠️ [Tab ${tabId}] Failed, reloading page... (retry ${attempt}/${maxRetries})`);
+        `);
 
         try {
           // Reload the page
           await chrome.tabs.reload(tabId);
-          console.log(`🔄 [Tab ${tabId}] Page reloaded`);
 
           // Wait for page to load
           await new Promise(resolve => setTimeout(resolve, 3000));
@@ -81,14 +75,11 @@ const phoneVerifyTabs = new Set();
 
 // Helper function to close old tabs
 async function closeOldTabs(tabSet, newTabs) {
-  console.log(`🗑️ Closing ${tabSet.size} old tabs...`);
 
   for (const tabId of tabSet) {
     try {
       await chrome.tabs.remove(tabId);
-      console.log(`✅ Closed tab ${tabId}`);
     } catch (error) {
-      console.log(`⚠️ Tab ${tabId} already closed`);
     }
   }
 
@@ -126,7 +117,6 @@ chrome.webNavigation.onCompleted.addListener(async (details) => {
               files: ['content.js']
             });
 
-            console.log(`✅ [Tab ${tabId}] Script re-injected after navigation`);
           } catch (error) {
             console.error(`❌ [Tab ${tabId}] Failed to re-inject:`, error);
           }
@@ -146,16 +136,13 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('📨 Background received:', request.action);
 
   if (request.action === 'startMultiAutoRegister') {
-    console.log('🚀 Starting multi-register with', request.data.urls.length, 'URLs');
     handleMultiAutoRegister(request.data);
     sendResponse({ success: true });
   }
 
   if (request.action === 'startMultiLogin') {
-    console.log('🔐 Starting multi-login with', request.data.urls.length, 'URLs');
     handleMultiLogin(request.data);
     sendResponse({ success: true });
   }
@@ -167,7 +154,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'startMultiPromotion') {
-    console.log('🎁 Starting multi-promotion (no phone verify) with', request.data.urls.length, 'URLs');
+     with', request.data.urls.length, 'URLs');
     handleMultiPromotionNoPhoneVerify(request.data);
     sendResponse({ success: true });
   }
@@ -179,7 +166,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'startAutoSequence') {
-    console.log('🚀 Starting auto sequence with', request.data.selectedCount, 'sites');
     handleAutoSequence(request.data);
     sendResponse({ success: true });
   }
@@ -214,47 +200,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 async function handleMultiLogin(data) {
   const { urls, username, password } = data;
 
-  console.log(`\n🔐🔐🔐 LOGIN MODE: ${urls.length} sites`);
-
   // Close old login tabs first
   if (loginTabs.size > 0) {
-    console.log(`🗑️ Closing ${loginTabs.size} old login tabs...`);
     await closeOldTabs(loginTabs, []);
   }
 
-  console.log('⚡ Creating ALL tabs RIGHT NOW (no waiting)...\n');
+  ...\n');
 
   // Create ALL tabs at once
   const tabPromises = [];
 
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i];
-    console.log(`📂 [${i + 1}/${urls.length}] Queueing: ${url}`);
 
     const promise = chrome.tabs.create({
       url: url,
       active: false
     }).then(tab => {
-      console.log(`✅ Tab ${tab.id} opened: ${url}`);
       return { tab, url, index: i };
     });
 
     tabPromises.push(promise);
   }
 
-  console.log(`\n⏳ Waiting for ALL ${urls.length} tabs to open...`);
-
   const createdTabs = await Promise.all(tabPromises);
-
-  console.log(`\n✅✅✅ ALL ${createdTabs.length} TABS OPENED!`);
-  console.log('Now logging in to them in parallel...\n');
 
   // Track new tabs
   createdTabs.forEach(({ tab }) => loginTabs.add(tab.id));
 
   // Process all tabs in parallel with retry
   const loginPromises = createdTabs.map(({ tab, url, index }) => {
-    console.log(`⏳ [${index + 1}/${urls.length}] Processing tab ${tab.id}`);
 
     return retryWithReload(
       tab.id,
@@ -264,7 +239,6 @@ async function handleMultiLogin(data) {
     )
       .then((success) => {
         if (success) {
-          console.log(`✅ [${index + 1}/${urls.length}] DONE: ${url}`);
         } else {
           console.error(`❌ [${index + 1}/${urls.length}] FAILED after retries: ${url}`);
         }
@@ -287,7 +261,6 @@ async function handleMultiLogin(data) {
 }
 
 async function waitAndAutoLogin(tabId, username, password) {
-  console.log(`⏳ [Tab ${tabId}] Waiting for login page...`);
 
   return new Promise((resolve) => {
     let attempts = 0;
@@ -301,7 +274,6 @@ async function waitAndAutoLogin(tabId, username, password) {
 
         if (tab.status === 'complete' && tab.url && !tab.url.startsWith('chrome://')) {
           clearInterval(checkInterval);
-          console.log(`✅ [Tab ${tabId}] Page loaded!`);
 
           await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -312,7 +284,6 @@ async function waitAndAutoLogin(tabId, username, password) {
               files: ['content.js']
             });
 
-            console.log(`✅ [Tab ${tabId}] Script injected`);
             await new Promise(resolve => setTimeout(resolve, 4000));
 
             // Ping to check if ready
@@ -331,7 +302,6 @@ async function waitAndAutoLogin(tabId, username, password) {
                   });
                 });
                 ready = true;
-                console.log(`✅ [Tab ${tabId}] Content script ready`);
               } catch (error) {
                 pingRetries--;
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -391,7 +361,6 @@ async function waitAndAutoLogin(tabId, username, password) {
                 console.log(`❌ [Tab ${tabId}] Send failed (${error.message}), retries left: ${retries}`);
 
                 if (error.message === 'RECONNECT_NEEDED' && retries > 0) {
-                  console.log(`🔄 [Tab ${tabId}] Re-injecting content script...`);
                   try {
                     await chrome.scripting.executeScript({
                       target: { tabId: tabId },
@@ -431,49 +400,38 @@ async function waitAndAutoLogin(tabId, username, password) {
 async function handleMultiAutoRegister(data) {
   const { urls, username, password, fullname, autoSubmit } = data;
 
-  console.log(`\n🚀🚀🚀 PARALLEL MODE: ${urls.length} sites`);
-
   // Close old register tabs first
   if (registerTabs.size > 0) {
-    console.log(`🗑️ Closing ${registerTabs.size} old register tabs...`);
     await closeOldTabs(registerTabs, []);
   }
 
-  console.log('⚡ Creating ALL tabs RIGHT NOW (no waiting)...\n');
+  ...\n');
 
   // Create ALL tabs at once - NO AWAIT in loop!
   const tabPromises = [];
 
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i];
-    console.log(`📂 [${i + 1}/${urls.length}] Queueing: ${url}`);
 
     // Don't await - just push promise
     const promise = chrome.tabs.create({
       url: url,
       active: false
     }).then(tab => {
-      console.log(`✅ Tab ${tab.id} opened: ${url}`);
       return { tab, url, index: i };
     });
 
     tabPromises.push(promise);
   }
 
-  console.log(`\n⏳ Waiting for ALL ${urls.length} tabs to open...`);
-
   // Wait for ALL tabs to be created
   const createdTabs = await Promise.all(tabPromises);
-
-  console.log(`\n✅✅✅ ALL ${createdTabs.length} TABS OPENED!`);
-  console.log('Now processing them in parallel...\n');
 
   // Track new tabs
   createdTabs.forEach(({ tab }) => registerTabs.add(tab.id));
 
   // Process all tabs in parallel with retry
   const fillPromises = createdTabs.map(({ tab, url, index }) => {
-    console.log(`⏳ [${index + 1}/${urls.length}] Processing tab ${tab.id}`);
 
     return retryWithReload(
       tab.id,
@@ -483,7 +441,6 @@ async function handleMultiAutoRegister(data) {
     )
       .then((success) => {
         if (success) {
-          console.log(`✅ [${index + 1}/${urls.length}] DONE: ${url}`);
         } else {
           console.error(`❌ [${index + 1}/${urls.length}] FAILED after retries: ${url}`);
         }
@@ -507,7 +464,6 @@ async function handleMultiAutoRegister(data) {
 }
 
 async function waitAndAutoLogin(tabId, username, password) {
-  console.log(`⏳ [Tab ${tabId}] Waiting for login page load...`);
 
   return new Promise((resolve) => {
     let attempts = 0;
@@ -521,7 +477,6 @@ async function waitAndAutoLogin(tabId, username, password) {
 
         if (tab.status === 'complete' && tab.url && !tab.url.startsWith('chrome://')) {
           clearInterval(checkInterval);
-          console.log(`✅ [Tab ${tabId}] Login page loaded!`);
 
           await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -532,7 +487,6 @@ async function waitAndAutoLogin(tabId, username, password) {
               files: ['content.js']
             });
 
-            console.log(`✅ [Tab ${tabId}] Script injected`);
             await new Promise(resolve => setTimeout(resolve, 4000));
 
             // Ping to check if ready
@@ -551,7 +505,6 @@ async function waitAndAutoLogin(tabId, username, password) {
                   });
                 });
                 ready = true;
-                console.log(`✅ [Tab ${tabId}] Content script ready`);
               } catch (error) {
                 pingRetries--;
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -611,7 +564,6 @@ async function waitAndAutoLogin(tabId, username, password) {
                 console.log(`❌ [Tab ${tabId}] Send failed (${error.message}), retries left: ${retries}`);
 
                 if (error.message === 'RECONNECT_NEEDED' && retries > 0) {
-                  console.log(`🔄 [Tab ${tabId}] Re-injecting content script...`);
                   try {
                     await chrome.scripting.executeScript({
                       target: { tabId: tabId },
@@ -649,7 +601,6 @@ async function waitAndAutoLogin(tabId, username, password) {
 }
 
 async function waitAndAutoFill(tabId, username, password, fullname, autoSubmit) {
-  console.log(`⏳ [Tab ${tabId}] Waiting for page load...`);
 
   return new Promise((resolve) => {
     let attempts = 0;
@@ -663,10 +614,9 @@ async function waitAndAutoFill(tabId, username, password, fullname, autoSubmit) 
 
         if (tab.status === 'complete' && tab.url && !tab.url.startsWith('chrome://')) {
           clearInterval(checkInterval);
-          console.log(`✅ [Tab ${tabId}] Page loaded!`);
 
           // Wait longer for dynamic content and slow network
-          console.log(`⏳ [Tab ${tabId}] Waiting 5 seconds for content to render...`);
+          
           await new Promise(resolve => setTimeout(resolve, 5000)); // Increased from 3s to 5s
 
           try {
@@ -676,10 +626,8 @@ async function waitAndAutoFill(tabId, username, password, fullname, autoSubmit) 
               files: ['content.js']
             });
 
-            console.log(`✅ [Tab ${tabId}] Script injected`);
-
             // Wait longer for initialization
-            console.log(`⏳ [Tab ${tabId}] Waiting 4 seconds for script initialization...`);
+            
             await new Promise(resolve => setTimeout(resolve, 4000)); // Increased from 3s to 4s
 
             // Ping to check if ready
@@ -698,7 +646,6 @@ async function waitAndAutoFill(tabId, username, password, fullname, autoSubmit) 
                   });
                 });
                 ready = true;
-                console.log(`✅ [Tab ${tabId}] Content script ready`);
               } catch (error) {
                 pingRetries--;
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -766,7 +713,6 @@ async function waitAndAutoFill(tabId, username, password, fullname, autoSubmit) 
 
                 // If connection error, try to re-inject script
                 if (error.message === 'RECONNECT_NEEDED' && retries > 0) {
-                  console.log(`🔄 [Tab ${tabId}] Re-injecting content script...`);
                   try {
                     await chrome.scripting.executeScript({
                       target: { tabId: tabId },
@@ -803,45 +749,36 @@ async function waitAndAutoFill(tabId, username, password, fullname, autoSubmit) 
   });
 }
 
-
 async function handleWithdrawPasswordSetup(data) {
   const { urls, withdrawPassword } = data;
 
   console.log(`\n💰💰💰 WITHDRAW PASSWORD SETUP: ${urls.length} sites`);
-  console.log('⚡ Creating ALL tabs RIGHT NOW...\n');
 
   // Create ALL tabs at once
   const tabPromises = [];
 
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i];
-    console.log(`📂 [${i + 1}/${urls.length}] Queueing: ${url}`);
 
     const promise = chrome.tabs.create({
       url: url,
       active: false
     }).then(tab => {
-      console.log(`✅ Tab ${tab.id} opened: ${url}`);
       return { tab, url, index: i };
     });
 
     tabPromises.push(promise);
   }
 
-  console.log(`\n⏳ Waiting for ALL ${urls.length} tabs to open...`);
-
   const createdTabs = await Promise.all(tabPromises);
 
-  console.log(`\n✅✅✅ ALL ${createdTabs.length} TABS OPENED!`);
   console.log('Now setting withdraw password in parallel...\n');
 
   // Process all tabs in parallel
   const fillPromises = createdTabs.map(({ tab, url, index }) => {
-    console.log(`⏳ [${index + 1}/${urls.length}] Processing tab ${tab.id}`);
 
     return waitAndSetWithdrawPassword(tab.id, withdrawPassword)
       .then(() => {
-        console.log(`✅ [${index + 1}/${urls.length}] DONE: ${url}`);
 
         // Update progress
         try {
@@ -861,7 +798,6 @@ async function handleWithdrawPasswordSetup(data) {
 }
 
 async function waitAndSetWithdrawPassword(tabId, withdrawPassword) {
-  console.log(`⏳ [Tab ${tabId}] Waiting for page load...`);
 
   return new Promise((resolve) => {
     let attempts = 0;
@@ -875,7 +811,6 @@ async function waitAndSetWithdrawPassword(tabId, withdrawPassword) {
 
         if (tab.status === 'complete' && tab.url && !tab.url.startsWith('chrome://')) {
           clearInterval(checkInterval);
-          console.log(`✅ [Tab ${tabId}] Page loaded!`);
 
           await new Promise(resolve => setTimeout(resolve, 3000));
 
@@ -886,7 +821,6 @@ async function waitAndSetWithdrawPassword(tabId, withdrawPassword) {
               files: ['content.js']
             });
 
-            console.log(`✅ [Tab ${tabId}] Script injected`);
             await new Promise(resolve => setTimeout(resolve, 3000));
 
             // Ping to check if ready
@@ -905,7 +839,6 @@ async function waitAndSetWithdrawPassword(tabId, withdrawPassword) {
                   });
                 });
                 ready = true;
-                console.log(`✅ [Tab ${tabId}] Content script ready`);
               } catch (error) {
                 pingRetries--;
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -965,7 +898,6 @@ async function waitAndSetWithdrawPassword(tabId, withdrawPassword) {
                 console.log(`❌ [Tab ${tabId}] Send failed (${error.message}), retries: ${retries}`);
 
                 if (error.message === 'RECONNECT_NEEDED' && retries > 0) {
-                  console.log(`🔄 [Tab ${tabId}] Re-injecting content script...`);
                   try {
                     await chrome.scripting.executeScript({
                       target: { tabId: tabId },
@@ -1002,12 +934,10 @@ async function waitAndSetWithdrawPassword(tabId, withdrawPassword) {
   });
 }
 
-
 async function handleMultiWithdraw(data) {
   const { selectedCount, withdrawPassword, bankAccount, bankName } = data;
 
   console.log(`\n💰💰💰 MULTI WITHDRAW SETUP: ${selectedCount} sites`);
-  console.log('⚠️ Using existing open tabs (from register/login)...\n');
 
   // Get all existing tabs (should be tabs from register or login)
   const allTabs = await chrome.tabs.query({});
@@ -1022,11 +952,9 @@ async function handleMultiWithdraw(data) {
   const tabsToProcess = bettingTabs.slice(0, selectedCount);
 
   if (tabsToProcess.length === 0) {
-    console.log('❌ No open tabs found! Make sure to run register/login first.');
     return;
   }
 
-  console.log(`\n✅ Found ${tabsToProcess.length} tabs to process`);
   console.log('Now setting up withdraw in parallel...\n');
 
   // Track skipped and completed
@@ -1035,7 +963,7 @@ async function handleMultiWithdraw(data) {
 
   // Process all tabs in parallel
   const fillPromises = tabsToProcess.map((tab, index) => {
-    console.log(`⏳ [${index + 1}/${selectedCount}] Processing tab ${tab.id} (${tab.url})`);
+    `);
 
     // Add tab to tracking
     withdrawTabs.add(tab.id);
@@ -1048,7 +976,6 @@ async function handleMultiWithdraw(data) {
           console.log(`⏭️ [${index + 1}/${selectedCount}] SKIPPED (already has bank): ${tab.url}`);
         } else if (result) {
           completedCount++;
-          console.log(`✅ [${index + 1}/${selectedCount}] DONE: ${tab.url}`);
         } else {
           console.error(`❌ [${index + 1}/${selectedCount}] FAILED: ${tab.url}`);
         }
@@ -1077,7 +1004,6 @@ async function handleMultiWithdraw(data) {
 }
 
 async function waitAndGoToWithdraw(tabId, withdrawPassword, bankAccount, bankName) {
-  console.log(`⏳ [Tab ${tabId}] Waiting for page load...`);
 
   return new Promise((resolve) => {
     let attempts = 0;
@@ -1091,7 +1017,6 @@ async function waitAndGoToWithdraw(tabId, withdrawPassword, bankAccount, bankNam
 
         if (tab.status === 'complete' && tab.url && !tab.url.startsWith('chrome://')) {
           clearInterval(checkInterval);
-          console.log(`✅ [Tab ${tabId}] Page loaded!`);
 
           await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -1102,7 +1027,6 @@ async function waitAndGoToWithdraw(tabId, withdrawPassword, bankAccount, bankNam
               files: ['content.js']
             });
 
-            console.log(`✅ [Tab ${tabId}] Script injected`);
             await new Promise(resolve => setTimeout(resolve, 4000));
 
             // Ping to check if ready
@@ -1121,7 +1045,6 @@ async function waitAndGoToWithdraw(tabId, withdrawPassword, bankAccount, bankNam
                   });
                 });
                 ready = true;
-                console.log(`✅ [Tab ${tabId}] Content script ready`);
               } catch (error) {
                 pingRetries--;
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1184,7 +1107,6 @@ async function waitAndGoToWithdraw(tabId, withdrawPassword, bankAccount, bankNam
                 console.log(`❌ [Tab ${tabId}] Send failed (${error.message}), retries: ${retries}`);
 
                 if (error.message === 'RECONNECT_NEEDED' && retries > 0) {
-                  console.log(`🔄 [Tab ${tabId}] Re-injecting content script...`);
                   try {
                     await chrome.scripting.executeScript({
                       target: { tabId: tabId },
@@ -1241,13 +1163,11 @@ async function handleMultiPromotionNoPhoneVerify(data) {
 
   for (let i = 0; i < urls.length; i++) {
     const url = urls[i];
-    console.log(`📂 [${i + 1}/${urls.length}] Opening: ${url}`);
 
     const promise = chrome.tabs.create({
       url: url,
       active: false
     }).then(tab => {
-      console.log(`✅ Tab ${tab.id} opened`);
       return { tab, url, index: i };
     });
 
@@ -1255,19 +1175,16 @@ async function handleMultiPromotionNoPhoneVerify(data) {
   }
 
   const createdTabs = await Promise.all(tabPromises);
-  console.log(`✅ ALL ${createdTabs.length} TABS OPENED!`);
 
   // Track new tabs
   createdTabs.forEach(({ tab }) => promotionTabs.add(tab.id));
 
   // Process all tabs in parallel WITHOUT retry (promotion errors are business errors, not technical)
   const claimPromises = createdTabs.map(({ tab, url, index }) => {
-    console.log(`⏳ [${index + 1}/${urls.length}] Processing tab ${tab.id}`);
 
     return waitAndClaimPromotionNoPhoneVerify(tab.id, index, urls.length)
       .then((result) => {
         if (result && result.success) {
-          console.log(`✅ [${index + 1}/${urls.length}] DONE: ${url}`);
         } else if (result && result.error) {
           console.log(`⚠️ [${index + 1}/${urls.length}] Business error (no retry): ${result.error.substring(0, 50)}...`);
         } else {
@@ -1292,7 +1209,6 @@ async function handleMultiPromotionNoPhoneVerify(data) {
 }
 
 async function waitAndClaimPromotionNoPhoneVerify(tabId, index, total) {
-  console.log(`⏳ [Tab ${tabId}] Waiting for page load...`);
 
   return new Promise((resolve) => {
     let attempts = 0;
@@ -1306,7 +1222,6 @@ async function waitAndClaimPromotionNoPhoneVerify(tabId, index, total) {
 
         if (tab.status === 'complete' && tab.url && !tab.url.startsWith('chrome://')) {
           clearInterval(checkInterval);
-          console.log(`✅ [Tab ${tabId}] Page loaded!`);
 
           await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -1317,7 +1232,6 @@ async function waitAndClaimPromotionNoPhoneVerify(tabId, index, total) {
               files: ['content.js']
             });
 
-            console.log(`✅ [Tab ${tabId}] Script injected`);
             await new Promise(resolve => setTimeout(resolve, 3000));
 
             // Ping to check if ready
@@ -1336,7 +1250,6 @@ async function waitAndClaimPromotionNoPhoneVerify(tabId, index, total) {
                   });
                 });
                 ready = true;
-                console.log(`✅ [Tab ${tabId}] Content script ready`);
               } catch (error) {
                 pingRetries--;
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1400,7 +1313,6 @@ async function waitAndClaimPromotionNoPhoneVerify(tabId, index, total) {
     }, 1000);
   });
 }
-
 
 // API Handlers for codesim.net (to avoid CORS in content script)
 
@@ -1503,7 +1415,6 @@ async function cancelSimFromCodesim(simId, apiKey, sendResponse) {
   }
 }
 
-
 // Save promotion result to storage
 function savePromotionResult(data) {
   chrome.storage.local.get(['promotionResults'], function (result) {
@@ -1529,7 +1440,6 @@ async function handleMultiPhoneVerify(data) {
   const { selectedCount, apiKey } = data;
 
   console.log(`\n📱 MULTI PHONE VERIFY: ${selectedCount} sites`);
-  console.log('⚠️ Using existing open tabs (from register/login)...\n');
 
   // Get all existing tabs (should be tabs from register or login)
   const allTabs = await chrome.tabs.query({});
@@ -1544,24 +1454,20 @@ async function handleMultiPhoneVerify(data) {
   const tabsToProcess = bettingTabs.slice(0, selectedCount);
 
   if (tabsToProcess.length === 0) {
-    console.log('❌ No open tabs found! Make sure to run register/login first.');
     return;
   }
-
-  console.log(`✅ Found ${tabsToProcess.length} tabs to process`);
 
   // Track tabs
   tabsToProcess.forEach(tab => phoneVerifyTabs.add(tab.id));
 
   // Process all tabs in parallel
   const verifyPromises = tabsToProcess.map((tab, index) => {
-    console.log(`⏳ [${index + 1}/${selectedCount}] Processing tab ${tab.id} (${tab.url})`);
+    `);
 
     // Directly call phone verify (tab is already on the site)
     return waitAndVerifyPhone(tab.id, index, selectedCount, apiKey)
       .then((success) => {
         if (success) {
-          console.log(`✅ [${index + 1}/${selectedCount}] DONE: ${tab.url}`);
         } else {
           console.error(`❌ [${index + 1}/${selectedCount}] FAILED after retries: ${tab.url}`);
         }
@@ -1584,7 +1490,6 @@ async function handleMultiPhoneVerify(data) {
 }
 
 async function waitAndVerifyPhone(tabId, index, total, apiKey) {
-  console.log(`⏳ [Tab ${tabId}] Waiting for page load...`);
 
   return new Promise((resolve) => {
     let attempts = 0;
@@ -1598,7 +1503,6 @@ async function waitAndVerifyPhone(tabId, index, total, apiKey) {
 
         if (tab.status === 'complete' && tab.url && !tab.url.startsWith('chrome://')) {
           clearInterval(checkInterval);
-          console.log(`✅ [Tab ${tabId}] Page loaded!`);
 
           await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -1609,7 +1513,6 @@ async function waitAndVerifyPhone(tabId, index, total, apiKey) {
               files: ['content.js']
             });
 
-            console.log(`✅ [Tab ${tabId}] Script injected`);
             await new Promise(resolve => setTimeout(resolve, 3000));
 
             // Ping to check if ready
@@ -1628,7 +1531,6 @@ async function waitAndVerifyPhone(tabId, index, total, apiKey) {
                   });
                 });
                 ready = true;
-                console.log(`✅ [Tab ${tabId}] Content script ready`);
               } catch (error) {
                 pingRetries--;
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1693,7 +1595,6 @@ async function waitAndVerifyPhone(tabId, index, total, apiKey) {
   });
 }
 
-
 // Open withdraw page and add bank
 async function openWithdrawPageAndAddBank(data) {
   const { url, password, bankAccount, bankName } = data;
@@ -1706,8 +1607,6 @@ async function openWithdrawPageAndAddBank(data) {
     active: true
   });
 
-  console.log(`✅ Tab ${tab.id} opened`);
-
   // Wait for page to load
   await new Promise(resolve => setTimeout(resolve, 5000));
 
@@ -1718,7 +1617,6 @@ async function openWithdrawPageAndAddBank(data) {
       files: ['content.js']
     });
 
-    console.log(`✅ Script injected`);
     await new Promise(resolve => setTimeout(resolve, 3000));
 
     // Ping to check if ready
@@ -1737,7 +1635,6 @@ async function openWithdrawPageAndAddBank(data) {
           });
         });
         ready = true;
-        console.log(`✅ Content script ready`);
       } catch (error) {
         pingRetries--;
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1770,8 +1667,6 @@ async function openWithdrawPageAndAddBank(data) {
   }
 }
 
-
-
 // ============================================
 // AUTO SEQUENCE - RUN ALL STEPS WITH FAILURE CHECK
 // ============================================
@@ -1779,12 +1674,10 @@ async function openWithdrawPageAndAddBank(data) {
 async function handleAutoSequence(data) {
   const { registerUrls, promoUrls, selectedCount, username, password, fullname, withdrawPassword, bankAccount, bankName, apiKey } = data;
 
-  console.log(`\n🚀🚀🚀 AUTO SEQUENCE: ${selectedCount} sites`);
   console.log('Will run: Register → Withdraw → Phone Verify → Promotion (stop on failure)\n');
 
   try {
     // STEP 1: Register
-    console.log('\n📝 STEP 1/4: REGISTERING...\n');
     updateAutoProgress(1, 'Đăng ký', 0, selectedCount);
 
     const registerSuccess = await runRegisterStep(registerUrls, username, password, fullname, selectedCount);
@@ -1850,8 +1743,6 @@ async function runRegisterStep(urls, username, password, fullname, total) {
 
   const tabPromises = urls.map(url => chrome.tabs.create({ url, active: false }));
   const createdTabs = await Promise.all(tabPromises);
-
-  console.log(`✅ ${createdTabs.length} tabs created`);
 
   let successCount = 0;
   const fillPromises = createdTabs.map((tab, index) => {
@@ -2068,7 +1959,6 @@ function updateAutoProgress(step, stepName, current, total) {
       data: { step, stepName, current, total }
     });
   } catch (e) {
-    console.log('Could not send progress update:', e);
   }
 }
 
@@ -2079,6 +1969,5 @@ function notifyAutoComplete(success, message) {
       data: { success, message }
     });
   } catch (e) {
-    console.log('Could not send completion notification:', e);
   }
 }

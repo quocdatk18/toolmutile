@@ -6,8 +6,8 @@ class HidemiumAPI {
     constructor() {
         this.baseUrl = 'http://127.0.0.1:2222'; // Hidemium Local API port
 
-        // Get dashboard port from current page URL (browser-safe)
-        const dashboardPort = window.location.port || 3000;
+        // Get dashboard port (Node.js safe)
+        const dashboardPort = process.env.PORT || 3000;
         this.dashboardUrl = `http://localhost:${dashboardPort}`; // Dashboard server port
     }
 

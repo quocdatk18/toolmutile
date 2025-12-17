@@ -1,9 +1,0 @@
-{
-  "customer": "legiabao",
-  "version": "3.0.0",
-  "createdAt": "2025-12-15T15:38:32.056Z",
-  "buildType": "customer-package",
-  "secretKey": "SECRET_legiabao_14235_5375",
-  "machineId": null,
-  "obfuscated": true
-}

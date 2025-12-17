@@ -21,22 +21,18 @@ class Hai2vipCompleteAutomation {
         });
 
         if (alreadyInjected) {
-            console.log('    ✅ Scripts already injected, skipping...');
             return;
         }
 
-        console.log('    💉 Injecting chrome.runtime mock...');
         await page.evaluate(() => {
             if (!window.chrome) window.chrome = {};
             if (!window.chrome.runtime) {
                 window.chrome.runtime = {
                     sendMessage: async (message, callback) => {
-                        console.log('📤 Mock sendMessage:', message);
                         if (callback) callback({ success: true });
                     },
                     onMessage: {
                         addListener: (callback) => {
-                            console.log('📥 Mock onMessage listener added');
                             window._chromeMessageListener = callback;
                         }
                     },
@@ -48,20 +44,15 @@ class Hai2vipCompleteAutomation {
                 window.chrome.storage = {
                     local: {
                         get: (keys, callback) => {
-                            console.log('📦 Mock storage.get:', keys);
                             callback({});
                         },
                         set: (items, callback) => {
-                            console.log('💾 Mock storage.set:', items);
                             if (callback) callback();
                         }
                     }
                 };
             }
         });
-
-        console.log('    💉 Injecting content.js...');
-        console.log('    📏 Content.js size:', this.scripts.content.length, 'characters');
 
         try {
             await page.evaluate(this.scripts.content);
@@ -76,7 +67,6 @@ class Hai2vipCompleteAutomation {
      * Verify scripts loaded
      */
     async verifyScripts(page) {
-        console.log('    🔍 Verifying scripts loaded...');
 
         const scriptsLoaded = await page.evaluate(() => {
             return {
@@ -85,10 +75,8 @@ class Hai2vipCompleteAutomation {
             };
         });
 
-        console.log('    📊 Scripts status:', scriptsLoaded);
-
         if (!scriptsLoaded.listenerExists) {
-            console.log('    ⚠️  Message listener not registered yet, waiting 5 more seconds...');
+            
             await page.waitForTimeout(5000);
 
             const recheckListener = await page.evaluate(() => {
@@ -99,7 +87,6 @@ class Hai2vipCompleteAutomation {
                 throw new Error('Content script failed to initialize');
             }
 
-            console.log('    ✅ Message listener now available');
         }
 
         return scriptsLoaded;
@@ -111,25 +98,19 @@ class Hai2vipCompleteAutomation {
     async setupPage(browser, url) {
         const page = await browser.newPage();
 
-        console.log('    📄 Opening page:', url);
         await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-        console.log('    👁️  Focusing on tab...');
         await page.bringToFront();
 
-        console.log('    ⏳ Waiting for page to load...');
         try {
             await page.waitForFunction(() => document.readyState === 'complete', { timeout: 20000 });
-            console.log('    ✅ Page loaded');
         } catch (e) {
-            console.log('    ⚠️  Timeout, but continuing...');
         }
 
         await page.waitForTimeout(5000);
 
         await this.injectScripts(page);
 
-        console.log('    ⏳ Waiting for scripts to initialize...');
         await page.waitForTimeout(3000);
 
         await this.verifyScripts(page);
@@ -141,9 +122,6 @@ class Hai2vipCompleteAutomation {
      * Run complete sequence for one site
      */
     async runSequenceForSite(browser, site, profileData) {
-        console.log(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
-        console.log(`🤖 Starting sequence for: ${site.name}`);
-        console.log(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`);
 
         const results = {
             site: site.name,
@@ -159,7 +137,6 @@ class Hai2vipCompleteAutomation {
 
         try {
             // STEP 1: Register
-            console.log(`📝 STEP 1: Registering on ${site.name}...`);
             results.register = await actions.completeRegistration(profileData);
 
             if (!results.register.success) {
@@ -186,7 +163,7 @@ class Hai2vipCompleteAutomation {
             }
 
             // STEP 4: Claim promotion
-            console.log(`🎁 STEP 4: Claiming promotion...`);
+            
             results.promo = await actions.claimPromotion();
 
             console.log(`✅ ${site.name} sequence completed`);

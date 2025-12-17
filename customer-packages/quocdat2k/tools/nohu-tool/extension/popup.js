@@ -1,5 +1,4 @@
 // Extension loaded
-console.log('Auto Register Tool loaded');
 
 // Load banks from VietQR API
 async function loadBanks() {
@@ -96,8 +95,6 @@ document.getElementById('togglePassword3').addEventListener('click', function ()
   this.textContent = type === 'password' ? '👁️' : '🙈';
 });
 
-
-
 // Show status message
 function showStatus(message, type = 'info') {
   const statusSection = document.getElementById('statusSection');
@@ -141,8 +138,6 @@ document.getElementById('registerBtn').addEventListener('click', async function 
     return;
   }
 
-  console.log('Selected sites:', urls);
-
   // No need to save accounts anymore
 
   // Show progress
@@ -154,7 +149,6 @@ document.getElementById('registerBtn').addEventListener('click', async function 
 
   // Get auto-submit checkbox value
   const autoSubmit = document.getElementById('autoSubmitRegister').checked;
-  console.log('🎯 Auto Submit:', autoSubmit);
 
   // Get API key (same as login)
   let apiKey = '';
@@ -164,9 +158,8 @@ document.getElementById('registerBtn').addEventListener('click', async function 
       apiKey = apiKeyElement.value.trim();
     }
   } catch (e) {
-    console.log('⚠️ Could not get API key');
   }
-  console.log('🔑 API Key for register:', apiKey ? (apiKey.substring(0, 10) + '...') : 'NONE');
+   + '...') : 'NONE');
 
   // Send message to background script
   showStatus(`🚀 Đang đăng ký ${urls.length} trang...${autoSubmit ? ' (Tự động submit)' : ''}`, 'info');
@@ -209,7 +202,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   }
 });
-
 
 // Tab switching
 document.getElementById('registerTab').addEventListener('click', function () {
@@ -307,7 +299,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-
 // Promo tab switching
 document.getElementById('promoTab').addEventListener('click', function () {
   // Switch active tab
@@ -346,7 +337,6 @@ chrome.storage.local.get(['captchaApiKey'], function (result) {
 document.getElementById('autoApiKey').addEventListener('change', function () {
   const apiKey = this.value.trim();
   chrome.storage.local.set({ captchaApiKey: apiKey }, function () {
-    console.log('✅ API key saved and shared across all tabs');
   });
 });
 
@@ -400,8 +390,6 @@ document.getElementById('checkBalanceBtn').addEventListener('click', async funct
     // Call API to check balance
     const response = await fetch(`https://autocaptcha.pro/apiv3/balance?key=${apiKey}`);
     const data = await response.json();
-
-    console.log('💰 Balance response:', data);
 
     if (data.success === true) {
       // Show balance
@@ -460,8 +448,7 @@ document.getElementById('promoBtn').addEventListener('click', async function () 
   }
 
   // Debug: Log API Key
-  console.log('🔑 API Key being sent:', apiKey ? (apiKey.substring(0, 5) + '...' + apiKey.substring(apiKey.length - 5)) : 'EMPTY');
-  console.log('🔑 API Key length:', apiKey ? apiKey.length : 0);
+   + '...' + apiKey.substring(apiKey.length - 5)) : 'EMPTY');
 
   // Send message to background script
   showPromoStatus(`🎁 Đang check khuyến mãi ${urls.length} trang...\n\n⚠️ LƯU Ý: Tool sẽ tự động CHUYỂN TAB từng trang một để tránh bị Chrome throttle API captcha.\n\nVui lòng không đóng các tab cho đến khi hoàn tất!`, 'info');
@@ -524,10 +511,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-
 // Test withdraw form fill button - REMOVED (button doesn't exist in HTML)
 // Commented out to prevent blocking other event listeners
-
 
 // ===== NEW BUTTONS: Login Only & Add Bank Only =====
 
@@ -551,8 +536,6 @@ document.getElementById('loginOnlyBtn').addEventListener('click', async function
     return;
   }
 
-  console.log('🔐 Login Only - Selected sites:', urls);
-
   // Show progress
   if (urls.length > 1) {
     document.getElementById('loginProgressSection').style.display = 'block';
@@ -570,7 +553,6 @@ document.getElementById('loginOnlyBtn').addEventListener('click', async function
       apiKey = apiKeyElement.value.trim();
     }
   } catch (e) {
-    console.log('⚠️ Could not get API key');
   }
 
   // Send message WITHOUT withdrawInfo
@@ -602,7 +584,6 @@ console.log('🔍 addBankBtn element:', addBankBtn);
 if (addBankBtn) {
   console.log('✅ addBankBtn found, attaching event listener...');
   addBankBtn.addEventListener('click', async function () {
-    console.log('🔘 Button "Thêm Ngân Hàng" clicked!');
 
     // Get withdraw information
     const bankName = document.getElementById('bankName').value;
@@ -644,7 +625,6 @@ if (addBankBtn) {
     }
 
     const urls = Array.from(checkedSites).map(cb => cb.dataset.url);
-    console.log('🌐 Selected sites:', urls);
 
     showWithdrawStatus(`⏳ Đang mở ${urls.length} trang và thêm ngân hàng...`, 'info');
 
@@ -666,7 +646,6 @@ if (addBankBtn) {
       },
       (response) => {
         if (response && response.success) {
-          console.log('✅ Background script started processing');
           showWithdrawStatus(`✅ Đã khởi động! Tool đang chạy ${urls.length} trang.\n\nBạn có thể đóng popup, tool vẫn tiếp tục chạy.`, 'success');
         } else {
           showWithdrawStatus('❌ Lỗi khởi động background script', 'error');
@@ -677,7 +656,6 @@ if (addBankBtn) {
 } else {
   console.error('❌ addBankBtn NOT FOUND! Check HTML for id="addBankBtn"');
 }
-
 
 // Show withdraw status message
 function showWithdrawStatus(message, type = 'info') {
@@ -691,7 +669,6 @@ function showWithdrawStatus(message, type = 'info') {
     statusSection.style.display = 'none';
   }, 5000);
 }
-
 
 // ===== AUTO TAB - Chạy tự động tuần tự =====
 
@@ -758,7 +735,6 @@ let autoRunInProgress = false; // Prevent duplicate runs
 document.getElementById('autoRunBtn').addEventListener('click', async function () {
   // Prevent duplicate clicks
   if (autoRunInProgress) {
-    console.log('⚠️ Auto run already in progress, ignoring click');
     showAutoStatus('⚠️ Tool đang chạy, vui lòng đợi...', 'error');
     return;
   }
@@ -793,7 +769,6 @@ document.getElementById('autoRunBtn').addEventListener('click', async function (
 
   // Get checked sites
   const checkedBoxes = document.querySelectorAll('.site-check-auto:checked');
-  console.log('🔍 Found checked boxes:', checkedBoxes.length);
 
   if (checkedBoxes.length === 0) {
     showAutoStatus('❌ Vui lòng chọn ít nhất 1 trang!', 'error');
@@ -801,7 +776,6 @@ document.getElementById('autoRunBtn').addEventListener('click', async function (
   }
 
   const sites = Array.from(checkedBoxes).map((cb, index) => {
-    console.log(`  [${index}] Checkbox:`, {
       registerUrl: cb.dataset.registerUrl,
       loginUrl: cb.dataset.loginUrl,
       promoUrl: cb.dataset.promoUrl,
@@ -816,10 +790,6 @@ document.getElementById('autoRunBtn').addEventListener('click', async function (
       promoUrl: cb.getAttribute('data-promo-url') || cb.dataset.promoUrl
     };
   });
-
-  console.log('🤖 Auto mode - Selected sites:', sites);
-  console.log('📊 Total sites:', sites.length);
-  console.log('📊 Sites JSON:', JSON.stringify(sites, null, 2));
 
   // Validate that we have unique sites
   const uniqueRegisterUrls = new Set(sites.map(s => s.registerUrl));
@@ -920,10 +890,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   }
 });
-
-
-
-
 
 // ============================================
 // RANDOM USERNAME GENERATOR
@@ -1094,7 +1060,6 @@ function addRandomButtonToUsername() {
     // Click event
     randomBtn.addEventListener('click', () => {
       const username = generateAndFillUsername(id);
-      console.log('✅ Generated username:', username);
 
       // Animation
       randomBtn.style.transform = 'scale(0.9) rotate(360deg)';

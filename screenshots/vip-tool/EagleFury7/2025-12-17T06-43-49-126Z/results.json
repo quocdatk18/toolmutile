@@ -1,0 +1,95 @@
+[
+  {
+    "site": "U888",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": false,
+      "message": "Bank info verification failed",
+      "expected": {
+        "fullname": "HOANG QUANG HAI",
+        "city": "TP. Hồ Chí Minh",
+        "accountNumber": "8501"
+      },
+      "actual": {
+        "Họ và Tên thật": "HOANG QUANG HAI",
+        "Ngân hàng": "KIENLONGBANK",
+        "Chi nhánh ngân hàng": "TP. Hồ Chí Minh",
+        "Số tài khoản": "************28501"
+      }
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - ABCVIP no promo"
+    }
+  },
+  {
+    "site": "J88",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": false,
+      "message": "Bank info verification failed",
+      "expected": {
+        "fullname": "HOANG QUANG HAI",
+        "city": "TP. Hồ Chí Minh",
+        "accountNumber": "8501"
+      },
+      "actual": {
+        "Họ và Tên thật": "HOANG QUANG HAI",
+        "Ngân hàng": "KIENLONGBANK",
+        "Chi nhánh ngân hàng": "TP. Hồ Chí Minh",
+        "Số tài khoản": "************28501"
+      }
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - ABCVIP no promo"
+    }
+  },
+  {
+    "site": "ABC8",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": false,
+      "message": "Bank info verification failed",
+      "expected": {
+        "fullname": "HOANG QUANG HAI",
+        "city": "TP. Hồ Chí Minh",
+        "accountNumber": "8501"
+      },
+      "actual": {
+        "Họ và Tên thật": "HOANG QUANG HAI",
+        "Ngân hàng": "KIENLONGBANK",
+        "Chi nhánh ngân hàng": "TP. Hồ Chí Minh",
+        "Số tài khoản": "************28501"
+      }
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - ABCVIP no promo"
+    }
+  }
+]

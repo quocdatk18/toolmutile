@@ -2981,7 +2981,7 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 // NOHU app sites config (centralized - used by both frontend and backend)
 const nohuSitesConfig = {
     'Go99': { name: 'Go99', registerUrl: ' https://m.1go99.vip/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
-    'NOHU': { name: 'NOHU', registerUrl: 'https://m.8nohu.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
+    'NOHU': { name: 'NOHU', registerUrl: 'https://m.2nohu.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
     'TT88': { name: 'TT88', registerUrl: 'https://m.1tt88.vip/Account/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
     'MMOO': { name: 'MMOO', registerUrl: 'https://m.mmoo.team/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
     '789P': { name: '789P', registerUrl: 'https://m.789p1.vip/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },

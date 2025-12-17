@@ -23,9 +23,6 @@ class NohuAutomation {
      * Run full automation sequence
      */
     async runFullSequence() {
-        console.log('🚀 Starting NOHU automation...');
-        console.log('Profile:', this.profileId);
-        console.log('Sites:', this.config.sites.length);
 
         try {
             // Validate API key first
@@ -36,7 +33,6 @@ class NohuAutomation {
 
             // Run automation for each site
             for (const site of this.config.sites) {
-                console.log(`\n📍 Processing site: ${site.name}`);
 
                 try {
                     // 1. Register
@@ -78,7 +74,6 @@ class NohuAutomation {
      * Validate API key before running automation
      */
     async validateApiKey() {
-        console.log('🔑 Validating API key...');
 
         const validator = new ApiKeyValidator();
 
@@ -94,8 +89,6 @@ class NohuAutomation {
             throw new Error(`API key validation failed: ${result.error}`);
         }
 
-        console.log(`✅ API key valid - ${result.message}`);
-
         // Warn if balance is low
         if (result.balance < 1) {
             console.warn('⚠️  Warning: API balance is low ($' + result.balance.toFixed(2) + ')');
@@ -106,7 +99,6 @@ class NohuAutomation {
      * Connect to Hidemium profile
      */
     async connectToProfile() {
-        console.log('🔌 Connecting to profile...');
 
         // Get debug port from Hidemium
         const axios = require('axios');
@@ -122,7 +114,6 @@ class NohuAutomation {
         }
 
         const debugPort = response.data.debugPort;
-        console.log('Debug port:', debugPort);
 
         // Connect puppeteer
         this.browser = await puppeteer.connect({
@@ -133,14 +124,12 @@ class NohuAutomation {
         const pages = await this.browser.pages();
         this.page = pages[0] || await this.browser.newPage();
 
-        console.log('✅ Connected to profile');
     }
 
     /**
      * Register account
      */
     async register(site) {
-        console.log(`📝 Registering on ${site.name}...`);
 
         // Navigate to register URL
         await this.page.goto(site.url, { waitUntil: 'networkidle2', timeout: 30000 });
@@ -158,10 +147,8 @@ class NohuAutomation {
      * Login to account
      */
     async login(site) {
-        console.log(`🔐 Logging in to ${site.name}...`);
 
         // TODO: Implement login logic
-        console.log(`⏭️ Login logic not implemented for ${site.name}`);
     }
 
     /**
@@ -178,7 +165,6 @@ class NohuAutomation {
      * Check promotions
      */
     async checkPromo(site) {
-        console.log(`🎁 Checking promos on ${site.name}...`);
 
         // TODO: Implement check promo logic
         console.log(`⏭️ Check promo logic not implemented for ${site.name}`);
@@ -188,13 +174,11 @@ class NohuAutomation {
      * Cleanup resources
      */
     async cleanup() {
-        console.log('🧹 Cleaning up...');
 
         if (this.browser) {
             await this.browser.disconnect();
         }
 
-        console.log('✅ Cleanup complete');
     }
 }
 

@@ -47,6 +47,17 @@ class ProfileManager {
 
             if (data.success && data.data) {
                 this.profiles = data.data;
+
+                // Sync running status from server
+                // Clear old running profiles and rebuild from server response
+                this.runningProfiles.clear();
+                this.profiles.forEach(profile => {
+                    if (profile.isRunning) {
+                        this.runningProfiles.add(profile.uuid);
+                    }
+                });
+                this.saveRunningProfiles();
+
                 return { success: true, profiles: this.profiles };
             } else {
                 throw new Error(data.error || 'Failed to load profiles');

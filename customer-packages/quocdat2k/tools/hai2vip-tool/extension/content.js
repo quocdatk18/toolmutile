@@ -1,5 +1,4 @@
 // Content script - Fixed for Vue app
-console.log('🚀 Auto Register Tool loaded on:', window.location.href);
 
 // Mark that content script is loaded
 window.__autoRegisterToolLoaded = true;
@@ -19,7 +18,6 @@ function checkPendingBankAdd() {
       // Only process if less than 60 seconds old (increased from 30)
       if (age < 60000) {
         console.log('💾 Found pending bank add:', data);
-        console.log(`  Age: ${Math.round(age / 1000)}s`);
 
         // Clear storage
         chrome.storage.local.remove('pendingBankAdd');
@@ -48,7 +46,7 @@ function checkPendingBankAdd() {
         // Timeout after 15 seconds
         setTimeout(() => {
           clearInterval(waitForPageReady);
-          console.log('⚠️ Timeout waiting for withdraw page');
+          
         }, 15000);
       } else {
         console.log('⚠️ Pending bank add too old, ignoring');
@@ -120,14 +118,12 @@ async function humanClick(element) {
       changedTouches: [touchObj]
     }));
   } catch (e) {
-    console.log('Touch events not supported, using click fallback');
   }
 
   // Fallback to regular click
   await randomDelay(50, 100);
   element.click();
 
-  console.log('✅ Human-like click executed');
   return true;
 }
 
@@ -189,7 +185,6 @@ async function humanTypeCharByChar(input, text) {
 // ============================================
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  console.log('📨 Message received:', request);
 
   if (request.action === 'ping') {
     sendResponse({ ready: true });
@@ -207,11 +202,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'autoFill') {
-    console.log('📝 Starting auto-fill with data:', request.data);
 
     // Prevent duplicate auto-fill
     if (window.__isAutoFilling) {
-      console.log('⏹️ Already auto-filling in progress, ignoring duplicate request');
       sendResponse({ success: false, error: 'Already in progress' });
       return true;
     }
@@ -223,13 +216,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     async function tryAutoFill() {
       attempts++;
-      console.log(`🔄 Auto-fill attempt ${attempts}/${maxAttempts}...`);
 
       try {
         const inputs = findAllInputs();
 
         if (inputs.length >= 4) {
-          console.log('✅ Found enough inputs, filling...');
           const result = await fillForm(inputs, request.data.username, request.data.password, request.data.fullname);
 
           if (result.username || result.password || result.fullname) {
@@ -237,7 +228,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             window.__isAutoFilling = false;
 
             if (request.data.autoSubmit === true) {
-              console.log('🎬 Auto-submitting form...');
 
               // Wait for autoSubmitForm to complete (it has 3s delay + click)
               await new Promise(resolve => {
@@ -256,7 +246,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         if (attempts < maxAttempts) {
           const delay = 2000;
-          console.log(`⚠️ Retrying in ${delay}ms...`);
           setTimeout(tryAutoFill, delay);
         } else {
           console.error('❌ FAILED after', maxAttempts, 'attempts');
@@ -279,7 +268,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'autoLogin') {
-    console.log('🔐 Starting auto-login');
     startAutoLogin(request.data, sendResponse);
     return true;
   }
@@ -324,7 +312,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'claimPromotion') {
-    console.log('🎁 Starting promotion claim (no phone verify)...');
+    ...');
     claimPromotionWithoutPhoneVerify(sendResponse);
     return true;
   }
@@ -333,7 +321,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 function startAutoLogin(data, sendResponse) {
   // Check global flag to prevent multiple instances
   if (window.__isAutoLogging) {
-    console.log('⏹️ Already auto-logging in progress, ignoring duplicate request');
     sendResponse({ success: false, error: 'Already in progress' });
     return;
   }
@@ -350,13 +337,11 @@ function startAutoLogin(data, sendResponse) {
     }
 
     attempts++;
-    console.log(`\n🔐 ========== LOGIN ATTEMPT ${attempts}/${maxAttempts} ==========`);
 
     const inputs = findAllInputs();
 
     // Login form usually has 2 inputs (username + password)
     if (inputs.length >= 2) {
-      console.log('✅ Found login inputs, filling...');
       const result = await fillLoginForm(inputs, data.username, data.password);
 
       if (result.username && result.password) {
@@ -374,7 +359,6 @@ function startAutoLogin(data, sendResponse) {
 
     if (attempts < maxAttempts && !isCompleted) {
       const delay = 2000;
-      console.log(`⚠️ Retrying in ${delay}ms...`);
       setTimeout(tryAutoLogin, delay);
     } else if (!isCompleted) {
       console.error('❌ FAILED after', maxAttempts, 'attempts');
@@ -389,7 +373,6 @@ function startAutoLogin(data, sendResponse) {
 }
 
 async function fillLoginForm(inputs, username, password) {
-  console.log('\n🔐 Filling login form...');
 
   const result = { username: false, password: false };
 
@@ -407,13 +390,11 @@ async function fillLoginForm(inputs, username, password) {
   );
 
   if (accountInput) {
-    console.log('  Filling username...');
     await fillInput(accountInput, username);
     result.username = true;
   }
 
   if (passInput) {
-    console.log('  Filling password...');
     await fillInput(passInput, password);
     result.password = true;
   }
@@ -436,7 +417,6 @@ async function fillLoginForm(inputs, username, password) {
 }
 
 function autoSubmitLoginForm() {
-  console.log('\n🎬 Auto-submit login form...');
 
   setTimeout(() => {
     // Find login button
@@ -450,7 +430,6 @@ function autoSubmitLoginForm() {
 
     // Search in iframes if not found
     if (!submitBtn) {
-      console.log('  Searching iframes for login button...');
       const iframes = document.querySelectorAll('iframe');
 
       for (let iframe of iframes) {
@@ -460,23 +439,19 @@ function autoSubmitLoginForm() {
             iframeDoc.querySelector('button.ui-button--primary');
 
           if (submitBtn) {
-            console.log('  ✅ Found in iframe!');
             break;
           }
         } catch (e) {
-          console.log('  Cannot access iframe');
         }
       }
     }
 
     if (submitBtn) {
-      console.log('✅ Found login button');
       showNotification('⏳ Đang nhấn Đăng Nhập trong 2s...');
 
       submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
       setTimeout(() => {
-        console.log('🚀 CLICKING login button!');
 
         // Touch events
         try {
@@ -489,7 +464,6 @@ function autoSubmitLoginForm() {
         submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
         submitBtn.click();
 
-        console.log('  ✅ Clicked login button');
         showNotification('✅ Đã nhấn nút Đăng Nhập!');
       }, 2000);
     } else {
@@ -505,27 +479,21 @@ function findAllInputs() {
   const inputs = [];
 
   // Method 1: Find in main document
-  console.log('  Searching main document...');
   const dataInputs = document.querySelectorAll('[data-input-name]');
-  console.log(`    [data-input-name]: ${dataInputs.length}`);
   inputs.push(...dataInputs);
 
   const uiInputs = document.querySelectorAll('.ui-input__input');
-  console.log(`    [.ui-input__input]: ${uiInputs.length}`);
   uiInputs.forEach(inp => {
     if (!inputs.includes(inp)) inputs.push(inp);
   });
 
   const allInputs = document.querySelectorAll('input[type="text"], input[type="password"], input:not([type])');
-  console.log(`    [input]: ${allInputs.length}`);
   allInputs.forEach(inp => {
     if (!inputs.includes(inp)) inputs.push(inp);
   });
 
   // Method 2: Find in iframes
-  console.log('  Searching iframes...');
   const iframes = document.querySelectorAll('iframe');
-  console.log(`    Found ${iframes.length} iframes`);
 
   iframes.forEach((iframe, i) => {
     try {
@@ -534,8 +502,6 @@ function findAllInputs() {
       const iframeDataInputs = iframeDoc.querySelectorAll('[data-input-name]');
       const iframeUiInputs = iframeDoc.querySelectorAll('.ui-input__input');
       const iframeAllInputs = iframeDoc.querySelectorAll('input');
-
-      console.log(`    Iframe ${i}: ${iframeAllInputs.length} inputs`);
 
       iframeDataInputs.forEach(inp => {
         if (!inputs.includes(inp)) inputs.push(inp);
@@ -547,23 +513,18 @@ function findAllInputs() {
         if (!inputs.includes(inp)) inputs.push(inp);
       });
     } catch (e) {
-      console.log(`    Iframe ${i}: Cannot access (${e.message})`);
     }
   });
-
-  console.log(`✅ Total: ${inputs.length}`);
 
   // Log each input
   inputs.forEach((inp, i) => {
     const name = inp.getAttribute('data-input-name') || inp.name || inp.placeholder;
-    console.log(`  ${i}: ${name} (${inp.type})`);
   });
 
   return inputs;
 }
 
 async function fillForm(inputs, username, password, fullname) {
-  console.log('\n📝 Filling form...');
 
   const result = { username: false, password: false, fullname: false, checkbox: false };
 
@@ -574,26 +535,21 @@ async function fillForm(inputs, username, password, fullname) {
   const nameInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'realName');
 
   if (accountInput) {
-    console.log('  Filling account...');
     await fillInput(accountInput, username);
     result.username = true;
   }
 
   if (passInput) {
-    console.log('  Filling password...');
     await fillInput(passInput, password);
     result.password = true;
   }
 
   if (confirmInput) {
-    console.log('  Filling confirm password...');
     await fillInput(confirmInput, password);
   }
 
   if (nameInput) {
-    console.log('  Filling fullname (char by char)...');
     await humanTypeCharByChar(nameInput, fullname);
-    console.log(`    ✅ Typed: "${fullname}"`);
     result.fullname = true;
   }
 
@@ -628,13 +584,10 @@ async function fillInput(input, value) {
 
   // Use humanType for realistic character-by-character typing
   await humanType(input, value);
-  console.log(`    ✅ Typed: "${value}"`);
 }
 
 function autoSubmitForm(autoSubmit) {
   if (!autoSubmit) return;
-
-  console.log('\n🎬 Auto-submit...');
 
   setTimeout(() => {
     let submitBtn = document.getElementById('insideRegisterSubmitClick') ||
@@ -643,7 +596,6 @@ function autoSubmitForm(autoSubmit) {
 
     // If not found in main document, search iframes
     if (!submitBtn) {
-      console.log('  Searching iframes for button...');
       const iframes = document.querySelectorAll('iframe');
 
       for (let iframe of iframes) {
@@ -654,23 +606,19 @@ function autoSubmitForm(autoSubmit) {
             iframeDoc.querySelector('button[type="submit"]');
 
           if (submitBtn) {
-            console.log('  ✅ Found in iframe!');
             break;
           }
         } catch (e) {
-          console.log('  Cannot access iframe');
         }
       }
     }
 
     if (submitBtn) {
-      console.log('✅ Found submit button');
       showNotification('⏳ Đang nhấn Đăng Ký trong 3s...');
 
       submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
       setTimeout(() => {
-        console.log('🚀 CLICKING with Touch events!');
 
         // Method 1: TouchEvent (for mobile emulator)
         try {
@@ -693,9 +641,7 @@ function autoSubmitForm(autoSubmit) {
             view: window
           });
           submitBtn.dispatchEvent(touchEnd);
-          console.log('  ✅ Touch events dispatched');
         } catch (e) {
-          console.log('  Touch events not supported, trying alternatives');
         }
 
         // Method 2: PointerEvent
@@ -710,7 +656,6 @@ function autoSubmitForm(autoSubmit) {
         // Method 4: Native click
         submitBtn.click();
 
-        console.log('  ✅ All click methods executed');
         showNotification('✅ Đã nhấn nút Đăng Ký!');
       }, 3000);
     } else {
@@ -819,10 +764,7 @@ function showWithdrawPasswordGuide(password) {
   }, 30000);
 }
 
-
-
 // Listener merged into main listener above
-
 
 // NEW SIMPLE LOGIC: Direct link to withdraw page (like SMS verification)
 function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse) {
@@ -830,7 +772,6 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
 
   // Step 1: Find and click "Tôi" tab
   setTimeout(() => {
-    console.log('🔍 Step 1: Finding "Tôi" tab...');
 
     // Method 1: Find by span text (most accurate)
     const allSpans = document.querySelectorAll('span[class*="_text"]');
@@ -842,7 +783,6 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
         // Get the parent tab element
         profileTab = span.closest('[role="tab"]') || span.closest('.ui-tabbar-item') || span.closest('[class*="tabbar-item"]');
         if (profileTab && profileTab.offsetParent !== null) {
-          console.log('  ✅ Found "Tôi" tab by span text');
           break;
         }
       }
@@ -855,14 +795,12 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
         const text = tab.textContent.trim();
         if (text === 'Tôi' && tab.offsetParent !== null) {
           profileTab = tab;
-          console.log('  ✅ Found "Tôi" tab by tab text');
           break;
         }
       }
     }
 
     if (profileTab) {
-      console.log('  Clicking "Tôi" tab...');
 
       try {
         profileTab.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
@@ -873,13 +811,10 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
 
       // Step 2: Wait for profile page to load, then click "Rút Tiền"
       setTimeout(() => {
-        console.log('🔍 Step 2: Finding "Rút Tiền" button...');
 
         // First, look for the label with "Rút Tiền" text
         const labels = document.querySelectorAll('p._label_1odty_95, p[class*="_label_"], p');
         let withdrawBtn = null;
-
-        console.log(`  Checking ${labels.length} labels...`);
 
         for (let label of labels) {
           const text = label.textContent.trim();
@@ -890,7 +825,6 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
 
             if (parentDiv && parentDiv.offsetParent !== null) {
               withdrawBtn = parentDiv;
-              console.log(`  ✅ Found "Rút Tiền" parent div: ${parentDiv.className}`);
               break;
             }
           }
@@ -898,20 +832,17 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
 
         // Fallback: search all navItems directly
         if (!withdrawBtn) {
-          console.log('  Fallback: searching all navItems...');
           const navItems = document.querySelectorAll('._navItem_1odty_45, [class*="navItem"]');
 
           for (let item of navItems) {
             if (item.textContent.includes('Rút Tiền') && item.offsetParent !== null) {
               withdrawBtn = item;
-              console.log(`  ✅ Found via fallback: ${item.className}`);
               break;
             }
           }
         }
 
         if (withdrawBtn) {
-          console.log('  Clicking "Rút Tiền" button...');
 
           // Scroll into view first
           withdrawBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -923,7 +854,6 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
             } catch (e) { }
 
             withdrawBtn.click();
-            console.log('  ✅ Clicked!');
           }, 500);
 
           // Step 3: Wait for withdraw page to load
@@ -945,11 +875,11 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
 
               if (hasWithdrawElements) {
                 clearInterval(checkPageState);
-                console.log(`✅ Withdraw page loaded (attempt ${attempts})`);
+                `);
                 checkAndFillWithdrawPassword(withdrawPassword, bankAccount, bankName, sendResponse);
               } else if (attempts >= maxAttempts) {
                 clearInterval(checkPageState);
-                console.log('⚠️ Timeout waiting for withdraw page');
+                
                 showNotification('⚠️ Không tìm thấy trang rút tiền!');
                 sendResponse({ success: false, error: 'Page not found' });
               }
@@ -957,14 +887,12 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
           }, 2000);
 
         } else {
-          console.log('  ❌ "Rút Tiền" button not found');
           showNotification('❌ Không tìm thấy nút Rút Tiền!');
           sendResponse({ success: false, error: 'Withdraw button not found' });
         }
       }, 2000);
 
     } else {
-      console.log('  ❌ "Tôi" tab not found');
       showNotification('❌ Không tìm thấy tab Tôi!');
       sendResponse({ success: false, error: 'Profile tab not found' });
     }
@@ -973,7 +901,6 @@ function goToWithdrawPage(withdrawPassword, bankAccount, bankName, sendResponse)
 
 // Navigate back to home page by clicking back button repeatedly
 function navigateBackToHome(callback) {
-  console.log('🔙 Navigating back to home page...');
 
   const checkAndClickBack = () => {
     const currentUrl = window.location.href;
@@ -986,13 +913,9 @@ function navigateBackToHome(callback) {
       (urlObj.pathname === '/home/' && !urlObj.search);
 
     if (isHomePage) {
-      console.log('✅ Already at home page:', currentUrl);
       callback();
       return;
     }
-
-    console.log(`  Current URL: ${currentUrl}`);
-    console.log('  Looking for back button...');
 
     // Find back button
     const backButton = document.querySelector('._back_cflif_51, [class*="_back_"], .ui-arrow--left') ||
@@ -1002,7 +925,6 @@ function navigateBackToHome(callback) {
       });
 
     if (backButton) {
-      console.log('  ✅ Found back button, clicking...');
 
       try {
         backButton.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
@@ -1014,7 +936,6 @@ function navigateBackToHome(callback) {
       // Wait and check again
       setTimeout(checkAndClickBack, 800);
     } else {
-      console.log('  ⚠️ Back button not found, assuming we are at home');
       callback();
     }
   };
@@ -1023,7 +944,6 @@ function navigateBackToHome(callback) {
 }
 
 async function closeAllPopups() {
-  console.log('🔍 Finding popups to close...');
 
   let closedCount = 0;
 
@@ -1045,7 +965,6 @@ async function closeAllPopups() {
     allText.includes('Khi từ nguyện từ bỏ');
 
   if (hasConfirmationPopup) {
-    console.log('  ✅ Found confirmation popup (step 2), clicking "Xác Nhận"...');
 
     // Find button with specific classes
     const confirmButtons = document.querySelectorAll(
@@ -1057,18 +976,13 @@ async function closeAllPopups() {
       'a'
     );
 
-    console.log(`  Found ${confirmButtons.length} potential buttons`);
-
     for (let btn of confirmButtons) {
       const text = btn.textContent.trim();
       const hasConfirmClass = btn.classList.contains('ui-dialog__confirm') ||
         btn.classList.contains('ui-button--primary');
 
-      console.log(`  Checking button: "${text}" (hasConfirmClass: ${hasConfirmClass})`);
-
       if ((text === 'Xác Nhận' || text === 'Xác nhận' || text === 'OK' || text === 'Đồng ý') &&
         btn.offsetParent !== null) {
-        console.log('  ✅ Clicking confirm button:', text);
 
         // Scroll into view
         btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1095,13 +1009,10 @@ async function closeAllPopups() {
         btn.click();
         closedCount++;
 
-        console.log('  ✅ Confirmation clicked!');
-
         return closedCount;
       }
     }
 
-    console.log('  ⚠️ Could not find clickable confirm button');
   }
 
   // Step 0B: Close promotional popups (like "ĐÓN MUA LÌ XÌ") - click X first
@@ -1122,7 +1033,6 @@ async function closeAllPopups() {
 
         // Check if parent is SVG and visible
         if (parent && parent.tagName === 'svg') {
-          console.log('  Found X button (circle), clicking...');
 
           // Click the parent SVG or its parent
           const clickTarget = parent.parentElement || parent;
@@ -1135,22 +1045,18 @@ async function closeAllPopups() {
           clickTarget.click();
           closedCount++;
 
-          console.log('  ✅ X clicked, confirmation popup should appear next');
-
           // Don't recursively call - let the watcher handle it
           return closedCount;
         }
       }
     }
 
-    console.log('  ⚠️ Could not find X button');
   }
 
   // Step 1: Check for "Lời nhắc quan trọng" popup
   const hasImportantNotice = allText.includes('Lời nhắc quan trọng') || allText.includes('lời nhắc quan trọng');
 
   if (hasImportantNotice) {
-    console.log('  Found "Lời nhắc quan trọng" popup, looking for confirm button...');
 
     // Find "Xác Nhận" button
     const allButtons = document.querySelectorAll('button, div[role="button"], a');
@@ -1160,7 +1066,6 @@ async function closeAllPopups() {
 
       if (text === 'xác nhận' || text === 'ok' || text === 'đồng ý' || text === 'confirm') {
         if (btn.offsetParent !== null) {
-          console.log('  Clicking confirm button:', text);
 
           // Touch click
           try {
@@ -1179,11 +1084,8 @@ async function closeAllPopups() {
   // Step 2: Close UI dialogs (ui-dialog-close-box)
   const uiDialogCloseButtons = document.querySelectorAll('.ui-dialog-close-box, .ui-dialog-close-box__icon, [class*="ui-dialog-close"]');
 
-  console.log(`  Found ${uiDialogCloseButtons.length} ui-dialog close buttons`);
-
   uiDialogCloseButtons.forEach(btn => {
     if (btn.offsetParent !== null) {
-      console.log('  Closing ui-dialog');
 
       // Click parent if this is the icon
       const clickTarget = btn.closest('.ui-dialog-close-box') || btn;
@@ -1213,7 +1115,6 @@ async function closeAllPopups() {
 
       // Check if it's visible
       if (btn.offsetParent !== null) {
-        console.log('  Closing popup with X');
 
         // Touch click
         try {
@@ -1227,12 +1128,10 @@ async function closeAllPopups() {
     }
   });
 
-  console.log(`✅ Closed ${closedCount} popups`);
   return closedCount;
 }
 
 function clickMoButton() {
-  console.log('🔍 Finding "MỞ" button in popup...');
 
   // Check if popup exists
   const pageText = document.body.textContent;
@@ -1241,7 +1140,6 @@ function clickMoButton() {
     pageText.includes('MỞ');
 
   if (!hasPopup) {
-    console.log('⚠️ Popup not found yet');
     return false;
   }
 
@@ -1254,7 +1152,6 @@ function clickMoButton() {
     // Look for "MỞ" button (exact match)
     if (text === 'MỞ' || text === 'MO') {
       if (btn.offsetParent !== null) {
-        console.log('✅ Found "MỞ" button');
 
         btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -1268,7 +1165,6 @@ function clickMoButton() {
           btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
           btn.click();
 
-          console.log('✅ Clicked "MỞ" button');
         }, 500);
 
         return true;
@@ -1280,7 +1176,6 @@ function clickMoButton() {
   console.error('❌ "MỞ" button not found');
   return false;
 }
-
 
 function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendResponse) {
   console.log('🔍 Checking withdraw page state...');
@@ -1306,7 +1201,6 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
       pageText.includes('Sau khi đóng');
 
     if (hasPromoPopup || hasConfirmPopup) {
-      console.log('🚫 Popup detected! Closing...');
       closeAllPopups().then(closed => {
         if (closed > 0) {
           console.log('✅ Popup closed successfully');
@@ -1315,7 +1209,6 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
           // Stop watcher after 2 seconds (give time for confirmation step)
           setTimeout(() => {
             clearInterval(popupWatcher);
-            console.log('✅ Popup watcher stopped');
           }, 2000);
         }
       });
@@ -1326,7 +1219,6 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
   setTimeout(() => {
     if (!popupClosed) {
       clearInterval(popupWatcher);
-      console.log('⏱️ Popup watcher timeout (10s) - no popup found, continuing anyway');
     }
   }, 10000);
 
@@ -1355,7 +1247,6 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
     const backButton = document.querySelector('.ui-nav-bar__left, [class*="back"], [class*="arrow-left"]');
 
     if (backButton) {
-      console.log('  Found back button, clicking...');
 
       try {
         backButton.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
@@ -1383,11 +1274,8 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
   let hasBankInDropdown = false;
   const readonlyInputs = document.querySelectorAll('input[readonly]');
 
-  console.log(`  Found ${readonlyInputs.length} readonly inputs`);
-
   readonlyInputs.forEach((input, index) => {
     const value = (input.value || '').trim();
-    console.log(`  Input ${index}: "${value}"`);
 
     // Check if this input has bank name with masked number
     // Pattern: TECHCOMBANK(TCB)(****0000) or similar
@@ -1406,7 +1294,6 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
     // Stop popup closer
     if (window.autoPopupCloser) {
       clearInterval(window.autoPopupCloser);
-      console.log('  Stopped popup closer');
     }
 
     showNotification('✅ Trang này đã có ngân hàng!');
@@ -1426,11 +1313,6 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
     pageText.includes('Xác nhận mật khẩu rút tiền');
 
   const passwordInputs = document.querySelectorAll('.ui-password-input__item');
-
-  console.log('🔍 Page detection:');
-  console.log(`  - hasPasswordSetup: ${hasPasswordSetup}`);
-  console.log(`  - hasAddAccountButton: ${hasAddAccountButton}`);
-  console.log(`  - passwordInputs: ${passwordInputs.length}`);
 
   // State 1: Password setup page (has 12 input boxes for 2 passwords)
   if (passwordInputs.length >= 6) {
@@ -1458,7 +1340,6 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
 
   // State 3: Unknown state - but if we see password inputs, try anyway
   if (passwordInputs.length > 0) {
-    console.log('⚠️ Unknown state but found password inputs, trying anyway...');
 
     // Stop popup watcher
     if (window.autoPopupCloser) {
@@ -1470,7 +1351,6 @@ function checkAndFillWithdrawPassword(password, bankAccount, bankName, sendRespo
   }
 
   // State 4: Really unknown - skip
-  console.log('❌ Cannot detect page state, skipping...');
   showNotification('⚠️ Không xác định được trạng thái trang!');
   sendResponse({ success: true, skipped: true, message: 'Không xác định được trạng thái' });
 }
@@ -1494,10 +1374,10 @@ function fillWithdrawPassword(password, bankAccount, bankName, sendResponse) {
     });
 
     if (hasKeyboard) {
-      console.log(`  ✅ Keyboard found after ${attempts} attempts (${attempts * 200}ms)`);
+      `);
       callback();
     } else if (attempts >= 15) {
-      console.log(`  ⚠️ Keyboard not detected after ${attempts} attempts, proceeding anyway...`);
+      
       callback();
     } else {
       setTimeout(() => waitForKeyboard(callback, attempts + 1), 200);
@@ -1506,8 +1386,6 @@ function fillWithdrawPassword(password, bankAccount, bankName, sendResponse) {
 
   // Find password input boxes - they are <li> elements
   const passwordInputs = document.querySelectorAll('.ui-password-input__item');
-
-  console.log(`  Found ${passwordInputs.length} password input boxes`);
 
   if (passwordInputs.length < 6) {
     console.log('⚠️ Password already set, skipping to add bank account...');
@@ -1524,7 +1402,6 @@ function fillWithdrawPassword(password, bankAccount, bankName, sendResponse) {
   let firstBox = passwordInputs[0];
 
   // Touch first box to show virtual keyboard
-  console.log('  Touching first <li> box to open keyboard...');
 
   // Scroll into view first
   firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1573,23 +1450,18 @@ function fillWithdrawPassword(password, bankAccount, bankName, sendResponse) {
         // Also try clicking the parent <ul> to trigger keyboard
         const parentUl = firstBox.closest('.ui-password-input__security');
         if (parentUl) {
-          console.log('  Also clicking parent <ul>');
           parentUl.click();
         }
 
         // Wait for keyboard to appear (smart wait)
-        console.log('  Waiting for keyboard to appear...');
+        
         waitForKeyboard(() => {
-          console.log('  ✅ Keyboard detected! Clicking numbers...');
           clickDigitsOnKeyboard(password, 0, () => {
-            console.log('✅ Finished first 6 digits');
 
             // Wait for keyboard for confirmation (smart wait)
-            console.log('  Waiting for keyboard for confirmation...');
+            
             waitForKeyboard(() => {
-              console.log('  ✅ Keyboard detected! Entering confirmation...');
               clickDigitsOnKeyboard(password, 0, () => {
-                console.log('✅ Finished confirmation');
                 showNotification('✅ Đã nhập mật khẩu!');
 
                 // Click confirm button
@@ -1607,7 +1479,7 @@ function fillWithdrawPassword(password, bankAccount, bankName, sendResponse) {
                     showNotification('✅ Đã xác nhận mã rút tiền!');
 
                     // Wait for page to redirect naturally, then add bank
-                    console.log('✅ Password confirmed! Waiting for page to load...');
+                    
                     showNotification('✅ Đã xác nhận, chờ trang tải...');
 
                     // Wait for page to redirect and stabilize
@@ -1635,7 +1507,6 @@ function clickDigitsOnKeyboard(password, index, callback) {
   }
 
   const digit = password[index];
-  console.log(`  Clicking digit ${index + 1}: ${digit}`);
 
   // Wait a bit before searching for button (let UI update)
   setTimeout(() => {
@@ -1668,7 +1539,6 @@ function clickDigitsOnKeyboard(password, index, callback) {
       });
 
       const btn = candidates[0].btn;
-      console.log(`    Found button: ${digit} (${candidates.length} candidates, chose best match)`);
 
       try {
         btn.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true }));
@@ -1692,7 +1562,6 @@ function clickDigitsOnKeyboard(password, index, callback) {
         }, 800 + Math.random() * 400); // 800-1200ms delay between digits
       }, 100); // 100ms between touch events
     } else {
-      console.log(`    ⚠️ Button ${digit} not found!`);
 
       // Still continue to next digit
       setTimeout(() => {
@@ -1703,7 +1572,6 @@ function clickDigitsOnKeyboard(password, index, callback) {
 }
 
 function clickAddBankAccount(password, bankAccount, bankName, sendResponse) {
-  console.log('🏦 Step 1: Looking for "Thêm Tài Khoản" button...');
 
   // Find "Thêm Tài Khoản" button by TEXT (more reliable than class)
   let addAccountBtn = null;
@@ -1713,7 +1581,6 @@ function clickAddBankAccount(password, bankAccount, bankName, sendResponse) {
 
   // Method 2: If not found, search by text (slower but more reliable)
   if (!addAccountBtn) {
-    console.log('  Class not found, searching by text...');
     const allElements = document.querySelectorAll('button, div, span, a');
 
     for (let el of allElements) {
@@ -1724,7 +1591,6 @@ function clickAddBankAccount(password, bankAccount, bankName, sendResponse) {
         // Make sure it's visible and clickable
         if (el.offsetParent !== null) {
           addAccountBtn = el;
-          console.log('  Found by text!');
           break;
         }
       }
@@ -1732,7 +1598,6 @@ function clickAddBankAccount(password, bankAccount, bankName, sendResponse) {
   }
 
   if (addAccountBtn) {
-    console.log('✅ Found "Thêm Tài Khoản" button');
 
     addAccountBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -1751,14 +1616,11 @@ function clickAddBankAccount(password, bankAccount, bankName, sendResponse) {
       }, 2000);
     }, 500);
   } else {
-    console.log('⚠️ "Thêm Tài Khoản" button not found');
-    console.log('  Page text:', document.body.textContent.substring(0, 500));
     sendResponse({ success: true, message: 'Không tìm thấy nút Thêm Tài Khoản!' });
   }
 }
 
 function clickBankAccountOption(password, bankAccount, bankName, sendResponse) {
-  console.log('🏦 Step 2: Looking for "Tài khoản ngân hàng" option...');
 
   // Find "Tài khoản ngân hàng" button
   const bankAccountBtn = Array.from(document.querySelectorAll('div, span, button')).find(el =>
@@ -1766,7 +1628,6 @@ function clickBankAccountOption(password, bankAccount, bankName, sendResponse) {
   );
 
   if (bankAccountBtn) {
-    console.log('✅ Found "Tài khoản ngân hàng" option');
 
     bankAccountBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -1781,12 +1642,11 @@ function clickBankAccountOption(password, bankAccount, bankName, sendResponse) {
 
       // Wait for password popup to appear
       setTimeout(() => {
-        console.log('🔐 Step 3: Waiting for password popup...');
+        
         reEnterWithdrawPassword(password, bankAccount, bankName, sendResponse);
       }, 2000);
     }, 500);
   } else {
-    console.log('⚠️ "Tài khoản ngân hàng" option not found');
     sendResponse({ success: true, message: 'Vui lòng chọn Tài khoản ngân hàng!' });
   }
 }
@@ -1797,8 +1657,6 @@ function reEnterWithdrawPassword(password, bankAccount, bankName, sendResponse) 
   // Find password input boxes in popup
   const passwordInputs = document.querySelectorAll('.ui-password-input__item');
 
-  console.log(`  Found ${passwordInputs.length} password input boxes in popup`);
-
   if (passwordInputs.length < 6) {
     console.error('❌ Password popup not found');
     showNotification('❌ Không tìm thấy popup nhập mật khẩu!');
@@ -1808,7 +1666,6 @@ function reEnterWithdrawPassword(password, bankAccount, bankName, sendResponse) 
 
   // Click first box to open keyboard
   let firstBox = passwordInputs[0];
-  console.log('  Touching first box in popup...');
 
   firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -1855,7 +1712,6 @@ function reEnterWithdrawPassword(password, bankAccount, bankName, sendResponse) 
         }
 
         // Now wait for keyboard using smart wait
-        console.log('  Waiting for keyboard in popup...');
 
         // Wait for keyboard to open - check if keyboard buttons exist
         const waitForKeyboard = (callback, attempts = 0) => {
@@ -1867,9 +1723,8 @@ function reEnterWithdrawPassword(password, bankAccount, bankName, sendResponse) 
 
           if (hasKeyboard || attempts >= 10) {
             if (hasKeyboard) {
-              console.log('  ✅ Keyboard detected, clicking numbers...');
             } else {
-              console.log('  ⚠️ Keyboard not detected after 10 attempts, proceeding anyway...');
+              
             }
             callback();
           } else {
@@ -1879,7 +1734,6 @@ function reEnterWithdrawPassword(password, bankAccount, bankName, sendResponse) 
 
         waitForKeyboard(() => {
           clickDigitsOnKeyboard(password, 0, () => {
-            console.log('✅ Finished entering password in popup');
             showNotification('✅ Đã nhập mật khẩu!');
 
             // Click "Tiếp Theo" button
@@ -1989,8 +1843,6 @@ function fillBankAccountForm(bankAccount, bankName, sendResponse) {
             bankDropdown.dispatchEvent(new Event('change', { bubbles: true }));
             bankDropdown.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
 
-            console.log('✅ Typed bank name, waiting for filtered list...');
-
             // Wait for list to filter
             setTimeout(() => {
               console.log('🔍 Searching for bank in dropdown...');
@@ -2012,8 +1864,6 @@ function fillBankAccountForm(bankAccount, bankName, sendResponse) {
                 bankName.substring(0, 3).toUpperCase() // First 3 chars: "MBB"
               ];
 
-              console.log('🔍 Search strategies:', searchStrategies);
-
               let bankOption = null;
 
               // Search within bank containers
@@ -2031,7 +1881,6 @@ function fillBankAccountForm(bankAccount, bankName, sendResponse) {
 
                   if (isMatch) {
                     console.log(`✅ Found bank: "${text}" (matched with: "${strategy}")`);
-                    console.log(`   Container class: ${container.className}`);
                     bankOption = container;
                     break;
                   }
@@ -2097,13 +1946,11 @@ function fillBankAccountForm(bankAccount, bankName, sendResponse) {
 // Listener merged into main listener above
 
 function goToSecurityPage(apiKey, sendResponse) {
-  console.log('🔒 Navigating to security page by clicking buttons...');
 
   // Step 0: Navigate back to home page first
   navigateBackToHome(() => {
     // Step 1: Find and click "Tôi" tab
     setTimeout(() => {
-      console.log('🔍 Step 1: Finding "Tôi" tab...');
 
       // Method 1: Find by span text (most accurate)
       const allSpans = document.querySelectorAll('span[class*="_text"]');
@@ -2115,7 +1962,6 @@ function goToSecurityPage(apiKey, sendResponse) {
           // Get the parent tab element
           profileTab = span.closest('[role="tab"]') || span.closest('.ui-tabbar-item') || span.closest('[class*="tabbar-item"]');
           if (profileTab && profileTab.offsetParent !== null) {
-            console.log('  ✅ Found "Tôi" tab by span text');
             break;
           }
         }
@@ -2128,14 +1974,12 @@ function goToSecurityPage(apiKey, sendResponse) {
           const text = tab.textContent.trim();
           if (text === 'Tôi' && tab.offsetParent !== null) {
             profileTab = tab;
-            console.log('  ✅ Found "Tôi" tab by tab text');
             break;
           }
         }
       }
 
       if (profileTab) {
-        console.log('  Clicking "Tôi" tab...');
 
         try {
           profileTab.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
@@ -2146,7 +1990,6 @@ function goToSecurityPage(apiKey, sendResponse) {
 
         // Step 2: Wait for profile page, then click "Bảo Mật"
         setTimeout(() => {
-          console.log('🔍 Step 2: Finding "Bảo Mật" button...');
 
           const labels = document.querySelectorAll('span._label_vplua_50, span[class*="_label_"], span.mine-menulist-label, span');
           let securityBtn = null;
@@ -2160,14 +2003,12 @@ function goToSecurityPage(apiKey, sendResponse) {
 
               if (parentDiv && parentDiv.offsetParent !== null) {
                 securityBtn = parentDiv;
-                console.log(`  ✅ Found "Bảo Mật" parent: ${parentDiv.className}`);
                 break;
               }
             }
           }
 
           if (securityBtn) {
-            console.log('  Clicking "Bảo Mật" button...');
 
             securityBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -2178,11 +2019,9 @@ function goToSecurityPage(apiKey, sendResponse) {
               } catch (e) { }
 
               securityBtn.click();
-              console.log('  ✅ Clicked!');
 
               // Step 3: Wait for security page, then click "Số Điện Thoại"
               setTimeout(() => {
-                console.log('🔍 Step 3: Finding "Số Điện Thoại" item...');
 
                 const listItems = document.querySelectorAll('li._item_1c3hl_56, li[class*="_item_"], li');
                 let phoneItem = null;
@@ -2192,13 +2031,11 @@ function goToSecurityPage(apiKey, sendResponse) {
 
                   if (text.includes('Số Điện Thoại')) {
                     phoneItem = item;
-                    console.log('  ✅ Found "Số Điện Thoại" item');
                     break;
                   }
                 }
 
                 if (phoneItem) {
-                  console.log('  Clicking "Số Điện Thoại" item...');
 
                   phoneItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -2209,7 +2046,6 @@ function goToSecurityPage(apiKey, sendResponse) {
                     } catch (e) { }
 
                     phoneItem.click();
-                    console.log('  ✅ Clicked!');
 
                     // Step 4: Wait for phone form to load
                     setTimeout(() => {
@@ -2219,7 +2055,6 @@ function goToSecurityPage(apiKey, sendResponse) {
                   }, 500);
 
                 } else {
-                  console.log('  ❌ "Số Điện Thoại" item not found');
                   showNotification('❌ Không tìm thấy mục Số Điện Thoại!');
                   sendResponse({ success: false, error: 'Phone item not found' });
                 }
@@ -2227,14 +2062,12 @@ function goToSecurityPage(apiKey, sendResponse) {
             }, 500);
 
           } else {
-            console.log('  ❌ "Bảo Mật" button not found');
             showNotification('❌ Không tìm thấy nút Bảo Mật!');
             sendResponse({ success: false, error: 'Security button not found' });
           }
         }, 2000);
 
       } else {
-        console.log('  ❌ "Tôi" tab not found');
         showNotification('❌ Không tìm thấy tab Tôi!');
         sendResponse({ success: false, error: 'Profile tab not found' });
       }
@@ -2245,14 +2078,11 @@ function goToSecurityPage(apiKey, sendResponse) {
 async function handlePhoneVerificationStandalone(apiKey, sendResponse, retryCount = 0) {
   const maxRetries = 3;
 
-  console.log(`📱 Starting phone verification (attempt ${retryCount + 1}/${maxRetries})...`);
+  ...`);
 
   // Check if phone form exists - find ALL matching inputs
   const allPhoneInputs = document.querySelectorAll('input[placeholder="Nhập SĐT"]');
   const allSmsInputs = document.querySelectorAll('input[placeholder="Nhập mã SMS"]');
-
-  console.log(`📍 Found ${allPhoneInputs.length} phone inputs`);
-  console.log(`📍 Found ${allSmsInputs.length} SMS inputs`);
 
   // Find the VISIBLE and EDITABLE phone input (not readonly, not hidden)
   let phoneInput = null;
@@ -2269,7 +2099,6 @@ async function handlePhoneVerificationStandalone(apiKey, sendResponse, retryCoun
   for (let input of allSmsInputs) {
     if (input.offsetParent !== null && !input.readOnly && !input.disabled) {
       smsInput = input;
-      console.log(`✅ Selected visible SMS input:`, input);
       break;
     }
   }
@@ -2280,10 +2109,6 @@ async function handlePhoneVerificationStandalone(apiKey, sendResponse, retryCoun
     sendResponse({ success: false, error: 'Phone verification form not found' });
     return;
   }
-
-  console.log(`📍 Current value: "${phoneInput.value}"`);
-  console.log(`📍 Input ID: ${phoneInput.id || 'no-id'}`);
-  console.log(`📍 Input class: ${phoneInput.className || 'no-class'}`);
 
   showPromotionNotification(`📱 Đang lấy số điện thoại...\n\n🔄 Lần thử: ${retryCount + 1}/${maxRetries}`);
 
@@ -2315,7 +2140,7 @@ async function handlePhoneVerificationStandalone(apiKey, sendResponse, retryCoun
     const phoneToFill = phoneNumber.startsWith('0') ? phoneNumber.substring(1) : phoneNumber;
 
     console.log(`📝 Filling phone number: ${phoneToFill}`);
-    console.log(`📍 Input dir attribute: ${phoneInput.getAttribute('dir')}`);
+    }`);
 
     // Focus and clear
     phoneInput.focus();
@@ -2334,13 +2159,11 @@ async function handlePhoneVerificationStandalone(apiKey, sendResponse, retryCoun
     await randomDelay(200, 300);
 
     console.log(`✅ Filled phone: ${phoneToFill}`);
-    console.log(`📍 Input value after filling: "${phoneInput.value}"`);
 
     // Check ALL phone inputs to see which one has the correct value
     const allInputsAfter = document.querySelectorAll('input[placeholder="Nhập SĐT"]');
     console.log(`🔍 Checking all ${allInputsAfter.length} phone inputs after filling:`);
     allInputsAfter.forEach((inp, idx) => {
-      console.log(`  Input ${idx}: value="${inp.value}", visible=${inp.offsetParent !== null}, readonly=${inp.readOnly}`);
     });
 
     // Wait then click "Lấy mã xác minh"
@@ -2353,7 +2176,6 @@ async function handlePhoneVerificationStandalone(apiKey, sendResponse, retryCoun
       const getCodeBtn = findGetCodeButton();
 
       if (getCodeBtn) {
-        console.log('✅ Found "Lấy mã xác minh" button');
         showPromotionNotification('📲 Đang gửi mã...');
 
         getCodeBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2365,14 +2187,12 @@ async function handlePhoneVerificationStandalone(apiKey, sendResponse, retryCoun
           } catch (e) { }
 
           getCodeBtn.click();
-          console.log('✅ Clicked "Lấy mã xác minh"');
 
           // Wait and get OTP with retry callback
           waitForOTPAndFill(otpId, simId, apiKey, smsInput, phoneInput, sendResponse, retryCount, maxRetries);
 
         }, 500);
       } else {
-        console.log('⚠️ "Lấy mã xác minh" button not found');
         showPromotionNotification('⚠️ Không tìm thấy nút Lấy mã!');
         sendResponse({ success: false, error: 'Get code button not found' });
       }
@@ -2419,7 +2239,6 @@ function findGetCodeButton() {
 
 // Wait for OTP and fill
 async function waitForOTPAndFill(otpId, simId, apiKey, smsInput, phoneInput, sendResponse, retryCount, maxRetries) {
-  console.log('⏳ Waiting for OTP...');
 
   let attempts = 0;
   const maxAttempts = 10;
@@ -2442,7 +2261,7 @@ async function waitForOTPAndFill(otpId, simId, apiKey, smsInput, phoneInput, sen
 
   const checkOTP = async () => {
     attempts++;
-    console.log(`🔍 Checking OTP (${attempts}/${maxAttempts})...`);
+    ...`);
 
     // Update notification immediately
     const timeLeft = (maxAttempts - attempts) * 7;
@@ -2478,7 +2297,6 @@ async function waitForOTPAndFill(otpId, simId, apiKey, smsInput, phoneInput, sen
         // Priority 1: Extract from content (message text) - most reliable
         const content = otpData.data?.content || otpData.content;
         if (content) {
-          console.log(`📝 Checking content: "${content}"`);
           const contentMatch = content.match(/\b(\d{4,6})\b/);
           if (contentMatch) {
             otpCode = contentMatch[1];
@@ -2490,7 +2308,6 @@ async function waitForOTPAndFill(otpId, simId, apiKey, smsInput, phoneInput, sen
         // Priority 2: Check code field (if content didn't work)
         if (!otpCode) {
           const codeField = otpData.data?.code || otpData.code;
-          console.log(`📝 Checking code field: "${codeField}"`);
 
           // If code field is clean digits, use it
           if (codeField && /^\d{4,6}$/.test(codeField)) {
@@ -2579,7 +2396,6 @@ async function waitForOTPAndFill(otpId, simId, apiKey, smsInput, phoneInput, sen
 
         // Retry with new number if possible
         if (retryCount < maxRetries - 1) {
-          console.log(`🔄 Retrying with new number (${retryCount + 1}/${maxRetries - 1})...`);
           showPromotionNotification(`⚠️ Không nhận được OTP!\n\n🔄 Đang hủy số và lấy số mới...\n\nLần thử: ${retryCount + 2}/${maxRetries}`);
 
           // Cancel current SIM
@@ -2599,7 +2415,6 @@ async function waitForOTPAndFill(otpId, simId, apiKey, smsInput, phoneInput, sen
             }
           );
         } else {
-          console.log('❌ Max retries reached');
           showPromotionNotification(`❌ Đã thử ${maxRetries} lần!\n\nKhông nhận được mã OTP.`);
           sendResponse({ success: false, error: 'OTP timeout after retries' });
         }
@@ -2628,7 +2443,6 @@ async function waitForOTPAndFill(otpId, simId, apiKey, smsInput, phoneInput, sen
 function claimPromotionWithoutPhoneVerify(sendResponse) {
   // Wait for page to load
   setTimeout(() => {
-    console.log('🔍 Step 1: Looking for "Đăng Ký Ngay" button...');
 
     const allButtons = document.querySelectorAll('button, div[role="button"], a');
     let registerButton = null;
@@ -2641,7 +2455,6 @@ function claimPromotionWithoutPhoneVerify(sendResponse) {
         text.toLowerCase() === 'đăng ký ngay') {
         if (btn.offsetParent !== null) {
           registerButton = btn;
-          console.log('✅ Found "Đăng Ký Ngay" button');
           break;
         }
       }
@@ -2652,16 +2465,13 @@ function claimPromotionWithoutPhoneVerify(sendResponse) {
 
       // Use human-like click
       humanClick(registerButton).then(() => {
-        console.log('✅ Clicked "Đăng Ký Ngay" button (human-like)');
 
         // Wait random time before checking (1.5-3 seconds)
         randomDelay(1500, 3000).then(() => {
-          console.log('🔍 Step 2: Checking what appeared after clicking...');
           checkAfterRegisterClickNoPhoneVerify(sendResponse);
         });
       });
     } else {
-      console.log('⚠️ "Đăng Ký Ngay" button not found');
       showPromotionNotification('⚠️ Không tìm thấy nút Đăng Ký Ngay!');
       sendResponse({ success: false, error: 'Register button not found' });
     }
@@ -2686,20 +2496,17 @@ function checkAfterRegisterClickNoPhoneVerify(sendResponse) {
 
   if (vaoButton) {
     // Has "Vào" button → Need to click it (assume already verified)
-    console.log('✅ Found "Vào" button → Clicking...');
     showPromotionNotification('✅ Đang vào...');
 
     humanClick(vaoButton).then(() => {
-      console.log('✅ Clicked "Vào" button');
 
       randomDelay(1500, 3000).then(() => {
-        console.log('🔍 Looking for 58K form...');
+        
         handleBonusQuestionForm(sendResponse);
       });
     });
   } else {
     // No "Vào" button → Go directly to 58K form
-    console.log('✅ No "Vào" button → Going to 58K form');
     showPromotionNotification('✅ Đang tìm form 58K...');
 
     setTimeout(() => {
@@ -2781,7 +2588,6 @@ async function checkAndHandlePhoneError(apiKey, currentSimId, phoneInput, smsInp
 
   if (hasPhoneError) {
     if (retryCount >= maxRetries) {
-      console.log(`❌ Max retries (${maxRetries}) reached, STOPPING!`);
       showPromotionNotification(`❌ Đã thử ${maxRetries} số!\n\nTất cả đều bị liên kết.\n\nĐÃ DỪNG!`);
       sendResponse({ success: false, error: 'All phone numbers already linked', stopped: true });
       return true; // Has error and stopped
@@ -2857,10 +2663,8 @@ async function checkAndHandlePhoneError(apiKey, currentSimId, phoneInput, smsInp
   return false; // No error, continue
 }
 
-
 // Handle 58K bonus question form
 function handleBonusQuestionForm(sendResponse) {
-  console.log('🎁 Handling 58K bonus question form...');
 
   setTimeout(() => {
     const pageText = document.body.textContent;
@@ -2869,14 +2673,13 @@ function handleBonusQuestionForm(sendResponse) {
       pageText.includes('QUÝ HỘI VIÊN CÓ MUỐN NHẬN');
 
     if (!hasBonusForm) {
-      console.log('⚠️ 58K form not found, waiting...');
+      
       setTimeout(() => {
         handleBonusQuestionForm(sendResponse);
       }, 2000);
       return;
     }
 
-    console.log('✅ Found 58K bonus form');
     showPromotionNotification('🎁 Tìm thấy form 58K!\n\nĐang điền "Có"...');
 
     const inputs = document.querySelectorAll('input[type="text"], input:not([type])');
@@ -2886,7 +2689,6 @@ function handleBonusQuestionForm(sendResponse) {
       const placeholder = (input.placeholder || '').toLowerCase();
       if (placeholder.includes('câu trả lời') || placeholder.includes('nhập')) {
         answerInput = input;
-        console.log('✅ Found answer input');
         break;
       }
     }
@@ -2902,14 +2704,12 @@ function handleBonusQuestionForm(sendResponse) {
       answerInput.dispatchEvent(new Event('input', { bubbles: true }));
       answerInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-      console.log('✅ Filled answer: "Có"');
       showPromotionNotification('✅ Đã điền "Có"!\n\nĐang click Đăng Ký Ngay...');
 
       setTimeout(() => {
         clickFinalRegisterButton(sendResponse);
       }, 1000);
     } else {
-      console.log('⚠️ Answer input not found');
       showPromotionNotification('⚠️ Không tìm thấy ô nhập câu trả lời!');
       sendResponse({ success: false, error: 'Answer input not found' });
     }
@@ -2941,7 +2741,6 @@ function clickFinalRegisterButton(sendResponse) {
       } catch (e) { }
 
       finalRegisterBtn.click();
-      console.log('✅ Clicked "Đăng Ký Ngay" button (final)');
 
       // Wait for captcha to appear
       setTimeout(() => {
@@ -2951,7 +2750,7 @@ function clickFinalRegisterButton(sendResponse) {
           document.body.textContent.includes('Chọn hình ảnh với');
 
         if (hasCaptcha) {
-          console.log('🤖 Captcha detected! Waiting for user to solve...');
+          
           showPromotionNotification('🤖 CAPTCHA XUẤT HIỆN!\n\n⏸️ Vui lòng tự giải captcha...\n\n✅ Tool sẽ tự động tiếp tục sau khi bạn giải xong!');
 
           // Wait for captcha to be solved (check every 2 seconds)
@@ -2970,7 +2769,6 @@ function clickFinalRegisterButton(sendResponse) {
       }, 2000);
     }, 1000);
   } else {
-    console.log('⚠️ Final "Đăng Ký Ngay" button not found');
     showPromotionNotification('⚠️ Vui lòng click Đăng Ký Ngay!');
     sendResponse({ success: true, message: 'Please click register manually' });
   }
@@ -2989,11 +2787,11 @@ function waitForCaptchaSolved(callback) {
 
     if (!hasCaptcha) {
       clearInterval(checkInterval);
-      console.log(`✅ Captcha disappeared after ${attempts * 2}s`);
+      
       callback();
     } else if (attempts >= maxAttempts) {
       clearInterval(checkInterval);
-      console.log('⏱️ Timeout waiting for captcha solve');
+      
       showPromotionNotification('⏱️ Timeout!\n\nVui lòng giải captcha nhanh hơn.');
       callback(); // Continue anyway
     } else if (attempts % 5 === 0) {
@@ -3010,8 +2808,6 @@ function checkPromotionResult(sendResponse) {
     const resultMessage = getResultNotification();
     const currentUrl = window.location.hostname;
 
-    console.log('📊 Result:', resultMessage);
-
     // If error detected, stop immediately
     if (resultMessage.includes('IP') || resultMessage.includes('đã được thu thập') ||
       resultMessage.includes('đã đạt số người') || resultMessage.includes('Phần thưởng này đã')) {
@@ -3023,8 +2819,6 @@ function checkPromotionResult(sendResponse) {
 
     chrome.storage.local.get(['lastUsername'], function (result) {
       const username = result.lastUsername || getUsername();
-
-      console.log('👤 Username:', username);
 
       chrome.runtime.sendMessage({
         action: 'savePromotionResult',
@@ -3123,7 +2917,6 @@ function showPromotionNotification(message) {
 }
 
 function clickVaoButton() {
-  console.log('🔍 Finding "Vào" button in "Lời nhắc quan trọng" popup...');
 
   // Check if popup exists
   const pageText = document.body.textContent;
@@ -3132,7 +2925,6 @@ function clickVaoButton() {
     pageText.includes('Vào');
 
   if (!hasPopup) {
-    console.log('⚠️ "Lời nhắc quan trọng" popup not found yet');
     return false;
   }
 
@@ -3145,7 +2937,6 @@ function clickVaoButton() {
     // Look for "Vào" button (exact match)
     if (text === 'Vào' || text === 'VÀO') {
       if (btn.offsetParent !== null) {
-        console.log('✅ Found "Vào" button');
 
         btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -3159,7 +2950,6 @@ function clickVaoButton() {
           btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
           btn.click();
 
-          console.log('✅ Clicked "Vào" button');
         }, 500);
 
         return true;
@@ -3172,11 +2962,9 @@ function clickVaoButton() {
   return false;
 }
 
-
 // ============================================
 // EXPORT FUNCTIONS TO WINDOW (for automation)
 // ============================================
-console.log('📤 Exporting functions to window...');
 
 // startAutoFill removed - now inline in message listener
 window.startAutoLogin = startAutoLogin;
@@ -3184,4 +2972,3 @@ window.goToWithdrawPage = goToWithdrawPage;
 window.goToSecurityPage = goToSecurityPage;
 window.claimPromotionWithoutPhoneVerify = claimPromotionWithoutPhoneVerify;
 
-console.log('✅ Functions exported to window');

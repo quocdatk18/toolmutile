@@ -14,7 +14,7 @@ class LicenseManager {
         // ⚠️ QUAN TRỌNG: Thay đổi secret key này trước khi gửi cho khách hàng!
         // Mỗi bản gửi khách nên có secret key khác nhau
         // Ví dụ: 'SECRET_CUSTOMER_001', 'SECRET_CUSTOMER_002', v.v.
-        this.secretKey = 'SECRET_haoPg_37622_86284'; // Thay đổi secret này
+        this.secretKey = 'SECRET_haoPG_84753_70883'; // Thay đổi secret này
     }
 
     /**
@@ -39,14 +39,15 @@ class LicenseManager {
 
     /**
      * Tạo license key mới
-     * @param {Object} options - { expiryDays, machineId, username }
+     * @param {Object} options - { expiryDays, machineId, username, allowedTools }
      * @returns {string} License key
      */
     generateKey(options = {}) {
         const {
             expiryDays = 30, // Mặc định 30 ngày
             machineId = null, // Nếu null thì không bind machine
-            username = 'user'
+            username = 'user',
+            allowedTools = ['nohu-tool'] // Mặc định chỉ cho phép NOHU tool
         } = options;
 
         const now = Date.now();
@@ -56,7 +57,8 @@ class LicenseManager {
             username,
             machineId,
             expiry,
-            created: now
+            created: now,
+            allowedTools // Danh sách tools được phép sử dụng
         };
 
         const dataString = JSON.stringify(data);
@@ -267,7 +269,6 @@ class LicenseManager {
         let finalKey = key;
 
         if (data.machineId === null) {
-            console.log('🔒 First activation - binding to this machine...');
 
             // Bind to current machine
             const currentMachineId = this.getMachineId();
@@ -286,7 +287,6 @@ class LicenseManager {
                 .digest('hex');
             finalKey = Buffer.from(dataString).toString('base64') + '.' + signature;
 
-            console.log('✅ License bound to machine:', currentMachineId);
         }
 
         // Save license (with machine binding if applicable)
@@ -311,7 +311,7 @@ class LicenseManager {
             }
         } catch (err) {
             // Ignore if delete-zip.js doesn't exist (master version)
-            console.log('ℹ️  Auto-delete ZIP not available (master version)');
+            console.log('ℹ️  Cleanup script not available');
         }
 
         return {
@@ -362,8 +362,57 @@ class LicenseManager {
             remainingDays: data.remainingDays,
             remainingTime: data.remainingTime,
             remainingText: remainingText,
-            isLifetime: data.isLifetime
+            isLifetime: data.isLifetime,
+            allowedTools: data.allowedTools || ['nohu-tool'] // Backward compatibility
         };
+    }
+
+    /**
+     * Check if license allows access to specific tool
+     * @param {string} toolId - Tool ID to check
+     * @returns {Object} { allowed, message }
+     */
+    checkToolPermission(toolId) {
+        const key = this.loadLicense();
+        if (!key) {
+            return { allowed: false, message: 'Không có license key' };
+        }
+
+        const validation = this.validateKey(key);
+        if (!validation.valid) {
+            return { allowed: false, message: validation.message };
+        }
+
+        const allowedTools = validation.data.allowedTools || ['nohu-tool'];
+
+        // Check if tool is allowed
+        if (allowedTools.includes(toolId) || allowedTools.includes('*')) {
+            return { allowed: true, message: 'Tool được phép sử dụng' };
+        } else {
+            return {
+                allowed: false,
+                message: `Tool "${toolId}" không có trong license. Được phép: ${allowedTools.join(', ')}`
+            };
+        }
+    }
+
+    /**
+     * Get list of allowed tools from current license
+     * @returns {Array} Array of allowed tool IDs
+     */
+    getAllowedTools() {
+        // Admin/Master version has access to all tools
+        if (this.isAdminVersion()) {
+            return ['*']; // Wildcard = all tools
+        }
+
+        const key = this.loadLicense();
+        if (!key) return [];
+
+        const validation = this.validateKey(key);
+        if (!validation.valid) return [];
+
+        return validation.data.allowedTools || ['nohu-tool'];
     }
 }
 

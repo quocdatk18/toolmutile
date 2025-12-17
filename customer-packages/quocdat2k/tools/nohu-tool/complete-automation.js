@@ -440,10 +440,30 @@ class CompleteAutomation {
         });
 
         console.log('    💉 Injecting banks.js...');
-        await page.evaluate(this.scripts.banksScript);
+        // Check if BANK_NAME_MAPPING already exists to avoid duplicate declaration error
+        const hasBanksScript = await page.evaluate(() => {
+            return typeof window.BANK_NAME_MAPPING !== 'undefined';
+        });
+
+        if (!hasBanksScript) {
+            await page.evaluate(this.scripts.banksScript);
+            console.log('    ✅ banks.js injected');
+        } else {
+            console.log('    ♻️  banks.js already injected, skipping');
+        }
 
         console.log('    💉 Injecting captcha-solver.js...');
-        await page.evaluate(this.scripts.captchaSolver);
+        // Check if CaptchaSolver already exists to avoid duplicate declaration error
+        const hasCaptchaSolver = await page.evaluate(() => {
+            return typeof window.CaptchaSolver !== 'undefined';
+        });
+
+        if (!hasCaptchaSolver) {
+            await page.evaluate(this.scripts.captchaSolver);
+            console.log('    ✅ captcha-solver.js injected');
+        } else {
+            console.log('    ♻️  captcha-solver.js already injected, skipping');
+        }
 
         console.log('    💉 Injecting Puppeteer API helper (bypass CORS)...');
         // Check if already exposed to avoid "already exists" error

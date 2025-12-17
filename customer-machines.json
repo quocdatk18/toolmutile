@@ -45,7 +45,7 @@
     ],
     "machineIdLocked": true,
     "machineIdSetAt": "2025-12-15T15:38:40.573Z",
-    "packageCreatedTime": 1765813111790,
+    "packageCreatedTime": 1765553431235,
     "machineIdUnlockedAt": "2025-12-15T15:38:38.387Z",
     "unlockReason": "Admin unlock for editing"
   },
@@ -157,7 +157,7 @@
     ],
     "machineIdLocked": true,
     "machineIdSetAt": "2025-12-16T19:43:20.603Z",
-    "packageCreatedTime": 1765914199897
+    "packageCreatedTime": 1765956287000
   },
   "anhVu": {
     "customerName": "anhVu",
@@ -192,5 +192,40 @@
     "machineIdLocked": true,
     "machineIdSetAt": "2025-12-17T03:29:24.304Z",
     "packageCreatedTime": 1765941732313
+  },
+  "legiabao1": {
+    "customerName": "legiabao1",
+    "machineId": "bca8ae3a151ea641",
+    "notes": "Machine ID updated and locked by admin.",
+    "displayName": "",
+    "createdAt": "2025-12-17T13:45:13.566Z",
+    "updatedAt": "2025-12-17T13:45:46.918Z",
+    "updateCount": 1,
+    "licenseHistory": [
+      {
+        "licenseKey": "eyJ1c2VybmFtZSI6ImxlZ2lhYmFvMSIsIm1hY2hpbmVJZCI6ImJjYThhZTNhMTUxZWE2NDEiLCJleHBpcnkiOjE3NjYxNTIwMDE3MzYsImNyZWF0ZWQiOjE3NjU5NzkyMDE3MzYsImFsbG93ZWRUb29scyI6WyJub2h1LXRvb2wiXX0=.4a86bd288c8abf0c7c0ea842f89f2d2ab63454369722e582145cca04c03f9e71",
+        "expiryDays": 2,
+        "notes": "Generated from Customer Manager. 2 days. Tools: nohu-tool",
+        "createdAt": "2025-12-17T13:46:41.736Z",
+        "isActive": true
+      }
+    ],
+    "machineIdLocked": true,
+    "machineIdSetAt": "2025-12-17T13:45:46.918Z",
+    "packageCreatedTime": 1765979019417,
+    "machineIdUnlockedAt": "2025-12-17T13:45:22.058Z",
+    "unlockReason": "Admin unlock for editing"
+  },
+  "haoPG": {
+    "customerName": "haoPG",
+    "machineId": "e16f2465312a09df",
+    "notes": "Upgraded package. Machine ID, Secret Key, and License preserved.",
+    "displayName": "",
+    "createdAt": "2025-12-17T13:49:24.162Z",
+    "updatedAt": "2025-12-17T13:49:24.162Z",
+    "updateCount": 0,
+    "licenseHistory": [],
+    "machineIdLocked": true,
+    "machineIdSetAt": "2025-12-17T13:49:24.162Z"
   }
 }

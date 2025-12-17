@@ -1,0 +1,27 @@
+{
+  "username": "EagleSoub9",
+  "password": "8kax22fq8dp",
+  "withdrawPassword": "457048",
+  "fullname": "PHAN VAN TUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "10367048105801726",
+    "accountHolder": "PHAN VAN TUAN"
+  },
+  "registeredAt": "2025-12-17T03:59:13.153Z",
+  "firstSite": "Go99",
+  "sites": [
+    "Go99",
+    "NOHU",
+    "TT88",
+    "MMOO",
+    "789P",
+    "33WIN",
+    "88VV"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

@@ -1,0 +1,27 @@
+{
+  "username": "PhnixSoul7b",
+  "password": "9fo34iedjcmc",
+  "withdrawPassword": "736813",
+  "fullname": "VU MINH TUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10367048105820901",
+    "accountHolder": "VU MINH TUAN"
+  },
+  "registeredAt": "2025-12-17T05:10:54.385Z",
+  "firstSite": "Go99",
+  "sites": [
+    "Go99",
+    "NOHU",
+    "TT88",
+    "MMOO",
+    "789P",
+    "33WIN",
+    "88VV"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

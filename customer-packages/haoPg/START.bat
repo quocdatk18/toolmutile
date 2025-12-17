@@ -6,7 +6,7 @@ echo ========================================
 echo    HIDEMIUM MULTI-TOOL
 echo ========================================
 echo.
-echo Customer: haoPg
+echo Customer: haoPG
 echo License: 30 days
 echo.
 

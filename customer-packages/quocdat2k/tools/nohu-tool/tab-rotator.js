@@ -23,7 +23,6 @@ class TabRotator {
             lastActive: 0,
             page: page
         });
-        console.log(`📋 Registered tab: ${taskName} (Total: ${this.tabs.size})`);
     }
 
     /**
@@ -42,20 +41,23 @@ class TabRotator {
      */
     start() {
         if (this.isRunning) {
-            console.log('⚠️  Tab rotation already running');
+
             return;
         }
 
-        console.log('🔄 Starting tab rotation...');
         this.isRunning = true;
 
+        // 🔥 DISABLED: Tab rotation disabled to prevent tab jumping during parallel execution
+        // Instead, activateTab is called strategically at critical points
+        // This prevents throttling while keeping UI stable
+
         // Rotate immediately
-        this.rotate();
+        // this.rotate();
 
         // Then rotate every X seconds
-        this.rotationInterval = setInterval(() => {
-            this.rotate();
-        }, this.rotationDelay);
+        // this.rotationInterval = setInterval(() => {
+        //     this.rotate();
+        // }, this.rotationDelay);
     }
 
     /**
@@ -67,7 +69,7 @@ class TabRotator {
             this.rotationInterval = null;
         }
         this.isRunning = false;
-        console.log('⏹️  Tab rotation stopped');
+
     }
 
     /**
@@ -80,7 +82,7 @@ class TabRotator {
             .sort((a, b) => a.lastActive - b.lastActive); // Least recently active first
 
         if (activeTabs.length === 0) {
-            console.log('✅ All tabs completed, stopping rotation');
+
             this.stop();
             return;
         }
@@ -100,7 +102,6 @@ class TabRotator {
             await nextTab.page.bringToFront();
             nextTab.lastActive = Date.now();
             nextTab.status = 'running';
-            console.log(`👁️  Rotated to: ${nextTab.taskName} (${activeTabs.length} tabs remaining)`);
         } catch (error) {
             console.warn(`⚠️  Failed to activate tab ${nextTab.taskName}:`, error.message);
             // Mark as completed if page is closed or error
@@ -135,7 +136,6 @@ class TabRotator {
     clear() {
         this.stop();
         this.tabs.clear();
-        console.log('🗑️  Cleared all tabs');
     }
 }
 

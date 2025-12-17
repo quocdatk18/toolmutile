@@ -493,11 +493,11 @@ class AutoSequenceSafe {
                 let attempts = 0;
                 const maxAttempts = 10; // 10 seconds max
 
+                // Activate tab ONCE before checking form (not every iteration)
+                await this.activateTab(page);
+
                 while (attempts < maxAttempts) {
                     attempts++;
-
-                    // Activate tab mỗi lần check để đảm bảo form render
-                    await this.activateTab(page);
 
                     const hasForm = await page.evaluate(() => {
                         // Kiểm tra các form input có tồn tại và visible không
@@ -661,6 +661,15 @@ class AutoSequenceSafe {
                             const elapsedMs = Date.now() - startTime;
                             const remainingMs = Math.max(0, randomDelay - elapsedMs);
                             const remainingSeconds = Math.ceil(remainingMs / 1000);
+
+                            // 🔥 Activate tab every 10s during delay to prevent throttling
+                            if (elapsedMs % 10000 < 3000) {
+                                try {
+                                    await this.activateTab(page);
+                                } catch (e) {
+                                    // Ignore if page is closed
+                                }
+                            }
 
                             // Gửi countdown status qua API
                             await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
@@ -1211,6 +1220,9 @@ class AutoSequenceSafe {
                     } else {
                         console.log(`📍 Promo URL: ${promoUrl}`);
 
+                        // Note: No need to activate main tab - checkPromo runs in separate context
+                        // Main tab is already completed (register + addBank done)
+
                         const promoResult = await this.safeExecute(async () => {
                             // Sử dụng shared context nếu có, nếu không thì tạo riêng
                             let promoContext = sharedPromoContext;
@@ -1225,16 +1237,24 @@ class AutoSequenceSafe {
                             }
 
                             try {
-                                const checkResult = await this.automation.runCheckPromotionFull(
-                                    promoContext, // Dùng shared context hoặc context riêng
-                                    null,
-                                    promoUrl,
-                                    siteUrls.registerUrl.replace('/Register', '/Login'),
-                                    profileData.username,
-                                    profileData.apiKey
-                                );
+                                // CheckPromo runs in separate context - no need to activate main tab
+                                // Promo context has its own tab rotation via startPromoTabActivation()
 
-                                return checkResult;
+                                try {
+                                    const checkResult = await this.automation.runCheckPromotionFull(
+                                        promoContext, // Dùng shared context hoặc context riêng
+                                        null,
+                                        promoUrl,
+                                        siteUrls.registerUrl.replace('/Register', '/Login'),
+                                        profileData.username,
+                                        profileData.apiKey
+                                    );
+
+                                    return checkResult;
+                                } finally {
+                                    // Stop activation when checkPromo completes
+                                    clearInterval(activationInterval);
+                                }
                             } finally {
                                 // Không đóng context - để checkPromo tự quản lý tab
                                 if (shouldCloseContext) {

@@ -15,18 +15,15 @@ class Hai2vipAutomationActions {
         return await this.page.evaluate((actionName, actionData) => {
             return new Promise((resolve) => {
                 const timeout = setTimeout(() => {
-                    console.log('⏱️ Action timeout after 60 seconds');
                     resolve({ success: false, error: 'Timeout after 60 seconds' });
                 }, 60000);
 
                 if (window._chromeMessageListener) {
-                    console.log(`📤 Calling action: ${actionName}`);
                     window._chromeMessageListener(
                         { action: actionName, data: actionData },
                         {},
                         (response) => {
                             clearTimeout(timeout);
-                            console.log(`📥 Action response:`, response);
                             resolve(response);
                         }
                     );
@@ -54,14 +51,10 @@ class Hai2vipAutomationActions {
                 autoSubmit: true
             });
 
-            console.log('    📊 Fill result:', fillResult);
-
             if (!fillResult || !fillResult.success) {
                 console.error('    ❌ Form fill failed:', fillResult?.error);
                 return { success: false, message: fillResult?.error || 'Form fill failed' };
             }
-
-            console.log('    ✅ Form filled and submitted');
 
             // Step 2: Check registration result (wait for redirect/token)
             console.log('    🔍 Checking registration result (30 seconds)...');
@@ -97,14 +90,14 @@ class Hai2vipAutomationActions {
 
                     if (hasToken) {
                         success = true;
-                        console.log(`    ✅ Registration successful (detected after ${attempts}s)`);
+                        `);
                         break;
                     }
 
                     await this.page.waitForTimeout(1000);
 
                 } catch (error) {
-                    console.log(`    ⚠️  Check attempt ${attempts} failed:`, error.message);
+                    
                     await this.page.waitForTimeout(1000);
                 }
             }
