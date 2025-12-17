@@ -3,6 +3,19 @@
    Clean, minimal, and professional design
    ============================================ */
 
+/* ============================================
+   TOAST NOTIFICATIONS - Toastify Override
+   ============================================ */
+
+.toastify {
+    position: fixed !important;
+    top: 20px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    z-index: 99999 !important;
+}
+
 /* Reset & Base */
 * {
     margin: 0;
@@ -1081,4 +1094,35 @@ body::-webkit-scrollbar {
         min-width: 90vw;
         max-width: 95vw;
     }
+}
+
+
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* ============================================
+   CATEGORY MANAGEMENT MODAL - Tabs
+   ============================================ */
+
+.category-tab {
+    padding: 8px 16px !important;
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    font-weight: 600 !important;
+    color: #6b7280 !important;
+    border-bottom: 3px solid transparent !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+    white-space: nowrap !important;
+}
+
+.category-tab:hover {
+    color: #4a5568 !important;
+}
+
+.category-tab.active {
+    color: #667eea !important;
+    border-bottom-color: #667eea !important;
 }

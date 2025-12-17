@@ -25,6 +25,24 @@ Nén folder `customer-packages/[customer-name]/` và gửi cho khách hàng.
 
 ---
 
+## 🎨 Tạo Shortcut Đẹp Cho Dashboard
+
+Muốn icon đẹp hơn cho `START_DASHBOARD.bat`? Chạy:
+
+```batch
+CREATE_SHORTCUT.vbs
+```
+
+Hoặc:
+
+```batch
+SETUP_ICON.bat
+```
+
+📖 **Chi tiết:** [SETUP_SHORTCUT.md](SETUP_SHORTCUT.md)
+
+---
+
 ## 📚 Đọc Gì Tiếp Theo?
 
 ### Nếu bạn muốn bắt đầu NGAY:

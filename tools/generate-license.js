@@ -57,31 +57,10 @@ const key = licenseManager.generateKey({
 // Validate to show info
 const validation = licenseManager.validateKey(key);
 
-console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('🔑 LICENSE KEY GENERATED');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-
-console.log('📋 License Information:');
-console.log('   Username:', validation.data.username);
-console.log('   Type:', validation.data.isLifetime ? 'LIFETIME' : `${validation.data.remainingDays} days`);
-console.log('   Machine Binding:', options.machineId ? 'YES' : 'NO');
 if (options.machineId) {
-    console.log('   Machine ID:', options.machineId);
 }
-console.log('   Created:', new Date(validation.data.created).toLocaleString('vi-VN'));
 if (!validation.data.isLifetime) {
-    console.log('   Expires:', new Date(validation.data.expiry).toLocaleString('vi-VN'));
 }
-
-console.log('\n🔐 LICENSE KEY:');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log(key);
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-
-console.log('📝 Instructions:');
-console.log('   1. Copy the license key above');
-console.log('   2. Send to customer');
-console.log('   3. Customer activates via dashboard or command line\n');
 
 // Save to file for record
 const fs = require('fs');
@@ -110,5 +89,3 @@ ${key}
 `;
 
 fs.writeFileSync(filepath, record, 'utf8');
-console.log('💾 Record saved to:', filepath);
-console.log('');

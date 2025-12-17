@@ -12,8 +12,6 @@ const machineId = process.argv[3];
 const days = parseInt(process.argv[4]) || 30;
 
 if (!customerName || !machineId) {
-    console.log('❌ Usage: node generate-customer-license.js <customerName> <machineId> <days>');
-    console.log('   Example: node generate-customer-license.js TEST_CUSTOMER 48b62c73fe0a524f 30');
     process.exit(1);
 }
 
@@ -22,15 +20,8 @@ const customerPath = path.join(__dirname, 'customer-packages', customerName);
 const customerLicenseManagerPath = path.join(customerPath, 'core', 'license-manager.js');
 
 if (!fs.existsSync(customerLicenseManagerPath)) {
-    console.log(`❌ Customer package not found: ${customerName}`);
-    console.log(`   Expected path: ${customerPath}`);
     process.exit(1);
 }
-
-console.log(`🔑 Generating license key for customer: ${customerName}`);
-console.log(`   Machine ID: ${machineId}`);
-console.log(`   Duration: ${days} days`);
-console.log(`   Customer Path: ${customerPath}`);
 
 try {
     // Clear require cache to ensure we load the customer's version
@@ -47,11 +38,6 @@ try {
         username: customerName
     });
 
-    console.log('\n✅ License Key Generated:');
-    console.log('='.repeat(80));
-    console.log(licenseKey);
-    console.log('='.repeat(80));
-
     // Save to customer's LICENSE_KEY.txt file
     const licenseKeyFile = path.join(customerPath, 'LICENSE_KEY.txt');
     let content = fs.readFileSync(licenseKeyFile, 'utf8');
@@ -64,19 +50,11 @@ try {
     content += '\n\nCopy the license key above and paste it in the dashboard activation form.';
 
     fs.writeFileSync(licenseKeyFile, content, 'utf8');
-    console.log(`\n📝 License key saved to: ${licenseKeyFile}`);
 
     // Test validation
-    console.log('\n🧪 Testing license key validation...');
     const validation = licenseManager.validateKey(licenseKey);
-    console.log(`   Valid: ${validation.valid}`);
-    console.log(`   Message: ${validation.message}`);
 
     if (validation.valid) {
-        console.log(`   Username: ${validation.data.username}`);
-        console.log(`   Machine ID: ${validation.data.machineId}`);
-        console.log(`   Expiry: ${validation.data.expiry === -1 ? 'Lifetime' : new Date(validation.data.expiry).toLocaleString('vi-VN')}`);
-        console.log(`   Remaining Days: ${validation.data.remainingDays}`);
     }
 
 } catch (error) {

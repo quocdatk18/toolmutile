@@ -238,6 +238,7 @@
                     <span class="start-icon">▶️</span>
                     <span class="start-text">START</span>
                 </button>
+
             </div>
         </div>
 
@@ -350,6 +351,8 @@
                 </div>
             </div>
         </div>
+
+
     </div>
     <!-- End Results Section -->
 
@@ -456,41 +459,7 @@
                             📱 Khuyến Mãi Tải App
                         </h4>
                         <div class="sites-grid" id="appPromoSites">
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="Go99">
-                                <div class="site-icon go99">GO</div>
-                                <div class="site-name">Go99</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="NOHU">
-                                <div class="site-icon nohu">NO</div>
-                                <div class="site-name">NOHU</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="TT88">
-                                <div class="site-icon tt88">TT</div>
-                                <div class="site-name">TT88</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="MMOO">
-                                <div class="site-icon mmoo">MM</div>
-                                <div class="site-name">MMOO</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="789P">
-                                <div class="site-icon p789">789</div>
-                                <div class="site-name">789P</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="33WIN">
-                                <div class="site-icon win33">33</div>
-                                <div class="site-name">33WIN</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="88VV">
-                                <div class="site-icon vv88">88</div>
-                                <div class="site-name">88VV</div>
-                            </label>
+                            <!-- Sites will be rendered dynamically -->
                         </div>
                         <div class="site-actions">
                             <button class="btn btn-sm" onclick="selectAppPromoSites()">✅ Chọn Tất Cả</button>
@@ -566,41 +535,7 @@
                             💬 Khuyến Mãi Tin Nhắn SMS
                         </h4>
                         <div class="sites-grid" id="smsPromoSites">
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="Go99-SMS">
-                                <div class="site-icon go99">GO</div>
-                                <div class="site-name">Go99</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="NOHU-SMS">
-                                <div class="site-icon nohu">NO</div>
-                                <div class="site-name">NOHU</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="TT88-SMS">
-                                <div class="site-icon tt88">TT</div>
-                                <div class="site-name">TT88</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="MMOO-SMS">
-                                <div class="site-icon mmoo">MM</div>
-                                <div class="site-name">MMOO</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="789P-SMS">
-                                <div class="site-icon p789">789</div>
-                                <div class="site-name">789P</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="33WIN-SMS">
-                                <div class="site-icon win33">33</div>
-                                <div class="site-name">33WIN</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="88VV-SMS">
-                                <div class="site-icon vv88">88</div>
-                                <div class="site-name">88VV</div>
-                            </label>
+                            <!-- Sites will be rendered dynamically -->
                         </div>
                         <div class="site-actions">
                             <button class="btn btn-sm" onclick="selectSmsPromoSites()">✅ Chọn Tất Cả</button>
@@ -901,7 +836,27 @@
 
 <!-- NOHU Tool JavaScript -->
 <script>
-    // Helper function to disable button for 0.5s to prevent double-click
+    // Helper function to disable button until server responds
+    function disableButton(button) {
+        if (!button) return;
+
+        button.disabled = true;
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+        button.style.pointerEvents = 'none';
+    }
+
+    // Helper function to enable button after server responds
+    function enableButton(button) {
+        if (!button) return;
+
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+        button.style.pointerEvents = 'auto';
+    }
+
+    // Helper function to disable button for 0.5s to prevent double-click (deprecated, use disableButton/enableButton instead)
     function disableButtonTemporarily(button, duration = 500) {
         if (!button) return;
 
@@ -1329,12 +1284,15 @@
     // Run action based on current active tab
     function runCurrentTabAction() {
         const btn = document.getElementById('btnRunAction');
-        if (btn) disableButtonTemporarily(btn);
+        if (btn) disableButton(btn);
 
         const activeTab = document.querySelector('.modal-tab.active');
         if (!activeTab) return;
 
         const tabName = activeTab.getAttribute('data-tab');
+
+        // Enable button immediately after starting (not waiting for completion)
+        if (btn) enableButton(btn);
 
         switch (tabName) {
             case 'auto':
@@ -1441,7 +1399,7 @@
                 accountNumber: document.getElementById('autoAccountNumber').value,
                 apiKey: apiKeyManager.get(),
                 sites: sites,
-                captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value || '10') * 1000
+                captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value ?? '0') * 1000
             };
 
             // Validate required fields
@@ -1942,13 +1900,27 @@
 
         // showToast('info', 'Đang chạy', `Check khuyến mãi trên ${sites.length} trang...`);
 
-        await runAutomationWithMarking('nohu-tool', 'checkPromoOnly', {
-            username: username,
-            apiKey: apiKeyManager.get(), // Required for captcha solving
-            checkPromo: true,
-            captchaDelay: captchaDelay,
-            sites: fullSites
-        });
+        try {
+            await runAutomationWithMarking('nohu-tool', 'checkPromoOnly', {
+                username: username,
+                apiKey: apiKeyManager.get(), // Required for captcha solving
+                checkPromo: true,
+                captchaDelay: captchaDelay,
+                sites: fullSites
+            });
+        } finally {
+            // Clear running status after checkPromoOnly completes
+            const currentProfileId = profileManager.selectedProfileId;
+            if (currentProfileId && profileManager.runningProfiles.has(currentProfileId)) {
+                profileManager.runningProfiles.delete(currentProfileId);
+                if (profileManager.runningStartTimes) {
+                    profileManager.runningStartTimes.delete(currentProfileId);
+                }
+                profileManager.saveRunningProfiles();
+                await loadProfilesCarousel();
+                console.log(`✅ Cleared running flag for checkPromoOnly`);
+            }
+        }
     }
 
     // ============================================
@@ -2398,6 +2370,12 @@
             return resultsData[b].lastTimestamp - resultsData[a].lastTimestamp;
         });
 
+        console.log(`🔄 refreshResultsTable called: ${sortedKeys.length} entries`);
+        sortedKeys.forEach(key => {
+            const entry = resultsData[key];
+            console.log(`  - ${key}: status=${entry.status}, message="${entry.message}"`);
+        });
+
         // Store previous total for comparison
         const previousTotal = totalResults;
         const newTotal = sortedKeys.length;
@@ -2526,7 +2504,14 @@
             let statusHtml = '';
             if (isRunning) {
                 // Show running status for the whole automation
-                statusHtml = `<span class="status-badge running">🔄 Đang chạy...</span>`;
+                console.log(`🔍 Rendering for ${group.username}: isRunning=${isRunning}, message="${group.message}", messageType=${typeof group.message}`);
+                const message = group.message ? `<div style="font-size: 12px; color: #2563eb; margin-top: 8px; font-weight: 600; word-break: break-word; white-space: normal; max-width: 350px; padding: 6px 8px; background-color: #eff6ff; border-left: 3px solid #2563eb; border-radius: 4px;">${group.message}</div>` : '';
+                if (group.message) {
+                    console.log(`📊 Displaying message for ${group.username}: "${group.message}"`);
+                } else {
+                    console.log(`⚠️ No message to display for ${group.username}`);
+                }
+                statusHtml = `<div><span class="status-badge running">🔄 Đang chạy...</span>${message}</div>`;
             } else {
                 // Show detailed status after completion
                 if (successCount > 0) statusHtml += `<span class="status-badge success">✅ ${successCount}</span> `;
@@ -3193,6 +3178,9 @@
 
                 // Add running statuses to table
                 data.statuses.forEach(status => {
+                    if (status.message) {
+                        console.log(`📡 Received status with message: "${status.message}" for ${status.username}`);
+                    }
                     if (status.status === 'running') {
                         currentlyRunning.add(status.username);
 
@@ -3218,11 +3206,26 @@
                                 screenshots: [],
                                 checkTimes: [],
                                 status: 'running',
+                                message: status.message || '',
                                 firstTimestamp: status.timestamp || Date.now(),
                                 lastTimestamp: status.timestamp || Date.now()
                             };
 
                             refreshResultsTable();
+                        } else {
+                            // Update message for existing running entry
+                            // Always update if message exists (even if empty string)
+                            if ('message' in status) {
+                                console.log(`📊 Before update - resultsData[${key}].message = "${resultsData[key].message}"`);
+                                resultsData[key].message = status.message || '';
+                                resultsData[key].lastTimestamp = status.timestamp || Date.now();
+                                console.log(`📊 After update - resultsData[${key}].message = "${resultsData[key].message}"`);
+                                console.log(`📊 Calling refreshResultsTable() for key: ${key}`);
+                                refreshResultsTable();
+                                console.log(`📊 Updated running entry message: "${status.message}"`);
+                            } else {
+                                console.log(`⚠️ Status has no message property for key: ${key}`);
+                            }
                         }
                     } else if (status.status === 'completed' || status.status === 'error') {
                         // Remove running entry when completed/error
@@ -3235,11 +3238,21 @@
                             refreshResultsTable();
                         }
 
-                        // Clear running flag for profile when automation completes
+                        // Clear running flag for profile when automation completes/errors
                         if (typeof profileManager !== 'undefined') {
-                            const profile = profileManager.profiles.find(p => p.name === status.username);
+                            // Try to find profile by profileId first (most accurate)
+                            let profile = null;
+                            if (status.profileId) {
+                                profile = profileManager.profiles.find(p => p.uuid === status.profileId);
+                            }
+                            // Fallback: find by username
+                            if (!profile) {
+                                profile = profileManager.profiles.find(p => p.name === status.username);
+                            }
+
                             if (profile && profileManager.runningProfiles.has(profile.uuid)) {
                                 profileManager.runningProfiles.delete(profile.uuid);
+                                console.log(`✅ Cleared running flag for profile: ${profile.name} (status: ${status.status})`);
 
                                 // Cleanup start time tracking
                                 if (profileManager.runningStartTimes) {
@@ -3699,6 +3712,117 @@
 
         console.log('✅ All data refreshed for NOHU Tool');
     };
+
+
+
+    // Load custom sites for NOHU
+    function loadCustomSitesForNohu() {
+        return JSON.parse(localStorage.getItem('nohu_custom_sites') || '[]');
+    }
+
+    // Render NOHU sites dynamically
+    async function renderNohuSites() {
+        try {
+            // Fetch NOHU sites from API
+            const response = await fetch('/api/nohu-automation/sites');
+            const result = await response.json();
+
+            if (!result.success || !result.data || !result.data.sites) {
+                console.error('Failed to load NOHU sites');
+                return;
+            }
+
+            // Icon mapping for NOHU sites
+            const iconMap = {
+                'Go99': 'go99',
+                'NOHU': 'nohu',
+                'TT88': 'tt88',
+                'MMOO': 'mmoo',
+                '789P': 'p789',
+                '33WIN': 'win33',
+                '88VV': 'vv88'
+            };
+
+            const appSites = result.data.sites.map(site => ({
+                name: site.name,
+                icon: iconMap[site.name] || 'go99',
+                text: site.name.substring(0, 3).toUpperCase()
+            }));
+
+            const customSites = loadCustomSitesForNohu();
+            const allAppSites = [...appSites, ...customSites.map(s => ({ name: s.name, icon: 'custom', text: s.name.substring(0, 3).toUpperCase() }))];
+
+            // Render App Promo Sites
+            const appGrid = document.getElementById('appPromoSites');
+            if (appGrid) {
+                appGrid.innerHTML = allAppSites.map(site => {
+                    const isCustom = customSites.some(s => s.name === site.name);
+                    const iconClass = isCustom ? 'site-icon' : `site-icon ${site.icon}`;
+                    const iconStyle = isCustom ? 'background-color: #9333ea;' : '';
+                    return `
+<label class="site-card">
+    <input type="checkbox" class="site-check" data-name="${site.name}">
+    <div class="${iconClass}" style="${iconStyle}">${site.text}</div>
+    <div class="site-name">${site.name}</div>
+</label>
+`;
+                }).join('');
+            }
+
+            // Fetch SMS site configs from server (with cache-busting)
+            let smsSiteConfigs = {};
+            try {
+                const timestamp = new Date().getTime();
+                const smsConfigResponse = await fetch(`/api/nohu-automation/sms-config?t=${timestamp}`);
+                const smsConfigData = await smsConfigResponse.json();
+                if (smsConfigData.success) {
+                    smsSiteConfigs = smsConfigData.data;
+                    console.log('✅ SMS Config loaded:', smsSiteConfigs);
+                } else {
+                    console.warn('⚠️ SMS Config response not successful:', smsConfigData);
+                }
+            } catch (err) {
+                console.warn('⚠️ Failed to load SMS config:', err);
+            }
+
+            console.log('📊 Final smsSiteConfigs:', smsSiteConfigs);
+
+            // Render SMS Promo Sites
+            const smsGrid = document.getElementById('smsPromoSites');
+            if (smsGrid) {
+                smsGrid.innerHTML = allAppSites.map(site => {
+                    const isCustom = customSites.some(s => s.name === site.name);
+                    const smsConfig = smsSiteConfigs[site.name];
+                    const hasSmsUrl = smsConfig && smsConfig.registerSmsUrl !== null && smsConfig.registerSmsUrl !== undefined;
+                    console.log(`📱 ${site.name}: hasSmsUrl=${hasSmsUrl}, config=${JSON.stringify(smsConfig)}`);
+                    const iconClass = isCustom ? 'site-icon' : `site-icon ${site.icon}`;
+                    const iconStyle = isCustom ? 'background-color: #9333ea;' : '';
+                    const disabledStyle = !hasSmsUrl ? 'opacity: 0.5; cursor: not-allowed;' : '';
+                    const disabledAttr = !hasSmsUrl ? 'disabled' : '';
+
+                    return `
+<label class="site-card" style="${disabledStyle}" title="${!hasSmsUrl ? '⚠️ SMS URL chưa cấu hình' : ''}">
+    <input type="checkbox" class="site-check site-check-sms" data-name="${site.name}-SMS" ${disabledAttr}>
+    <div class="${iconClass}" style="${iconStyle}">${site.text}</div>
+    <div class="site-name">${site.name}${!hasSmsUrl ? ' ⚠️' : ''}</div>
+</label>
+`;
+                }).join('');
+            }
+
+            console.log(`✅ Rendered ${allAppSites.length} NOHU sites`);
+        } catch (error) {
+            console.error('❌ Error rendering NOHU sites:', error);
+        }
+    }
+
+    // Initialize sites on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderNohuSites);
+    } else {
+        // DOM is already loaded
+        renderNohuSites();
+    }
 
     console.log('✅ NOHU Tool JavaScript loaded (V2 Design)');
 </script>

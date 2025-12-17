@@ -1,5 +1,4 @@
 // Simple Site Config Test
-console.log('🧪 Testing Site Configs...');
 
 // Simulate the siteConfigs from optimized-automation.js
 const siteConfigs = {
@@ -107,31 +106,17 @@ const testSitesFromUI = [
     { name: 'INVALID_SITE', category: 'test' } // Test invalid site
 ];
 
-console.log('📋 Available Site Configs:', Object.keys(siteConfigs));
-console.log('📤 Test Sites from UI:', testSitesFromUI.map(s => s.name));
-
-console.log('\n🔍 Testing Site Lookups:');
 testSitesFromUI.forEach(site => {
     const config = siteConfigs[site.name];
     if (config) {
-        console.log(`✅ ${site.name} (${site.category}): Found config - ${config.type} - ${config.registerUrl}`);
     } else {
-        console.log(`❌ ${site.name} (${site.category}): NO CONFIG FOUND`);
     }
 });
 
-console.log('\n🎯 Summary:');
 const foundSites = testSitesFromUI.filter(site => siteConfigs[site.name]);
 const missingSites = testSitesFromUI.filter(site => !siteConfigs[site.name]);
 
-console.log(`✅ Found configs: ${foundSites.length}/${testSitesFromUI.length}`);
-console.log(`❌ Missing configs: ${missingSites.map(s => s.name).join(', ')}`);
-
 if (missingSites.length > 0) {
-    console.log('\n🔧 Possible Issues:');
-    console.log('1. Site name mismatch between UI and optimized-automation.js');
-    console.log('2. Site not added to siteConfigs yet');
-    console.log('3. Typo in site name');
 }
 
 console.log('\n✅ Test completed!');

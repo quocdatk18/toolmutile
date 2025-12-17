@@ -135,12 +135,8 @@ async function handleApiCall(endpoint, method, body, apiKey) {
             options.body = JSON.stringify(body);
         }
 
-        console.log('[bg] API Call:', endpoint, method);
-
         const response = await fetch(endpoint, options);
         const data = await response.json();
-
-        console.log('[bg] API Response:', data);
 
         return data;
     } catch (error) {
@@ -171,7 +167,6 @@ async function solveImageCaptcha(base64Image, apiKey) {
         });
 
         const submitData = await response.json();
-        console.log('[bg] Submit response:', submitData);
 
         // Handle direct response format {success: true, captcha: "text"}
         if (submitData.success && submitData.captcha) {
@@ -205,20 +200,16 @@ async function pollCaptchaResult(taskId, apiKey, maxAttempts = 20) {
         await sleep(3000); // Wait 3 seconds
 
         try {
-            console.log(`[bg] Polling attempt ${i + 1}/${maxAttempts}...`);
 
             const endpoint = `${CAPTCHA_API_BASE}/result?key=${apiKey}&taskId=${taskId}`;
             const response = await fetch(endpoint);
             const data = await response.json();
-
-            console.log('[bg] Poll response:', data);
 
             // Check if resolved
             if (data.resolved !== null && data.resolved !== undefined) {
                 console.log('[bg] Captcha resolved:', data.resolved);
                 return data.resolved;
             } else if (data.errorId === 0 && data.resolved === null) {
-                console.log('[bg] Still processing...');
                 continue;
             } else if (data.errorId !== 0) {
                 throw new Error(data.message || 'Failed to get result');
@@ -290,7 +281,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 cookieMap[cookie.name] = cookie.value;
             });
 
-            console.log('[bg] Cookies retrieved:', Object.keys(cookieMap));
             sendResponse({ success: true, cookies: cookieMap });
         });
 

@@ -23,17 +23,5 @@ const signature = crypto
 
 const key = Buffer.from(dataString).toString('base64') + '.' + signature;
 
-console.log('\n========================================');
-console.log('LICENSE KEY FOR test_final');
-console.log('========================================\n');
-console.log(key);
-console.log('\n========================================\n');
-console.log('Length:', key.length);
-console.log('Has dot:', key.includes('.'));
-console.log('Parts:', key.split('.').length);
-console.log('\n');
-
 // Save to file
 fs.writeFileSync('LICENSE_KEY_CORRECT.txt', key, 'utf8');
-console.log('✅ Saved to: LICENSE_KEY_CORRECT.txt\n');
-console.log('Copy the key above (entire line) and paste into dashboard!\n');

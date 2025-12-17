@@ -3,16 +3,12 @@
  * Chạy script này trong console của trang NOHU để test
  */
 
-console.log('🧪 Testing improved NOHU content script...');
-
 // Inject improved content script
 const script = document.createElement('script');
 script.src = chrome.runtime.getURL('tools/nohu-tool/extension/content-improved.js');
 script.onload = function () {
-    console.log('✅ Improved content script loaded');
 
     // Test removing SAFE MODE notifications
-    console.log('🗑️ Testing notification removal...');
 
     // Create a fake SAFE MODE notification to test removal
     const testNotification = document.createElement('div');
@@ -37,19 +33,16 @@ script.onload = function () {
     `;
 
     document.body.appendChild(testNotification);
-    console.log('📝 Created test notification');
 
     // It should be removed automatically by the improved script
     setTimeout(() => {
         const remaining = document.querySelectorAll('div').length;
-        console.log('🔍 Checking if notification was removed...');
 
         const safeModeElements = Array.from(document.querySelectorAll('div')).filter(div =>
             div.innerHTML && div.innerHTML.includes('SAFE MODE COMPLETE')
         );
 
         if (safeModeElements.length === 0) {
-            console.log('✅ Test passed: SAFE MODE notification was removed');
         } else {
             console.log('❌ Test failed: SAFE MODE notification still exists');
         }
@@ -88,7 +81,6 @@ document.head.appendChild(script);
 const directScript = document.createElement('script');
 directScript.textContent = `
 // Direct injection for immediate testing
-console.log('🚀 Direct injection test starting...');
 
 // Remove SAFE MODE notifications immediately
 function removeSafeModeNotification() {
@@ -97,20 +89,16 @@ function removeSafeModeNotification() {
     
     indicators.forEach(div => {
         if (div.innerHTML && div.innerHTML.includes('SAFE MODE COMPLETE')) {
-            console.log('🗑️ Removing SAFE MODE COMPLETE notification');
             div.remove();
             removed++;
         }
     });
-    
-    console.log(\`✅ Removed \${removed} SAFE MODE notifications\`);
-    
+
     // Prevent future notifications
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === 1 && node.innerHTML && node.innerHTML.includes('SAFE MODE COMPLETE')) {
-                    console.log('🗑️ Preventing new SAFE MODE COMPLETE notification');
                     node.remove();
                 }
             });
@@ -127,7 +115,6 @@ function removeSafeModeNotification() {
 
 // Execute immediately
 const removedCount = removeSafeModeNotification();
-console.log(\`🎯 Immediate cleanup complete: \${removedCount} notifications removed\`);
 
 // Enhanced token detection for immediate redirect
 function setupImmediateTokenRedirect() {
@@ -187,9 +174,7 @@ if (window.location.href.includes('/Register')) {
     setupImmediateTokenRedirect();
 }
 
-console.log('✅ Direct injection complete - SAFE MODE notifications blocked, immediate redirect enabled');
 `;
 
 document.head.appendChild(directScript);
-
-console.log('🎯 Test scripts injected - check console for results');
+

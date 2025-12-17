@@ -1,0 +1,27 @@
+{
+  "username": "SkyFury1",
+  "password": "8ffcqo72h",
+  "withdrawPassword": "617155",
+  "fullname": "DANG HOANG VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10367048105780883",
+    "accountHolder": "DANG HOANG VINH"
+  },
+  "registeredAt": "2025-12-17T01:41:19.049Z",
+  "firstSite": "Go99",
+  "sites": [
+    "Go99",
+    "NOHU",
+    "TT88",
+    "MMOO",
+    "789P",
+    "33WIN",
+    "88VV"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

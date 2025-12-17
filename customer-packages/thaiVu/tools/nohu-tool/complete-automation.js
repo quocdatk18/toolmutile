@@ -488,6 +488,14 @@ class CompleteAutomation {
         }
 
         console.log('    💉 Injecting content.js (FULL LOGIC)...');
+
+        // Set profileData on window before injecting content.js (for countdown notifications)
+        if (this.settings && this.settings.profileData) {
+            await page.evaluate((profileData) => {
+                window.profileData = profileData;
+            }, this.settings.profileData);
+        }
+
         await page.evaluate(this.scripts.contentScript);
     }
 
@@ -1696,38 +1704,19 @@ class CompleteAutomation {
      * - User is already logged in from FreeLXB TRUE
      * - Can be called directly after Add Bank or standalone
      */
+    /**
+     * Wrapper: Tab riêng gọi runCheckPromotionFull
+     */
     async runCheckPromotion(browser, url, username, apiKey) {
-        const page = await this.setupPage(browser, url);
-
+        const context = await browser.createBrowserContext();
         try {
-            // SPEED: Fast tab activation
-            console.log('    ⚡ Activating tab...');
-            await page.bringToFront();
-            await wait(500);
-
-            const actions = new AutomationActions(page);
-            const result = await actions.completeCheckPromotion(username, apiKey);
-
-            console.log('    ℹ️  Keeping page open for inspection...');
-            return result;
-
-        } catch (error) {
-            console.error('    ❌ Error:', error.message);
-
-            // Handle TAB_CLOSED error gracefully
-            if (isTabClosedError(error)) {
-                console.log('    ⛔ Check promotion stopped: Tab was closed by user');
-                // Send status to dashboard to update isRunning
-                const siteName = new URL(url).hostname;
-                await sendTabClosedStatus(username, siteName);
-                return {
-                    success: false,
-                    error: 'TAB_CLOSED',
-                    message: 'Tab was closed during check promotion - operation cancelled'
-                };
+            return await this.runCheckPromotionFull(context, null, url, null, username, apiKey);
+        } finally {
+            try {
+                await context.close();
+            } catch (e) {
+                // Ignore
             }
-
-            return { success: false, promotions: [], message: error.message };
         }
     }
 
@@ -1923,7 +1912,54 @@ class CompleteAutomation {
             await promoPage.goto(promoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
         } catch (navError) {
             checkPageValid(); // Check if tab was closed
-            throw navError;
+
+            // If initial page load fails (timeout/network error), take screenshot and close tab
+            console.log('    ❌ Initial page load failed:', navError.message);
+            console.log('    📸 Taking screenshot of load error...');
+
+            try {
+                const fs = require('fs');
+                const path = require('path');
+                const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
+                const sessionId = this.settings.sessionId || new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                const userDir = path.join(screenshotsDir, username);
+                const sessionDir = path.join(userDir, sessionId);
+
+                if (!fs.existsSync(sessionDir)) {
+                    fs.mkdirSync(sessionDir, { recursive: true });
+                }
+
+                const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
+                const errorFilename = `${siteName}-load-error.png`;
+                const errorFilepath = path.join(sessionDir, errorFilename);
+
+                try {
+                    await promoPage.screenshot({
+                        path: errorFilepath,
+                        fullPage: true,
+                        timeout: 5000
+                    });
+                    console.log(`    ✅ Load error screenshot saved: ${errorFilename}`);
+                } catch (screenshotErr) {
+                    console.log('    ⚠️  Screenshot failed:', screenshotErr.message);
+                }
+            } catch (e) {
+                console.log('    ⚠️  Error saving screenshot:', e.message);
+            }
+
+            // Close tab
+            try {
+                await promoPage.close();
+                console.log('    ✅ Promo tab closed after load error');
+            } catch (closeErr) {
+                console.log('    ⚠️  Error closing tab:', closeErr.message);
+            }
+
+            return {
+                success: false,
+                error: 'PAGE_LOAD_TIMEOUT',
+                message: `Failed to load promo page: ${navError.message}`
+            };
         }
 
         // 🔥 Check if tab still valid after navigation
@@ -1965,7 +2001,61 @@ class CompleteAutomation {
             console.log('    📊 Username:', username);
             console.log('    📊 API Key:', apiKey ? `${apiKey.substring(0, 5)}...` : 'undefined');
 
-            const result = await actions.completeCheckPromotion(username, apiKey);
+            let result;
+            try {
+                result = await actions.completeCheckPromotion(username, apiKey);
+            } catch (formError) {
+                console.log('    ❌ Check promo form error:', formError.message);
+
+                // If form not loaded, take screenshot and return error
+                if (formError.message.includes('CHECK_PROMO_FORM_ERROR')) {
+                    console.log('    📸 Taking screenshot of error state...');
+                    try {
+                        const fs = require('fs');
+                        const path = require('path');
+                        const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
+                        const sessionId = this.settings.sessionId || new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                        const userDir = path.join(screenshotsDir, username);
+                        const sessionDir = path.join(userDir, sessionId);
+
+                        // Ensure directories exist
+                        if (!fs.existsSync(sessionDir)) {
+                            fs.mkdirSync(sessionDir, { recursive: true });
+                        }
+
+                        const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
+                        const errorFilename = `${siteName}-form-error.png`;
+                        const errorFilepath = path.join(sessionDir, errorFilename);
+
+                        await promoPage.screenshot({
+                            path: errorFilepath,
+                            fullPage: true,
+                            timeout: 5000
+                        });
+
+                        console.log(`    ✅ Error screenshot saved: ${errorFilename}`);
+
+                        // Send result with screenshot
+                        return {
+                            success: false,
+                            error: 'FORM_NOT_LOADED',
+                            message: formError.message,
+                            screenshot: `/screenshots/${username}/${sessionId}/${errorFilename}`,
+                            screenshotPath: errorFilepath
+                        };
+                    } catch (screenshotErr) {
+                        console.log('    ⚠️  Error screenshot failed:', screenshotErr.message);
+                        return {
+                            success: false,
+                            error: 'FORM_NOT_LOADED',
+                            message: formError.message
+                        };
+                    }
+                }
+
+                // Re-throw other errors
+                throw formError;
+            }
 
             // 🔥 Check if tab still valid after checkPromotion
             checkPageValid();
@@ -1981,20 +2071,79 @@ class CompleteAutomation {
                 // Increased timeout for slow network or slow captcha API
                 await promoPage.waitForNavigation({
                     waitUntil: 'networkidle2',
-                    timeout: 120000 // 120 seconds (2 minutes) for slow sites/network
+                    timeout: 300000 // 300 seconds (5 minutes) for slow sites/network + 8-15s captcha delay + 20-60s click delay
                 });
                 console.log('    ✅ Page navigation completed');
             } catch (navError) {
                 console.log('    ⚠️  Navigation timeout or no navigation occurred');
+
+                // Check if page is still on captcha modal (page didn't load)
+                try {
+                    const stillOnCaptcha = await promoPage.evaluate(() => {
+                        const captchaModal = document.querySelector('.modal, .dialog, [role="dialog"], .captcha-modal');
+                        const captchaInput = document.querySelector('input[id*="captcha"], input[placeholder*="captcha"]');
+                        return !!(captchaModal || captchaInput);
+                    });
+
+                    if (stillOnCaptcha) {
+                        console.log('    ❌ Page still on captcha modal after timeout - page load failed');
+
+                        // Take screenshot of timeout error state
+                        console.log('    📸 Taking screenshot of timeout error...');
+                        try {
+                            const fs = require('fs');
+                            const path = require('path');
+                            const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
+                            const sessionId = this.settings.sessionId || new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                            const userDir = path.join(screenshotsDir, username);
+                            const sessionDir = path.join(userDir, sessionId);
+
+                            if (!fs.existsSync(sessionDir)) {
+                                fs.mkdirSync(sessionDir, { recursive: true });
+                            }
+
+                            const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
+                            const timeoutFilename = `${siteName}-timeout-error.png`;
+                            const timeoutFilepath = path.join(sessionDir, timeoutFilename);
+
+                            await promoPage.screenshot({
+                                path: timeoutFilepath,
+                                fullPage: true,
+                                timeout: 5000
+                            });
+
+                            console.log(`    ✅ Timeout error screenshot saved: ${timeoutFilename}`);
+                        } catch (screenshotErr) {
+                            console.log('    ⚠️  Timeout error screenshot failed:', screenshotErr.message);
+                        }
+
+                        // Close tab
+                        try {
+                            await promoPage.close();
+                            console.log('    ✅ Promo tab closed after timeout');
+                        } catch (closeErr) {
+                            console.log('    ⚠️  Error closing tab:', closeErr.message);
+                        }
+
+                        return {
+                            success: false,
+                            error: 'PAGE_LOAD_FAILED',
+                            message: 'Page did not load after clicking "Nhận KM" - network error or page error'
+                        };
+                    }
+                } catch (e) {
+                    console.log('    ⚠️  Could not check page state:', e.message);
+                }
+
                 console.log('    ℹ️  Will check current page state and take screenshot anyway...');
             }
 
             // Wait for modal to render, but check continuously (don't wait full timeout)
-            console.log('    ⏳ Waiting for result modal to render (max 30s)...');
+            console.log('    ⏳ Waiting for result modal to render (max 60s)...');
 
             let modalRendered = false;
             let waitAttempts = 0;
-            const maxWaitAttempts = 30; // Check for 30 seconds max
+            const maxWaitAttempts = 60; // Check for 60 seconds max (account for 20-60s click delay)
             let timeoutScreenshotTaken = false;
 
             while (waitAttempts < maxWaitAttempts && !modalRendered) {
@@ -2030,7 +2179,7 @@ class CompleteAutomation {
 
             // Take screenshot 1s before timeout if no content rendered (capture error state)
             if (!modalRendered && !timeoutScreenshotTaken) {
-                console.log('    📸 Taking timeout screenshot (no content after 30s)...');
+                console.log('    📸 Taking timeout screenshot (no content after 60s)...');
                 try {
                     const fs = require('fs');
                     const path = require('path');
@@ -2062,7 +2211,7 @@ class CompleteAutomation {
             }
 
             if (!modalRendered) {
-                console.log('    ⚠️  No content rendered after 30s - timeout screenshot taken');
+                console.log('    ⚠️  No content rendered after 60s - timeout screenshot taken');
             } else {
                 // Wait a bit more for modal animation if content loaded
                 await wait(2000);

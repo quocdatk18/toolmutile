@@ -50,8 +50,6 @@ const obfuscationOptions = {
     unicodeEscapeSequence: false
 };
 
-console.log('🔒 Obfuscating critical files...\n');
-
 const projectRoot = path.join(__dirname, '..');
 let successCount = 0;
 let failCount = 0;
@@ -60,8 +58,6 @@ filesToObfuscate.forEach(file => {
     try {
         const inputFile = path.join(projectRoot, file);
         const outputFile = path.join(projectRoot, file.replace('.js', '.obfuscated.js'));
-
-        console.log(`📝 Processing: ${file}`);
 
         // Read source code
         const sourceCode = fs.readFileSync(inputFile, 'utf8');
@@ -75,9 +71,6 @@ filesToObfuscate.forEach(file => {
         const originalSize = fs.statSync(inputFile).size;
         const obfuscatedSize = fs.statSync(outputFile).size;
 
-        console.log(`   ✅ Created: ${file.replace('.js', '.obfuscated.js')}`);
-        console.log(`   📊 Size: ${originalSize} → ${obfuscatedSize} bytes\n`);
-
         successCount++;
     } catch (error) {
         console.log(`   ❌ Failed: ${error.message}\n`);
@@ -85,12 +78,9 @@ filesToObfuscate.forEach(file => {
     }
 });
 
-console.log('========================================');
 console.log(`✅ Success: ${successCount} files`);
 console.log(`❌ Failed: ${failCount} files`);
-console.log('========================================\n');
 
 if (successCount > 0) {
-    console.log('📝 Obfuscated files created with .obfuscated.js extension');
-    console.log('🔧 Use BUILD_CUSTOMER_PACKAGE_OBFUSCATED.bat to build package\n');
+    
 }

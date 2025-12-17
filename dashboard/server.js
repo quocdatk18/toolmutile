@@ -206,8 +206,6 @@ app.get('/api/profiles/all', async (req, res) => {
         const limit = parseInt(req.query.limit) || 10000; // Default 10000 profiles (load all)
         const offset = parseInt(req.query.offset) || 0;
 
-        console.log(`📂 Loading profiles: limit=${limit}, offset=${offset}`);
-
         const response = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
             params: {
                 is_local: false,
@@ -219,7 +217,6 @@ app.get('/api/profiles/all', async (req, res) => {
         const profiles = response.data?.data?.content || [];
         const total = response.data?.data?.total || profiles.length;
 
-        console.log(`✅ Loaded ${profiles.length} profiles (total: ${total})`);
         console.log(`📊 Hidemium response:`, {
             contentLength: profiles.length,
             total: total,
@@ -811,6 +808,32 @@ app.post('/api/automation/status', (req, res) => {
     }
 });
 
+// Clear completed/error automation status
+app.post('/api/automation/status/clear', (req, res) => {
+    try {
+        const { username } = req.body;
+
+        if (!username) {
+            return res.status(400).json({ success: false, error: 'Username required' });
+        }
+
+        if (!global.automationStatuses) {
+            global.automationStatuses = new Map();
+        }
+
+        const key = `${username}`;
+        if (global.automationStatuses.has(key)) {
+            global.automationStatuses.delete(key);
+            console.log(`🗑️ Cleared automation status for: ${username}`);
+        }
+
+        res.json({ success: true, message: 'Status cleared' });
+    } catch (error) {
+        console.error('❌ Error clearing status:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Get current automation statuses
 app.get('/api/automation/statuses', (req, res) => {
     try {
@@ -818,6 +841,7 @@ app.get('/api/automation/statuses', (req, res) => {
             global.automationStatuses = new Map();
         }
 
+        // Return ALL statuses (running, completed, error) so frontend can detect completion
         const statuses = Array.from(global.automationStatuses.values());
         res.json({ success: true, statuses });
     } catch (error) {
@@ -833,6 +857,7 @@ app.get('/api/vip-automation/statuses', (req, res) => {
             global.automationStatuses = new Map();
         }
 
+        // Return ALL statuses (running, completed, error) so frontend can detect completion
         const statuses = Array.from(global.automationStatuses.values());
         res.json({ success: true, statuses });
     } catch (error) {
@@ -878,6 +903,16 @@ app.post('/api/automation/result', (req, res) => {
         // Keep only last 100 results
         if (global.automationResults.length > 100) {
             global.automationResults.splice(100);
+        }
+
+        // CRITICAL: Remove from running statuses when result is received
+        // This ensures the "đang chạy" table is cleared when automation completes
+        if (global.automationStatuses && result.username) {
+            const key = `${result.username}`;
+            if (global.automationStatuses.has(key)) {
+                global.automationStatuses.delete(key);
+                console.log(`🗑️ Removed ${result.username} from running statuses`);
+            }
         }
 
         res.json({ success: true, message: 'Result saved' });
@@ -1578,8 +1613,8 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
 
         // Load and run tool-specific automation
         if (toolId === 'nohu-tool') {
-            // Use AutoSequence (WORKING VERSION from hidemium-tool-cu)
-            const AutoSequence = require('../tools/nohu-tool/auto-sequence');
+            // Use AutoSequenceSafe (SAFE MODE with account saving)
+            const AutoSequence = require('../tools/nohu-tool/auto-sequence-safe');
 
             // Read extension scripts (using original content.js - has full checkPromotion logic like quocdat)
             const contentScript = fs.readFileSync(path.join(__dirname, '../tools/nohu-tool/extension/content.js'), 'utf8');
@@ -1612,6 +1647,14 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
 
             config.runNumber = runNumber;
             config.profileId = profileId; // Add profileId to config for automation script
+
+            // Prepare profileData for countdown notifications
+            const profileDataForConfig = {
+                profileId: profileId,
+                username: config.username,
+                captchaDelay: config.captchaDelay || 0  // Add captcha delay for registration
+            };
+            config.profileData = profileDataForConfig;
 
             // Create automation instance
             const autoSequence = new AutoSequence(config, scripts);
@@ -1858,7 +1901,7 @@ async function runSMSPromoCheckInBackground(smsToolOptimized, profileId, config,
         // Send completion status
         try {
             await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
-                status: 'complete',
+                status: 'completed',
                 profileId: profileId,
                 username: config.username,
                 profileName: profileName,
@@ -2066,6 +2109,12 @@ async function runSMSAutomationInBackground(smsAutoSequence, profileId, config, 
         } catch (statusError) {
             console.warn('⚠️ Failed to send error status:', statusError.message);
         }
+    } finally {
+        // Remove from running profiles
+        if (profileId && global.runningProfiles.has(profileId)) {
+            global.runningProfiles.delete(profileId);
+            console.log(`✅ Cleared running profile: ${profileId}`);
+        }
     }
 }
 
@@ -2075,6 +2124,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
     const axios = require('axios');
     const dashboardPort = global.DASHBOARD_PORT || 3000;
     const username = config.username || 'Unknown';
+    let profileName = 'Profile'; // Default value in case of early error
 
     try {
         console.log('🚀 Starting NOHU automation (proven working version)...');
@@ -2086,12 +2136,19 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
 
         // Open profile
         console.log('📂 Opening profile:', profileId);
-        const openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
-            params: {
-                uuid: profileId,
-                command: '--remote-debugging-port=0'
-            }
-        });
+        let openResponse;
+        try {
+            openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
+                params: {
+                    uuid: profileId,
+                    command: '--remote-debugging-port=0'
+                }
+            });
+        } catch (hidemiumError) {
+            const errorMsg = hidemiumError.response?.data?.message || hidemiumError.message;
+            console.error('❌ Hidemium API error:', errorMsg);
+            throw new Error(`Failed to open profile in Hidemium: ${errorMsg}`);
+        }
 
         console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
 
@@ -2100,7 +2157,8 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
         const webSocket = data.web_socket || data.webSocket;
 
         if (!webSocket) {
-            throw new Error('Failed to get web_socket from Hidemium');
+            console.error('❌ No webSocket in response:', JSON.stringify(data));
+            throw new Error('Failed to get web_socket from Hidemium - profile may not be available');
         }
 
         console.log('🔌 WebSocket URL:', webSocket);
@@ -2113,8 +2171,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
 
         console.log('✅ Connected to browser');
 
-        // Get profile name from Hidemium
-        let profileName = 'Profile'; // Default fallback
+        // Get profile name from Hidemium (update existing profileName variable)
         try {
             const profileResponse = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
                 params: { is_local: false }
@@ -2193,6 +2250,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
             bankBranch: config.bankBranch || 'Thành phố Hồ Chí Minh',
             accountNumber: config.accountNumber || '9704361234567890',
             apiKey: config.apiKey || 'default_api_key',
+            captchaDelay: config.captchaDelay ?? 0, // Delay before submit (from UI, default 0 if not set)
             checkPromo: config.checkPromo !== false, // Default true for app
             executionMode: config.executionMode || 'parallel',
             parallelCount: config.parallelCount || 0,
@@ -2207,42 +2265,43 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                 console.log('💬 Running SMS sequence (Register → Add Bank only)...');
                 const smsResult = await autoSequence.runSmsSequence(browser, profileData, profileData.sites);
                 console.log('✅ SMS sequence completed:', smsResult);
+
+                // Close browser and exit after SMS sequence completes
+                console.log('🧹 Closing browser after SMS sequence...');
+                try {
+                    await browser.disconnect();
+                    console.log('✅ Browser disconnected');
+                } catch (e) {
+                    console.warn('⚠️  Error disconnecting browser:', e.message);
+                }
+
                 break;
 
             case 'checkPromoOnly':
                 console.log('🎁 Running standalone check promo...');
                 const promoResult = await autoSequence.runCheckPromoOnly(browser, config, config.sites || []);
                 console.log('✅ Check promo completed:', promoResult);
-                break;
 
-            case 'registerOnly':
-                console.log('📝 Running standalone register...');
-                const registerResult = await autoSequence.runRegisterOnly(browser, config, config.sites || []);
-                console.log('✅ Register completed:', registerResult);
-                break;
+                // Close browser and exit after check promo completes
+                console.log('🧹 Closing browser after check promo...');
+                try {
+                    await browser.disconnect();
+                    console.log('✅ Browser disconnected');
+                } catch (e) {
+                    console.warn('⚠️  Error disconnecting browser:', e.message);
+                }
 
-            case 'loginOnly':
-                console.log('🔐 Running standalone login...');
-                const loginResult = await autoSequence.runLoginOnly(browser, config, config.sites || []);
-                console.log('✅ Login completed:', loginResult);
-                break;
-
-            case 'addBankOnly':
-                console.log('💳 Running standalone add bank...');
-                const bankResult = await autoSequence.runAddBankOnly(browser, config, config.sites || []);
-                console.log('✅ Add bank completed:', bankResult);
                 break;
 
             default:
-                // Run full AutoSequence (proven working version)
+                console.log('🚀 Running full NOHU automation sequence...');
                 const result = await autoSequence.runSequence(browser, profileData, profileData.sites);
                 console.log('✅ NOHU automation completed:', result);
 
                 // Check if automation truly completed all steps successfully
-                const isFullyCompleted = result && result.results && result.results.length > 0 &&
-                    result.results.every(siteResult =>
+                const isFullyCompleted = result && result.length > 0 &&
+                    result.every(siteResult =>
                         siteResult.register?.success &&
-                        siteResult.login?.success &&
                         siteResult.addBank?.success &&
                         (siteResult.checkPromo?.success || siteResult.checkPromo?.skipped)
                     );
@@ -2254,6 +2313,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                             profileId: profileId,
                             profileName: profileName,
                             username: username,
+                            sessionId: config.sessionId,
                             status: 'completed',
                             sites: config.sites || [],
                             timestamp: Date.now()
@@ -2261,6 +2321,40 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                         console.log('📤 Sent "complete" status to dashboard');
                     } catch (err) {
                         console.error('⚠️  Failed to send complete status:', err.message);
+                    }
+
+                    // Create screenshot files for UI to detect completion
+                    try {
+                        const screenshotsDir = path.join(__dirname, '../screenshots');
+                        const toolDir = path.join(screenshotsDir, 'nohu-tool');
+                        const sessionDir = path.join(toolDir, username, config.sessionId);
+
+                        // Create directories if not exist
+                        if (!fs.existsSync(sessionDir)) {
+                            fs.mkdirSync(sessionDir, { recursive: true });
+                        }
+
+                        // Create dummy screenshot files for each site (for UI display)
+                        if (result && Array.isArray(result)) {
+                            result.forEach(siteResult => {
+                                const siteName = siteResult.site || 'unknown';
+                                const screenshotFile = path.join(sessionDir, `${siteName}.png`);
+                                // Create empty file (UI will use this to detect results)
+                                if (!fs.existsSync(screenshotFile)) {
+                                    fs.writeFileSync(screenshotFile, '');
+                                }
+                            });
+                        }
+
+                        // Save results.json for reference
+                        const resultsFile = path.join(sessionDir, 'results.json');
+                        if (!fs.existsSync(resultsFile)) {
+                            fs.writeFileSync(resultsFile, JSON.stringify(result, null, 2));
+                        }
+
+                        console.log(`✅ Created screenshot files for UI detection in: ${sessionDir}`);
+                    } catch (fileErr) {
+                        console.warn('⚠️ Failed to create screenshot files:', fileErr.message);
                     }
                 } else {
                     console.log('⚠️  Automation incomplete - not sending "complete" status');
@@ -2278,6 +2372,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                             profileId: profileId,
                             profileName: profileName,
                             username: username,
+                            sessionId: config.sessionId,
                             status: 'error',
                             error: 'Automation incomplete - some steps failed',
                             sites: config.sites || [],
@@ -2285,7 +2380,6 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                         });
                         console.log('📤 Sent "error" status for incomplete automation');
                     } catch (err) {
-                        console.error('⚠️  Failed to send error status:', err.message);
                     }
                 }
                 break;
@@ -2306,6 +2400,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                 profileId: profileId,
                 profileName: profileName,
                 username: username,
+                sessionId: config.sessionId,
                 status: 'error',
                 error: error.message,
                 sites: config.sites || [],
@@ -2314,6 +2409,12 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
             console.log('📤 Sent "error" status to dashboard');
         } catch (err) {
             console.error('⚠️  Failed to send error status:', err.message);
+        }
+    } finally {
+        // Ensure running profile is cleared even if error handling fails
+        if (profileId && global.runningProfiles.has(profileId)) {
+            global.runningProfiles.delete(profileId);
+            console.log(`✅ Finally: Cleared running profile: ${profileId}`);
         }
     }
 }
@@ -2709,6 +2810,21 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 
             console.log('✅ Connected to Hidemium browser');
 
+            // 🔥 Send "running" status to dashboard immediately
+            try {
+                await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    profileId: profileId,
+                    profileName: profile?.name || 'Profile',
+                    username: profileData?.username || 'unknown',
+                    status: 'running',
+                    sites: sites || [],
+                    timestamp: Date.now()
+                });
+                console.log('📤 Sent "running" status to dashboard');
+            } catch (statusError) {
+                console.warn('⚠️ Failed to send running status:', statusError.message);
+            }
+
             // Run automation
             const results = await vipAutomation.runVIPAutomation(
                 browser,
@@ -2721,6 +2837,21 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
             );
 
             console.log('✅ VIP Automation completed:', results);
+
+            // Send completion status to dashboard API
+            try {
+                await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    profileId: profileId,
+                    profileName: profile?.name || 'Profile',
+                    username: profileData?.username || 'unknown',
+                    status: 'completed',
+                    sites: sites || [],
+                    timestamp: Date.now()
+                });
+                console.log('📤 Sent "completed" status to dashboard');
+            } catch (statusError) {
+                console.warn('⚠️ Failed to send completion status:', statusError.message);
+            }
 
             // Update automation status to 'completed' (for frontend polling)
             const statusUpdate = {
@@ -2739,6 +2870,12 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
             }
             global.automationStatuses.set(statusUpdate.username, statusUpdate);
             console.log('📊 Updated automation status to completed:', statusUpdate);
+
+            // Clear running profile when completed
+            if (profileId && global.runningProfiles.has(profileId)) {
+                global.runningProfiles.delete(profileId);
+                console.log(`✅ Cleared running flag for profile: ${profileId} (VIP automation completed)`);
+            }
 
             // Save results to file (like NOHU tool)
             const screenshotsDir = path.join(__dirname, '../screenshots');
@@ -2782,6 +2919,28 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
         } catch (error) {
             console.error('❌ VIP Automation Error:', error.message);
 
+            // Clear running profile on error
+            if (profileId && global.runningProfiles.has(profileId)) {
+                global.runningProfiles.delete(profileId);
+                console.log(`✅ Cleared running profile on error: ${profileId}`);
+            }
+
+            // Send error status to dashboard API
+            try {
+                await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    profileId: profileId,
+                    profileName: profile?.name || 'Profile',
+                    username: profileData?.username || 'unknown',
+                    status: 'error',
+                    error: error.message,
+                    sites: sites || [],
+                    timestamp: Date.now()
+                });
+                console.log('� tSent "error" status to dashboard');
+            } catch (statusError) {
+                console.warn('⚠️ Failed to send error status:', statusError.message);
+            }
+
             // Update automation status to 'error' (for frontend polling)
             const statusUpdate = {
                 username: profileData?.username || 'unknown',
@@ -2821,13 +2980,13 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 
 // NOHU app sites config (centralized - used by both frontend and backend)
 const nohuSitesConfig = {
-    'Go99': { name: 'Go99', registerUrl: 'https://m.ghhdj-567dhdhhmm.asia/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
-    'NOHU': { name: 'NOHU', registerUrl: null, checkPromoUrl: 'https://nohucode.shop' },
-    'TT88': { name: 'TT88', registerUrl: 'https://m.1bedd-fb89bj53gg9hjs0bka.club/Account/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
-    'MMOO': { name: 'MMOO', registerUrl: 'https://m.0mmoo.com/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
-    '789P': { name: '789P', registerUrl: 'https://m.jvdf76fd92jk87gfuj60o.xyz/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
-    '33WIN': { name: '33WIN', registerUrl: 'https://m.336049.com/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
-    '88VV': { name: '88VV', registerUrl: 'https://m.88vv.my/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
+    'Go99': { name: 'Go99', registerUrl: ' https://m.1go99.vip/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
+    'NOHU': { name: 'NOHU', registerUrl: 'https://m.8nohu.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
+    'TT88': { name: 'TT88', registerUrl: 'https://m.1tt88.vip/Account/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
+    'MMOO': { name: 'MMOO', registerUrl: 'https://m.mmoo.team/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
+    '789P': { name: '789P', registerUrl: 'https://m.789p1.vip/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
+    '33WIN': { name: '33WIN', registerUrl: 'https://m.3333win.cc/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
+    '88VV': { name: '88VV', registerUrl: 'https://m.888vvv.bet/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
 };
 
 // Get NOHU sites config

@@ -7,7 +7,6 @@ const fs = require('fs');
 const path = require('path');
 
 async function testContentFixed() {
-    console.log('🔧 Testing Content Fixed Script...\n');
 
     const browser = await puppeteer.launch({
         headless: false,
@@ -23,7 +22,6 @@ async function testContentFixed() {
 
         // Navigate to a NOHU site
         const testUrl = 'https://m.ghhdj-567dhdhhmm.asia/Account/Register?f=3528698&app=1';
-        console.log('📍 Navigating to:', testUrl);
 
         await page.goto(testUrl, {
             waitUntil: 'domcontentloaded',
@@ -34,7 +32,7 @@ async function testContentFixed() {
         await new Promise(resolve => setTimeout(resolve, 3000));
 
         // Inject content-fixed.js
-        console.log('💉 Injecting content-fixed.js...');
+        
         const contentFixedScript = fs.readFileSync(
             path.join(__dirname, 'tools/nohu-tool/extension/content-fixed.js'),
             'utf8'
@@ -46,7 +44,6 @@ async function testContentFixed() {
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         // Test 1: Check if script loaded
-        console.log('\n🧪 TEST 1: Script Loading');
         const scriptLoaded = await page.evaluate(() => {
             return {
                 autoRegisterToolLoaded: window.autoRegisterToolLoaded,
@@ -55,12 +52,7 @@ async function testContentFixed() {
             };
         });
 
-        console.log('   Script loaded:', scriptLoaded.autoRegisterToolLoaded ? '✅' : '❌');
-        console.log('   Message listener:', scriptLoaded.messageListener ? '✅' : '❌');
-        console.log('   Audio tracking:', scriptLoaded.audioTracking ? '✅' : '❌');
-
         // Test 2: Test autoFill action (working version logic)
-        console.log('\n🧪 TEST 2: AutoFill Action');
         const autoFillResult = await page.evaluate(() => {
             return new Promise((resolve) => {
                 const timeout = setTimeout(() => {
@@ -97,11 +89,9 @@ async function testContentFixed() {
             console.log('   Error:', autoFillResult.error);
         }
         if (autoFillResult.result) {
-            console.log('   Fields filled:', autoFillResult.result);
         }
 
         // Test 3: Test freelxbFlow action (optimized version logic)
-        console.log('\n🧪 TEST 3: FreeLXB Flow Action');
         const flowResult = await page.evaluate(() => {
             return new Promise((resolve) => {
                 const timeout = setTimeout(() => {
@@ -141,11 +131,9 @@ async function testContentFixed() {
             console.log('   Error:', flowResult.error);
         }
         if (flowResult.data) {
-            console.log('   Flow data:', flowResult.data);
         }
 
         // Test 4: Check form state
-        console.log('\n🧪 TEST 4: Form State Check');
         const formState = await page.evaluate(() => {
             const accountInput = document.querySelector('input[formcontrolname="account"]');
             const passwordInput = document.querySelector('input[formcontrolname="password"]');
@@ -159,13 +147,7 @@ async function testContentFixed() {
             };
         });
 
-        console.log('   Form found:', formState.formFound ? '✅' : '❌');
-        console.log('   Account field:', formState.accountValue);
-        console.log('   Password field:', formState.passwordValue);
-        console.log('   Name field:', formState.nameValue);
-
         // Test 5: Test ping action
-        console.log('\n🧪 TEST 5: Ping Action');
         const pingResult = await page.evaluate(() => {
             return new Promise((resolve) => {
                 const timeout = setTimeout(() => {
@@ -191,8 +173,6 @@ async function testContentFixed() {
         console.log('   Ping result:', pingResult.success ? '✅' : '❌');
 
         // Summary
-        console.log('\n📊 TEST SUMMARY:');
-        console.log('================');
 
         const tests = [
             { name: 'Script Loading', result: scriptLoaded.autoRegisterToolLoaded && scriptLoaded.messageListener },
@@ -203,7 +183,6 @@ async function testContentFixed() {
         ];
 
         tests.forEach((test, i) => {
-            console.log(`${i + 1}. ${test.name}: ${test.result ? '✅ PASS' : '❌ FAIL'}`);
         });
 
         const passedTests = tests.filter(t => t.result).length;
@@ -213,20 +192,11 @@ async function testContentFixed() {
         console.log(`\nOverall: ${passedTests}/${totalTests} tests passed (${successRate}%)`);
 
         if (passedTests === totalTests) {
-            console.log('🎉 ALL TESTS PASSED! Content-fixed.js is working correctly!');
         } else if (passedTests >= totalTests * 0.8) {
-            console.log('✅ Most tests passed. Content-fixed.js is mostly working.');
         } else {
             console.log('⚠️ Some tests failed. Content-fixed.js needs more work.');
         }
 
-        console.log('\n📝 Next Steps:');
-        console.log('1. Check browser console for detailed logs');
-        console.log('2. Inspect form fields to see if they were filled');
-        console.log('3. Test with real automation tools');
-        console.log('4. Use content-fixed.js in auto-sequence-safe.js');
-
-        console.log('\n⏳ Keeping browser open for 30 seconds for inspection...');
         await new Promise(resolve => setTimeout(resolve, 30000));
 
     } catch (error) {

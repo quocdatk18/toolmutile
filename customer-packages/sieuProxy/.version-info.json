@@ -1,0 +1,9 @@
+{
+  "customer": "sieuProxy",
+  "version": "3.0.0",
+  "createdAt": "2025-12-17T03:22:12.735Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_sieuProxy_40738_91734",
+  "machineId": null,
+  "obfuscated": true
+}

@@ -16,12 +16,11 @@ async function checkAdminFeatures() {
             // Admin features available - show Admin button, hide License button
             document.getElementById('adminBtn').style.display = 'inline-flex';
             document.getElementById('licenseBtn').style.display = 'none';
-            console.log('✅ Admin features enabled');
         } else {
             // Customer version - show License button, hide Admin button
             document.getElementById('adminBtn').style.display = 'none';
             document.getElementById('licenseBtn').style.display = 'inline-flex';
-            console.log('ℹ️  Customer version');
+
         }
     } catch (error) {
         // Default to customer version
@@ -48,7 +47,6 @@ function requireLicense(action = 'sử dụng tính năng này') {
 
 // Initialize dashboard
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 Dashboard initializing...');
 
     // Check if admin features available
     await checkAdminFeatures();
@@ -82,7 +80,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Start polling for automation status updates
     startAutomationStatusPolling();
 
-    console.log('✅ Dashboard initialized');
 });
 
 // ============================================
@@ -172,7 +169,6 @@ async function checkHidemiumConnection() {
             statusText.textContent = 'Hidemium Connected';
             statusBadge.classList.add('status-connected');
             statusBadge.classList.remove('status-error');
-            console.log('Hidemium is running and connected');
         } else {
             throw new Error('Hidemium not responding');
         }
@@ -228,9 +224,8 @@ function toggleApiKeyVisibility() {
 }
 
 async function saveGlobalApiKey() {
-    console.log('🔑 saveGlobalApiKey called');
+
     const apiKey = document.getElementById('globalApiKey').value.trim();
-    console.log('🔑 API Key:', apiKey ? 'Present' : 'Empty');
 
     if (!apiKey) {
         showToast('warning', 'Thiếu API Key', 'Vui lòng nhập API Key');
@@ -245,7 +240,6 @@ async function saveGlobalApiKey() {
     }
 
     const result = apiKeyManager.save(apiKey);
-    console.log('💾 Save result:', result);
 
     if (result.success) {
         console.log('✅ Save successful, loading info and checking balance...');
@@ -267,7 +261,6 @@ async function saveGlobalApiKey() {
 async function checkGlobalBalance() {
     console.log('💰 checkGlobalBalance called');
     const apiKey = apiKeyManager.get();
-    console.log('💰 Retrieved API Key:', apiKey ? 'Present' : 'Empty');
 
     if (!apiKey) {
         showToast('warning', 'Thiếu API Key', 'Vui lòng nhập API Key trước');
@@ -286,9 +279,7 @@ async function checkGlobalBalance() {
     try {
         console.log('🌐 Fetching balance from API...');
         const response = await fetch(`/api/captcha/balance?key=${apiKey}`);
-        console.log('📡 Response status:', response.status);
         const data = await response.json();
-        console.log('📋 Response data:', data);
 
         if (data.success) {
             balanceElement.textContent = data.balance.toLocaleString('vi-VN') + ' VNĐ';
@@ -435,7 +426,6 @@ async function loadProfiles(showNotification = false) {
 
     // Check if container exists (may not exist on tool pages)
     if (!container) {
-        console.log('profilesList container not found, skipping display');
         await profileManager.loadAll();
         return;
     }
@@ -464,7 +454,6 @@ function displayProfiles(profiles) {
 
     // Check if container exists
     if (!container) {
-        console.log('profilesList container not found, skipping display');
         return;
     }
 
@@ -791,7 +780,6 @@ function closeCreateProfileModal() {
 }
 
 function resetCreateProfileForm() {
-    console.log('🔄 Resetting create profile form...');
 
     try {
         // CRITICAL FIX: Force reset all form fields with multiple methods
@@ -801,7 +789,6 @@ function resetCreateProfileForm() {
         if (profilePrefixInput) {
             profilePrefixInput.value = '';
             profilePrefixInput.value = 'Profile';
-            console.log('✅ Profile prefix reset to:', profilePrefixInput.value);
         }
 
         // Method 2: Reset radio buttons
@@ -809,11 +796,9 @@ function resetCreateProfileForm() {
         const chromeRadio = document.querySelector('input[name="profileBrowser"][value="chrome"]');
         if (winRadio) {
             winRadio.checked = true;
-            console.log('✅ Windows OS selected');
         }
         if (chromeRadio) {
             chromeRadio.checked = true;
-            console.log('✅ Chrome browser selected');
         }
 
         // Method 3: Force reset proxy fields with clear first
@@ -830,7 +815,6 @@ function resetCreateProfileForm() {
             if (element) {
                 element.value = '';
                 element.value = field.defaultValue;
-                console.log(`✅ ${field.id} reset to: "${element.value}"`);
             }
         });
 
@@ -838,14 +822,12 @@ function resetCreateProfileForm() {
         const useProxyCheckbox = document.getElementById('useProxy');
         if (useProxyCheckbox) {
             useProxyCheckbox.checked = false;
-            console.log('✅ Use proxy unchecked');
         }
 
         // Reset proxy type radio
         const httpRadio = document.querySelector('input[name="proxyType"][value="HTTP"]');
         if (httpRadio) {
             httpRadio.checked = true;
-            console.log('✅ HTTP proxy type selected');
         }
 
         // Reset advanced options to default (Auto)
@@ -889,7 +871,6 @@ function resetCreateProfileForm() {
         // Update advanced options for default OS (Windows)
         if (typeof updateAdvancedOptionsForOS === 'function') {
             updateAdvancedOptionsForOS();
-            console.log('✅ Advanced options updated');
         }
 
         console.log('✅ Form reset completed successfully');
@@ -908,12 +889,10 @@ function resetCreateProfileForm() {
 
 // Debug function for manual testing
 function testFormResetManual() {
-    console.log('🧪 Manual form reset test...');
 
     // Check if modal is open
     const modal = document.getElementById('createProfileModal');
     if (!modal || modal.style.display !== 'flex') {
-        console.log('⚠️ Modal not open, opening it first...');
         if (typeof openCreateProfileModal === 'function') {
             openCreateProfileModal();
         }
@@ -983,8 +962,6 @@ function parseProxyString() {
         }
     }
 }
-
-
 
 async function createProfileFromModal() {
     // Check license first
@@ -1058,28 +1035,18 @@ async function createProfileFromModal() {
         console.log('✅ Profile created successfully - resetting form...');
 
         // Debug: Check if elements exist before reset
-        console.log('🔍 Debug - Elements before reset:');
-        console.log('  profilePrefix:', document.getElementById('profilePrefix')?.value);
-        console.log('  proxyString:', document.getElementById('proxyString')?.value);
-        console.log('  proxyHost:', document.getElementById('proxyHost')?.value);
 
         resetCreateProfileForm();
 
         // Debug: Check if elements were reset
-        console.log('🔍 Debug - Elements after reset:');
-        console.log('  profilePrefix:', document.getElementById('profilePrefix')?.value);
-        console.log('  proxyString:', document.getElementById('proxyString')?.value);
-        console.log('  proxyHost:', document.getElementById('proxyHost')?.value);
 
         // Don't close modal automatically - let user decide when to close
         // This allows creating multiple profiles without reopening modal
-        console.log('ℹ️ Modal kept open for creating more profiles');
 
         // Check if any automation is running
         const hasRunningAutomation = profileManager.runningProfiles.size > 0;
 
         if (hasRunningAutomation) {
-            console.log('⚠️ Automation is running, skipping profile reload to avoid interference');
             showToast('info', 'Lưu ý', 'Profile đã tạo. Danh sách sẽ cập nhật sau khi automation hoàn thành.', 3000);
         } else {
             // Reload profiles in all views only if no automation is running
@@ -1119,7 +1086,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
                     const isVisible = modal.style.display === 'flex';
                     if (isVisible) {
-                        console.log('🔄 Modal được mở - đảm bảo form được reset');
                         // Đợi một chút để DOM cập nhật xong
                         setTimeout(() => {
                             resetCreateProfileForm();
@@ -1134,7 +1100,6 @@ document.addEventListener('DOMContentLoaded', () => {
             attributeFilter: ['style']
         });
 
-        console.log('✅ Modal observer đã được thiết lập để theo dõi việc reset form');
     }
 });
 
@@ -1154,7 +1119,6 @@ async function loadTools() {
 
         // Always show all tools - check permission when opening
         tools = allTools;
-        console.log('📋 Showing all tools - permission check on open');
 
         displayTools(tools);
     } catch (error) {
@@ -1323,7 +1287,6 @@ async function openTool(toolId) {
 
     if (!isFromReload) {
         // First time opening tool - reload for clean state
-        console.log(`🔄 Opening tool ${toolId} - reloading page for clean state`);
 
         // Set flag to prevent infinite reload
         sessionStorage.setItem('toolReloadFlag', toolId);
@@ -1337,7 +1300,6 @@ async function openTool(toolId) {
     } else {
         // This is after reload - clear flag and proceed normally
         sessionStorage.removeItem('toolReloadFlag');
-        console.log(`✅ Loading tool ${toolId} after reload`);
     }
 
     currentTool = tool;
@@ -1374,7 +1336,6 @@ async function openTool(toolId) {
                 newLink.rel = 'stylesheet';
                 newLink.href = href;
                 document.head.appendChild(newLink);
-                console.log('Loaded CSS:', href);
             }
             link.remove();
         });
@@ -1400,11 +1361,9 @@ async function openTool(toolId) {
         // Clear previous tool data to prevent cross-contamination
         if (window.resultsData) {
             Object.keys(window.resultsData).forEach(key => delete window.resultsData[key]);
-            console.log('🧹 Cleared previous tool results data');
         }
         if (window.processedResults) {
             window.processedResults.clear();
-            console.log('🧹 Cleared previous processed results');
         }
 
         // Clear results table immediately to show tool switching
@@ -1426,7 +1385,6 @@ async function openTool(toolId) {
 
             // Auto-refresh data when loading tool
             if (window.refreshAllData) {
-                console.log('🔄 Auto-refreshing data for tool:', tool.name);
                 window.refreshAllData();
             }
         }, 100);
@@ -1685,7 +1643,6 @@ function showToast(type, title, message, duration = 5000) {
     }, duration);
 }
 
-
 // ============================================
 // BULK OPERATIONS
 // ============================================
@@ -1854,30 +1811,26 @@ function saveNavigationState(view, toolId = null, activeTab = null) {
     };
 
     localStorage.setItem('dashboardNavigationState', JSON.stringify(state));
-    console.log('💾 Saved navigation state:', state);
 }
 
 function clearNavigationState() {
     localStorage.removeItem('dashboardNavigationState');
-    console.log('🗑️ Cleared navigation state');
 }
 
 async function restoreNavigationState() {
     const stateJson = localStorage.getItem('dashboardNavigationState');
 
     if (!stateJson) {
-        console.log('ℹ️ No saved navigation state');
+
         return;
     }
 
     try {
         const state = JSON.parse(stateJson);
-        console.log('🔄 Restoring navigation state:', state);
 
         // Check if state is not too old (e.g., 24 hours)
         const maxAge = 24 * 60 * 60 * 1000; // 24 hours
         if (Date.now() - state.timestamp > maxAge) {
-            console.log('⏰ Navigation state expired, clearing...');
             clearNavigationState();
             return;
         }
@@ -1904,7 +1857,6 @@ function saveActiveTab(tabName) {
         const state = JSON.parse(stateJson);
         state.activeTab = tabName;
         localStorage.setItem('dashboardNavigationState', JSON.stringify(state));
-        console.log('💾 Saved active tab:', tabName);
     }
 }
 
@@ -1915,7 +1867,6 @@ function restoreActiveTab() {
     try {
         const state = JSON.parse(stateJson);
         if (state.activeTab) {
-            console.log('🔄 Restoring active tab:', state.activeTab);
 
             // Find and click the tab
             const tab = document.querySelector(`.nohu-tool-container .tab[data-tab="${state.activeTab}"]`);
@@ -1927,7 +1878,6 @@ function restoreActiveTab() {
         console.error('❌ Error restoring active tab:', error);
     }
 }
-
 
 // Clear all running statuses (manual - for stuck profiles)
 async function clearAllRunningStatuses() {
@@ -1999,7 +1949,6 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-
 // ============================================
 // AUTOMATION STATUS POLLING
 // ============================================
@@ -2032,6 +1981,12 @@ function startAutomationStatusPolling() {
                         } else {
                             showToast('error', 'Lỗi', `Automation cho ${status.username} gặp lỗi`);
                         }
+
+                        // Clear the completed/error status from server after showing notification
+                        // This prevents the same notification from showing repeatedly
+                        setTimeout(() => {
+                            clearAutomationStatus(key);
+                        }, 1000);
                     }
 
                     // Update last known status
@@ -2048,5 +2003,18 @@ function stopAutomationStatusPolling() {
     if (automationStatusPollingInterval) {
         clearInterval(automationStatusPollingInterval);
         automationStatusPollingInterval = null;
+    }
+}
+
+// Clear completed/error automation status from server
+async function clearAutomationStatus(username) {
+    try {
+        await fetch('/api/automation/status/clear', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        });
+    } catch (error) {
+        console.error('Error clearing automation status:', error);
     }
 }

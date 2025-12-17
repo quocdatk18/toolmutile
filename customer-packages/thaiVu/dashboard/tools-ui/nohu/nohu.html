@@ -1399,7 +1399,7 @@
                 accountNumber: document.getElementById('autoAccountNumber').value,
                 apiKey: apiKeyManager.get(),
                 sites: sites,
-                captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value || '10') * 1000
+                captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value ?? '0') * 1000
             };
 
             // Validate required fields
@@ -2370,6 +2370,12 @@
             return resultsData[b].lastTimestamp - resultsData[a].lastTimestamp;
         });
 
+        console.log(`🔄 refreshResultsTable called: ${sortedKeys.length} entries`);
+        sortedKeys.forEach(key => {
+            const entry = resultsData[key];
+            console.log(`  - ${key}: status=${entry.status}, message="${entry.message}"`);
+        });
+
         // Store previous total for comparison
         const previousTotal = totalResults;
         const newTotal = sortedKeys.length;
@@ -2498,7 +2504,14 @@
             let statusHtml = '';
             if (isRunning) {
                 // Show running status for the whole automation
-                statusHtml = `<span class="status-badge running">🔄 Đang chạy...</span>`;
+                console.log(`🔍 Rendering for ${group.username}: isRunning=${isRunning}, message="${group.message}", messageType=${typeof group.message}`);
+                const message = group.message ? `<div style="font-size: 12px; color: #2563eb; margin-top: 8px; font-weight: 600; word-break: break-word; white-space: normal; max-width: 350px; padding: 6px 8px; background-color: #eff6ff; border-left: 3px solid #2563eb; border-radius: 4px;">${group.message}</div>` : '';
+                if (group.message) {
+                    console.log(`📊 Displaying message for ${group.username}: "${group.message}"`);
+                } else {
+                    console.log(`⚠️ No message to display for ${group.username}`);
+                }
+                statusHtml = `<div><span class="status-badge running">🔄 Đang chạy...</span>${message}</div>`;
             } else {
                 // Show detailed status after completion
                 if (successCount > 0) statusHtml += `<span class="status-badge success">✅ ${successCount}</span> `;
@@ -3165,6 +3178,9 @@
 
                 // Add running statuses to table
                 data.statuses.forEach(status => {
+                    if (status.message) {
+                        console.log(`📡 Received status with message: "${status.message}" for ${status.username}`);
+                    }
                     if (status.status === 'running') {
                         currentlyRunning.add(status.username);
 
@@ -3190,11 +3206,26 @@
                                 screenshots: [],
                                 checkTimes: [],
                                 status: 'running',
+                                message: status.message || '',
                                 firstTimestamp: status.timestamp || Date.now(),
                                 lastTimestamp: status.timestamp || Date.now()
                             };
 
                             refreshResultsTable();
+                        } else {
+                            // Update message for existing running entry
+                            // Always update if message exists (even if empty string)
+                            if ('message' in status) {
+                                console.log(`📊 Before update - resultsData[${key}].message = "${resultsData[key].message}"`);
+                                resultsData[key].message = status.message || '';
+                                resultsData[key].lastTimestamp = status.timestamp || Date.now();
+                                console.log(`📊 After update - resultsData[${key}].message = "${resultsData[key].message}"`);
+                                console.log(`📊 Calling refreshResultsTable() for key: ${key}`);
+                                refreshResultsTable();
+                                console.log(`📊 Updated running entry message: "${status.message}"`);
+                            } else {
+                                console.log(`⚠️ Status has no message property for key: ${key}`);
+                            }
                         }
                     } else if (status.status === 'completed' || status.status === 'error') {
                         // Remove running entry when completed/error

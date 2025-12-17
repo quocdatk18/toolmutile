@@ -2,7 +2,6 @@
 const SmsToolOptimized = require('./tools/sms-tool/optimized-automation.js');
 
 async function testSiteConfigs() {
-    console.log('🧪 Testing SMS Site Configs...');
 
     // Create instance
     const smstool = new SmsToolOptimized();
@@ -31,29 +30,23 @@ async function testSiteConfigs() {
         keepOpen: true
     };
 
-    console.log('📤 Test Sites Data:', JSON.stringify(testSites, null, 2));
-    console.log('🔧 Available Site Configs:', Object.keys(smstools.siteConfigs));
+    );
 
     // Test each site individually
     for (const site of testSites) {
-        console.log(`\n🎯 Testing site: ${site.name}`);
 
         const config = smstools.siteConfigs[site.name];
         if (config) {
-            console.log(`✅ Config found for ${site.name}:`, {
                 type: config.type,
                 registerUrl: config.registerUrl,
                 loginUrl: config.loginUrl
             });
         } else {
-            console.log(`❌ No config found for ${site.name}`);
-            console.log(`🔍 Available configs:`, Object.keys(smstools.siteConfigs));
         }
     }
 
     // Test batchProcess (without actually running browser)
     try {
-        console.log('\n🚀 Testing batchProcess (dry run)...');
 
         // Mock the browser initialization to avoid actual browser launch
         smstools.browser = { newPage: () => ({ goto: () => { }, close: () => { } }) };

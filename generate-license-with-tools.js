@@ -36,19 +36,12 @@ const licenseTypes = {
     }
 };
 
-console.log('🔑 License Generator with Tool Permissions\n');
-
 // Hiển thị các loại license
-console.log('📋 Available License Types:');
 Object.keys(licenseTypes).forEach((key, index) => {
     const type = licenseTypes[key];
-    console.log(`${index + 1}. ${type.name}`);
-    console.log(`   Tools: ${type.allowedTools.join(', ')}`);
-    console.log(`   ${type.description}\n`);
 });
 
 // Generate example licenses
-console.log('🎯 Generating Example Licenses:\n');
 
 Object.keys(licenseTypes).forEach(typeKey => {
     const type = licenseTypes[typeKey];
@@ -60,8 +53,4 @@ Object.keys(licenseTypes).forEach(typeKey => {
         allowedTools: type.allowedTools
     });
 
-    console.log(`📦 ${type.name}:`);
-    console.log(`Key: ${key}`);
-    console.log(`Tools: ${type.allowedTools.join(', ')}`);
-    console.log('---\n');
 });

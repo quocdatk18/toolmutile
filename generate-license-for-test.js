@@ -8,8 +8,6 @@ const content = fs.readFileSync(secretKeyFile, 'utf8');
 const secretKeyMatch = content.match(/Secret Key: (.+)/);
 const SECRET_KEY = secretKeyMatch[1].trim();
 
-console.log(`🔐 Using secret key: ${SECRET_KEY}\n`);
-
 // License data
 const customerName = 'test_final';
 const machineId = '48b62c73fe0a524f'; // From secret key file
@@ -35,11 +33,7 @@ const signature = crypto
 
 const licenseKey = `${encoded}.${signature}`;
 
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-console.log('🔑 LICENSE KEY (CORRECT)');
-console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
-console.log(licenseKey);
-console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+');
 
 // Save to package
 const licenseKeyContent = `
@@ -61,5 +55,3 @@ fs.writeFileSync(
     'utf8'
 );
 
-console.log('✅ Saved to: customer-packages/test_final/LICENSE_KEY.txt\n');
-console.log('📝 Copy the license key above and paste into dashboard!\n');

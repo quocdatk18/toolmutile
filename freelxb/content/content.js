@@ -1,5 +1,4 @@
 // Content script - tự động điền form trên các trang web
-console.log('[reg-acc] Content script loaded');
 
 let isProcessing = false;
 let hasRedirected = false;
@@ -9,31 +8,25 @@ async function clickElementNaturally(element) {
         return false;
     }
 
-    console.log('[reg-acc] Simulating natural click on:', element.tagName, element.textContent.trim().substring(0, 30));
-
     try {
         const rect = element.getBoundingClientRect();
 
         // Kiểm tra nếu element nằm ngoài viewport
         if (rect.top < 0 || rect.left < 0 || rect.bottom > window.innerHeight || rect.right > window.innerWidth) {
-            console.log('[reg-acc] Element not fully visible, scrolling into view...');
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             await delay(400);
         }
 
         const x = rect.left + rect.width / 2 + (Math.random() * 10 - 5);
         const y = rect.top + rect.height / 2 + (Math.random() * 10 - 5);
-        console.log('[reg-acc] Click position:', { x, y });
 
         // Focus element first
         if (element.focus) {
-            console.log('[reg-acc] Focusing element...');
             element.focus();
             await delay(100);
         }
 
         // Dispatch mouse events
-        console.log('[reg-acc] Dispatching mousedown...');
         element.dispatchEvent(new MouseEvent('mousedown', {
             bubbles: true,
             cancelable: true,
@@ -44,7 +37,6 @@ async function clickElementNaturally(element) {
         }));
         await delay(50 + Math.random() * 50);
 
-        console.log('[reg-acc] Dispatching mouseup...');
         element.dispatchEvent(new MouseEvent('mouseup', {
             bubbles: true,
             cancelable: true,
@@ -54,7 +46,6 @@ async function clickElementNaturally(element) {
         }));
         await delay(50);
 
-        console.log('[reg-acc] Dispatching click...');
         element.dispatchEvent(new MouseEvent('click', {
             bubbles: true,
             cancelable: true,
@@ -102,7 +93,6 @@ if (window.location.pathname.includes('/Financial') && window.location.search.in
     console.log('[reg-acc] On Financial withdraw page, handling bank info...');
 
     const handleBankForm = async () => {
-        console.log('[reg-acc] handleBankForm called, waiting for form to render...');
 
         // Chờ form render xong bằng cách tìm 3 element chính
         let attempts = 0;
@@ -120,7 +110,7 @@ if (window.location.pathname.includes('/Financial') && window.location.search.in
             if (bankDropdown && bankDropdown.offsetParent !== null &&
                 cityInput && cityInput.offsetParent !== null &&
                 accountInput && accountInput.offsetParent !== null) {
-                console.log(`[reg-acc] ✅ Form fully rendered! (attempt ${attempts})`);
+                `);
 
                 // Form đã render, lấy data và điền
                 chrome.storage.local.get(['lastRunPayload', 'bankFormSubmitted'], (result) => {
@@ -138,7 +128,6 @@ if (window.location.pathname.includes('/Financial') && window.location.search.in
                             console.error('[reg-acc] ❌ fillBankInfoForm error:', err);
                         });
                     } else {
-                        console.log('[reg-acc] ⚠️ Conditions not met:', {
                             hasPayload: !!result.lastRunPayload,
                             isProcessing: isProcessing
                         });
@@ -149,7 +138,7 @@ if (window.location.pathname.includes('/Financial') && window.location.search.in
             }
 
             if (attempts % 5 === 0) {
-                console.log(`[reg-acc] Waiting for form to render... (attempt ${attempts}/${maxAttempts})`);
+                `);
             }
             await new Promise(resolve => setTimeout(resolve, 500));
         }
@@ -225,7 +214,6 @@ window.addEventListener('load', () => {
 
     // CRITICAL: Reset isProcessing khi load trang Financial
     if (window.location.pathname.includes('/Financial')) {
-        console.log('[reg-acc] 🔄 Resetting isProcessing flag for Financial page');
         isProcessing = false;
     }
 
@@ -257,7 +245,7 @@ window.addEventListener('load', () => {
                     handlePromoPage(result.lastPromoPayload);
                 } else if (retries < maxRetries) {
                     retries++;
-                    console.log(`[reg-acc] Waiting for payload... (${retries}/${maxRetries})`);
+                    `);
                     setTimeout(checkPayload, 500);
                 } else {
                     console.warn('[reg-acc] ⚠️ Promo payload not found after retries');
@@ -285,7 +273,6 @@ window.addEventListener('load', () => {
 
 async function fillFormAndSubmit(data) {
     try {
-        console.log('[reg-acc] Starting form fill and submit...', data);
 
         // Kiểm tra nếu không phải trang đăng ký thì skip
         if (window.location.pathname.includes('/Account/ChangeMoneyPassword') ||
@@ -304,7 +291,6 @@ async function fillFormAndSubmit(data) {
         }
 
         let formType = detectFormType();
-        console.log('[reg-acc] Form type:', formType);
 
         // Bước 1: Điền thông tin cơ bản
         await fillBasicInfo(data);
@@ -350,7 +336,6 @@ async function handlePromoPage(data) {
         let currentSite = null;
         if (selectedSites && selectedSites.length > 0) {
             currentSite = selectedSites.find(site => currentHost.includes(site));
-            console.log('[reg-acc] Current site:', currentSite);
         }
 
         // Xác định type dựa trên site
@@ -391,7 +376,6 @@ async function handlePromoPage(data) {
 // Xử lý xin khuyến mãi OKVIP
 async function handlePromoOKVIP(username, promoType) {
     console.log('[reg-acc] === HANDLING PROMO OKVIP ===');
-    console.log('[reg-acc] Username:', username);
     console.log('[reg-acc] Promo type:', promoType);
 
     try {
@@ -405,7 +389,6 @@ async function handlePromoOKVIP(username, promoType) {
             usernameInput.value = username;
             usernameInput.dispatchEvent(new Event('input', { bubbles: true }));
             usernameInput.dispatchEvent(new Event('change', { bubbles: true }));
-            console.log('[reg-acc] ✅ Filled username:', username);
             await delay(500);
         } else {
             console.warn('[reg-acc] ⚠️ Username input not found');
@@ -459,7 +442,6 @@ async function handlePromoOKVIP(username, promoType) {
             submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
             await delay(300);
             submitBtn.click();
-            console.log('[reg-acc] ✅ Clicked submit button:', submitBtn.textContent.trim());
         } else {
             console.warn('[reg-acc] ⚠️ Submit button not found');
         }
@@ -557,10 +539,8 @@ async function handleCaptcha(formType, data) {
             const parent = captchaInput.closest('div, form, fieldset');
             if (parent) {
                 const images = parent.querySelectorAll('img');
-                console.log('[reg-acc] Images in parent:', images.length);
                 for (const img of images) {
                     const src = img.src;
-                    console.log('[reg-acc] Image src:', src.substring(0, 100));
                     // Lọc ảnh base64 có kích thước lớn (captcha thường > 1000 bytes)
                     if (src.includes('data:image') && src.length > 1000) {
                         captchaImg = img;
@@ -573,12 +553,10 @@ async function handleCaptcha(formType, data) {
             // Cách 2: Nếu không tìm thấy, tìm tất cả ảnh base64 lớn
             if (!captchaImg) {
                 const allImages = document.querySelectorAll('img');
-                console.log('[reg-acc] Total images on page:', allImages.length);
                 for (const img of allImages) {
                     const src = img.src;
                     if (src.includes('data:image') && src.length > 1000) {
                         captchaImg = img;
-                        console.log('[reg-acc] Found large base64 image, size:', src.length);
                         break;
                     }
                 }
@@ -632,8 +610,6 @@ async function getImageBase64(img) {
                 const parts = img.src.split(',');
                 if (parts.length === 2) {
                     const base64 = parts[1];
-                    console.log('[reg-acc] Image is already base64, length:', base64.length);
-                    console.log('[reg-acc] Base64 preview:', base64.substring(0, 50));
                     resolve(base64);
                 } else {
                     console.error('[reg-acc] Invalid data URL format');
@@ -641,20 +617,17 @@ async function getImageBase64(img) {
                 }
             } else {
                 // Fetch ảnh và convert
-                console.log('[reg-acc] Fetching image from:', img.src);
                 fetch(img.src, { mode: 'cors' })
                     .then(res => {
                         if (!res.ok) throw new Error(`HTTP ${res.status}`);
                         return res.blob();
                     })
                     .then(blob => {
-                        console.log('[reg-acc] Got blob, size:', blob.size);
                         const reader = new FileReader();
                         reader.onloadend = () => {
                             const parts = reader.result.split(',');
                             if (parts.length === 2) {
                                 const base64 = parts[1];
-                                console.log('[reg-acc] Converted to base64, length:', base64.length);
                                 resolve(base64);
                             } else {
                                 console.error('[reg-acc] Invalid data URL from FileReader');
@@ -735,7 +708,6 @@ async function handleSuccessPopup() {
             const closeBtn = popup.querySelector('button.swal2-confirm, button.ok-btn, button.close, .close-btn');
             if (closeBtn) {
                 closeBtn.click();
-                console.log('[reg-acc] Clicked close button');
                 return true;
             }
         }
@@ -747,32 +719,27 @@ async function handleSuccessPopup() {
 async function fillBasicInfo(data) {
     // Xác định loại form dựa trên URL
     let formType = detectFormType();
-    console.log('[reg-acc] Detected form type:', formType);
 
     const selectors = FORM_SELECTORS[formType] || FORM_SELECTORS.type1;
 
     // Điền username
     if (data.username) {
         fillInput(selectors.username, data.username);
-        console.log('[reg-acc] Filled username');
     }
 
     // Điền password
     if (data.password) {
         fillInput(selectors.password, data.password);
-        console.log('[reg-acc] Filled password');
     }
 
     // Điền confirm password
     if (data.password) {
         fillInput(selectors.confirmPassword, data.password);
-        console.log('[reg-acc] Filled confirm password');
     }
 
     // Điền fullname
     if (data.fullname) {
         fillInput(selectors.fullname, data.fullname);
-        console.log('[reg-acc] Filled fullname');
     }
 
     // Điền phone
@@ -784,7 +751,6 @@ async function fillBasicInfo(data) {
     // Điền email
     if (data.gmail) {
         fillInput(selectors.email, data.gmail);
-        console.log('[reg-acc] Filled email');
     }
 
     // Check agree checkbox nếu có
@@ -792,7 +758,6 @@ async function fillBasicInfo(data) {
         const agreeCheckbox = document.querySelector(selectors.agree[0]);
         if (agreeCheckbox && !agreeCheckbox.checked) {
             agreeCheckbox.click();
-            console.log('[reg-acc] Checked agree checkbox');
         }
     }
 }
@@ -833,12 +798,10 @@ async function fillBankInfo(data) {
 
     if (data.accountNumber) {
         fillInput(selectors.accountNumber, data.accountNumber);
-        console.log('[reg-acc] Filled account number');
     }
 
     if (data.branch) {
         fillInput(selectors.branch, data.branch);
-        console.log('[reg-acc] Filled branch');
     }
 
     if (data.withdrawPass) {
@@ -904,7 +867,6 @@ function fillInput(selectors, value) {
                                 element.value = option.value;
                                 element.dispatchEvent(new Event('change', { bubbles: true }));
                                 element.dispatchEvent(new Event('input', { bubbles: true }));
-                                console.log('[reg-acc] Selected option:', option.textContent);
                                 return true;
                             }
                         }
@@ -940,17 +902,14 @@ function fillInput(selectors, value) {
 }
 
 async function autoSubmit() {
-    console.log('[reg-acc] Looking for submit button...');
 
     // Tìm nút submit - ưu tiên button[type="submit"]
     const submitButtons = document.querySelectorAll('button[type="submit"]');
-    console.log(`[reg-acc] Found ${submitButtons.length} submit buttons`);
 
     for (const button of submitButtons) {
         if (button.offsetParent === null) continue; // Skip hidden buttons
 
         const text = button.textContent.toLowerCase().trim();
-        console.log(`[reg-acc] Submit button text: "${text}"`);
 
         // Scroll vào view
         button.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -959,7 +918,6 @@ async function autoSubmit() {
         // Click button
         try {
             button.click();
-            console.log('[reg-acc] Submit button clicked:', text);
             return true;
         } catch (e) {
             console.error('[reg-acc] Error clicking button:', e);
@@ -968,7 +926,6 @@ async function autoSubmit() {
 
     // Fallback: tìm button khác
     const allButtons = document.querySelectorAll('button');
-    console.log(`[reg-acc] Fallback: Found ${allButtons.length} total buttons`);
 
     for (const button of allButtons) {
         if (button.offsetParent === null) continue;
@@ -985,7 +942,6 @@ async function autoSubmit() {
 
             try {
                 button.click();
-                console.log('[reg-acc] Fallback button clicked:', text);
                 return true;
             } catch (e) {
                 console.error('[reg-acc] Error clicking fallback button:', e);
@@ -993,7 +949,6 @@ async function autoSubmit() {
         }
     }
 
-    console.log('[reg-acc] Submit button not found');
     return false;
 }
 
@@ -1001,14 +956,11 @@ function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-
-
 async function checkTokenAndRedirect() {
     console.log('[reg-acc] Checking for token...');
 
     // Kiểm tra nếu đã redirect rồi thì không redirect lại
     if (hasRedirected) {
-        console.log('[reg-acc] ⚠️ Already redirected, skipping...');
         return false;
     }
 
@@ -1016,7 +968,6 @@ async function checkTokenAndRedirect() {
     return new Promise((resolve) => {
         chrome.storage.local.get(['hasRedirectedSession'], (result) => {
             if (result.hasRedirectedSession) {
-                console.log('[reg-acc] ⚠️ Already redirected in this session, skipping...');
                 hasRedirected = true;
                 resolve(false);
                 return;
@@ -1036,8 +987,6 @@ async function performTokenCheck() {
     for (let i = 0; i < maxAttempts; i++) {
         await delay(checkInterval);
 
-        console.log(`[reg-acc] Token check attempt ${i + 1}/${maxAttempts}`);
-
         // Gọi background script để lấy cookies
         const result = await new Promise((resolve) => {
             chrome.runtime.sendMessage({
@@ -1056,8 +1005,6 @@ async function performTokenCheck() {
         }
 
         const cookies = result.cookies || {};
-        console.log('[reg-acc] Available cookies:', Object.keys(cookies));
-        console.log('[reg-acc] Cookie values:', cookies);
 
         // Kiểm tra token (_pat và _prt) - case sensitive
         const hasPatToken = cookies['_pat'];
@@ -1076,12 +1023,10 @@ async function performTokenCheck() {
 
             // Persist flag to storage
             chrome.storage.local.set({ hasRedirectedSession: true }, () => {
-                console.log('[reg-acc] Set hasRedirectedSession flag');
             });
 
             // Gọi background script để navigate
             const redirectUrl = '/Account/ChangeMoneyPassword';
-            console.log('[reg-acc] Redirecting to:', redirectUrl);
 
             chrome.runtime.sendMessage({
                 action: 'navigate',
@@ -1089,7 +1034,6 @@ async function performTokenCheck() {
                     url: redirectUrl
                 }
             }, (response) => {
-                console.log('[reg-acc] Navigate response:', response);
             });
 
             return true;
@@ -1109,7 +1053,6 @@ async function fillWithdrawalPassword(data) {
         console.log('[reg-acc] Filling withdrawal password form...');
 
         let formType = detectFormType();
-        console.log('[reg-acc] Form type:', formType);
 
         const selectors = FORM_SELECTORS[formType] || FORM_SELECTORS.type1;
 
@@ -1135,7 +1078,6 @@ async function fillWithdrawalPassword(data) {
 
         // Redirect to Financial withdraw page
         const redirectUrl = '/Financial?type=withdraw';
-        console.log('[reg-acc] Redirecting to:', redirectUrl);
 
         chrome.runtime.sendMessage({
             action: 'navigate',
@@ -1143,7 +1085,6 @@ async function fillWithdrawalPassword(data) {
                 url: redirectUrl
             }
         }, (response) => {
-            console.log('[reg-acc] Navigate response:', response);
         });
 
         console.log('[reg-acc] Withdrawal password form submitted successfully');
@@ -1155,8 +1096,6 @@ async function fillWithdrawalPassword(data) {
 async function fillBankInfoForm(data) {
     try {
         console.log('[reg-acc] ========== FILLING BANK INFO FORM ==========');
-        console.log('[reg-acc] Data received:', data);
-        console.log('[reg-acc] Current URL:', window.location.href);
         console.log('[reg-acc] Filling bank info form...');
 
         // Chọn ngân hàng - tìm custom dropdown
@@ -1169,11 +1108,9 @@ async function fillBankInfoForm(data) {
 
         // Điền chi nhánh (city)
         if (data.branch) {
-            console.log('[reg-acc] Filling city:', data.branch);
             const cityInput = document.querySelector('input[formcontrolname="city"]');
             if (cityInput) {
                 await fillInputAdvanced(cityInput, data.branch);
-                console.log('[reg-acc] ✅ Filled city/branch:', data.branch);
             } else {
                 console.warn('[reg-acc] ⚠️ City input not found');
             }
@@ -1181,27 +1118,22 @@ async function fillBankInfoForm(data) {
 
         // Điền số tài khoản (account)
         if (data.accountNumber) {
-            console.log('[reg-acc] Filling account:', data.accountNumber);
             const accountInput = document.querySelector('input[formcontrolname="account"]');
             if (accountInput) {
                 await fillInputAdvanced(accountInput, data.accountNumber);
-                console.log('[reg-acc] ✅ Filled account number:', data.accountNumber);
             } else {
                 console.warn('[reg-acc] ⚠️ Account input not found');
             }
         }
 
         // Tìm nút submit - có thể là button.btn-submit hoặc button[type="submit"]
-        console.log('[reg-acc] Looking for submit button...');
         const submitBtn = document.querySelector('button.btn-submit') ||
             document.querySelector('button[type="submit"]');
 
         if (submitBtn) {
-            console.log('[reg-acc] ✅ Found submit button, clicking...');
             submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
             await delay(500);
             submitBtn.click();
-            console.log('[reg-acc] ✅ Submit button clicked');
 
             // Set flag để ngăn chặn submit lại
             chrome.storage.local.set({ bankFormSubmitted: true }, () => {
@@ -1228,7 +1160,6 @@ async function selectBankSimple(bankName) {
     const cleanBankName = bankName.includes('(') ? bankName.split('(')[0].trim() : bankName.trim();
     const searchName = cleanBankName.toUpperCase().trim();
     console.log('[reg-acc] Clean bank name:', cleanBankName);
-    console.log('[reg-acc] Search name:', searchName);
 
     // Find the dropdown - try multiple selectors
     let dropdown = document.querySelector('.mat-select-trigger') ||
@@ -1238,21 +1169,15 @@ async function selectBankSimple(bankName) {
 
     if (!dropdown) {
         console.error('[reg-acc] ❌ Dropdown not found');
-        console.log('[reg-acc] Trying to find parent mat-select...');
 
         // Try to find parent mat-select
         const matSelects = document.querySelectorAll('mat-select');
-        console.log('[reg-acc] Found mat-select elements:', matSelects.length);
 
         for (let i = 0; i < matSelects.length; i++) {
-            console.log(`[reg-acc] mat-select ${i}:`, matSelects[i].outerHTML.substring(0, 200));
         }
 
         return false;
     }
-
-    console.log('[reg-acc] ✅ Found dropdown:', dropdown.tagName, dropdown.className);
-    console.log('[reg-acc] Dropdown HTML:', dropdown.outerHTML.substring(0, 300));
 
     // Scroll into view
     dropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1262,16 +1187,12 @@ async function selectBankSimple(bankName) {
     try {
         dropdown.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
         dropdown.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
-        console.log('[reg-acc] Touch events dispatched');
     } catch (e) {
-        console.log('[reg-acc] Touch events not supported');
     }
 
     // Focus and click
-    console.log('[reg-acc] Focusing dropdown...');
     dropdown.focus();
 
-    console.log('[reg-acc] Clicking dropdown...');
     dropdown.click();
 
     // Also try dispatchEvent
@@ -1281,7 +1202,6 @@ async function selectBankSimple(bankName) {
 
     // Check if it's a SELECT element
     if (dropdown.tagName === 'SELECT') {
-        console.log('[reg-acc] Handling SELECT element');
         const options = dropdown.querySelectorAll('option');
 
         for (const option of options) {
@@ -1295,17 +1215,14 @@ async function selectBankSimple(bankName) {
         }
     } else {
         // For mat-select or custom dropdowns
-        console.log('[reg-acc] Handling mat-select/custom dropdown');
         await delay(500); // Wait for options to render
 
         // Find all options
         const options = document.querySelectorAll('mat-option, [role="option"], .mat-option');
-        console.log('[reg-acc] Found options:', options.length);
 
         // Log all options for debugging (commented out to reduce console noise)
         // for (let i = 0; i < options.length; i++) {
         //     const text = options[i].textContent.trim().toUpperCase();
-        //     console.log(`[reg-acc] Option ${i}:`, text);
         // }
 
         // Try to match with dropdown options
@@ -1319,11 +1236,8 @@ async function selectBankSimple(bankName) {
             const normalizedText = textUpper.replace(/\s+/g, '').replace(/[^A-Z0-9]/g, '');
             const normalizedSearch = searchName.replace(/\s+/g, '').replace(/[^A-Z0-9]/g, '');
 
-            // console.log('[reg-acc] Comparing:', normalizedText, 'with', normalizedSearch);
-
             // Exact match or partial match (case-insensitive)
             if (normalizedText === normalizedSearch || textUpper.includes(searchName)) {
-                console.log('[reg-acc] ✅ Found matching option:', text);
                 // Scroll option into view FIRST
                 option.scrollIntoView({ behavior: 'auto', block: 'center' });
                 await delay(300);

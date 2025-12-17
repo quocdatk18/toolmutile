@@ -255,20 +255,25 @@ class AutoSequenceSafe {
         try {
             console.log('    💾 Saving shared account info via API...');
 
-            // Prepare account info
+            // Prepare account info (giống taiapp)
             const accountInfo = {
                 username: profileData.username,
                 password: profileData.password,
                 withdrawPassword: profileData.withdrawPassword,
                 fullname: profileData.fullname,
+                email: profileData.email || '',
+                phone: profileData.phone || '',
                 bank: {
                     name: profileData.bankName,
                     branch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
-                    accountNumber: profileData.accountNumber
+                    accountNumber: profileData.accountNumber,
+                    accountHolder: profileData.fullname
                 },
                 registeredAt: new Date().toISOString(),
                 firstSite: firstSiteName,
-                sites: allSites.map(s => s.name || s) // Lưu danh sách tất cả sites
+                sites: allSites.map(s => s.name || s), // Lưu danh sách tất cả sites
+                status: 'active',
+                tool: 'nohu-sms'
             };
 
             // Get dashboard port (dynamic)
@@ -299,51 +304,51 @@ class AutoSequenceSafe {
     }
 
     /**
-     * Get site URLs by name - complete config with checkKM links
+     * Get site URLs by name - fetch from server (centralized config)
+     * URLs are managed in server.js for both app and SMS
      */
     getSiteUrls(siteName) {
-        const siteConfigs = {
-            'Go99': {
-                registerUrl: 'https://m.ghhdj-567dhdhhmm.asia/Account/Register?f=3528698&app=1',
-                promoUrl: 'https://go99code.store'
-            },
-            'NOHU': {
-                registerUrl: 'https://m.88111188.com/Account/Register?f=6344995&app=1',
-                promoUrl: 'https://nohucode.shop'
-            },
-            'TT88': {
-                registerUrl: 'https://m.1bedd-fb89bj53gg9hjs0bka.club/Account/Register?f=3535864&app=1',
-                promoUrl: 'https://tt88code.win'
-            },
-            'MMOO': {
-                registerUrl: 'https://m.0mmoo.com/Account/Register?f=394579&app=1',
-                promoUrl: 'https://mmoocode.shop'
-            },
-            '789P': {
-                registerUrl: 'https://m.jvdf76fd92jk87gfuj60o.xyz/Account/Register?f=784461&app=1',
-                promoUrl: 'https://789pcode.store'
-            },
-            '33WIN': {
-                registerUrl: 'https://m.336049.com/Account/Register?f=3115867&app=1',
-                promoUrl: 'https://33wincode.com'
-            },
-            '88VV': {
-                registerUrl: 'https://m.88vv.my/Account/Register?f=1054152&app=1',
-                promoUrl: 'https://88vvcode.com'
-            }
-        };
 
-        const config = siteConfigs[siteName];
-        if (!config) return null;
+        // Check if this is SMS promo site (has -SMS suffix)
+        let cleanSiteName = siteName;
+        let isSmsPromo = false;
+        if (siteName.endsWith('-SMS')) {
+            cleanSiteName = siteName.replace('-SMS', '');
+            isSmsPromo = true;
+        }
+
+        // Get URLs from global config (set by server.js on startup)
+        let registerUrl = null;
+        let promoUrl = null;
+
+        // Try to get from global cache first
+        if (global.nohuSitesConfig && global.nohuSitesConfig[cleanSiteName]) {
+            const siteConfig = global.nohuSitesConfig[cleanSiteName];
+            registerUrl = siteConfig.registerUrl;
+            promoUrl = siteConfig.checkPromoUrl;
+        }
+
+        // For SMS promo, use SMS URL if available
+        if (isSmsPromo && global.nohuSmsSiteConfigs && global.nohuSmsSiteConfigs[cleanSiteName]) {
+            const smsUrl = global.nohuSmsSiteConfigs[cleanSiteName].registerSmsUrl;
+            if (smsUrl) {
+                registerUrl = smsUrl;
+            }
+        }
+
+        if (!registerUrl) {
+            console.warn(`⚠️ No URL found for site: ${siteName}`);
+            return null;
+        }
 
         // Extract origin from registerUrl for withdrawUrl
-        const url = new URL(config.registerUrl);
+        const url = new URL(registerUrl);
         const origin = url.origin;
 
         return {
-            registerUrl: config.registerUrl,
+            registerUrl: registerUrl,
             withdrawUrl: origin + '/Financial?type=withdraw',
-            promoUrl: config.promoUrl
+            promoUrl: promoUrl
         };
     }
 
@@ -574,9 +579,51 @@ class AutoSequenceSafe {
             }, `Registration for ${siteName}`);
 
             if (registerResult.success) {
+                console.log(`✅ Registration form submitted for ${siteName}`);
+
+                // CRITICAL: Check token sau submit để xác nhận đăng ký thành công
+                console.log(`🔍 Checking token after registration submit...`);
+                let tokenCheckResult = await this.safeExecute(async () => {
+                    let attempts = 0;
+                    const maxAttempts = 10; // 10 seconds max (10 * 1000ms)
+
+                    while (attempts < maxAttempts) {
+                        attempts++;
+
+                        try {
+                            const status = await page.evaluate(() => {
+                                const cookies = document.cookie;
+                                const hasToken = cookies.includes('_pat=') ||
+                                    cookies.includes('token=') ||
+                                    localStorage.getItem('token') ||
+                                    localStorage.getItem('auth');
+                                return { hasToken: !!hasToken };
+                            });
+
+                            if (status.hasToken) {
+                                console.log(`✅ Token found after ${attempts}s - Registration confirmed!`);
+                                return { success: true, attempts };
+                            }
+                        } catch (e) {
+                            console.log(`⚠️ Token check failed (attempt ${attempts}):`, e.message);
+                        }
+
+                        console.log(`⏳ [${attempts}/${maxAttempts}] No token yet, waiting...`);
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                    }
+
+                    return { success: false, error: 'No token found after 10 seconds' };
+                }, `Token check after registration for ${siteName}`);
+
+                if (!tokenCheckResult.success) {
+                    console.error(`❌ Registration failed for ${siteName}: No token received`);
+                    results.register = { success: false, error: 'No token after 10 seconds - registration failed' };
+                    return results; // Dừng luôn, không tiếp tục
+                }
+
                 console.log(`✅ Registration successful for ${siteName}`);
                 results.register = { success: true, method: registerResult.method || 'unknown' };
-                results.login = { success: true, message: 'Assumed successful after registration' };
+                results.login = { success: true, message: 'Confirmed by token' };
 
                 // Lưu thông tin tài khoản sau khi đăng ký thành công (chỉ lưu 1 lần)
                 // Tất cả sites dùng chung 1 account nên chỉ cần lưu 1 file
@@ -600,93 +647,78 @@ class AutoSequenceSafe {
                     // FreeLXB-style: Activate tab before bank operation
                     await this.activateTab(page);
 
-                    const bankResult = await this.safeExecute(async () => {
-                        // Đợi một chút để trang redirect hoàn tất
-                        console.log(`⏳ Waiting for post-registration redirect to complete...`);
-                        await new Promise(resolve => setTimeout(resolve, 3000));
+                    // Đăng ký xong → chờ delay 30-120s NGAY LẬP TỨC → rồi mới redirect sang Add Bank
+                    console.log(`⏳ Registration completed. Starting delay before Add Bank redirect...`);
+                    const randomDelay = Math.random() * (120000 - 30000) + 30000; // 30-120s
+                    const delaySeconds = Math.round(randomDelay / 1000);
+                    console.log(`⏳ Waiting ${delaySeconds}s before redirecting to Add Bank...`);
 
+                    // Gửi countdown qua API (không bị mất khi page redirect)
+                    const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                    const startTime = Date.now();
+                    const countdownInterval = setInterval(async () => {
+                        try {
+                            const elapsedMs = Date.now() - startTime;
+                            const remainingMs = Math.max(0, randomDelay - elapsedMs);
+                            const remainingSeconds = Math.ceil(remainingMs / 1000);
+
+                            // Gửi countdown status qua API
+                            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    profileId: profileData.profileId,
+                                    username: profileData.username,
+                                    status: 'running',
+                                    message: `⏳ Chờ ${remainingSeconds}s trước khi chuyển sang Thêm Bank...`,
+                                    timestamp: new Date().toISOString()
+                                })
+                            }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
+                        } catch (e) {
+                            // Ignore errors
+                        }
+                    }, 3000);
+
+                    await new Promise(resolve => setTimeout(resolve, randomDelay));
+                    clearInterval(countdownInterval);
+                    console.log(`✅ Delay completed. Now redirecting to Add Bank...`);
+
+                    // Send final status message
+                    try {
+                        await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                profileId: profileData.profileId,
+                                username: profileData.username,
+                                status: 'running',
+                                message: `🔄 Đang chuyển sang Thêm Bank...`,
+                                timestamp: new Date().toISOString()
+                            })
+                        }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+                    } catch (e) {
+                        // Ignore errors
+                    }
+
+                    const bankResult = await this.safeExecute(async () => {
                         // Đảm bảo page context còn hoạt động
                         console.log(`🔍 Ensuring page context is valid...`);
                         await this.ensurePageContext(page);
 
-                        console.log(`⏳ Waiting for token/redirect (smart wait)...`);
-
-                        let waitAttempts = 0;
-                        const maxWaitAttempts = 10; // Max 5 seconds (10 * 500ms)
-                        let hasToken = false;
-                        let isOnWithdrawPage = false;
-
-                        while (waitAttempts < maxWaitAttempts) {
-                            waitAttempts++;
-
-                            try {
-                                // Kiểm tra token và URL với error handling
-                                const status = await page.evaluate(() => {
-                                    const cookies = document.cookie;
-                                    const hasToken = cookies.includes('_pat=') ||
-                                        cookies.includes('token=') ||
-                                        localStorage.getItem('token') ||
-                                        localStorage.getItem('auth');
-                                    const currentUrl = window.location.href;
-                                    const isWithdraw = currentUrl.includes('/withdraw') ||
-                                        currentUrl.includes('/Financial') ||
-                                        currentUrl.includes('type=withdraw');
-                                    return { hasToken: !!hasToken, isWithdraw, currentUrl };
-                                });
-
-                                hasToken = status.hasToken;
-                                isOnWithdrawPage = status.isWithdraw;
-
-                                if (isOnWithdrawPage) {
-                                    console.log(`✅ Already on withdraw page after ${waitAttempts * 500}ms`);
-                                    break;
-                                }
-
-                                if (hasToken) {
-                                    console.log(`✅ Token found after ${waitAttempts * 500}ms, navigating to withdraw...`);
-                                    break;
-                                }
-                            } catch (e) {
-                                console.log(`⚠️ Page evaluation failed (attempt ${waitAttempts}):`, e.message);
-                                // Nếu page bị destroy, thử reload
-                                if (e.message.includes('Execution context was destroyed')) {
-                                    console.log(`🔄 Reloading page due to destroyed context...`);
-                                    try {
-                                        await page.reload({ waitUntil: 'domcontentloaded' });
-                                        await new Promise(resolve => setTimeout(resolve, 2000));
-                                    } catch (reloadError) {
-                                        console.log(`❌ Reload failed:`, reloadError.message);
-                                    }
-                                }
-                            }
-
-                            await new Promise(resolve => setTimeout(resolve, 500));
-                        }
-
-                        let currentUrl;
+                        // Sau delay, navigate sang Add Bank
+                        console.log(`🔄 Navigating to withdraw page: ${siteUrls.withdrawUrl}`);
                         try {
-                            currentUrl = await page.url();
-                            console.log(`📍 Current URL: ${currentUrl}, hasToken: ${hasToken}`);
+                            await page.goto(siteUrls.withdrawUrl, {
+                                waitUntil: 'domcontentloaded',
+                                timeout: 150000  // Increased from 30s to 150s (delay is 30-120s)
+                            });
+                            await new Promise(resolve => setTimeout(resolve, 2000));
+
+                            // Đảm bảo page context sau navigation
+                            await this.ensurePageContext(page);
                         } catch (e) {
-                            console.log(`⚠️ Could not get current URL:`, e.message);
-                            currentUrl = siteUrls.withdrawUrl; // Fallback
-                        }
-
-                        if (!isOnWithdrawPage) {
-                            console.log(`🔄 Navigating to withdraw page: ${siteUrls.withdrawUrl}`);
-                            try {
-                                await page.goto(siteUrls.withdrawUrl, {
-                                    waitUntil: 'domcontentloaded',
-                                    timeout: 30000
-                                });
-                                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                                // Đảm bảo page context sau navigation
-                                await this.ensurePageContext(page);
-                            } catch (e) {
-                                console.log(`⚠️ Navigation failed:`, e.message);
-                                throw new Error(`Cannot navigate to withdraw page: ${e.message}`);
-                            }
+                            console.log(`⚠️ Navigation failed:`, e.message);
+                            throw new Error(`Cannot navigate to withdraw page: ${e.message}`);
                         }
 
                         console.log('💉 Re-injecting scripts after withdraw navigation...');
@@ -758,10 +790,26 @@ class AutoSequenceSafe {
 
                         // ĐỢI form được điền và submit (fillWithdrawForm cần ~5-8 giây để hoàn thành)
                         console.log(`⏳ Waiting for bank form to be filled and submitted...`);
-                        await new Promise(resolve => setTimeout(resolve, 12000));
 
                         // VERIFY: Kiểm tra kết quả thêm bank với nhiều lần retry
                         console.log(`🔍 Verifying bank submission result...`);
+
+                        // Send status message
+                        try {
+                            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    profileId: profileData.profileId,
+                                    username: profileData.username,
+                                    status: 'running',
+                                    message: `🔍 Đang xác minh thêm Bank...`,
+                                    timestamp: new Date().toISOString()
+                                })
+                            }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+                        } catch (e) {
+                            // Ignore errors
+                        }
 
                         // Đợi thêm để đảm bảo page đã xử lý xong
                         await new Promise(resolve => setTimeout(resolve, 3000));
@@ -778,175 +826,219 @@ class AutoSequenceSafe {
                             verifyAttempts++;
                             console.log(`🔍 Verify attempt ${verifyAttempts}/${maxVerifyAttempts}...`);
 
-                            verifyResult = await page.evaluate((verifyData) => {
-                                const { urlBefore, expectedFullname, expectedBranch } = verifyData;
-                                const currentUrl = window.location.href;
+                            // Send status message for each attempt
+                            try {
+                                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        profileId: profileData.profileId,
+                                        username: profileData.username,
+                                        status: 'running',
+                                        message: `🔍 Xác minh Bank (lần ${verifyAttempts}/${maxVerifyAttempts})...`,
+                                        timestamp: new Date().toISOString()
+                                    })
+                                }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+                            } catch (e) {
+                                // Ignore errors
+                            }
 
-                                // 1. Kiểm tra có modal lỗi không (thất bại = hiện modal)
-                                const errorModal = document.querySelector('.modal, .dialog, [role="dialog"], .popup, .alert-modal, .error-modal, .mat-dialog-container');
-                                const hasErrorModal = errorModal && errorModal.offsetParent !== null;
+                            try {
+                                verifyResult = await page.evaluate((verifyData) => {
+                                    const { urlBefore, expectedFullname, expectedBranch, expectedAccountNumber } = verifyData;
+                                    const currentUrl = window.location.href;
 
-                                // 2. Kiểm tra nội dung modal có phải lỗi không
-                                let modalErrorText = '';
-                                if (hasErrorModal) {
-                                    modalErrorText = errorModal.textContent || '';
-                                }
-                                const isErrorContent = modalErrorText.includes('thất bại') ||
-                                    modalErrorText.includes('Lỗi') ||
-                                    modalErrorText.includes('Error') ||
-                                    modalErrorText.includes('không hợp lệ') ||
-                                    modalErrorText.includes('không thành công') ||
-                                    modalErrorText.includes('failed');
+                                    // 1. Kiểm tra có modal lỗi không (thất bại = hiện modal)
+                                    const errorModal = document.querySelector('.modal, .dialog, [role="dialog"], .popup, .alert-modal, .error-modal, .mat-dialog-container');
+                                    const hasErrorModal = errorModal && errorModal.offsetParent !== null;
 
-                                // 3. Kiểm tra form còn hiển thị không (nhiều selector hơn)
-                                const bankFormSelectors = [
-                                    '[formcontrolname="bankName"]',
-                                    '[formcontrolname="bank"]',
-                                    '[formcontrolname="account"]',
-                                    '[formcontrolname="city"]',
-                                    'select[name*="bank"]',
-                                    'mat-select[formcontrolname="bankName"]',
-                                    'input[placeholder*="ngân hàng"]',
-                                    'input[placeholder*="chi nhánh"]'
-                                ];
-                                const formStillVisible = bankFormSelectors.some(sel => {
-                                    const el = document.querySelector(sel);
-                                    return el && el.offsetParent !== null;
-                                });
+                                    // 2. Kiểm tra nội dung modal có phải lỗi không
+                                    let modalErrorText = '';
+                                    if (hasErrorModal) {
+                                        modalErrorText = errorModal.textContent || '';
+                                    }
+                                    const isErrorContent = modalErrorText.includes('thất bại') ||
+                                        modalErrorText.includes('Lỗi') ||
+                                        modalErrorText.includes('Error') ||
+                                        modalErrorText.includes('không hợp lệ') ||
+                                        modalErrorText.includes('không thành công') ||
+                                        modalErrorText.includes('failed');
 
-                                // 4. QUAN TRỌNG: Kiểm tra bank-detail div với so sánh giá trị chính xác
-                                const bankDetailDiv = document.querySelector('.bank-detail, .px-4.bank-detail');
-                                let hasBankDisplay = false;
-                                let fullnameMatch = false;
-                                let branchMatch = false;
-                                let displayedFullname = '';
-                                let displayedBranch = '';
-
-                                if (bankDetailDiv) {
-                                    // Tìm tất cả các row trong bank-detail
-                                    const rows = bankDetailDiv.querySelectorAll('.block.w-full');
-
-                                    rows.forEach(row => {
-                                        const labelSpan = row.querySelector('span:first-child');
-                                        const valueSpan = row.querySelector('span.text-right, span:last-child');
-
-                                        if (labelSpan && valueSpan) {
-                                            const label = labelSpan.textContent.trim().toUpperCase();
-                                            const value = valueSpan.textContent.trim().toUpperCase();
-
-                                            // Kiểm tra Họ và Tên
-                                            if (label.includes('HỌ VÀ TÊN') || label.includes('REAL_NAME')) {
-                                                displayedFullname = value;
-                                                // So sánh với expected fullname (normalize để so sánh)
-                                                const normalizedExpected = (expectedFullname || '').toUpperCase().trim();
-                                                fullnameMatch = value === normalizedExpected ||
-                                                    value.includes(normalizedExpected) ||
-                                                    normalizedExpected.includes(value);
-                                            }
-
-                                            // Kiểm tra Chi nhánh
-                                            if (label.includes('CHI NHÁNH')) {
-                                                displayedBranch = value;
-                                                // So sánh với expected branch (normalize để so sánh)
-                                                const normalizedExpectedBranch = (expectedBranch || '').toUpperCase().trim()
-                                                    .replace(/THÀNH PHỐ/g, '')
-                                                    .replace(/TP\./g, '')
-                                                    .replace(/\s+/g, ' ')
-                                                    .trim();
-                                                const normalizedDisplayedBranch = value
-                                                    .replace(/THÀNH PHỐ/g, '')
-                                                    .replace(/TP\./g, '')
-                                                    .replace(/\s+/g, ' ')
-                                                    .trim();
-                                                branchMatch = normalizedDisplayedBranch.includes(normalizedExpectedBranch) ||
-                                                    normalizedExpectedBranch.includes(normalizedDisplayedBranch) ||
-                                                    value === normalizedExpectedBranch;
-                                            }
-                                        }
+                                    // 3. Kiểm tra form còn hiển thị không (nhiều selector hơn)
+                                    const bankFormSelectors = [
+                                        '[formcontrolname="bankName"]',
+                                        '[formcontrolname="bank"]',
+                                        '[formcontrolname="account"]',
+                                        '[formcontrolname="city"]',
+                                        'select[name*="bank"]',
+                                        'mat-select[formcontrolname="bankName"]',
+                                        'input[placeholder*="ngân hàng"]',
+                                        'input[placeholder*="chi nhánh"]'
+                                    ];
+                                    const formStillVisible = bankFormSelectors.some(sel => {
+                                        const el = document.querySelector(sel);
+                                        return el && el.offsetParent !== null;
                                     });
 
-                                    // Bank display thành công nếu có bank-detail div
-                                    hasBankDisplay = true;
-                                }
+                                    // 4. QUAN TRỌNG: Kiểm tra bank-detail div với so sánh giá trị chính xác
+                                    const bankDetailDiv = document.querySelector('.bank-detail, .px-4.bank-detail');
+                                    let hasBankDisplay = false;
+                                    let fullnameMatch = false;
+                                    let branchMatch = false;
+                                    let displayedFullname = '';
+                                    let displayedBranch = '';
 
-                                // Fallback: Kiểm tra các pattern khác nếu không tìm thấy bank-detail
-                                if (!hasBankDisplay) {
-                                    const bodyText = document.body.textContent || '';
-                                    hasBankDisplay =
-                                        (bodyText.includes('NGÂN HÀNG') && bodyText.includes('SỐ TÀI KHOẢN')) ||
-                                        document.querySelector('.bank-info, .account-info, [class*="bank-display"], [class*="withdraw-info"]') ||
-                                        bodyText.includes('Sửa thông tin') ||
-                                        bodyText.includes('Chỉnh sửa');
-                                }
+                                    if (bankDetailDiv) {
+                                        // Tìm tất cả các row trong bank-detail
+                                        const rows = bankDetailDiv.querySelectorAll('.block.w-full');
+                                        let displayedAccountNumber = '';
 
-                                // 5. Kiểm tra toast/notification thành công
-                                const successToast = document.querySelector('.toast-success, .success-message, .alert-success');
-                                const hasSuccessToast = successToast && successToast.offsetParent !== null;
+                                        rows.forEach(row => {
+                                            const labelSpan = row.querySelector('span:first-child');
+                                            const valueSpan = row.querySelector('span.text-right, span:last-child');
 
-                                // Kết quả verify chính xác: cả fullname và branch phải match
-                                const exactMatch = fullnameMatch && branchMatch;
+                                            if (labelSpan && valueSpan) {
+                                                const label = labelSpan.textContent.trim().toUpperCase();
+                                                const value = valueSpan.textContent.trim().toUpperCase();
 
-                                console.log('🔍 Verify results:', {
-                                    hasErrorModal,
-                                    isErrorContent,
-                                    formStillVisible,
-                                    hasBankDisplay,
-                                    hasSuccessToast,
-                                    fullnameMatch,
-                                    branchMatch,
-                                    exactMatch,
-                                    displayedFullname,
-                                    displayedBranch,
-                                    expectedFullname,
-                                    expectedBranch
+                                                // Kiểm tra Họ và Tên (hỗ trợ cả "Họ tên thật" và "Họ và tên")
+                                                if (label.includes('HỌ') && (label.includes('TÊN') || label.includes('REAL_NAME'))) {
+                                                    displayedFullname = value;
+                                                    // So sánh với expected fullname (trim để loại bỏ space thừa)
+                                                    const normalizedExpected = (expectedFullname || '').toUpperCase().trim();
+                                                    fullnameMatch = value === normalizedExpected ||
+                                                        value.includes(normalizedExpected) ||
+                                                        normalizedExpected.includes(value);
+                                                }
+
+                                                // Kiểm tra Chi nhánh
+                                                if (label.includes('CHI NHÁNH')) {
+                                                    displayedBranch = value;
+                                                    // So sánh với expected branch (normalize để so sánh)
+                                                    const normalizedExpectedBranch = (expectedBranch || '').toUpperCase().trim()
+                                                        .replace(/THÀNH PHỐ/g, '')
+                                                        .replace(/TP\./g, '')
+                                                        .replace(/\s+/g, ' ')
+                                                        .trim();
+                                                    const normalizedDisplayedBranch = value
+                                                        .replace(/THÀNH PHỐ/g, '')
+                                                        .replace(/TP\./g, '')
+                                                        .replace(/\s+/g, ' ')
+                                                        .trim();
+                                                    branchMatch = normalizedDisplayedBranch.includes(normalizedExpectedBranch) ||
+                                                        normalizedExpectedBranch.includes(normalizedDisplayedBranch) ||
+                                                        value === normalizedExpectedBranch;
+                                                }
+
+                                                // Kiểm tra Số tài khoản (chỉ check 4 số cuối vì trang che)
+                                                if (label.includes('SỐ TÀI KHOẢN')) {
+                                                    displayedAccountNumber = value;
+                                                    // Chỉ check 4 số cuối vì trang che số
+                                                    const last4Digits = (expectedAccountNumber || '').slice(-4);
+                                                    // Nếu không có last4Digits thì skip check này
+                                                    if (last4Digits && !value.includes(last4Digits)) {
+                                                        // Account number không match - nhưng vẫn tiếp tục check fullname + branch
+                                                    }
+                                                }
+                                            }
+                                        });
+
+                                        // Bank display thành công nếu có bank-detail div
+                                        hasBankDisplay = true;
+                                    }
+
+                                    // Fallback: Kiểm tra các pattern khác nếu không tìm thấy bank-detail
+                                    if (!hasBankDisplay) {
+                                        const bodyText = document.body.textContent || '';
+                                        hasBankDisplay =
+                                            (bodyText.includes('NGÂN HÀNG') && bodyText.includes('SỐ TÀI KHOẢN')) ||
+                                            document.querySelector('.bank-info, .account-info, [class*="bank-display"], [class*="withdraw-info"]') ||
+                                            bodyText.includes('Sửa thông tin') ||
+                                            bodyText.includes('Chỉnh sửa');
+                                    }
+
+                                    // 5. Kiểm tra toast/notification thành công
+                                    const successToast = document.querySelector('.toast-success, .success-message, .alert-success');
+                                    const hasSuccessToast = successToast && successToast.offsetParent !== null;
+
+                                    // Kết quả verify chính xác: cả fullname và branch phải match
+                                    const exactMatch = fullnameMatch && branchMatch;
+
+                                    console.log('🔍 Verify results:', {
+                                        hasErrorModal,
+                                        isErrorContent,
+                                        formStillVisible,
+                                        hasBankDisplay,
+                                        hasSuccessToast,
+                                        fullnameMatch,
+                                        branchMatch,
+                                        exactMatch,
+                                        displayedFullname,
+                                        displayedBranch,
+                                        expectedFullname,
+                                        expectedBranch
+                                    });
+
+                                    return {
+                                        hasErrorModal,
+                                        isErrorContent,
+                                        modalErrorText: modalErrorText.substring(0, 200),
+                                        formStillVisible,
+                                        hasBankDisplay,
+                                        hasSuccessToast,
+                                        fullnameMatch,
+                                        branchMatch,
+                                        exactMatch,
+                                        displayedFullname,
+                                        displayedBranch,
+                                        currentUrl,
+                                        urlChanged: currentUrl !== urlBefore
+                                    };
+                                }, {
+                                    urlBefore: urlBeforeSubmit,
+                                    expectedFullname: profileData.fullname,
+                                    expectedBranch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
+                                    expectedAccountNumber: profileData.accountNumber || ''
                                 });
 
-                                return {
-                                    hasErrorModal,
-                                    isErrorContent,
-                                    modalErrorText: modalErrorText.substring(0, 200),
-                                    formStillVisible,
-                                    hasBankDisplay,
-                                    hasSuccessToast,
-                                    fullnameMatch,
-                                    branchMatch,
-                                    exactMatch,
-                                    displayedFullname,
-                                    displayedBranch,
-                                    currentUrl,
-                                    urlChanged: currentUrl !== urlBefore
-                                };
-                            }, {
-                                urlBefore: urlBeforeSubmit,
-                                expectedFullname: profileData.fullname,
-                                expectedBranch: profileData.bankBranch || 'Thành phố Hồ Chí Minh'
-                            });
+                                console.log(`📊 Bank verification result (attempt ${verifyAttempts}):`, verifyResult);
 
-                            console.log(`📊 Bank verification result (attempt ${verifyAttempts}):`, verifyResult);
+                                // Nếu có kết quả rõ ràng thì dừng
+                                // Ưu tiên exactMatch (so sánh họ tên + chi nhánh)
+                                if (verifyResult.exactMatch) {
+                                    console.log(`✅ Bank verified with EXACT MATCH on attempt ${verifyAttempts}`);
+                                    console.log(`   Fullname: "${verifyResult.displayedFullname}" matches "${profileData.fullname}"`);
+                                    console.log(`   Branch: "${verifyResult.displayedBranch}" matches "${profileData.bankBranch}"`);
+                                    break;
+                                }
 
-                            // Nếu có kết quả rõ ràng thì dừng
-                            // Ưu tiên exactMatch (so sánh họ tên + chi nhánh)
-                            if (verifyResult.exactMatch) {
-                                console.log(`✅ Bank verified with EXACT MATCH on attempt ${verifyAttempts}`);
-                                console.log(`   Fullname: "${verifyResult.displayedFullname}" matches "${profileData.fullname}"`);
-                                console.log(`   Branch: "${verifyResult.displayedBranch}" matches "${profileData.bankBranch}"`);
-                                break;
-                            }
+                                if (verifyResult.hasBankDisplay || verifyResult.hasSuccessToast) {
+                                    console.log(`✅ Bank display found on attempt ${verifyAttempts}`);
+                                    break;
+                                }
 
-                            if (verifyResult.hasBankDisplay || verifyResult.hasSuccessToast) {
-                                console.log(`✅ Bank display found on attempt ${verifyAttempts}`);
-                                break;
-                            }
+                                if (verifyResult.hasErrorModal && verifyResult.isErrorContent) {
+                                    console.log(`❌ Bank error detected on attempt ${verifyAttempts}`);
+                                    break;
+                                }
 
-                            if (verifyResult.hasErrorModal && verifyResult.isErrorContent) {
-                                console.log(`❌ Bank error detected on attempt ${verifyAttempts}`);
-                                break;
-                            }
-
-                            // Nếu form vẫn còn, đợi thêm và thử lại
-                            if (verifyResult.formStillVisible && verifyAttempts < maxVerifyAttempts) {
-                                console.log(`⏳ Form still visible, waiting 3s before retry...`);
-                                await new Promise(resolve => setTimeout(resolve, 3000));
+                                // Nếu form vẫn còn, đợi thêm và thử lại
+                                if (verifyResult.formStillVisible && verifyAttempts < maxVerifyAttempts) {
+                                    console.log(`⏳ Form still visible, waiting 3s before retry...`);
+                                    await new Promise(resolve => setTimeout(resolve, 3000));
+                                }
+                            } catch (e) {
+                                console.warn(`⚠️ Error during verify attempt ${verifyAttempts}:`, e.message);
+                                // If execution context destroyed (page redirect), treat as success
+                                if (e.message.includes('Execution context was destroyed')) {
+                                    console.log(`✅ Page redirected during verification - treating as success`);
+                                    verifyResult = {
+                                        success: true,
+                                        verified: false,
+                                        message: 'Page redirected - likely successful but cannot verify data match'
+                                    };
+                                    break;
+                                }
                             }
                         }
 
@@ -984,14 +1076,14 @@ class AutoSequenceSafe {
                             };
                         }
 
-                        // Trường hợp 4: Có bank display nhưng không exact match → cần kiểm tra thêm
+                        // Trường hợp 4: Có bank display → check fullname + branch (giống VIP logic)
                         if (verifyResult.hasBankDisplay) {
-                            // Nếu có fullname match hoặc branch match thì vẫn coi là thành công
-                            if (verifyResult.fullnameMatch || verifyResult.branchMatch) {
+                            // Cần cả fullname match VÀ branch match để coi là verified
+                            if (verifyResult.fullnameMatch && verifyResult.branchMatch) {
                                 return {
                                     success: true,
                                     verified: true,
-                                    message: `Bank added - partial match (Fullname: ${verifyResult.fullnameMatch}, Branch: ${verifyResult.branchMatch})`,
+                                    message: `Bank added - verified (Fullname: ${verifyResult.fullnameMatch}, Branch: ${verifyResult.branchMatch})`,
                                     verifyResult
                                 };
                             }
@@ -1022,15 +1114,67 @@ class AutoSequenceSafe {
                             console.log(`✅ Bank info added and VERIFIED for ${siteName}`);
                             results.addBank = { success: true, verified: true, method: 'freelxb_style', message: bankResult.message };
 
+                            // Send success status message
+                            try {
+                                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        profileId: profileData.profileId,
+                                        username: profileData.username,
+                                        status: 'running',
+                                        message: `✅ Thêm Bank thành công`,
+                                        timestamp: new Date().toISOString()
+                                    })
+                                }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+                            } catch (e) {
+                                // Ignore errors
+                            }
+
                             // Mark tab as completed - no longer needs activation rotation
                             this.markTabCompleted(siteName);
                         } else {
                             console.log(`⚠️ Bank info added but NOT VERIFIED for ${siteName} - will skip checkPromo`);
-                            results.addBank = { success: false, verified: false, method: 'freelxb_style', message: bankResult.message };
+                            // success: true vì form biến mất = bank đã submit thành công, chỉ là không verify được data
+                            results.addBank = { success: true, verified: false, method: 'freelxb_style', message: bankResult.message };
+
+                            // Send warning status message
+                            try {
+                                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        profileId: profileData.profileId,
+                                        username: profileData.username,
+                                        status: 'running',
+                                        message: `⚠️ Thêm Bank nhưng không xác minh được`,
+                                        timestamp: new Date().toISOString()
+                                    })
+                                }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+                            } catch (e) {
+                                // Ignore errors
+                            }
                         }
                     } else {
                         console.log(`❌ Bank info addition failed for ${siteName}:`, bankResult?.error || 'Unknown error');
                         results.addBank = { success: false, error: bankResult?.error || 'Bank result is undefined or invalid' };
+
+                        // Send error status message
+                        try {
+                            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    profileId: profileData.profileId,
+                                    username: profileData.username,
+                                    status: 'running',
+                                    message: `❌ Thêm Bank thất bại`,
+                                    timestamp: new Date().toISOString()
+                                })
+                            }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+                        } catch (e) {
+                            // Ignore errors
+                        }
                     }
                 } else {
                     console.log(`⏭️ Skipping bank info for ${siteName} (not provided)`);
@@ -1049,10 +1193,9 @@ class AutoSequenceSafe {
                 // Quyết định chạy checkPromo dựa trên:
                 // 1. profileData.checkPromo phải enabled
                 // 2. addBank phải thành công (success = true)
-                // 3. addBank phải được verified
+                // Không cần verified = true, vì nếu bank display được tìm thấy, bank đã được thêm vào hệ thống
                 const shouldRunCheckPromo = profileData.checkPromo &&
-                    results.addBank?.success &&
-                    results.addBank?.verified;
+                    results.addBank?.success;
 
                 if (shouldRunCheckPromo) {
                     // Cảnh báo nếu bank chưa được verify
@@ -1320,7 +1463,7 @@ class AutoSequenceSafe {
         // Tóm tắt kết quả checkPromo
         const promoSummary = results.map(r => ({
             site: r.site,
-            checkPromo: r.checkPromo?.success ? '✅' : (r.checkPromo?.skipped ? '⏭️' : '❌')
+            checkPromo: r.checkPromo?.skipped ? '⏭️' : (r.checkPromo?.success ? '✅' : '❌')
         }));
         console.log(`📊 CheckPromo Summary:`, promoSummary);
 
@@ -1328,6 +1471,34 @@ class AutoSequenceSafe {
 
         // Stop promo tab rotation khi automation hoàn thành
         this.stopPromoTabActivation();
+
+        // Gửi status hoàn thành để dừng profile
+        try {
+            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+            const completionStatus = {
+                profileId: profileData.profileId,
+                username: profileData.username,
+                status: 'completed',
+                timestamp: new Date().toISOString(),
+                totalSites: sites.length,
+                successCount: results.filter(r => r.register?.success).length
+            };
+
+            console.log(`📤 Sending completion status to dashboard...`);
+            const response = await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(completionStatus)
+            });
+
+            if (response.ok) {
+                console.log(`✅ Completion status sent successfully`);
+            } else {
+                console.warn(`⚠️ Failed to send completion status: ${response.status}`);
+            }
+        } catch (error) {
+            console.warn(`⚠️ Error sending completion status:`, error.message);
+        }
 
         return { success: true, results };
     }

@@ -102,6 +102,10 @@ function openFormModal() {
     if (window.loadProfilesCarousel) {
         window.loadProfilesCarousel();
     }
+    // Reload sites from server (for NOHU tool)
+    if (window.renderNohuSites) {
+        window.renderNohuSites();
+    }
 }
 
 function closeFormModal() {
@@ -210,7 +214,7 @@ function showToast(type, title, message) {
             text: `${title}: ${message}`,
             duration: 3000,
             gravity: "top",
-            position: "right",
+            position: "center",
             backgroundColor: type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#6366f1'
         }).showToast();
     } else {

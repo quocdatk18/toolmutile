@@ -34,7 +34,6 @@ class CustomerMachineManager {
                             customer.machineIdSetAt = customer.updatedAt || customer.createdAt;
                         }
 
-                        console.log(`🔧 Migration: Set machineIdLocked=${customer.machineIdLocked} for ${customerName}`);
                     }
                 });
 
@@ -87,7 +86,6 @@ class CustomerMachineManager {
                 this.customers[customerName].machineId = machineId;
                 this.customers[customerName].machineIdLocked = true;
                 this.customers[customerName].machineIdSetAt = now;
-                console.log(`🔒 Machine ID locked for customer: ${customerName}`);
             } else if (!isMachineIdLocked) {
                 // Allow update if not locked yet
                 this.customers[customerName].machineId = machineId;
@@ -158,7 +156,6 @@ class CustomerMachineManager {
                         ? stat.birthtime.getTime()
                         : stat.mtime.getTime();
                     customer.packageCreatedTime = createdTime;
-                    console.log(`📦 ${customer.customerName}: birthtime=${stat.birthtime}, mtime=${stat.mtime}`);
                 } else {
                     // Nếu package không tồn tại, dùng createdAt từ JSON
                     customer.packageCreatedTime = new Date(customer.createdAt).getTime();
@@ -212,7 +209,6 @@ class CustomerMachineManager {
         customer.unlockReason = adminReason;
 
         this.saveCustomers();
-        console.log(`🔓 Machine ID unlocked for customer: ${customerName}. Reason: ${adminReason}`);
         return true;
     }
 
@@ -263,10 +259,8 @@ class CustomerMachineManager {
             // Xóa key cũ nhất cho đến khi còn 10 key
             while (customer.licenseHistory.length > 10) {
                 const removedKey = customer.licenseHistory.shift();
-                console.log(`🗑️ Auto-removed old license key for ${customerName}: ${removedKey.licenseKey.substring(0, 20)}... (created: ${removedKey.createdAt})`);
             }
 
-            console.log(`📋 License history for ${customerName}: ${customer.licenseHistory.length} keys remaining`);
         }
 
         this.saveCustomers();

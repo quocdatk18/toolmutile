@@ -102,6 +102,10 @@ function openFormModal() {
     if (window.loadProfilesCarousel) {
         window.loadProfilesCarousel();
     }
+    // Reload sites from server (for NOHU tool)
+    if (window.renderNohuSites) {
+        window.renderNohuSites();
+    }
 }
 
 function closeFormModal() {

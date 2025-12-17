@@ -14,7 +14,6 @@ const banksScript = fs.readFileSync(path.join(__dirname, 'tools/nohu-tool/banks.
 const AutoSequence = require('./tools/nohu-tool/auto-sequence');
 
 async function testSafeMode() {
-    console.log('🛡️ Testing Safe Mode - Tab should NOT close automatically...\n');
 
     const browser = await puppeteer.launch({
         headless: false,
@@ -63,19 +62,11 @@ async function testSafeMode() {
             }
         ];
 
-        console.log('🛡️ Starting Safe Mode test...\n');
-        console.log('📋 Expected behavior:');
-        console.log('  ✅ Tab should open and stay open');
         console.log('  ✅ Detailed error logs if something fails');
-        console.log('  ✅ Visual indicator when complete');
-        console.log('  ✅ NO automatic tab closing\n');
 
         // Test single site
         const result = await autoSequence.runSequenceForSite(browser, testSites[0], profileData);
 
-        console.log('\n📊 Safe Mode Test Results:');
-        console.log('==========================');
-        console.log(`Site: ${result.site}`);
         console.log(`Register: ${result.register.success ? '✅ SUCCESS' : '❌ FAILED'}`);
         if (result.register.error) {
             console.log(`  Error: ${result.register.error}`);
@@ -83,19 +74,8 @@ async function testSafeMode() {
         console.log(`Login: ${result.login.success ? '✅ SUCCESS' : '❌ FAILED'}`);
         console.log(`Add Bank: ${result.addBank.success ? '✅ SUCCESS' : '❌ FAILED'}`);
 
-        console.log('\n🎯 Safe Mode Test Summary:');
         console.log(`Tab Status: ${result.register.success ? '✅ OPEN (Success)' : '✅ OPEN (Failed but safe)'}`);
-        console.log('✅ No automatic tab closing detected');
         console.log('✅ Error handling working correctly');
-
-        console.log('\n📝 Instructions:');
-        console.log('1. Check the browser tab - it should still be open');
-        console.log('2. Look for the completion indicator in top-right corner');
-        console.log('3. Check browser console for detailed logs');
-        console.log('4. Tab will remain open until you manually close it');
-
-        console.log('\n⏳ Keeping browser open for 60 seconds for inspection...');
-        console.log('   You can manually close the browser when done.');
 
         // Keep browser open for inspection
         await new Promise(resolve => setTimeout(resolve, 60000));

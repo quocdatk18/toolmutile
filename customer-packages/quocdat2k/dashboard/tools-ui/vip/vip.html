@@ -9,6 +9,68 @@
 <!-- Load API Key Manager -->
 <script src="core/api-key-manager.js"></script>
 
+<!-- Load VIP Config -->
+<script>
+    let vipConfig = null;
+    let configLoaded = false;
+
+    // Load config from file
+    async function loadVipConfig() {
+        try {
+            const response = await fetch('tools-ui/vip/vip-config.json');
+            vipConfig = await response.json();
+            configLoaded = true;
+            console.log('✅ VIP Config loaded:', vipConfig);
+            // Trigger any pending operations
+            if (window.pendingCategoryLoad) {
+                loadCategoryManagementContent(window.pendingCategoryLoad);
+                window.pendingCategoryLoad = null;
+            }
+        } catch (error) {
+            console.error('❌ Failed to load VIP config:', error);
+            // Fallback to default config
+            vipConfig = {
+                categories: [
+                    { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
+                    { id: 'abcvip', icon: '🎲', name: 'ABCVIP', color: '#0066cc' },
+                    { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
+                    { id: 'kjc', icon: '🎪', name: 'KJC', color: '#cc0000' }
+                ],
+                sites: {
+                    'okvip': [
+                        { name: 'Hi88', registerUrl: 'https://m.www-24h-com-vn-com.com/Account/Register', checkPromoUrl: 'https://tangqua88.com/?promo_id=KM58' },
+                        { name: 'F8BET', registerUrl: 'https://m.jsdujkg8djjkuqw8czbm.com/Account/Register', checkPromoUrl: 'https://ttkm-f8bet01.pages.dev/?promo_id=KM68' },
+                        { name: 'SHBET', registerUrl: 'https://m.djifshuie89shjdhsdxbvckrgio.com/Account/Register', checkPromoUrl: 'https://khuyenmai-shbet02.pages.dev/?promo_id=SH57K' },
+                        { name: 'NEW88', registerUrl: 'https://m.dxiidnc84gkoopfcmbpwhsgf.com/Account/Register', checkPromoUrl: 'https://khuyenmai-new88okvip1.pages.dev/?promo_id=N58' },
+                        { name: 'MB66', registerUrl: 'https://m.wtyurfuijkxcvklrhyli3imxjuuflegmgkiow3i.com/Account/Register', checkPromoUrl: 'https://ttkm-mb66okvip02.pages.dev/?promo_id=FREE66' },
+                        { name: '789BET', registerUrl: 'https://m.hsdh99hjsbcnjiufkxuuwvg.com/Account/Register', checkPromoUrl: 'https://ttkm789bet04.pages.dev/khuyenmai/?promo_id=FR58K' }
+                    ],
+                    'abcvip': [
+                        { name: 'U888', registerUrl: 'https://m.u888at.link/?f=2551606&app=1/Account/Register', checkPromoUrl: 'https://88u888.club/' },
+                        { name: 'J88', registerUrl: 'https://m.j859.xyz/?f=4556781&app=1/Account/Register', checkPromoUrl: 'https://j8j88.com/' },
+                        { name: 'ABC8', registerUrl: 'https://m.abc11.link/?f=109114&app=1/Account/Register', checkPromoUrl: 'https://www.88abc8.cc/' },
+                        { name: '888clb', registerUrl: 'https://88clb2jt.buzz/?f=889534&app=1/Account/Register', checkPromoUrl: 'https://88clb88.xyz/' }
+                    ],
+                    'jun88': [
+                        { name: 'Jun881', registerUrl: 'https://jun881.com/register', checkPromoUrl: 'https://jun881.com/promo' },
+                        { name: 'Jun882', registerUrl: 'https://jun882.com/register', checkPromoUrl: 'https://jun882.com/promo' },
+                        { name: 'Jun883', registerUrl: 'https://jun883.com/register', checkPromoUrl: 'https://jun883.com/promo' }
+                    ],
+                    'kjc': [
+                        { name: 'KJC1', registerUrl: 'https://kjc1.com/register', checkPromoUrl: 'https://kjc1.com/promo' },
+                        { name: 'KJC2', registerUrl: 'https://kjc2.com/register', checkPromoUrl: 'https://kjc2.com/promo' },
+                        { name: 'KJC3', registerUrl: 'https://kjc3.com/register', checkPromoUrl: 'https://kjc3.com/promo' }
+                    ]
+                }
+            };
+            configLoaded = true;
+        }
+    }
+
+    // Load config immediately
+    loadVipConfig();
+</script>
+
 <!-- VIP Auto Tool UI -->
 <div class="vip-tool-container">
 
@@ -34,6 +96,7 @@
                     <span class="start-icon">▶️</span>
                     <span class="start-text">START</span>
                 </button>
+
             </div>
         </div>
 
@@ -107,6 +170,12 @@
                     <div class="modal-tab" data-tab="promo" onclick="switchModalTab('promo')">
                         🎁 Check KM
                     </div>
+                    <!-- Category Badge -->
+                    <div id="categoryBadge"
+                        style="margin-left: auto; padding: 6px 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                        <span id="categoryIcon">🎰</span>
+                        <span id="categoryName">OKVIP</span>
+                    </div>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <button class="btn btn-warning btn-sm" onclick="clearAllRunningStatuses()"
@@ -146,11 +215,12 @@
                 </div>
             </div>
 
-            <!-- Modal Body - 1/3 Left + 2/3 Right Layout -->
+            <!-- Modal Body -->
             <div class="modal-body-form" id="modalBodyForm">
-                <!-- LEFT COLUMN (1/3): Category & Sites Selection -->
+
+                <!-- LEFT COLUMN: Sites Selection -->
                 <div class="modal-sites-column">
-                    <!-- Category Selection -->
+                    <!-- Category Selection (VIP-specific) -->
                     <div id="categorySelector"
                         style="margin-bottom: 12px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
                         <h4 style="margin: 0 0 6px 0; color: #4a5568; font-size: 12px; font-weight: 600;">🎯 Chọn
@@ -195,23 +265,23 @@
                             📱 Chọn Sites
                         </h4>
                         <div class="sites-grid" id="vipSitesGrid"
-                            style="grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 10px;">
                             <!-- Sites will be loaded dynamically -->
                         </div>
-                        <div class="site-actions"
-                            style="gap: 8px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr;">
-                            <button class="btn btn-sm" onclick="selectAllVipSites()"
-                                style="padding: 10px 16px; font-size: 13px; font-weight: 700; height: 40px;">✅ Chọn Tất
-                                Cả</button>
-                            <button class="btn btn-sm" onclick="deselectAllVipSites()"
-                                style="padding: 10px 16px; font-size: 13px; font-weight: 700; height: 40px;">❌ Bỏ
-                                Chọn</button>
-                        </div>
+                    </div>
+                    <div class="site-actions"
+                        style="gap: 8px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr;">
+                        <button class="btn btn-sm" onclick="selectAllVipSites()"
+                            style="padding: 10px 16px; font-size: 13px; font-weight: 700; height: 40px;">✅ Chọn Tất
+                            Cả</button>
+                        <button class="btn btn-sm" onclick="deselectAllVipSites()"
+                            style="padding: 10px 16px; font-size: 13px; font-weight: 700; height: 40px;">❌ Bỏ
+                            Chọn</button>
                     </div>
 
-                    <!-- Execution Mode Settings -->
-                    <div id="executionModeSection"
-                        style="margin-bottom: 12px; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <!-- Execution Mode -->
+                    <div
+                        style="padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
                         <h4 style="margin: 0 0 10px 0; color: #4a5568; font-size: 13px; font-weight: 600;">⚙️ Chế Độ
                             Chạy</h4>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -248,28 +318,49 @@
                             </label>
                         </div>
                     </div>
-                </div>
-                <!-- End LEFT COLUMN -->
 
-                <!-- RIGHT COLUMN (2/3): Form Inputs & Profile -->
+                    <!-- Delay Captcha -->
+                    <div
+                        style="padding: 10px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe; margin-top: auto;">
+                        <h4 style="margin: 0 0 10px 0; color: #1e40af; font-size: 13px; font-weight: 600;">⏱️ Delay
+                            Captcha</h4>
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #1e40af;">
+                            <span>Chờ trước khi submit:</span>
+                            <select id="autoCaptchaDelay"
+                                style="padding: 6px 10px; border-radius: 6px; border: 1px solid #bfdbfe; font-size: 12px; background: white;">
+                                <option value="0">Không delay (0s)</option>
+                                <option value="5">5 giây</option>
+                                <option value="10" selected>10 giây</option>
+                                <option value="15">15 giây</option>
+                                <option value="20">20 giây</option>
+                                <option value="30">30 giây</option>
+                            </select>
+                        </label>
+                        <div style="font-size: 11px; color: #1e40af; margin-top: 6px; font-style: italic;">
+                            💡 Tránh detect bot, để tool tự động chạy
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Form Inputs -->
                 <div class="modal-form-column">
                     <!-- Tab Content: Auto -->
                     <div class="tab-content active" id="tab-auto">
-                        <!-- Profile Selection Section -->
+                        <!-- Profile Selection -->
                         <div class="form-section">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <h3 style="margin: 0;">📋 Chọn Profile</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()"
+                                    title="Tải lại profiles">🔄 Tải Lại</button>
                             </div>
-
-                            <!-- Profile Carousel -->
                             <div class="profile-carousel-wrapper">
                                 <div class="profile-carousel-container">
                                     <button class="carousel-btn carousel-prev"
                                         onclick="scrollProfileCarousel('auto', -1)">‹</button>
                                     <div class="profile-carousel" id="autoProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>⏳ Đang tải profiles...</p>
+                                            <p>Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -278,52 +369,53 @@
                             </div>
                         </div>
 
+                        <!-- Account Info -->
                         <div class="form-section">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
                                 <button class="btn btn-secondary btn-sm" onclick="randomAllForm()"
-                                    title="Random toàn bộ form">
-                                    🎲 Random
-                                </button>
+                                    title="Random toàn bộ form">🎲
+                                    Random</button>
                             </div>
                             <div class="form-grid">
-                                <input type="text" id="autoUsername" placeholder="Tên đăng nhập" class="form-input">
+                                <input type="text" id="autoUsername" placeholder="Tên tài khoản" class="form-input">
+                                <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)"
+                                    class="form-input">
                                 <input type="password" id="autoPassword" placeholder="Mật khẩu" class="form-input">
                                 <input type="password" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền"
                                     class="form-input">
-                                <input type="text" id="autoFullname" placeholder="Họ và tên" class="form-input">
                                 <input type="email" id="autoEmail" placeholder="Email" class="form-input">
                                 <input type="tel" id="autoPhone" placeholder="Số điện thoại" class="form-input">
                                 <select id="autoBankName" class="form-input">
-                                    <option value="">Chọn ngân hàng</option>
-                                    <option value="Vietcombank">Vietcombank</option>
-                                    <option value="Techcombank">Techcombank</option>
+                                    <option value="">-- Chọn ngân hàng --</option>
+                                    <option value="VIETINBANK">VIETINBANK</option>
+                                    <option value="TECHCOMBANK">TECHCOMBANK</option>
                                     <option value="BIDV">BIDV</option>
-                                    <option value="Agribank">Agribank</option>
+                                    <option value="VIETCOMBANK">VIETCOMBANK</option>
+                                    <option value="MBBANK">MBBANK</option>
+                                    <option value="TPBANK">TPBANK</option>
+                                    <option value="VPBANK">VPBANK</option>
+                                    <option value="SACOMBANK">SACOMBANK</option>
+                                    <option value="ACB">ACB</option>
                                 </select>
-                                <input type="text" id="autoAccountNumber" placeholder="Số tài khoản" class="form-input">
+                                <input type="text" id="autoAccountNumber" placeholder="Số tài khoản ngân hàng"
+                                    class="form-input">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tab Content: Promo -->
-                    <div class="tab-content" id="tab-promo" style="display: none;">
-                        <!-- Profile Selection Section -->
+                    <!-- Tab Content: Check Promo -->
+                    <div class="tab-content" id="tab-promo">
                         <div class="form-section">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">📋 Chọn Profile</h3>
-                            </div>
-
-                            <!-- Profile Carousel -->
+                            <h3>📋 Chọn Profile</h3>
                             <div class="profile-carousel-wrapper">
                                 <div class="profile-carousel-container">
                                     <button class="carousel-btn carousel-prev"
                                         onclick="scrollProfileCarousel('promo', -1)">‹</button>
                                     <div class="profile-carousel" id="promoProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>⏳ Đang tải profiles...</p>
+                                            <p>Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -332,21 +424,17 @@
                             </div>
                         </div>
 
-                        <!-- Username Input Section (Simple) -->
                         <div class="form-section">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">👤 Tên Đăng Nhập</h3>
-                            </div>
+                            <h3>👤 Thông Tin Check</h3>
                             <div class="form-grid">
-                                <input type="text" id="promoUsername" placeholder="Nhập tên đăng nhập"
+                                <input type="text" id="promoUsername" placeholder="Tên tài khoản đã đăng ký"
+                                    class="form-input">
+                                <input type="text" id="promoApiKey" placeholder="API Key từ autocaptcha.pro"
                                     class="form-input">
                             </div>
                         </div>
-
                     </div>
                 </div>
-                <!-- End RIGHT COLUMN -->
             </div>
         </div>
     </div>
@@ -366,10 +454,83 @@
         </div>
     </div>
 
+
+
+    <!-- Category Management Modal - Full Screen -->
+    <div id="categoryManagementModal" class="screenshots-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeCategoryManagementModal()"></div>
+        <div
+            style="position: relative; background: white; width: 95vw; height: 95vh; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); z-index: 1; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #e5e7eb; background: white; flex-shrink: 0;">
+                <h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #111827;">⚙️ Quản Lý Category & Sites
+                </h2>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn btn-secondary btn-sm" onclick="downloadConfigFile()"
+                        style="padding: 8px 16px; font-size: 13px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        💾 Tải Config
+                    </button>
+                    <button class="modal-close" onclick="closeCategoryManagementModal()"
+                        style="width: 36px; height: 36px; border: none; background: #f3f4f6; border-radius: 50%; font-size: 24px; color: #6b7280; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;">×</button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div
+                style="display: flex; gap: 8px; padding: 16px 24px; border-bottom: 2px solid #e5e7eb; background: #f9fafb; flex-shrink: 0; overflow-x: auto;">
+                <button class="category-tab active" data-category="okvip" onclick="switchCategoryTab('okvip')"
+                    style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
+                    🎰 OKVIP
+                </button>
+                <button class="category-tab" data-category="abcvip" onclick="switchCategoryTab('abcvip')"
+                    style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
+                    🎲 ABCVIP
+                </button>
+                <button class="category-tab" data-category="jun88" onclick="switchCategoryTab('jun88')"
+                    style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
+                    🎯 JUN88
+                </button>
+                <button class="category-tab" data-category="kjc" onclick="switchCategoryTab('kjc')"
+                    style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
+                    � KJC
+                </button>
+
+            </div>
+
+            <!-- Content -->
+            <div style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+                <div id="categoryManagementContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-    // Helper function to disable button for 0.5s to prevent double-click
+    // Helper function to disable button until server responds
+    function disableButton(button) {
+        if (!button) return;
+
+        button.disabled = true;
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+        button.style.pointerEvents = 'none';
+    }
+
+    // Helper function to enable button after server responds
+    function enableButton(button) {
+        if (!button) return;
+
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+        button.style.pointerEvents = 'auto';
+    }
+
+    // Helper function to disable button for 0.5s to prevent double-click (deprecated, use disableButton/enableButton instead)
     function disableButtonTemporarily(button, duration = 500) {
         if (!button) return;
 
@@ -390,33 +551,56 @@
         }, duration);
     }
 
+    // Update category badge
+    function updateCategoryBadge(category) {
+        if (!configLoaded || !vipConfig) return;
+
+        const categoryInfo = vipConfig.categories.find(c => c.id === category);
+        if (!categoryInfo) return;
+
+        const badge = document.getElementById('categoryBadge');
+        const icon = document.getElementById('categoryIcon');
+        const name = document.getElementById('categoryName');
+
+        if (badge && icon && name) {
+            icon.textContent = categoryInfo.icon;
+            name.textContent = categoryInfo.name;
+            badge.style.background = `linear-gradient(135deg, ${categoryInfo.color}, ${categoryInfo.color}dd)`;
+        }
+    }
+
     // Initialize VIP sites based on category
     async function toggleCategorySites() {
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
         const sitesGrid = document.getElementById('vipSitesGrid');
 
-        try {
-            // Fetch category config từ backend
-            const response = await fetch(`/api/vip-automation/category/${category}`);
-            const result = await response.json();
+        // Update badge
+        updateCategoryBadge(category);
 
-            if (!result.success || !result.data) {
-                console.error('Failed to load category data');
+        try {
+            // Wait for config to load if not ready yet
+            if (!configLoaded || !vipConfig) {
+                console.warn('Config not loaded yet, waiting...');
+                // Wait up to 5 seconds for config to load
+                for (let i = 0; i < 50; i++) {
+                    if (configLoaded && vipConfig) break;
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                if (!configLoaded || !vipConfig) {
+                    console.error('Config failed to load');
+                    return;
+                }
+            }
+
+            // Get category info from config
+            const categoryInfo = vipConfig.categories.find(c => c.id === category);
+            if (!categoryInfo) {
+                console.error('Category not found in config');
                 return;
             }
 
-            const categoryConfig = result.data;
-            const sites = categoryConfig.sites || [];
-
-            // Map color cho từng category
-            const colorMap = {
-                'okvip': '#ff6b35',
-                'abcvip': '#0066cc',
-                'jun88': '#00aa00',
-                'kjc': '#cc0000'
-            };
-
-            const color = colorMap[category] || '#667eea';
+            const sites = vipConfig.sites[category] || [];
+            const color = categoryInfo.color;
 
             // Icon mapping for all sites
             const iconMap = {
@@ -437,20 +621,26 @@
                 '888clb': '888clb.jpg'
             };
 
-            sitesGrid.innerHTML = sites.map((site, index) => {
+            let sitesHtml = sites.map((site, index) => {
                 const iconFile = iconMap[site.name] || null;
                 const iconHtml = iconFile
-                    ? `<img src="tools-ui/vip/icons/${iconFile}" alt="${site.name}" class="site-icon-img" title="${site.name}">`
-                    : `<div class="site-icon" style="background-color: ${color};" title="${site.name}">${site.name.substring(0,
-                        3).toUpperCase()}</div>`;
+                    ? `<img src="tools-ui/vip/icons/${iconFile}" alt="${site.name}" class="site-icon-img" title="${site.name}" style="width: 40px; height: 40px;">`
+                    : `<div class="site-icon" style="width: 40px; height: 40px; font-size: 9px; background-color: ${color};" title="${site.name}">${site.name.substring(0, 3).toUpperCase()}</div>`;
 
                 return `
-<label class="site-card">
-    <input type="checkbox" class="site-check" data-name="${site.name}">
-    ${iconHtml}
+<label class="site-card" style="position: relative;">
+    <input type="checkbox" class="site-check" data-name="${site.name}" style="display: none;" onchange="updateSiteCardStyle(this)">
+    <div style="position: relative;">
+        ${iconHtml}
+        <div class="site-check-mark" style="position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: none; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">✓</div>
+    </div>
 </label>
 `;
             }).join('');
+
+
+
+            sitesGrid.innerHTML = sitesHtml;
 
             console.log(`✅ Loaded ${sites.length} sites for ${category}`);
         } catch (error) {
@@ -460,12 +650,23 @@
         }
     }
 
+    function updateSiteCardStyle(checkbox) {
+        // Trigger change event to update UI
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
     function selectAllVipSites() {
-        document.querySelectorAll('#vipSitesGrid .site-check').forEach(cb => cb.checked = true);
+        document.querySelectorAll('#vipSitesGrid .site-check').forEach(cb => {
+            cb.checked = true;
+            updateSiteCardStyle(cb);
+        });
     }
 
     function deselectAllVipSites() {
-        document.querySelectorAll('#vipSitesGrid .site-check').forEach(cb => cb.checked = false);
+        document.querySelectorAll('#vipSitesGrid .site-check').forEach(cb => {
+            cb.checked = false;
+            updateSiteCardStyle(cb);
+        });
     }
 
     function openFormModal() {
@@ -524,15 +725,18 @@
 
     async function runCurrentTabAction() {
         const btn = document.getElementById('btnRunAction');
-        if (btn) disableButtonTemporarily(btn);
+        if (btn) disableButton(btn);
 
         const activeTab = document.querySelector('.modal-tab.active');
         const tabName = activeTab?.getAttribute('data-tab');
 
+        // Enable button immediately after starting (not waiting for completion)
+        if (btn) enableButton(btn);
+
         if (tabName === 'auto') {
-            await runAutoAutomation();
+            runAutoAutomation();
         } else if (tabName === 'promo') {
-            await runCheckPromo();
+            runCheckPromo();
         }
 
         // Reset form inputs AFTER automation completes
@@ -655,10 +859,18 @@
 
         // Mark profile as running
         profileManager.runningProfiles.add(selectedProfile.uuid);
+
+        // Track start time to prevent premature sync removal
+        if (!profileManager.runningStartTimes) {
+            profileManager.runningStartTimes = new Map();
+        }
+        profileManager.runningStartTimes.set(selectedProfile.uuid, Date.now());
+
         profileManager.saveRunningProfiles();
 
         // Refresh carousel to show running status
         const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+        await loadProfilesCarousel();
         renderProfileCarousel(activeTab);
 
         // Send to backend
@@ -712,12 +924,20 @@
         } catch (error) {
             console.error('❌ Automation Error:', error);
             showToast('error', 'Lỗi', error.message);
+            // Unmark on error
+            profileManager.runningProfiles.delete(selectedProfile.uuid);
+            if (profileManager.runningStartTimes) {
+                profileManager.runningStartTimes.delete(selectedProfile.uuid);
+            }
+            profileManager.saveRunningProfiles();
+            await loadProfilesCarousel();
         } finally {
             // Re-enable button after waiting for server confirmation
             const btnRunAction = document.getElementById('btnRunAction');
             if (btnRunAction) {
                 btnRunAction.disabled = false;
             }
+            // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
 
@@ -755,6 +975,22 @@
 
         console.log('🎁 Starting Check Promo:', { category, sites: selectedSites, username });
 
+        // Mark profile as running
+        profileManager.runningProfiles.add(selectedProfile.uuid);
+
+        // Track start time to prevent premature sync removal
+        if (!profileManager.runningStartTimes) {
+            profileManager.runningStartTimes = new Map();
+        }
+        profileManager.runningStartTimes.set(selectedProfile.uuid, Date.now());
+
+        profileManager.saveRunningProfiles();
+
+        // Refresh carousel to show running status
+        const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'promo';
+        await loadProfilesCarousel();
+        renderProfileCarousel(activeTab);
+
         try {
             const response = await fetch('/api/vip-automation/run', {
                 method: 'POST',
@@ -779,10 +1015,19 @@
         } catch (error) {
             console.error('❌ Check Promo Error:', error);
             showToast('error', 'Lỗi', error.message);
+            // Unmark on error
+            profileManager.runningProfiles.delete(selectedProfile.uuid);
+            if (profileManager.runningStartTimes) {
+                profileManager.runningStartTimes.delete(selectedProfile.uuid);
+            }
+            profileManager.saveRunningProfiles();
+            await loadProfilesCarousel();
+        } finally {
+            // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
 
-    function clearAllRunningStatuses() {
+    async function clearAllRunningStatuses() {
         const count = profileManager.runningProfiles.size;
 
         if (count === 0) {
@@ -803,6 +1048,7 @@
 
         // Refresh carousel to update UI
         const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+        await loadProfilesCarousel();
         renderProfileCarousel(activeTab);
 
         showToast('success', 'Đã clear', `Đã clear ${count} profiles`);
@@ -1010,6 +1256,7 @@
             return;
         }
 
+        // Hiển thị tất cả profiles (giống NOHU)
         carousel.innerHTML = availableProfiles.map((profile) => {
             const selectedProfile = getSelectedProfile();
             const isSelected = selectedProfile?.uuid === profile.uuid;
@@ -1681,7 +1928,7 @@
                 // Track which usernames are currently running
                 const currentlyRunning = new Set();
 
-                data.statuses.forEach(status => {
+                for (const status of data.statuses) {
                     if (status.status === 'running') {
                         currentlyRunning.add(status.username);
                     } else if (status.status === 'completed' || status.status === 'error') {
@@ -1701,11 +1948,12 @@
 
                                 // Refresh carousel to update UI
                                 const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+                                await loadProfilesCarousel();
                                 renderProfileCarousel(activeTab);
                             }
                         }
                     }
-                });
+                }
 
                 // Sync profileManager.runningProfiles with server state
                 const profilesToRemove = [];
@@ -1733,6 +1981,7 @@
                     });
                     profileManager.saveRunningProfiles();
                     const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+                    await loadProfilesCarousel();
                     renderProfileCarousel(activeTab);
                 }
             }
@@ -1894,6 +2143,51 @@
         const modal = document.getElementById('vipAccountInfoModal');
         modal.style.display = 'none';
     }
+
+
+
+    // Auto-detect category from URL
+    function autoDetectCategoryFromUrl(url) {
+        try {
+            const urlObj = new URL(url);
+            const domain = urlObj.hostname.toLowerCase();
+
+            // OKVIP sites
+            if (domain.includes('okvip') || domain.includes('ok-vip') ||
+                domain.includes('hi88') || domain.includes('f8bet') ||
+                domain.includes('shbet') || domain.includes('tigerstorm') ||
+                domain.includes('new88') || domain.includes('mb66') ||
+                domain.includes('789bet')) {
+                return 'okvip';
+            }
+
+            // ABCVIP sites
+            if (domain.includes('abcvip') || domain.includes('abc-vip') ||
+                domain.includes('u888') || domain.includes('j88') ||
+                domain.includes('abc8') || domain.includes('888clb')) {
+                return 'abcvip';
+            }
+
+            // JUN88 sites
+            if (domain.includes('jun88') || domain.includes('jun-88')) {
+                return 'jun88';
+            }
+
+            // KJC sites
+            if (domain.includes('kjc') || domain.includes('k-jc')) {
+                return 'kjc';
+            }
+
+            return null; // Could not detect
+        } catch (error) {
+            console.error('Error auto-detecting category:', error);
+            return null;
+        }
+    }
+
+
+
+
 
     // Close modal on Escape key
     document.addEventListener('keydown', (e) => {

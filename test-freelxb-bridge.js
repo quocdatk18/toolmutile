@@ -14,7 +14,6 @@ const banksScript = fs.readFileSync(path.join(__dirname, 'tools/nohu-tool/banks.
 const AutoSequence = require('./tools/nohu-tool/auto-sequence');
 
 async function testFreeLXBBridge() {
-    console.log('🧪 Testing FreeLXB Bridge...\n');
 
     const browser = await puppeteer.launch({
         headless: false,
@@ -63,14 +62,9 @@ async function testFreeLXBBridge() {
             }
         ];
 
-        console.log('🚀 Starting FreeLXB Bridge test...\n');
-
         // Test single site
         const result = await autoSequence.runSequenceForSite(browser, testSites[0], profileData);
 
-        console.log('\n📊 Test Results:');
-        console.log('================');
-        console.log(`Site: ${result.site}`);
         console.log(`Register: ${result.register.success ? '✅ SUCCESS' : '❌ FAILED'}`);
         if (result.register.error) {
             console.log(`  Error: ${result.register.error}`);
@@ -79,19 +73,15 @@ async function testFreeLXBBridge() {
         console.log(`Add Bank: ${result.addBank.success ? '✅ SUCCESS' : '❌ FAILED'}`);
         console.log(`Check Promo: ${result.checkPromo.success ? '✅ SUCCESS' : '❌ FAILED'}`);
 
-        console.log('\n🎯 FreeLXB Bridge Test Summary:');
         const overallSuccess = result.register.success && result.login.success;
         console.log(`Overall: ${overallSuccess ? '✅ SUCCESS' : '❌ FAILED'}`);
 
         if (overallSuccess) {
-            console.log('🎉 FreeLXB Bridge is working correctly!');
             console.log('✅ Extension logic successfully converted to tool logic');
         } else {
-            console.log('❌ FreeLXB Bridge needs more work');
-            console.log('🔧 Check the error messages above for debugging');
+            
         }
 
-        console.log('\n⏳ Keeping browser open for 30 seconds for manual inspection...');
         await new Promise(resolve => setTimeout(resolve, 30000));
 
     } catch (error) {

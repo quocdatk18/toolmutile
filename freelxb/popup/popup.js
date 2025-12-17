@@ -84,7 +84,6 @@ document.getElementById('checkBalanceBtn').addEventListener('click', async () =>
     try {
         const response = await fetch(`https://autocaptcha.pro/apiv3/balance?key=${apiKey}`);
         const result = await response.json();
-        console.log('Balance response:', result);
 
         if (result.success) {
             const balance = result.balance || 0;

@@ -9,6 +9,68 @@
 <!-- Load API Key Manager -->
 <script src="core/api-key-manager.js"></script>
 
+<!-- Load VIP Config -->
+<script>
+    let vipConfig = null;
+    let configLoaded = false;
+
+    // Load config from file
+    async function loadVipConfig() {
+        try {
+            const response = await fetch('tools-ui/vip/vip-config.json');
+            vipConfig = await response.json();
+            configLoaded = true;
+            console.log('✅ VIP Config loaded:', vipConfig);
+            // Trigger any pending operations
+            if (window.pendingCategoryLoad) {
+                loadCategoryManagementContent(window.pendingCategoryLoad);
+                window.pendingCategoryLoad = null;
+            }
+        } catch (error) {
+            console.error('❌ Failed to load VIP config:', error);
+            // Fallback to default config
+            vipConfig = {
+                categories: [
+                    { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
+                    { id: 'abcvip', icon: '🎲', name: 'ABCVIP', color: '#0066cc' },
+                    { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
+                    { id: 'kjc', icon: '🎪', name: 'KJC', color: '#cc0000' }
+                ],
+                sites: {
+                    'okvip': [
+                        { name: 'Hi88', registerUrl: 'https://m.www-24h-com-vn-com.com/Account/Register', checkPromoUrl: 'https://tangqua88.com/?promo_id=KM58' },
+                        { name: 'F8BET', registerUrl: 'https://m.jsdujkg8djjkuqw8czbm.com/Account/Register', checkPromoUrl: 'https://ttkm-f8bet01.pages.dev/?promo_id=KM68' },
+                        { name: 'SHBET', registerUrl: 'https://m.djifshuie89shjdhsdxbvckrgio.com/Account/Register', checkPromoUrl: 'https://khuyenmai-shbet02.pages.dev/?promo_id=SH57K' },
+                        { name: 'NEW88', registerUrl: 'https://m.dxiidnc84gkoopfcmbpwhsgf.com/Account/Register', checkPromoUrl: 'https://khuyenmai-new88okvip1.pages.dev/?promo_id=N58' },
+                        { name: 'MB66', registerUrl: 'https://m.wtyurfuijkxcvklrhyli3imxjuuflegmgkiow3i.com/Account/Register', checkPromoUrl: 'https://ttkm-mb66okvip02.pages.dev/?promo_id=FREE66' },
+                        { name: '789BET', registerUrl: 'https://m.hsdh99hjsbcnjiufkxuuwvg.com/Account/Register', checkPromoUrl: 'https://ttkm789bet04.pages.dev/khuyenmai/?promo_id=FR58K' }
+                    ],
+                    'abcvip': [
+                        { name: 'U888', registerUrl: 'https://m.u888at.link/?f=2551606&app=1/Account/Register', checkPromoUrl: 'https://88u888.club/' },
+                        { name: 'J88', registerUrl: 'https://m.j859.xyz/?f=4556781&app=1/Account/Register', checkPromoUrl: 'https://j8j88.com/' },
+                        { name: 'ABC8', registerUrl: 'https://m.abc11.link/?f=109114&app=1/Account/Register', checkPromoUrl: 'https://www.88abc8.cc/' },
+                        { name: '888clb', registerUrl: 'https://88clb2jt.buzz/?f=889534&app=1/Account/Register', checkPromoUrl: 'https://88clb88.xyz/' }
+                    ],
+                    'jun88': [
+                        { name: 'Jun881', registerUrl: 'https://jun881.com/register', checkPromoUrl: 'https://jun881.com/promo' },
+                        { name: 'Jun882', registerUrl: 'https://jun882.com/register', checkPromoUrl: 'https://jun882.com/promo' },
+                        { name: 'Jun883', registerUrl: 'https://jun883.com/register', checkPromoUrl: 'https://jun883.com/promo' }
+                    ],
+                    'kjc': [
+                        { name: 'KJC1', registerUrl: 'https://kjc1.com/register', checkPromoUrl: 'https://kjc1.com/promo' },
+                        { name: 'KJC2', registerUrl: 'https://kjc2.com/register', checkPromoUrl: 'https://kjc2.com/promo' },
+                        { name: 'KJC3', registerUrl: 'https://kjc3.com/register', checkPromoUrl: 'https://kjc3.com/promo' }
+                    ]
+                }
+            };
+            configLoaded = true;
+        }
+    }
+
+    // Load config immediately
+    loadVipConfig();
+</script>
+
 <!-- VIP Auto Tool UI -->
 <div class="vip-tool-container">
 
@@ -34,6 +96,7 @@
                     <span class="start-icon">▶️</span>
                     <span class="start-text">START</span>
                 </button>
+
             </div>
         </div>
 
@@ -107,6 +170,12 @@
                     <div class="modal-tab" data-tab="promo" onclick="switchModalTab('promo')">
                         🎁 Check KM
                     </div>
+                    <!-- Category Badge -->
+                    <div id="categoryBadge"
+                        style="margin-left: auto; padding: 6px 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+                        <span id="categoryIcon">🎰</span>
+                        <span id="categoryName">OKVIP</span>
+                    </div>
                 </div>
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <button class="btn btn-warning btn-sm" onclick="clearAllRunningStatuses()"
@@ -146,11 +215,12 @@
                 </div>
             </div>
 
-            <!-- Modal Body - 1/3 Left + 2/3 Right Layout -->
+            <!-- Modal Body -->
             <div class="modal-body-form" id="modalBodyForm">
-                <!-- LEFT COLUMN (1/3): Category & Sites Selection -->
+
+                <!-- LEFT COLUMN: Sites Selection -->
                 <div class="modal-sites-column">
-                    <!-- Category Selection -->
+                    <!-- Category Selection (VIP-specific) -->
                     <div id="categorySelector"
                         style="margin-bottom: 12px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
                         <h4 style="margin: 0 0 6px 0; color: #4a5568; font-size: 12px; font-weight: 600;">🎯 Chọn
@@ -195,23 +265,23 @@
                             📱 Chọn Sites
                         </h4>
                         <div class="sites-grid" id="vipSitesGrid"
-                            style="grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 10px;">
                             <!-- Sites will be loaded dynamically -->
                         </div>
-                        <div class="site-actions"
-                            style="gap: 8px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr;">
-                            <button class="btn btn-sm" onclick="selectAllVipSites()"
-                                style="padding: 10px 16px; font-size: 13px; font-weight: 700; height: 40px;">✅ Chọn Tất
-                                Cả</button>
-                            <button class="btn btn-sm" onclick="deselectAllVipSites()"
-                                style="padding: 10px 16px; font-size: 13px; font-weight: 700; height: 40px;">❌ Bỏ
-                                Chọn</button>
-                        </div>
+                    </div>
+                    <div class="site-actions"
+                        style="gap: 8px; margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr;">
+                        <button class="btn btn-sm" onclick="selectAllVipSites()"
+                            style="padding: 10px 16px; font-size: 13px; font-weight: 700; height: 40px;">✅ Chọn Tất
+                            Cả</button>
+                        <button class="btn btn-sm" onclick="deselectAllVipSites()"
+                            style="padding: 10px 16px; font-size: 13px; font-weight: 700; height: 40px;">❌ Bỏ
+                            Chọn</button>
                     </div>
 
-                    <!-- Execution Mode Settings -->
-                    <div id="executionModeSection"
-                        style="margin-bottom: 12px; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                    <!-- Execution Mode -->
+                    <div
+                        style="padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 12px;">
                         <h4 style="margin: 0 0 10px 0; color: #4a5568; font-size: 13px; font-weight: 600;">⚙️ Chế Độ
                             Chạy</h4>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -248,28 +318,49 @@
                             </label>
                         </div>
                     </div>
-                </div>
-                <!-- End LEFT COLUMN -->
 
-                <!-- RIGHT COLUMN (2/3): Form Inputs & Profile -->
+                    <!-- Delay Captcha -->
+                    <div
+                        style="padding: 10px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe; margin-top: auto;">
+                        <h4 style="margin: 0 0 10px 0; color: #1e40af; font-size: 13px; font-weight: 600;">⏱️ Delay
+                            Captcha</h4>
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #1e40af;">
+                            <span>Chờ trước khi submit:</span>
+                            <select id="autoCaptchaDelay"
+                                style="padding: 6px 10px; border-radius: 6px; border: 1px solid #bfdbfe; font-size: 12px; background: white;">
+                                <option value="0">Không delay (0s)</option>
+                                <option value="5">5 giây</option>
+                                <option value="10" selected>10 giây</option>
+                                <option value="15">15 giây</option>
+                                <option value="20">20 giây</option>
+                                <option value="30">30 giây</option>
+                            </select>
+                        </label>
+                        <div style="font-size: 11px; color: #1e40af; margin-top: 6px; font-style: italic;">
+                            💡 Tránh detect bot, để tool tự động chạy
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Form Inputs -->
                 <div class="modal-form-column">
                     <!-- Tab Content: Auto -->
                     <div class="tab-content active" id="tab-auto">
-                        <!-- Profile Selection Section -->
+                        <!-- Profile Selection -->
                         <div class="form-section">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <h3 style="margin: 0;">📋 Chọn Profile</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()"
+                                    title="Tải lại profiles">🔄 Tải Lại</button>
                             </div>
-
-                            <!-- Profile Carousel -->
                             <div class="profile-carousel-wrapper">
                                 <div class="profile-carousel-container">
                                     <button class="carousel-btn carousel-prev"
                                         onclick="scrollProfileCarousel('auto', -1)">‹</button>
                                     <div class="profile-carousel" id="autoProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>⏳ Đang tải profiles...</p>
+                                            <p>Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -278,52 +369,53 @@
                             </div>
                         </div>
 
+                        <!-- Account Info -->
                         <div class="form-section">
                             <div
                                 style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                                 <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
                                 <button class="btn btn-secondary btn-sm" onclick="randomAllForm()"
-                                    title="Random toàn bộ form">
-                                    🎲 Random
-                                </button>
+                                    title="Random toàn bộ form">🎲
+                                    Random</button>
                             </div>
                             <div class="form-grid">
-                                <input type="text" id="autoUsername" placeholder="Tên đăng nhập" class="form-input">
+                                <input type="text" id="autoUsername" placeholder="Tên tài khoản" class="form-input">
+                                <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)"
+                                    class="form-input">
                                 <input type="password" id="autoPassword" placeholder="Mật khẩu" class="form-input">
                                 <input type="password" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền"
                                     class="form-input">
-                                <input type="text" id="autoFullname" placeholder="Họ và tên" class="form-input">
                                 <input type="email" id="autoEmail" placeholder="Email" class="form-input">
                                 <input type="tel" id="autoPhone" placeholder="Số điện thoại" class="form-input">
                                 <select id="autoBankName" class="form-input">
-                                    <option value="">Chọn ngân hàng</option>
-                                    <option value="Vietcombank">Vietcombank</option>
-                                    <option value="Techcombank">Techcombank</option>
+                                    <option value="">-- Chọn ngân hàng --</option>
+                                    <option value="VIETINBANK">VIETINBANK</option>
+                                    <option value="TECHCOMBANK">TECHCOMBANK</option>
                                     <option value="BIDV">BIDV</option>
-                                    <option value="Agribank">Agribank</option>
+                                    <option value="VIETCOMBANK">VIETCOMBANK</option>
+                                    <option value="MBBANK">MBBANK</option>
+                                    <option value="TPBANK">TPBANK</option>
+                                    <option value="VPBANK">VPBANK</option>
+                                    <option value="SACOMBANK">SACOMBANK</option>
+                                    <option value="ACB">ACB</option>
                                 </select>
-                                <input type="text" id="autoAccountNumber" placeholder="Số tài khoản" class="form-input">
+                                <input type="text" id="autoAccountNumber" placeholder="Số tài khoản ngân hàng"
+                                    class="form-input">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Tab Content: Promo -->
-                    <div class="tab-content" id="tab-promo" style="display: none;">
-                        <!-- Profile Selection Section -->
+                    <!-- Tab Content: Check Promo -->
+                    <div class="tab-content" id="tab-promo">
                         <div class="form-section">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">📋 Chọn Profile</h3>
-                            </div>
-
-                            <!-- Profile Carousel -->
+                            <h3>📋 Chọn Profile</h3>
                             <div class="profile-carousel-wrapper">
                                 <div class="profile-carousel-container">
                                     <button class="carousel-btn carousel-prev"
                                         onclick="scrollProfileCarousel('promo', -1)">‹</button>
                                     <div class="profile-carousel" id="promoProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>⏳ Đang tải profiles...</p>
+                                            <p>Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -332,56 +424,183 @@
                             </div>
                         </div>
 
-                        <!-- Username Input Section (Simple) -->
                         <div class="form-section">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">👤 Tên Đăng Nhập</h3>
-                            </div>
+                            <h3>👤 Thông Tin Check</h3>
                             <div class="form-grid">
-                                <input type="text" id="promoUsername" placeholder="Nhập tên đăng nhập"
+                                <input type="text" id="promoUsername" placeholder="Tên tài khoản đã đăng ký"
+                                    class="form-input">
+                                <input type="text" id="promoApiKey" placeholder="API Key từ autocaptcha.pro"
                                     class="form-input">
                             </div>
                         </div>
-
                     </div>
                 </div>
-                <!-- End RIGHT COLUMN -->
             </div>
         </div>
     </div>
     <!-- End Form Modal -->
 
+    <!-- Account Info Modal -->
+    <div id="vipAccountInfoModal" class="screenshots-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeVipAccountInfoModal()"></div>
+        <div class="modal-content-large">
+            <div class="modal-header">
+                <h3 id="vipAccountInfoTitle">📋 Thông Tin Tài Khoản</h3>
+                <button class="modal-close" onclick="closeVipAccountInfoModal()">×</button>
+            </div>
+            <div class="modal-body" id="vipAccountInfoContent" style="padding: 20px;">
+                <!-- Account info will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Category Management Modal - Full Screen -->
+    <div id="categoryManagementModal" class="screenshots-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeCategoryManagementModal()"></div>
+        <div
+            style="position: relative; background: white; width: 95vw; height: 95vh; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); z-index: 1; display: flex; flex-direction: column;">
+            <!-- Header -->
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #e5e7eb; background: white; flex-shrink: 0;">
+                <h2 style="margin: 0; font-size: 22px; font-weight: 700; color: #111827;">⚙️ Quản Lý Category & Sites
+                </h2>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button class="btn btn-secondary btn-sm" onclick="downloadConfigFile()"
+                        style="padding: 8px 16px; font-size: 13px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        💾 Tải Config
+                    </button>
+                    <button class="modal-close" onclick="closeCategoryManagementModal()"
+                        style="width: 36px; height: 36px; border: none; background: #f3f4f6; border-radius: 50%; font-size: 24px; color: #6b7280; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;">×</button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div
+                style="display: flex; gap: 8px; padding: 16px 24px; border-bottom: 2px solid #e5e7eb; background: #f9fafb; flex-shrink: 0; overflow-x: auto;">
+                <button class="category-tab active" data-category="okvip" onclick="switchCategoryTab('okvip')"
+                    style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
+                    🎰 OKVIP
+                </button>
+                <button class="category-tab" data-category="abcvip" onclick="switchCategoryTab('abcvip')"
+                    style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
+                    🎲 ABCVIP
+                </button>
+                <button class="category-tab" data-category="jun88" onclick="switchCategoryTab('jun88')"
+                    style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
+                    🎯 JUN88
+                </button>
+                <button class="category-tab" data-category="kjc" onclick="switchCategoryTab('kjc')"
+                    style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
+                    � KJC
+                </button>
+
+            </div>
+
+            <!-- Content -->
+            <div style="flex: 1; overflow-y: auto; padding: 20px 24px;">
+                <div id="categoryManagementContent">
+                    <!-- Content will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <script>
+    // Helper function to disable button until server responds
+    function disableButton(button) {
+        if (!button) return;
+
+        button.disabled = true;
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+        button.style.pointerEvents = 'none';
+    }
+
+    // Helper function to enable button after server responds
+    function enableButton(button) {
+        if (!button) return;
+
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+        button.style.pointerEvents = 'auto';
+    }
+
+    // Helper function to disable button for 0.5s to prevent double-click (deprecated, use disableButton/enableButton instead)
+    function disableButtonTemporarily(button, duration = 500) {
+        if (!button) return;
+
+        const originalOpacity = button.style.opacity;
+        const originalCursor = button.style.cursor;
+        const originalPointerEvents = button.style.pointerEvents;
+
+        button.disabled = true;
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+        button.style.pointerEvents = 'none';
+
+        setTimeout(() => {
+            button.disabled = false;
+            button.style.opacity = originalOpacity || '1';
+            button.style.cursor = originalCursor || 'pointer';
+            button.style.pointerEvents = originalPointerEvents || 'auto';
+        }, duration);
+    }
+
+    // Update category badge
+    function updateCategoryBadge(category) {
+        if (!configLoaded || !vipConfig) return;
+
+        const categoryInfo = vipConfig.categories.find(c => c.id === category);
+        if (!categoryInfo) return;
+
+        const badge = document.getElementById('categoryBadge');
+        const icon = document.getElementById('categoryIcon');
+        const name = document.getElementById('categoryName');
+
+        if (badge && icon && name) {
+            icon.textContent = categoryInfo.icon;
+            name.textContent = categoryInfo.name;
+            badge.style.background = `linear-gradient(135deg, ${categoryInfo.color}, ${categoryInfo.color}dd)`;
+        }
+    }
+
     // Initialize VIP sites based on category
     async function toggleCategorySites() {
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
         const sitesGrid = document.getElementById('vipSitesGrid');
 
-        try {
-            // Fetch category config từ backend
-            const response = await fetch(`/api/vip-automation/category/${category}`);
-            const result = await response.json();
+        // Update badge
+        updateCategoryBadge(category);
 
-            if (!result.success || !result.data) {
-                console.error('Failed to load category data');
+        try {
+            // Wait for config to load if not ready yet
+            if (!configLoaded || !vipConfig) {
+                console.warn('Config not loaded yet, waiting...');
+                // Wait up to 5 seconds for config to load
+                for (let i = 0; i < 50; i++) {
+                    if (configLoaded && vipConfig) break;
+                    await new Promise(r => setTimeout(r, 100));
+                }
+                if (!configLoaded || !vipConfig) {
+                    console.error('Config failed to load');
+                    return;
+                }
+            }
+
+            // Get category info from config
+            const categoryInfo = vipConfig.categories.find(c => c.id === category);
+            if (!categoryInfo) {
+                console.error('Category not found in config');
                 return;
             }
 
-            const categoryConfig = result.data;
-            const sites = categoryConfig.sites || [];
-
-            // Map color cho từng category
-            const colorMap = {
-                'okvip': '#ff6b35',
-                'abcvip': '#0066cc',
-                'jun88': '#00aa00',
-                'kjc': '#cc0000'
-            };
-
-            const color = colorMap[category] || '#667eea';
+            const sites = vipConfig.sites[category] || [];
+            const color = categoryInfo.color;
 
             // Icon mapping for all sites
             const iconMap = {
@@ -402,19 +621,26 @@
                 '888clb': '888clb.jpg'
             };
 
-            sitesGrid.innerHTML = sites.map((site, index) => {
+            let sitesHtml = sites.map((site, index) => {
                 const iconFile = iconMap[site.name] || null;
                 const iconHtml = iconFile
-                    ? `<img src="tools-ui/vip/icons/${iconFile}" alt="${site.name}" class="site-icon-img" title="${site.name}">`
-                    : `<div class="site-icon" style="background-color: ${color};" title="${site.name}">${site.name.substring(0, 3).toUpperCase()}</div>`;
+                    ? `<img src="tools-ui/vip/icons/${iconFile}" alt="${site.name}" class="site-icon-img" title="${site.name}" style="width: 40px; height: 40px;">`
+                    : `<div class="site-icon" style="width: 40px; height: 40px; font-size: 9px; background-color: ${color};" title="${site.name}">${site.name.substring(0, 3).toUpperCase()}</div>`;
 
                 return `
-                <label class="site-card">
-                    <input type="checkbox" class="site-check" data-name="${site.name}">
-                    ${iconHtml}
-                </label>
-            `;
+<label class="site-card" style="position: relative;">
+    <input type="checkbox" class="site-check" data-name="${site.name}" style="display: none;" onchange="updateSiteCardStyle(this)">
+    <div style="position: relative;">
+        ${iconHtml}
+        <div class="site-check-mark" style="position: absolute; top: -8px; right: -8px; width: 24px; height: 24px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: none; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: bold; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);">✓</div>
+    </div>
+</label>
+`;
             }).join('');
+
+
+
+            sitesGrid.innerHTML = sitesHtml;
 
             console.log(`✅ Loaded ${sites.length} sites for ${category}`);
         } catch (error) {
@@ -424,15 +650,29 @@
         }
     }
 
+    function updateSiteCardStyle(checkbox) {
+        // Trigger change event to update UI
+        checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
     function selectAllVipSites() {
-        document.querySelectorAll('#vipSitesGrid .site-check').forEach(cb => cb.checked = true);
+        document.querySelectorAll('#vipSitesGrid .site-check').forEach(cb => {
+            cb.checked = true;
+            updateSiteCardStyle(cb);
+        });
     }
 
     function deselectAllVipSites() {
-        document.querySelectorAll('#vipSitesGrid .site-check').forEach(cb => cb.checked = false);
+        document.querySelectorAll('#vipSitesGrid .site-check').forEach(cb => {
+            cb.checked = false;
+            updateSiteCardStyle(cb);
+        });
     }
 
     function openFormModal() {
+        const btn = event?.target;
+        if (btn) disableButtonTemporarily(btn);
+
         document.getElementById('formModal').style.display = 'flex';
         toggleCategorySites(); // Initialize sites
         loadProfilesCarousel(); // Auto load profiles when opening modal
@@ -484,13 +724,19 @@
     }
 
     async function runCurrentTabAction() {
+        const btn = document.getElementById('btnRunAction');
+        if (btn) disableButton(btn);
+
         const activeTab = document.querySelector('.modal-tab.active');
         const tabName = activeTab?.getAttribute('data-tab');
 
+        // Enable button immediately after starting (not waiting for completion)
+        if (btn) enableButton(btn);
+
         if (tabName === 'auto') {
-            await runAutoAutomation();
+            runAutoAutomation();
         } else if (tabName === 'promo') {
-            await runCheckPromo();
+            runCheckPromo();
         }
 
         // Reset form inputs AFTER automation completes
@@ -498,6 +744,12 @@
     }
 
     async function runAutoAutomation() {
+        // Disable button to prevent multiple clicks
+        const btnRunAction = document.getElementById('btnRunAction');
+        if (btnRunAction) {
+            btnRunAction.disabled = true;
+        }
+
         // Get selected category
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
 
@@ -507,29 +759,40 @@
 
         if (selectedSites.length === 0) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn ít nhất 1 site');
+            // Re-enable button on error
+            if (btnRunAction) {
+                btnRunAction.disabled = false;
+            }
             return;
         }
 
         // Get profile data
+        const selectedProfile = getSelectedProfile();
         if (!selectedProfile) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn profile');
+            // Re-enable button on error
+            if (btnRunAction) {
+                btnRunAction.disabled = false;
+            }
             return;
         }
 
-        // Disable button for 1 second to prevent double-click
-        const btnRunAction = document.getElementById('btnRunAction');
-        if (btnRunAction) {
-            btnRunAction.disabled = true;
-            setTimeout(() => {
+        // Check if profile is already running
+        if (profileManager.isRunning(selectedProfile.uuid)) {
+            showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
+            // Re-enable button on error
+            if (btnRunAction) {
                 btnRunAction.disabled = false;
-            }, 1000);
+            }
+            return;
         }
 
         // Show notification
         showToast('info', 'Đang chạy', `Automation đang chạy cho ${selectedSites.length} site(s)...`);
 
         // Get form data
-        const apiKey = typeof apiKeyManager !== 'undefined' ? apiKeyManager.get() : localStorage.getItem('hidemium_global_api_key') || '';
+        const apiKey = typeof apiKeyManager !== 'undefined' ? apiKeyManager.get() :
+            localStorage.getItem('hidemium_global_api_key') || '';
 
         const profileData = {
             username: document.getElementById('autoUsername').value,
@@ -546,23 +809,39 @@
         // Validate form data
         if (!profileData.username || !profileData.password) {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập username và password');
+            // Re-enable button on error
+            if (btnRunAction) {
+                btnRunAction.disabled = false;
+            }
             return;
         }
 
         // Validate bank info
         if (!profileData.bankName || profileData.bankName.trim() === '') {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn ngân hàng');
+            // Re-enable button on error
+            if (btnRunAction) {
+                btnRunAction.disabled = false;
+            }
             return;
         }
 
         if (!profileData.accountNumber || profileData.accountNumber.trim() === '') {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập số tài khoản ngân hàng');
+            // Re-enable button on error
+            if (btnRunAction) {
+                btnRunAction.disabled = false;
+            }
             return;
         }
 
         // Validate API key
         if (!profileData.apiKey || profileData.apiKey.trim() === '') {
             showToast('error', 'Thiếu API Key', 'Vui lòng thêm Captcha API Key ở sidebar bên trái');
+            // Re-enable button on error
+            if (btnRunAction) {
+                btnRunAction.disabled = false;
+            }
             return;
         }
 
@@ -578,6 +857,22 @@
             parallelCount
         });
 
+        // Mark profile as running
+        profileManager.runningProfiles.add(selectedProfile.uuid);
+
+        // Track start time to prevent premature sync removal
+        if (!profileManager.runningStartTimes) {
+            profileManager.runningStartTimes = new Map();
+        }
+        profileManager.runningStartTimes.set(selectedProfile.uuid, Date.now());
+
+        profileManager.saveRunningProfiles();
+
+        // Refresh carousel to show running status
+        const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+        await loadProfilesCarousel();
+        renderProfileCarousel(activeTab);
+
         // Send to backend
         try {
             const response = await fetch('/api/vip-automation/run', {
@@ -587,6 +882,7 @@
                     category,
                     sites: selectedSites,
                     profile: selectedProfile,
+                    profileId: selectedProfile.uuid,
                     profileData,
                     mode: 'auto',
                     executionMode,
@@ -597,7 +893,14 @@
             const result = await response.json();
 
             if (result.success) {
-                showToast('success', 'Hoàn thành', `Automation completed for ${selectedSites.length} sites`);
+                // Wait for server to actually start automation
+                const waitResult = await waitForServerStart(profileData.username, 30000);
+
+                if (waitResult.success) {
+                    showToast('success', 'Hoàn thành', `Automation completed for ${selectedSites.length} sites`);
+                } else {
+                    showToast('success', 'Đã gửi', `Automation đã được gửi tới server`);
+                }
                 // Modal will stay open - user must close manually
 
                 // Add results
@@ -621,6 +924,20 @@
         } catch (error) {
             console.error('❌ Automation Error:', error);
             showToast('error', 'Lỗi', error.message);
+            // Unmark on error
+            profileManager.runningProfiles.delete(selectedProfile.uuid);
+            if (profileManager.runningStartTimes) {
+                profileManager.runningStartTimes.delete(selectedProfile.uuid);
+            }
+            profileManager.saveRunningProfiles();
+            await loadProfilesCarousel();
+        } finally {
+            // Re-enable button after waiting for server confirmation
+            const btnRunAction = document.getElementById('btnRunAction');
+            if (btnRunAction) {
+                btnRunAction.disabled = false;
+            }
+            // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
 
@@ -640,13 +957,15 @@
             return;
         }
 
+        const selectedProfile = getSelectedProfile();
         if (!selectedProfile) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn profile');
             return;
         }
 
         // Get API key
-        const apiKey = typeof apiKeyManager !== 'undefined' ? apiKeyManager.get() : localStorage.getItem('hidemium_global_api_key') || '';
+        const apiKey = typeof apiKeyManager !== 'undefined' ? apiKeyManager.get() :
+            localStorage.getItem('hidemium_global_api_key') || '';
 
         // Validate API key
         if (!apiKey || apiKey.trim() === '') {
@@ -656,6 +975,22 @@
 
         console.log('🎁 Starting Check Promo:', { category, sites: selectedSites, username });
 
+        // Mark profile as running
+        profileManager.runningProfiles.add(selectedProfile.uuid);
+
+        // Track start time to prevent premature sync removal
+        if (!profileManager.runningStartTimes) {
+            profileManager.runningStartTimes = new Map();
+        }
+        profileManager.runningStartTimes.set(selectedProfile.uuid, Date.now());
+
+        profileManager.saveRunningProfiles();
+
+        // Refresh carousel to show running status
+        const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'promo';
+        await loadProfilesCarousel();
+        renderProfileCarousel(activeTab);
+
         try {
             const response = await fetch('/api/vip-automation/run', {
                 method: 'POST',
@@ -664,6 +999,7 @@
                     category,
                     sites: selectedSites,
                     profile: selectedProfile,
+                    profileId: selectedProfile.uuid,
                     profileData: { username, apiKey },
                     mode: 'promo'
                 })
@@ -679,13 +1015,44 @@
         } catch (error) {
             console.error('❌ Check Promo Error:', error);
             showToast('error', 'Lỗi', error.message);
+            // Unmark on error
+            profileManager.runningProfiles.delete(selectedProfile.uuid);
+            if (profileManager.runningStartTimes) {
+                profileManager.runningStartTimes.delete(selectedProfile.uuid);
+            }
+            profileManager.saveRunningProfiles();
+            await loadProfilesCarousel();
+        } finally {
+            // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
 
-    function clearAllRunningStatuses() {
-        console.log('🔄 Clearing all running statuses...');
-        // TODO: Implement clear running statuses
-        alert('Cleared all running statuses');
+    async function clearAllRunningStatuses() {
+        const count = profileManager.runningProfiles.size;
+
+        if (count === 0) {
+            showToast('info', 'Không có gì', 'Không có profile nào đang marked running');
+            return;
+        }
+
+        if (!confirm(`Bạn có chắc muốn clear ${count} profile(s) đang running?`)) {
+            return;
+        }
+
+        // Clear all running profiles
+        profileManager.runningProfiles.clear();
+        if (profileManager.runningStartTimes) {
+            profileManager.runningStartTimes.clear();
+        }
+        profileManager.saveRunningProfiles();
+
+        // Refresh carousel to update UI
+        const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+        await loadProfilesCarousel();
+        renderProfileCarousel(activeTab);
+
+        showToast('success', 'Đã clear', `Đã clear ${count} profiles`);
+        console.log(`✅ Cleared ${count} running profiles`);
     }
 
     // Load banks from vietQR API
@@ -736,7 +1103,8 @@
         // Random fullname (Vietnamese names)
         const firstNames = ['NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI'];
         const middleNames = ['VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH'];
-        const lastNames = ['AN', 'BINH', 'CUONG', 'DUNG', 'HAI', 'HUNG', 'KHANH', 'LINH', 'MINH', 'NAM', 'PHONG', 'QUAN', 'TAM', 'TUAN', 'VINH'];
+        const lastNames = ['AN', 'BINH', 'CUONG', 'DUNG', 'HAI', 'HUNG', 'KHANH', 'LINH', 'MINH', 'NAM', 'PHONG', 'QUAN', 'TAM',
+            'TUAN', 'VINH'];
 
         const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
         const middleName = middleNames[Math.floor(Math.random() * middleNames.length)];
@@ -756,10 +1124,7 @@
         password += numbers[Math.floor(Math.random() * numbers.length)];
 
         const allChars = letters + numbers;
-        for (let i = 4; i < passwordLength; i++) {
-            password += allChars[Math.floor(Math.random() * allChars.length)];
-        }
-
+        for (let i = 4; i < passwordLength; i++) { password += allChars[Math.floor(Math.random() * allChars.length)]; }
         password = password.split('').sort(() => Math.random() - 0.5).join('');
         document.getElementById('autoPassword').value = password;
 
@@ -785,30 +1150,65 @@
         // Random account number (10-14 digits)
         const accountLength = 10 + Math.floor(Math.random() * 5);
         let accountNumber = '';
-        for (let i = 0; i < accountLength; i++) {
-            accountNumber += Math.floor(Math.random() * 10);
-        }
-        document.getElementById('autoAccountNumber').value = accountNumber;
-
-        // Visual feedback
-        const inputs = [
-            'autoUsername', 'autoFullname', 'autoPassword', 'autoWithdrawPassword',
-            'autoEmail', 'autoPhone', 'autoBankName', 'autoAccountNumber'
-        ];
-        inputs.forEach(id => {
-            const input = document.getElementById(id);
-            if (input && input.value) {
-                input.style.background = 'linear-gradient(135deg, #ebf4ff, #e0e7ff)';
-                setTimeout(() => { input.style.background = ''; }, 1000);
-            }
-        });
+        for (let i = 0; i < accountLength; i++) { accountNumber += Math.floor(Math.random() * 10); }
+        document.getElementById('autoAccountNumber').value = accountNumber; // Visual feedback const
+        inputs = ['autoUsername', 'autoFullname', 'autoPassword', 'autoWithdrawPassword', 'autoEmail', 'autoPhone'
+            , 'autoBankName', 'autoAccountNumber']; inputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input && input.value) {
+                    input.style.background = 'linear-gradient(135deg, #ebf4ff, #e0e7ff)';
+                    setTimeout(() => { input.style.background = ''; }, 1000);
+                }
+            });
 
         console.log('✅ Random form completed');
     }
 
     // Profile Management
     let availableProfiles = [];
-    let selectedProfile = null;
+
+    // Wait for server to actually start automation (check if it's in running status)
+    async function waitForServerStart(username, maxWaitTime = 30000) {
+        const startTime = Date.now();
+        const checkInterval = 500; // Check every 500ms
+
+        console.log(`⏳ Waiting for server to start automation for ${username}...`);
+
+        while (Date.now() - startTime < maxWaitTime) {
+            try {
+                const response = await fetch('/api/vip-automation/statuses');
+                const data = await response.json();
+
+                if (data.success && data.statuses) {
+                    // Check if this username is in running status
+                    const isRunning = data.statuses.some(status =>
+                        status.username === username && status.status === 'running'
+                    );
+
+                    if (isRunning) {
+                        console.log(`✅ Server confirmed automation started for ${username}`);
+                        return { success: true, waitTime: Date.now() - startTime };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error checking server status:', error.message);
+            }
+
+            // Wait before next check
+            await new Promise(resolve => setTimeout(resolve, checkInterval));
+        }
+
+        console.warn(`⚠️ Server start confirmation timeout after ${maxWaitTime}ms`);
+        return { success: false, timeout: true, waitTime: Date.now() - startTime };
+    }
+
+    // Get selected profile from profileManager (shared with Nohu tool)
+    function getSelectedProfile() {
+        if (typeof profileManager !== 'undefined' && profileManager.selectedProfileId) {
+            return availableProfiles.find(p => p.uuid === profileManager.selectedProfileId);
+        }
+        return null;
+    }
 
     async function loadProfilesCarousel() {
         try {
@@ -856,13 +1256,22 @@
             return;
         }
 
-        carousel.innerHTML = availableProfiles.map((profile, index) => {
-            const isSelected = selectedProfile?.id === profile.id;
+        // Hiển thị tất cả profiles (giống NOHU)
+        carousel.innerHTML = availableProfiles.map((profile) => {
+            const selectedProfile = getSelectedProfile();
+            const isSelected = selectedProfile?.uuid === profile.uuid;
+            const isRunning = profileManager.isRunning(profile.uuid);
             const initials = (profile.name || 'PR').substring(0, 2).toUpperCase();
 
             // OS & Browser icons mapping
-            const osIcons = { 'win': '🪟', 'windows': '🪟', 'mac': '🍎', 'macos': '🍎', 'linux': '🐧', 'android': '🤖', 'ios': '📱' };
-            const browserIcons = { 'chrome': '🌐', 'firefox': '🦊', 'edge': '🔷', 'opera': '🔴', 'brave': '🦁', 'safari': '🧭' };
+            const osIcons = {
+                'win': '🪟', 'windows': '🪟', 'mac': '🍎', 'macos': '🍎', 'linux': '🐧', 'android': '🤖',
+                'ios': '📱'
+            };
+            const browserIcons = {
+                'chrome': '🌐', 'firefox': '🦊', 'edge': '🔷', 'opera': '🔴', 'brave': '🦁',
+                'safari': '🧭'
+            };
 
             const osIcon = osIcons[profile.os?.toLowerCase()] || '💻';
             const browserIcon = browserIcons[profile.browser?.toLowerCase()] || '🌐';
@@ -879,48 +1288,58 @@
             }
 
             return `
-                <div class="profile-carousel-card ${isSelected ? 'selected' : ''}" 
-                    onclick="selectProfile(${index})" 
-                    style="cursor: pointer;">
-                    <div class="profile-card-header">
-                        <div class="profile-avatar">${initials}</div>
-                        ${isSelected ? '<span class="selected-badge">✓ Đã Chọn</span>' : ''}
-                    </div>
-                    <div class="profile-card-body">
-                        <div class="profile-card-name">${profile.name || 'Unnamed Profile'}</div>
-                        <div class="profile-card-info">
-                            <div class="info-item">
-                                <span class="info-icon">${osIcon}</span>
-                                <span class="info-text">${profile.os || 'N/A'}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-icon">${browserIcon}</span>
-                                <span class="info-text">${profile.browser || 'chrome'}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-icon">🌍</span>
-                                <span class="info-text">${proxyIP}</span>
-                            </div>
+            <div class="profile-carousel-card ${isSelected ? 'selected' : ''} ${isRunning ? 'running' : ''}"
+                data-uuid="${profile.uuid}" onclick="${isRunning ? '' : 'selectProfileVip(\'' + profile.uuid + '\')'}"
+                style="cursor: ${isRunning ? 'not-allowed' : 'pointer'};">
+                <div class="profile-card-header">
+                    <div class="profile-avatar">${initials}</div>
+                    ${isRunning ? '<span class="running-badge">● Running</span>' : ''}
+                    ${isSelected ? '<span class="selected-badge">✓ Selected</span>' : ''}
+                </div>
+                <div class="profile-card-body">
+                    <div class="profile-card-name">${profile.name || 'Unnamed Profile'}</div>
+                    <div class="profile-card-info">
+                        <div class="info-item">
+                            <span class="info-icon">${osIcon}</span>
+                            <span class="info-text">${profile.os || 'N/A'}</span>
                         </div>
-                    </div>
-                    <div class="profile-card-footer">
-                        <div class="profile-status-text ${isSelected ? 'selected' : 'available'}">
-                            ${isSelected ? '✓ Đã Chọn' : '👆 Click để chọn'}
+                        <div class="info-item">
+                            <span class="info-icon">${browserIcon}</span>
+                            <span class="info-text">${profile.browser || 'chrome'}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🌍</span>
+                            <span class="info-text">${proxyIP}</span>
                         </div>
                     </div>
                 </div>
+                <div class="profile-card-footer">
+                    <div class="profile-status-text ${isRunning ? 'running' : (isSelected ? 'selected' : 'available')}">
+                        ${isRunning ? '🔴 Đang Chạy' : (isSelected ? '✓ Đã Chọn' : '👆 Click để chọn')}
+                    </div>
+                </div>
+            </div>
             `;
         }).join('');
     }
 
-    function selectProfile(index) {
-        selectedProfile = availableProfiles[index];
+    function selectProfileVip(uuid) {
+        // Check if profile is running
+        if (profileManager.isRunning(uuid)) {
+            showToast('warning', 'Profile đang chạy', 'Không thể chọn profile đang chạy automation');
+            return;
+        }
+
+        // Select in manager (shared with Nohu tool)
+        profileManager.select(uuid);
 
         // Get current active tab
         const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
         renderProfileCarousel(activeTab);
 
+        const selectedProfile = getSelectedProfile();
         console.log('✅ Selected profile:', selectedProfile);
+        showToast('success', 'Profile đã chọn', selectedProfile?.name || 'Unknown');
     }
 
     function scrollProfileCarousel(tab, direction) {
@@ -933,6 +1352,69 @@
         });
     }
 
+    // Touch/Swipe support for profile carousel
+    function initCarouselSwipe() {
+        const carousels = document.querySelectorAll('.profile-carousel');
+
+        carousels.forEach(carousel => {
+            let startX = 0;
+            let scrollLeft = 0;
+            let isDown = false;
+
+            carousel.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - carousel.offsetLeft;
+                scrollLeft = carousel.scrollLeft;
+                carousel.style.cursor = 'grabbing';
+            });
+
+            carousel.addEventListener('mouseleave', () => {
+                isDown = false;
+                carousel.style.cursor = 'grab';
+            });
+
+            carousel.addEventListener('mouseup', () => {
+                isDown = false;
+                carousel.style.cursor = 'grab';
+            });
+
+            carousel.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - carousel.offsetLeft;
+                const walk = (x - startX) * 1.5; // Multiply for faster scroll
+                carousel.scrollLeft = scrollLeft - walk;
+            });
+
+            // Touch support for mobile
+            carousel.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].pageX - carousel.offsetLeft;
+                scrollLeft = carousel.scrollLeft;
+            });
+
+            carousel.addEventListener('touchmove', (e) => {
+                const x = e.touches[0].pageX - carousel.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                carousel.scrollLeft = scrollLeft - walk;
+            });
+
+            // Smooth scroll on wheel
+            carousel.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                carousel.scrollBy({
+                    left: e.deltaY < 0 ? -100 : 100, behavior: 'smooth'
+                });
+            });
+        });
+    }
+
+    // Initialize swipe when profiles are loaded
+    const originalLoadProfiles = loadProfilesCarousel;
+    loadProfilesCarousel = async function () {
+        await originalLoadProfiles.call(this);
+        setTimeout(initCarouselSwipe, 100);
+    };
+
     function startCheckPromo() {
         runCheckPromo();
     }
@@ -941,48 +1423,34 @@
     let vipResults = [];
     const RESULTS_PER_PAGE = 5;
     let currentPage = 1;
-
     function addResult(result) {
         vipResults.unshift({
-            id: Date.now(),
-            profile: result.profile || 'N/A',
-            category: result.category || 'N/A',
-            site: result.site || 'N/A',
-            username: result.username || 'N/A',
-            password: result.password || 'N/A',
-            withdrawPassword: result.withdrawPassword || 'N/A',
-            fullname: result.fullname || 'N/A',
-            bankName: result.bankName || 'N/A',
-            accountNumber: result.accountNumber || 'N/A',
-            register: result.register || { success: false },
-            login: result.login || { success: false },
-            addBank: result.addBank || { success: false },
-            checkPromo: result.checkPromo || { success: false },
-            timestamp: new Date().toLocaleString('vi-VN'),
-            checked: false
-        });
-        updateResultsTable();
-    }
-
-    function getStatusBadge(status) {
+            id: Date.now(), profile: result.profile || 'N/A',
+            category: result.category || 'N/A', site: result.site || 'N/A', username: result.username || 'N/A',
+            password: result.password || 'N/A', withdrawPassword: result.withdrawPassword || 'N/A', fullname:
+                result.fullname || 'N/A', bankName: result.bankName || 'N/A', accountNumber: result.accountNumber
+                    || 'N/A', register: result.register || { success: false }, login: result.login || { success: false },
+            addBank: result.addBank || { success: false }, checkPromo: result.checkPromo || { success: false },
+            timestamp: new Date().toLocaleString('vi-VN'), checked: false
+        }); updateResultsTable();
+    } function
+        getStatusBadge(status) {
         if (status === true || (status && status.success === true)) {
             return '<span class="status-badge status-success">✅ Thành Công</span>';
-        } else if (status === false || (status && status.success === false)) {
+        } else if (status === false ||
+            (status && status.success === false)) {
             return '<span class="status-badge status-failed">❌ Thất Bại</span>';
         } else {
             return '<span class="status-badge status-pending">⏳ Chờ</span>';
         }
-    }
-
-    function getCategoryBadge(category) {
+    } function
+        getCategoryBadge(category) {
         const categoryMap = {
-            'okvip': 'category-okvip',
-            'abcvip': 'category-abcvip',
-            'jun88': 'category-jun88',
-            'kjc': 'category-kjc'
-        };
-        const className = categoryMap[category] || '';
-        return `<span class="category-badge ${className}">${category.toUpperCase()}</span>`;
+            'okvip': 'category-okvip', 'abcvip'
+                : 'category-abcvip', 'jun88': 'category-jun88', 'kjc': 'category-kjc'
+        }; const
+            className = categoryMap[category] || ''; return `<span class="category-badge ${className}">
+                ${category.toUpperCase()}</span>`;
     }
 
     function updateResultsTable() {
@@ -995,7 +1463,7 @@
                         Chưa có kết quả. Chạy automation để xem kết quả ở đây.
                     </td>
                 </tr>
-            `;
+                `;
             updatePagination();
             return;
         }
@@ -1026,46 +1494,41 @@
             return `
                 <tr>
                     <td style="width: 40px;">
-                        <input type="checkbox" class="result-checkbox" data-id="${result.id}" 
+                        <input type="checkbox" class="result-checkbox" data-id="${result.id}"
                             onchange="updateSelectAll()" style="cursor: pointer; width: 18px; height: 18px;">
                     </td>
                     <td><strong>${result.profile}</strong></td>
-                    <td style="text-align: center; display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;" title="${Array.isArray(result.sites) ? result.sites.join(', ') : result.sites}">
+                    <td style="text-align: center; display: flex; gap: 6px; justify-content: center; align-items: center; flex-wrap: wrap;"
+                        title="${Array.isArray(result.sites) ? result.sites.join(', ') : result.sites}">
                         ${(() => {
-                    const siteIconMap = {
-                        'OKVip1': 'okvip1.jpg',
-                        'OKVip2': 'okvip2.jpg',
-                        'Hi88': 'hi88.jpg',
-                        'F8BET': 'f8bet.jpg',
-                        'SHBET': 'shbet.jpg',
-                        'TigerStorm7ff': 'tigerstorm.jpg',
-                        'NEW88': 'new88.jpg',
-                        'MB66': 'mb66.jpg',
-                        '789BET': '789bet.jpg',
-                        'U888': 'u888.jpg',
-                        'J88': 'j88.jpg',
-                        'ABC8': 'abc8.jpg',
-                        '888clb': '888clb.jpg'
-                    };
                     const sites = Array.isArray(result.sites) ? result.sites : [result.sites];
                     return sites.map(site => {
-                        const iconFile = siteIconMap[site];
-                        return iconFile
-                            ? `<img src="tools-ui/vip/icons/${iconFile}" alt="${site}" style="width: 32px; height: 32px; border-radius: 4px; object-fit: contain;" title="${site}">`
-                            : `<span style="font-size: 16px;">🎮</span>`;
+                        return `<span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap;">
+                            ${site}
+                        </span>`;
                     }).join('');
                 })()}
                     </td>
                     <td>${result.username}</td>
                     <td><span class="status-badge ${statusClass}">${overallStatus}</span></td>
                     <td style="font-size: 12px; color: #6b7280;">${result.timestamp}</td>
-                    <td style="text-align: center;">
-                        <button class="action-btn action-btn-small" onclick="deleteResult(${result.id})" title="Xóa">
+                    <td style="text-align: center; display: flex; gap: 12px; justify-content: center; align-items: center;">
+                        ${overallStatus === '✅ Hoàn Thành'
+                    ? `<button class="action-btn action-btn-small"
+                            onclick="openVipAccountInfoModal('${result.username}', '${result.category}', '${(result.sites || []).join(',')}')"
+                            title="Xem thông tin tài khoản"
+                            style="font-size: 20px; padding: 8px 12px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);">
+                            📋
+                        </button>`
+                    : '<span style="color: #cbd5e0; font-size: 20px;">-</span>'
+                }
+                        <button class="action-btn action-btn-small" onclick="deleteResult(${result.id})" title="Xóa"
+                            style="font-size: 20px; padding: 8px 12px; background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(245, 87, 108, 0.4);">
                             🗑️
                         </button>
                     </td>
                 </tr>
-            `;
+                `;
         }).join('');
 
         updatePagination();
@@ -1104,18 +1567,11 @@
 
     function goToNextPage() {
         const totalPages = Math.ceil(vipResults.length / RESULTS_PER_PAGE);
-        if (currentPage < totalPages) {
-            currentPage++;
-            updateResultsTable();
-        }
-    }
-
-    function goToLastPage() {
-        currentPage = Math.ceil(vipResults.length / RESULTS_PER_PAGE);
-        updateResultsTable();
-    }
-
-    function toggleSelectAll(checkbox) {
+        if (currentPage < totalPages) { currentPage++; updateResultsTable(); }
+    } function goToLastPage() {
+        currentPage = Math.ceil(vipResults.length / RESULTS_PER_PAGE); updateResultsTable();
+    } function
+        toggleSelectAll(checkbox) {
         document.querySelectorAll('.result-checkbox').forEach(cb => {
             cb.checked = checkbox.checked;
         });
@@ -1127,7 +1583,10 @@
         selectAllCheckbox.checked = allChecked > 0;
     }
 
-    function deleteSelectedResults() {
+    async function deleteSelectedResults() {
+        const btn = event?.target;
+        if (btn) disableButtonTemporarily(btn);
+
         const selectedIds = Array.from(document.querySelectorAll('.result-checkbox:checked'))
             .map(cb => parseInt(cb.dataset.id));
 
@@ -1137,13 +1596,42 @@
         }
 
         if (confirm(`Xóa ${selectedIds.length} kết quả?`)) {
-            vipResults = vipResults.filter(r => !selectedIds.includes(r.id));
-            currentPage = 1;
-            updateResultsTable();
+            try {
+                // Get selected results
+                const selectedResults = vipResults.filter(r => selectedIds.includes(r.id));
+
+                // Call API to delete results
+                const response = await fetch('/api/results/clear-selected', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sessions: selectedResults.map(r => ({
+                            username: r.username,
+                            sessionId: r.sessionId,
+                            toolId: 'vip-tool'
+                        }))
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    showToast('success', 'Đã xóa', `${selectedIds.length} kết quả đã được xóa thành công`);
+                    // Reload results from API
+                    await loadResultsFromAPI();
+                } else {
+                    showToast('error', 'Lỗi', data.error || 'Không thể xóa kết quả');
+                }
+            } catch (error) {
+                console.error('Error deleting results:', error);
+                showToast('error', 'Lỗi', error.message);
+            }
         }
     }
 
     async function deleteResult(id) {
+        const btn = event?.target;
+        if (btn) disableButtonTemporarily(btn);
+
         const result = vipResults.find(r => r.id === id);
         if (!result) return;
 
@@ -1190,10 +1678,10 @@
         // Show loading modal
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = '<div style="text-align: center; padding: 40px;"><span style="font-size: 24px;">⏳</span><br>Đang tải...</div>';
-        tempDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 10000; max-width: 600px;';
+        tempDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); z-index: 10000; max-width: 600px;';
 
         const overlay = document.createElement('div');
-        overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999;';
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 9999;';
         overlay.onclick = () => {
             document.body.removeChild(overlay);
             document.body.removeChild(tempDiv);
@@ -1217,54 +1705,64 @@
             if (data.success && data.account) {
                 const acc = data.account;
                 const accountHTML = `
-            <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
-                <h4 style="margin: 0 0 15px 0; color: #2d3748; display: flex; align-items: center; gap: 8px;">
-                    <span style="font-size: 20px;">👤</span> Thông Tin Tài Khoản
-                    <span style="background: #e2e8f0; color: #4a5568; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
-                        ${(acc.category || 'VIP').toUpperCase()}
-                    </span>
-                </h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
-                    <div>
-                        <strong style="color: #4a5568;">👤 Tên đăng nhập:</strong><br>
-                        <span style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.username}</span>
+                    <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
+                        <h4 style="margin: 0 0 15px 0; color: #2d3748; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 20px;">👤</span> Thông Tin Tài Khoản
+                            <span
+                                style="background: #e2e8f0; color: #4a5568; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                                ${(acc.category || 'VIP').toUpperCase()}
+                            </span>
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
+                            <div>
+                                <strong style="color: #4a5568;">👤 Tên đăng nhập:</strong><br>
+                                <span
+                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.username}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">🔑 Mật khẩu:</strong><br>
+                                <span
+                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.password}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">💰 MK rút tiền:</strong><br>
+                                <span
+                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.withdrawPassword
+                    || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">📝 Họ và tên:</strong><br>
+                                <span style="color: #2d3748;">${acc.fullname || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">🏦 Ngân hàng:</strong><br>
+                                <span style="color: #2d3748;">${acc.bankName || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">🏢 Chi nhánh:</strong><br>
+                                <span style="color: #2d3748;">${acc.bankBranch || 'N/A'}</span>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <strong style="color: #4a5568;">💳 Số tài khoản:</strong><br>
+                                <span
+                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.accountNumber
+                    || 'N/A'}</span>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <strong style="color: #4a5568;">📅 Ngày đăng ký:</strong><br>
+                                <span style="color: #718096;">${new
+                        Date(acc.registeredAt).toLocaleString('vi-VN')}</span>
+                            </div>
+                        </div>
+                        <div
+                            style="margin-top: 15px; padding: 12px; background: #e6fffa; border-radius: 8px; border-left: 4px solid #38b2ac;">
+                            <p style="margin: 0; color: #234e52; font-size: 13px;">
+                                <strong>ℹ️ Lưu ý:</strong> Tài khoản này được sử dụng cho tất cả site trong category
+                                <strong>${(acc.category || 'VIP').toUpperCase()}</strong>.
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <strong style="color: #4a5568;">🔑 Mật khẩu:</strong><br>
-                        <span style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.password}</span>
-                    </div>
-                    <div>
-                        <strong style="color: #4a5568;">💰 MK rút tiền:</strong><br>
-                        <span style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.withdrawPassword || 'N/A'}</span>
-                    </div>
-                    <div>
-                        <strong style="color: #4a5568;">📝 Họ và tên:</strong><br>
-                        <span style="color: #2d3748;">${acc.fullname || 'N/A'}</span>
-                    </div>
-                    <div>
-                        <strong style="color: #4a5568;">🏦 Ngân hàng:</strong><br>
-                        <span style="color: #2d3748;">${acc.bankName || 'N/A'}</span>
-                    </div>
-                    <div>
-                        <strong style="color: #4a5568;">🏢 Chi nhánh:</strong><br>
-                        <span style="color: #2d3748;">${acc.bankBranch || 'N/A'}</span>
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                        <strong style="color: #4a5568;">💳 Số tài khoản:</strong><br>
-                        <span style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.accountNumber || 'N/A'}</span>
-                    </div>
-                    <div style="grid-column: 1 / -1;">
-                        <strong style="color: #4a5568;">📅 Ngày đăng ký:</strong><br>
-                        <span style="color: #718096;">${new Date(acc.registeredAt).toLocaleString('vi-VN')}</span>
-                    </div>
-                </div>
-                <div style="margin-top: 15px; padding: 12px; background: #e6fffa; border-radius: 8px; border-left: 4px solid #38b2ac;">
-                    <p style="margin: 0; color: #234e52; font-size: 13px;">
-                        <strong>ℹ️ Lưu ý:</strong> Tài khoản này được sử dụng cho tất cả site trong category <strong>${(acc.category || 'VIP').toUpperCase()}</strong>.
-                    </p>
-                </div>
-            </div>
-        `;
+                    `;
                 tempDiv.innerHTML = accountHTML;
             } else {
                 tempDiv.innerHTML = '<div style="text-align: center; padding: 40px; color: #f59e0b;">⚠️ Không tìm thấy thông tin tài khoản</div>';
@@ -1274,7 +1772,7 @@
             tempDiv.innerHTML = '<div style="text-align: center; padding: 40px; color: #ef4444;">❌ Lỗi: ' + error.message + '</div>';
         }
 
-        tempDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 10000; max-width: 600px; max-height: 80vh; overflow-y: auto;';
+        tempDiv.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); z-index: 10000; max-width: 600px; max-height: 80vh; overflow-y: auto;';
     }
 
     function viewResultDetails(id) {
@@ -1282,23 +1780,25 @@
         if (!result) return;
 
         const details = `
-Profile: ${result.profile}
-Category: ${result.category}
-Site: ${result.site}
-Tài Khoản: ${result.username}
+                    Profile: ${result.profile}
+                    Category: ${result.category}
+                    Site: ${result.site}
+                    Tài Khoản: ${result.username}
 
-Đăng Ký: ${result.register.success ? '✅ Thành Công' : '❌ Thất Bại'}
-Đăng Nhập: ${result.login.success ? '✅ Thành Công' : '❌ Thất Bại'}
-Thêm Bank: ${result.addBank.success ? '✅ Thành Công' : '❌ Thất Bại'}
-Check KM: ${result.checkPromo.success ? '✅ Thành Công' : '❌ Thất Bại'}
+                    Đăng Ký: ${result.register.success ? '✅ Thành Công' : '❌ Thất Bại'}
+                    Đăng Nhập: ${result.login.success ? '✅ Thành Công' : '❌ Thất Bại'}
+                    Thêm Bank: ${result.addBank.success ? '✅ Thành Công' : '❌ Thất Bại'}
+                    Check KM: ${result.checkPromo.success ? '✅ Thành Công' : '❌ Thất Bại'}
 
-Thời Gian: ${result.timestamp}
-        `;
+                    Thời Gian: ${result.timestamp}
+                    `;
 
         alert(details);
     }
 
     async function refreshResults() {
+        const btn = event?.target;
+        if (btn) disableButtonTemporarily(btn);
         await loadResultsFromAPI();
         updateResultsTable();
     }
@@ -1329,12 +1829,14 @@ Thời Gian: ${result.timestamp}
                     <tr>
                         <td colspan="8" style="text-align: center; color: #6366f1; padding: 40px;">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 10px;">
-                                <div style="width: 20px; height: 20px; border: 2px solid #6366f1; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                                <div
+                                    style="width: 20px; height: 20px; border: 2px solid #6366f1; border-top: 2px solid transparent; border-radius: 50%; animation: spin 1s linear infinite;">
+                                </div>
                                 Đang tải kết quả VIP Auto Tool...
                             </div>
                         </td>
                     </tr>
-                `;
+                    `;
             }
 
             const response = await fetch('/api/automation/results?tool=vip-tool');
@@ -1410,5 +1912,287 @@ Thời Gian: ${result.timestamp}
         toggleCategorySites();
 
         console.log('✅ VIP Tool initialized');
+    });
+
+    // ============================================
+    // AUTO-CLEAR RUNNING STATUS (Polling)
+    // ============================================
+
+    // Load automation statuses (running automations) - similar to Nohu
+    async function loadVipAutomationStatuses() {
+        try {
+            const response = await fetch('/api/automation/statuses');
+            const data = await response.json();
+
+            if (data.success && data.statuses) {
+                // Track which usernames are currently running
+                const currentlyRunning = new Set();
+
+                for (const status of data.statuses) {
+                    if (status.status === 'running') {
+                        currentlyRunning.add(status.username);
+                    } else if (status.status === 'completed' || status.status === 'error') {
+                        // Clear running flag for profile when automation completes
+                        if (typeof profileManager !== 'undefined') {
+                            const profile = availableProfiles.find(p => p.name === status.username);
+                            if (profile && profileManager.runningProfiles.has(profile.uuid)) {
+                                profileManager.runningProfiles.delete(profile.uuid);
+
+                                // Cleanup start time tracking
+                                if (profileManager.runningStartTimes) {
+                                    profileManager.runningStartTimes.delete(profile.uuid);
+                                }
+
+                                profileManager.saveRunningProfiles();
+                                console.log(`✅ Cleared running flag for profile: ${profile.name} (automation ${status.status})`);
+
+                                // Refresh carousel to update UI
+                                const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+                                await loadProfilesCarousel();
+                                renderProfileCarousel(activeTab);
+                            }
+                        }
+                    }
+                }
+
+                // Sync profileManager.runningProfiles with server state
+                const profilesToRemove = [];
+                for (const profileId of profileManager.runningProfiles) {
+                    const profile = availableProfiles.find(p => p.uuid === profileId);
+                    if (profile && !currentlyRunning.has(profile.name)) {
+                        // Check if this profile has been marked as running recently (within 30 seconds)
+                        const runningStartTime = profileManager.runningStartTimes?.get(profileId) || 0;
+                        const timeSinceStart = Date.now() - runningStartTime;
+
+                        // Only remove if it's been more than 30 seconds since marked as running
+                        if (timeSinceStart > 30000) {
+                            profilesToRemove.push(profileId);
+                        }
+                    }
+                }
+
+                if (profilesToRemove.length > 0) {
+                    profilesToRemove.forEach(profileId => {
+                        profileManager.runningProfiles.delete(profileId);
+                        if (profileManager.runningStartTimes) {
+                            profileManager.runningStartTimes.delete(profileId);
+                        }
+                        console.log(`✅ Synced: Removed running flag for profile ${profileId}`);
+                    });
+                    profileManager.saveRunningProfiles();
+                    const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+                    await loadProfilesCarousel();
+                    renderProfileCarousel(activeTab);
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load VIP automation statuses:', error);
+        }
+    }
+
+    // Start polling automation statuses every 5 seconds (faster updates)
+    setInterval(() => {
+        loadVipAutomationStatuses();
+    }, 5000);
+
+    // Also check on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadVipAutomationStatuses();
+    });
+
+    // Open VIP account info modal
+    async function openVipAccountInfoModal(username, category, resultSitesStr = '') {
+        const btn = event?.target;
+        if (btn) disableButtonTemporarily(btn);
+
+        const modal = document.getElementById('vipAccountInfoModal');
+        const title = document.getElementById('vipAccountInfoTitle');
+        const content = document.getElementById('vipAccountInfoContent');
+
+        title.textContent = `📋 Thông Tin Tài Khoản - ${username}`;
+
+        try {
+            // Parse sites from string
+            const resultSites = resultSitesStr ? resultSitesStr.split(',').filter(s => s.trim()) : [];
+            console.log('� Fetchning VIP account info:', { username, category, resultSites });
+            const response = await fetch(`/api/accounts/vip/${username}`);
+            console.log('📡 Response status:', response.status, response.statusText);
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            console.log('📋 Account data:', data);
+
+            if (data.success && data.account) {
+                const acc = data.account;
+                // Use sites from result if available, otherwise use from account data
+                const sitesToDisplay = resultSites && resultSites.length > 0 ? resultSites : (acc.sites || []);
+
+                content.innerHTML = `
+                    <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
+                        <h4 style="margin: 0 0 15px 0; color: #2d3748; display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 20px;">👤</span> Thông Tin Tài Khoản
+                            <span
+                                style="background: #e2e8f0; color: #4a5568; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                                ${(category || 'VIP').toUpperCase()}
+                            </span>
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
+                            <div>
+                                <strong style="color: #4a5568;">👤 Tên đăng nhập:</strong><br>
+                                <span
+                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.username}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">🔑 Mật khẩu:</strong><br>
+                                <span
+                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.password}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">💰 MK rút tiền:</strong><br>
+                                <span
+                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.withdrawPassword
+                    || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">📝 Họ và tên:</strong><br>
+                                <span style="color: #2d3748;">${acc.fullname || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">🏦 Ngân hàng:</strong><br>
+                                <span style="color: #2d3748;">${acc.bankName || 'N/A'}</span>
+                            </div>
+                            <div>
+                                <strong style="color: #4a5568;">🏢 Chi nhánh:</strong><br>
+                                <span style="color: #2d3748;">${acc.bankBranch || 'N/A'}</span>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <strong style="color: #4a5568;">💳 Số tài khoản:</strong><br>
+                                <span
+                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.accountNumber
+                    || 'N/A'}</span>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <strong style="color: #4a5568;">📅 Ngày đăng ký:</strong><br>
+                                <span style="color: #718096;">${new
+                        Date(acc.registeredAt).toLocaleString('vi-VN')}</span>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <strong style="color: #4a5568;">📱 Các trang được đăng ký:</strong><br>
+                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                                    ${sitesToDisplay && sitesToDisplay.length > 0
+                        ? sitesToDisplay.map(site => `
+                                    <span
+                                        style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                        ${site}
+                                    </span>
+                                    `).join('')
+                        : '<span style="color: #718096; font-style: italic;">Không có thông tin</span>'
+                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            style="margin-top: 15px; padding: 12px; background: #e6fffa; border-radius: 8px; border-left: 4px solid #38b2ac;">
+                            <p style="margin: 0; color: #234e52; font-size: 13px;">
+                                <strong>ℹ️ Lưu ý:</strong> Thông tin này được sử dụng chung cho tất cả trang web trong
+                                session này.
+                            </p>
+                        </div>
+                    </div>
+                    `;
+            } else {
+                content.innerHTML = `
+                    <div style="background: #fff5f5; border-radius: 12px; padding: 20px; border: 1px solid #feb2b2;">
+                        <h4 style="margin: 0; color: #c53030;">⚠️ Không tìm thấy thông tin</h4>
+                        <p style="margin: 10px 0 0 0; color: #742a2a;">Không tìm thấy thông tin tài khoản cho session
+                            này</p>
+                    </div>
+                    `;
+            }
+
+            modal.style.display = 'flex';
+        } catch (error) {
+            console.error('Error loading VIP account info:', error);
+            const errorMsg = error.message || 'Unknown error';
+            content.innerHTML = `
+                    <div style="background: #fff5f5; border-radius: 12px; padding: 20px; border: 1px solid #feb2b2;">
+                        <h4 style="margin: 0; color: #c53030;">❌ Lỗi tải thông tin tài khoản</h4>
+                        <p style="margin: 10px 0 0 0; color: #742a2a; font-size: 13px;">
+                            <strong>Chi tiết:</strong> ${errorMsg}<br>
+                            <strong>Username:</strong> ${username}<br>
+                            <strong>Category:</strong> ${category}
+                        </p>
+                        <div
+                            style="margin-top: 15px; padding: 10px; background: #f7fafc; border-radius: 6px; font-size: 12px; color: #4a5568;">
+                            💡 <strong>Có thể do:</strong><br>
+                            • API endpoint chưa được thiết lập<br>
+                            • Tài khoản chưa được lưu trong database<br>
+                            • Lỗi kết nối mạng
+                        </div>
+                    </div>
+                    `;
+            modal.style.display = 'flex';
+        }
+    }
+
+    // Close VIP account info modal
+    function closeVipAccountInfoModal() {
+        const modal = document.getElementById('vipAccountInfoModal');
+        modal.style.display = 'none';
+    }
+
+
+
+    // Auto-detect category from URL
+    function autoDetectCategoryFromUrl(url) {
+        try {
+            const urlObj = new URL(url);
+            const domain = urlObj.hostname.toLowerCase();
+
+            // OKVIP sites
+            if (domain.includes('okvip') || domain.includes('ok-vip') ||
+                domain.includes('hi88') || domain.includes('f8bet') ||
+                domain.includes('shbet') || domain.includes('tigerstorm') ||
+                domain.includes('new88') || domain.includes('mb66') ||
+                domain.includes('789bet')) {
+                return 'okvip';
+            }
+
+            // ABCVIP sites
+            if (domain.includes('abcvip') || domain.includes('abc-vip') ||
+                domain.includes('u888') || domain.includes('j88') ||
+                domain.includes('abc8') || domain.includes('888clb')) {
+                return 'abcvip';
+            }
+
+            // JUN88 sites
+            if (domain.includes('jun88') || domain.includes('jun-88')) {
+                return 'jun88';
+            }
+
+            // KJC sites
+            if (domain.includes('kjc') || domain.includes('k-jc')) {
+                return 'kjc';
+            }
+
+            return null; // Could not detect
+        } catch (error) {
+            console.error('Error auto-detecting category:', error);
+            return null;
+        }
+    }
+
+
+
+
+
+    // Close modal on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            closeVipAccountInfoModal();
+        }
     });
 </script>

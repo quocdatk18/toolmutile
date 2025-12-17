@@ -7,7 +7,6 @@ const fs = require('fs');
 const path = require('path');
 
 function cleanPackage(packagePath) {
-    console.log(`\n🧹 Cleaning sensitive data in: ${packagePath}\n`);
 
     // 1. Clean settings.json
     const settingsPath = path.join(packagePath, 'config', 'settings.json');
@@ -29,9 +28,7 @@ function cleanPackage(packagePath) {
             }
 
             fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2), 'utf8');
-            console.log('✅ Cleaned: config/settings.json');
         } catch (err) {
-            console.log('⚠️  Could not clean settings.json:', err.message);
         }
     }
 
@@ -47,28 +44,24 @@ function cleanPackage(packagePath) {
 # HIDEMIUM_API_KEY=
 `;
         fs.writeFileSync(envPath, cleanEnv, 'utf8');
-        console.log('✅ Cleaned: .env');
     }
 
     // 3. Remove screenshots folder (nếu có)
     const screenshotsPath = path.join(packagePath, 'screenshots');
     if (fs.existsSync(screenshotsPath)) {
         fs.rmSync(screenshotsPath, { recursive: true, force: true });
-        console.log('✅ Removed: screenshots/');
     }
 
     // 4. Remove license records
     const licenseRecordsPath = path.join(packagePath, 'license-records');
     if (fs.existsSync(licenseRecordsPath)) {
         fs.rmSync(licenseRecordsPath, { recursive: true, force: true });
-        console.log('✅ Removed: license-records/');
     }
 
     // 5. Remove .license file (nếu có)
     const licenseFilePath = path.join(packagePath, '.license');
     if (fs.existsSync(licenseFilePath)) {
         fs.unlinkSync(licenseFilePath);
-        console.log('✅ Removed: .license');
     }
 
     // 6. Check for any remaining sensitive files
@@ -96,7 +89,6 @@ function cleanPackage(packagePath) {
                 } else if (stat.isFile()) {
                     // Check filename
                     if (sensitivePatterns.some(pattern => pattern.test(item))) {
-                        console.log(`⚠️  Found sensitive file: ${path.relative(packagePath, fullPath)}`);
                     }
                 }
             });
@@ -105,7 +97,6 @@ function cleanPackage(packagePath) {
         }
     }
 
-    console.log('\n🔍 Scanning for sensitive files...');
     scanDirectory(packagePath);
 
     console.log('\n✅ Cleaning completed!\n');
@@ -116,7 +107,6 @@ if (require.main === module) {
     const packagePath = process.argv[2] || 'customer-packages/test_final';
 
     if (!fs.existsSync(packagePath)) {
-        console.log(`❌ Package not found: ${packagePath}`);
         process.exit(1);
     }
 

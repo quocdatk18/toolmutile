@@ -1,0 +1,27 @@
+{
+  "username": "WolfStorm1m",
+  "password": "r6yy28zk",
+  "withdrawPassword": "830355",
+  "fullname": "VO MINH AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10367048105787680",
+    "accountHolder": "VO MINH AN"
+  },
+  "registeredAt": "2025-12-17T02:36:15.644Z",
+  "firstSite": "Go99",
+  "sites": [
+    "Go99",
+    "NOHU",
+    "TT88",
+    "MMOO",
+    "789P",
+    "33WIN",
+    "88VV"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

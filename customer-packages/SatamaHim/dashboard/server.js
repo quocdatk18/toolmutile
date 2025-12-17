@@ -826,6 +826,21 @@ app.get('/api/automation/statuses', (req, res) => {
     }
 });
 
+// Get current VIP automation statuses (same as automation statuses for now)
+app.get('/api/vip-automation/statuses', (req, res) => {
+    try {
+        if (!global.automationStatuses) {
+            global.automationStatuses = new Map();
+        }
+
+        const statuses = Array.from(global.automationStatuses.values());
+        res.json({ success: true, statuses });
+    } catch (error) {
+        console.error('❌ Error getting VIP statuses:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Get current running profiles (for frontend sync)
 app.get('/api/profiles/running', (req, res) => {
     try {
@@ -1097,6 +1112,10 @@ app.get('/api/accounts/nohu/:username', (req, res) => {
         if (fs.existsSync(sharedAccountFile)) {
             console.log(`✅ Found shared account file for NOHU: account.json`);
             const accountData = JSON.parse(fs.readFileSync(sharedAccountFile, 'utf8'));
+            // Ensure sites field exists (for backward compatibility with old data)
+            if (!accountData.sites) {
+                accountData.sites = [];
+            }
             return res.json({ success: true, account: accountData });
         }
 
@@ -1108,6 +1127,10 @@ app.get('/api/accounts/nohu/:username', (req, res) => {
             console.log(`📁 No shared account file, using first available: ${files[0]}`);
             const accountPath = path.join(nohuAccountDir, files[0]);
             const accountData = JSON.parse(fs.readFileSync(accountPath, 'utf8'));
+            // Ensure sites field exists (for backward compatibility with old data)
+            if (!accountData.sites) {
+                accountData.sites = [];
+            }
             return res.json({ success: true, account: accountData });
         }
 
@@ -1153,6 +1176,9 @@ app.post('/api/accounts/nohu/:username', (req, res) => {
 
         // Also save as readable text file
         const accountTextFile = path.join(nohuAccountDir, 'account.txt');
+        const sitesText = accountData.sites && accountData.sites.length > 0
+            ? accountData.sites.map(s => `   • ${s}`).join('\n')
+            : '   • N/A';
         const accountText = `
 ═══════════════════════════════════════════════════════════
                     THÔNG TIN TÀI KHOẢN NOHU
@@ -1168,6 +1194,9 @@ app.post('/api/accounts/nohu/:username', (req, res) => {
    • Ngân hàng: ${accountData.bank?.name || 'N/A'}
    • Chi nhánh: ${accountData.bank?.branch || 'N/A'}
    • Số tài khoản: ${accountData.bank?.accountNumber || 'N/A'}
+
+📱 CÁC TRANG ĐƯỢC ĐĂNG KÝ
+${sitesText}
 
 📅 Ngày đăng ký: ${accountData.registeredAt}
 
@@ -1195,17 +1224,32 @@ app.get('/api/accounts/vip/:username', (req, res) => {
         }
 
         // Try to find any VIP category file (okvip, abcvip, jun88, kjc)
+        // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
         const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
         let accountData = null;
 
         for (const category of validCategories) {
-            const userCategoryDir = path.join(vipDir, category, username);
-            const accountFile = path.join(userCategoryDir, `${category}.json`);
-            if (fs.existsSync(accountFile)) {
-                console.log(`📁 Found ${category} account file for VIP`);
-                accountData = JSON.parse(fs.readFileSync(accountFile, 'utf8'));
-                break;
+            const categoryDir = path.join(vipDir, category);
+            if (!fs.existsSync(categoryDir)) continue;
+
+            // Search through date folders
+            const dateFolders = fs.readdirSync(categoryDir, { withFileTypes: true })
+                .filter(item => item.isDirectory())
+                .map(item => item.name)
+                .sort()
+                .reverse(); // Sort by date descending to get latest first
+
+            for (const dateFolder of dateFolders) {
+                const userCategoryDir = path.join(categoryDir, dateFolder, username);
+                const accountFile = path.join(userCategoryDir, `${category}.json`);
+                if (fs.existsSync(accountFile)) {
+                    console.log(`📁 Found ${category} account file for VIP at ${dateFolder}`);
+                    accountData = JSON.parse(fs.readFileSync(accountFile, 'utf8'));
+                    break;
+                }
             }
+
+            if (accountData) break;
         }
 
         // If not found in standard categories, search recursively
@@ -1251,6 +1295,11 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'No VIP account file found' });
         }
 
+        // Ensure sites field exists (for backward compatibility with old data)
+        if (!accountData.sites) {
+            accountData.sites = [];
+        }
+
         res.json({ success: true, account: accountData });
     } catch (error) {
         console.error('❌ Error getting VIP account info:', error);
@@ -1276,7 +1325,12 @@ app.post('/api/accounts/:category/:username', (req, res) => {
 
         const accountsDir = path.join(__dirname, '../accounts');
         const vipCategoryDir = path.join(accountsDir, 'vip', category);
-        const userAccountDir = path.join(vipCategoryDir, username);
+
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date();
+        const dateFolder = today.toISOString().split('T')[0]; // YYYY-MM-DD
+
+        const userAccountDir = path.join(vipCategoryDir, dateFolder, username);
 
         // Create directory if not exists
         if (!fs.existsSync(userAccountDir)) {
@@ -1292,6 +1346,9 @@ app.post('/api/accounts/:category/:username', (req, res) => {
 
         // Also save as readable text file
         const accountTextFile = path.join(userAccountDir, `${category}.txt`);
+        const sitesText = accountData.sites && accountData.sites.length > 0
+            ? accountData.sites.map(s => `   • ${s}`).join('\n')
+            : '   • N/A';
         const accountText = `
 ═══════════════════════════════════════════════════════════
                     THÔNG TIN TÀI KHOẢN ${categoryUpper}
@@ -1308,9 +1365,11 @@ app.post('/api/accounts/:category/:username', (req, res) => {
    • Chi nhánh: ${accountData.bank?.branch || 'N/A'}
    • Số tài khoản: ${accountData.bank?.accountNumber || 'N/A'}
 
+📱 CÁC TRANG ĐƯỢC ĐĂNG KÝ
+${sitesText}
+
 📅 Ngày đăng ký: ${accountData.registeredAt || new Date().toLocaleString('vi-VN')}
 📍 Danh mục: ${accountData.category || category}
-🎮 Site: ${accountData.site || 'N/A'}
 
 ═══════════════════════════════════════════════════════════
 `;
@@ -1519,8 +1578,8 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
 
         // Load and run tool-specific automation
         if (toolId === 'nohu-tool') {
-            // Use AutoSequence (WORKING VERSION from hidemium-tool-cu)
-            const AutoSequence = require('../tools/nohu-tool/auto-sequence');
+            // Use AutoSequenceSafe (SAFE MODE with account saving)
+            const AutoSequence = require('../tools/nohu-tool/auto-sequence-safe');
 
             // Read extension scripts (using original content.js - has full checkPromotion logic like quocdat)
             const contentScript = fs.readFileSync(path.join(__dirname, '../tools/nohu-tool/extension/content.js'), 'utf8');
@@ -1553,6 +1612,14 @@ app.post('/api/automation/run', checkLicense, async (req, res) => {
 
             config.runNumber = runNumber;
             config.profileId = profileId; // Add profileId to config for automation script
+
+            // Prepare profileData for countdown notifications
+            const profileDataForConfig = {
+                profileId: profileId,
+                username: config.username,
+                captchaDelay: config.captchaDelay || 0  // Add captcha delay for registration
+            };
+            config.profileData = profileDataForConfig;
 
             // Create automation instance
             const autoSequence = new AutoSequence(config, scripts);
@@ -1935,9 +2002,20 @@ async function runSMSAutomationInBackground(smsAutoSequence, profileId, config, 
             accountNumber: profileData.accountNumber
         });
 
+        // Prepare sites with URLs (convert site names to site objects with URLs)
+        const sitesWithUrls = (config.sites || []).map(site => {
+            // If site is a string (just name), convert to object
+            if (typeof site === 'string') {
+                return { name: site };
+            }
+            return site;
+        });
+
+        console.log('📱 Sites to process:', sitesWithUrls.map(s => s.name || s).join(', '));
+
         // Run SMS sequence (register with auto-redirect like nohu tool)
         console.log('🤖 Running SMS sequence (Register → Auto-redirect → Keep open)...');
-        const smsResult = await smsAutoSequence.runSmsSequence(browser, profileData, config.sites || []);
+        const smsResult = await smsAutoSequence.runSmsSequence(browser, profileData, sitesWithUrls);
         console.log('✅ SMS sequence completed:', smsResult);
 
         // Send success status to dashboard
@@ -2005,6 +2083,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
     const axios = require('axios');
     const dashboardPort = global.DASHBOARD_PORT || 3000;
     const username = config.username || 'Unknown';
+    let profileName = 'Profile'; // Default value in case of early error
 
     try {
         console.log('🚀 Starting NOHU automation (proven working version)...');
@@ -2016,12 +2095,19 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
 
         // Open profile
         console.log('📂 Opening profile:', profileId);
-        const openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
-            params: {
-                uuid: profileId,
-                command: '--remote-debugging-port=0'
-            }
-        });
+        let openResponse;
+        try {
+            openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
+                params: {
+                    uuid: profileId,
+                    command: '--remote-debugging-port=0'
+                }
+            });
+        } catch (hidemiumError) {
+            const errorMsg = hidemiumError.response?.data?.message || hidemiumError.message;
+            console.error('❌ Hidemium API error:', errorMsg);
+            throw new Error(`Failed to open profile in Hidemium: ${errorMsg}`);
+        }
 
         console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
 
@@ -2030,7 +2116,8 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
         const webSocket = data.web_socket || data.webSocket;
 
         if (!webSocket) {
-            throw new Error('Failed to get web_socket from Hidemium');
+            console.error('❌ No webSocket in response:', JSON.stringify(data));
+            throw new Error('Failed to get web_socket from Hidemium - profile may not be available');
         }
 
         console.log('🔌 WebSocket URL:', webSocket);
@@ -2043,8 +2130,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
 
         console.log('✅ Connected to browser');
 
-        // Get profile name from Hidemium
-        let profileName = 'Profile'; // Default fallback
+        // Get profile name from Hidemium (update existing profileName variable)
         try {
             const profileResponse = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
                 params: { is_local: false }
@@ -2070,9 +2156,10 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
         // Send "start" status to dashboard
         try {
             await axios.post(`http://localhost:${dashboardPort}/api/automation/status`, {
+                profileId: profileId,
                 username: username,
                 profileName: profileName,
-                sessionId: config.sessionId, // Include sessionId
+                sessionId: config.sessionId,
                 status: 'running',
                 sites: config.sites || [],
                 timestamp: Date.now()
@@ -2109,13 +2196,33 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
         console.log('⏳ Waiting 1 second for browser to be ready...');
         await new Promise(resolve => setTimeout(resolve, 1000));
 
+        // Prepare profileData for automation (same structure as SMS)
+        const profileData = {
+            profileId: profileId,
+            username: config.username,
+            password: config.password,
+            withdrawPassword: config.withdrawPassword,
+            fullname: config.fullname,
+            email: config.email,
+            phone: config.phone,
+            bankName: config.bankName || 'Vietcombank',
+            bankBranch: config.bankBranch || 'Thành phố Hồ Chí Minh',
+            accountNumber: config.accountNumber || '9704361234567890',
+            apiKey: config.apiKey || 'default_api_key',
+            captchaDelay: config.captchaDelay ?? 0, // Delay before submit (from UI, default 0 if not set)
+            checkPromo: config.checkPromo !== false, // Default true for app
+            executionMode: config.executionMode || 'parallel',
+            parallelCount: config.parallelCount || 0,
+            sites: config.sites || []
+        };
+
         // Check if this is a standalone action (not full sequence)
         const action = config.action || 'full';
 
         switch (action) {
             case 'sms':
                 console.log('💬 Running SMS sequence (Register → Add Bank only)...');
-                const smsResult = await autoSequence.runSmsSequence(browser, config, config.sites || []);
+                const smsResult = await autoSequence.runSmsSequence(browser, profileData, profileData.sites);
                 console.log('✅ SMS sequence completed:', smsResult);
                 break;
 
@@ -2145,7 +2252,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
 
             default:
                 // Run full AutoSequence (proven working version)
-                const result = await autoSequence.runSequence(browser, config, config.sites || []);
+                const result = await autoSequence.runSequence(browser, profileData, profileData.sites);
                 console.log('✅ NOHU automation completed:', result);
 
                 // Check if automation truly completed all steps successfully
@@ -2203,6 +2310,12 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
 
     } catch (error) {
         console.error('❌ NOHU automation failed:', error);
+
+        // Clear running profile on error
+        if (profileId && global.runningProfiles.has(profileId)) {
+            global.runningProfiles.delete(profileId);
+            console.log(`✅ Cleared running profile on error: ${profileId}`);
+        }
 
         // Send "error" status to dashboard
         try {
@@ -2626,6 +2739,24 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 
             console.log('✅ VIP Automation completed:', results);
 
+            // Update automation status to 'completed' (for frontend polling)
+            const statusUpdate = {
+                username: profileData?.username || 'unknown',
+                profileId: profileId,
+                profileName: profile?.name || 'Profile',
+                status: 'completed',
+                timestamp: new Date().toISOString(),
+                category: category,
+                sites: sites,
+                mode: mode
+            };
+
+            if (!global.automationStatuses) {
+                global.automationStatuses = new Map();
+            }
+            global.automationStatuses.set(statusUpdate.username, statusUpdate);
+            console.log('📊 Updated automation status to completed:', statusUpdate);
+
             // Save results to file (like NOHU tool)
             const screenshotsDir = path.join(__dirname, '../screenshots');
             const toolDir = path.join(screenshotsDir, 'vip-tool');
@@ -2667,6 +2798,26 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 
         } catch (error) {
             console.error('❌ VIP Automation Error:', error.message);
+
+            // Update automation status to 'error' (for frontend polling)
+            const statusUpdate = {
+                username: profileData?.username || 'unknown',
+                profileId: profileId,
+                profileName: profile?.name || 'Profile',
+                status: 'error',
+                error: error.message,
+                timestamp: new Date().toISOString(),
+                category: category,
+                sites: sites,
+                mode: mode
+            };
+
+            if (!global.automationStatuses) {
+                global.automationStatuses = new Map();
+            }
+            global.automationStatuses.set(statusUpdate.username, statusUpdate);
+            console.log('📊 Updated automation status to error:', statusUpdate);
+
             res.status(500).json({ success: false, error: error.message });
         } finally {
             // Close browser connection
@@ -2681,6 +2832,109 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
         }
     } catch (error) {
         console.error('❌ VIP Automation Error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// NOHU app sites config (centralized - used by both frontend and backend)
+const nohuSitesConfig = {
+    'Go99': { name: 'Go99', registerUrl: 'https://m.ghhdj-567dhdhhmm.asia/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
+    'NOHU': { name: 'NOHU', registerUrl: 'https://m.8nohu.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
+    'TT88': { name: 'TT88', registerUrl: 'https://m.1bedd-fb89bj53gg9hjs0bka.club/Account/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
+    'MMOO': { name: 'MMOO', registerUrl: 'https://m.0mmoo.com/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
+    '789P': { name: '789P', registerUrl: 'https://m.jvdf76fd92jk87gfuj60o.xyz/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
+    '33WIN': { name: '33WIN', registerUrl: 'https://m.336049.com/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
+    '88VV': { name: '88VV', registerUrl: 'https://m.88vv.my/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
+};
+
+// Get NOHU sites config
+app.get('/api/nohu-automation/sites', (req, res) => {
+    try {
+        // Convert object to array for frontend
+        const nohuSites = Object.values(nohuSitesConfig);
+        res.json({ success: true, data: { sites: nohuSites } });
+    } catch (error) {
+        console.error('❌ Error getting NOHU sites:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// NOHU SMS sites config (centralized - used by both frontend and backend)
+const nohuSmsSiteConfigs = {
+    'Go99': { registerSmsUrl: 'https://m.go99.tw/Account/Register?f=4688147' },
+    'NOHU': { registerSmsUrl: null },
+    'TT88': { registerSmsUrl: null },
+    'MMOO': { registerSmsUrl: null },
+    '789P': { registerSmsUrl: null },
+    '33WIN': { registerSmsUrl: null },
+    '88VV': { registerSmsUrl: null }
+};
+
+// Set global config for backend to use
+global.nohuSitesConfig = nohuSitesConfig;
+global.nohuSmsSiteConfigs = nohuSmsSiteConfigs;
+
+// Get NOHU SMS sites config (with registerSmsUrl)
+app.get('/api/nohu-automation/sms-config', (req, res) => {
+    try {
+        res.json({ success: true, data: nohuSmsSiteConfigs });
+    } catch (error) {
+        console.error('❌ Error getting SMS config:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Update NOHU sites config (app URLs)
+app.post('/api/nohu-automation/sites/update', (req, res) => {
+    try {
+        const { siteName, registerUrl, checkPromoUrl } = req.body;
+
+        if (!siteName || !registerUrl) {
+            return res.status(400).json({ success: false, error: 'siteName and registerUrl are required' });
+        }
+
+        // Update config
+        if (!nohuSitesConfig[siteName]) {
+            nohuSitesConfig[siteName] = { name: siteName };
+        }
+        nohuSitesConfig[siteName].registerUrl = registerUrl;
+        if (checkPromoUrl) {
+            nohuSitesConfig[siteName].checkPromoUrl = checkPromoUrl;
+        }
+
+        // Update global config for backend
+        global.nohuSitesConfig = nohuSitesConfig;
+
+        console.log(`✅ Updated site config: ${siteName}`);
+        res.json({ success: true, message: `Updated ${siteName}`, data: nohuSitesConfig[siteName] });
+    } catch (error) {
+        console.error('❌ Error updating site config:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Update NOHU SMS sites config
+app.post('/api/nohu-automation/sms-config/update', (req, res) => {
+    try {
+        const { siteName, registerSmsUrl } = req.body;
+
+        if (!siteName) {
+            return res.status(400).json({ success: false, error: 'siteName is required' });
+        }
+
+        // Update config
+        if (!nohuSmsSiteConfigs[siteName]) {
+            nohuSmsSiteConfigs[siteName] = {};
+        }
+        nohuSmsSiteConfigs[siteName].registerSmsUrl = registerSmsUrl || null;
+
+        // Update global config for backend
+        global.nohuSmsSiteConfigs = nohuSmsSiteConfigs;
+
+        console.log(`✅ Updated SMS site config: ${siteName}`);
+        res.json({ success: true, message: `Updated ${siteName}`, data: nohuSmsSiteConfigs[siteName] });
+    } catch (error) {
+        console.error('❌ Error updating SMS config:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });
@@ -3480,3 +3734,4 @@ All critical files have been protected against reverse engineering.
         process.exit(1);
     }
 })();
+

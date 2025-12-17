@@ -1054,8 +1054,20 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                         console.log('Captcha filled (fast mode, no focus)');
                         showNotification('✅ Đã điền captcha: ' + captchaText);
 
-                        // Wait a bit then click submit
-                        await new Promise(resolve => setTimeout(resolve, 300)); // Reduced from 1000ms to 300ms
+                        // Random delay trước submit captcha (8-15s)
+                        const randomDelay = Math.random() * (15000 - 8000) + 8000;
+                        const delaySeconds = Math.round(randomDelay / 1000);
+                        console.log(`⏳ Waiting ${delaySeconds}s before submitting captcha...`);
+
+                        // Hiện countdown (update mỗi 2s, không nhảy liên tục)
+                        let remainingSeconds = delaySeconds;
+                        const countdownInterval = setInterval(() => {
+                          showNotification(`⏳ Chờ ${remainingSeconds}s trước khi submit captcha...`, 2000);
+                          remainingSeconds -= 2;
+                        }, 2000);
+
+                        await new Promise(resolve => setTimeout(resolve, randomDelay));
+                        clearInterval(countdownInterval);
 
                         // Click "Xác Thực" submit button
                         const submitButton = document.querySelector('button.audio-captcha-submit') ||
@@ -1768,14 +1780,14 @@ async function autoFillForm(username, password, withdrawPassword, fullname) {
                 tokenFound = true;
                 clearInterval(tokenMonitor);
 
-                console.log('🎉 TOKEN FOUND! Redirecting immediately...');
+                console.log('🎉 TOKEN FOUND! Waiting for manual redirect from auto-sequence-safe.js...');
                 filled.submitSuccessful = true;
 
-                const withdrawUrl = window.location.origin + '/Financial?type=withdraw';
-                console.log('🚀 Redirect to:', withdrawUrl);
-
-                window.location.href = withdrawUrl;
-                filled.autoRedirected = true;
+                // DISABLED: Auto-redirect removed - delay logic handled by auto-sequence-safe.js
+                // const withdrawUrl = window.location.origin + '/Financial?type=withdraw';
+                // console.log('🚀 Redirect to:', withdrawUrl);
+                // window.location.href = withdrawUrl;
+                // filled.autoRedirected = true;
                 return;
               }
 
@@ -1787,11 +1799,11 @@ async function autoFillForm(username, password, withdrawPassword, fullname) {
                 console.log('🔄 URL CHANGED away from Register page - assuming success');
                 filled.submitSuccessful = true;
 
-                const withdrawUrl = window.location.origin + '/Financial?type=withdraw';
-                console.log('🚀 Redirect to:', withdrawUrl);
-
-                window.location.href = withdrawUrl;
-                filled.autoRedirected = true;
+                // DISABLED: Auto-redirect removed - delay logic handled by auto-sequence-safe.js
+                // const withdrawUrl = window.location.origin + '/Financial?type=withdraw';
+                // console.log('🚀 Redirect to:', withdrawUrl);
+                // window.location.href = withdrawUrl;
+                // filled.autoRedirected = true;
                 return;
               }
 
@@ -4182,9 +4194,55 @@ async function solveAudioCaptchaAuto(audioUrl) {
         console.log('✅ Captcha filled');
         showNotification('✅ Đã điền: ' + captchaText);
 
-        // Wait before submitting (for validation)
-        console.log('⏳ Waiting before submit...');
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Wait 1.5s for server to process captcha input
+        // Delay trước submit captcha
+        // - Nếu là registration (window.profileData.captchaDelay): dùng giá trị từ UI
+        // - Nếu là check promo (window.isCheckingPromo): dùng random 8-15s (hardcode)
+        console.log('🔍 DEBUG: Determining delay...');
+        console.log('  window.profileData?.captchaDelay =', window.profileData?.captchaDelay);
+        console.log('  window.isCheckingPromo =', window.isCheckingPromo);
+        console.log('  window.captchaDelay =', window.captchaDelay);
+
+        let randomDelay;
+        // IMPORTANT: Check isCheckingPromo FIRST (priority over profileData)
+        if (window.isCheckingPromo) {
+          // Check promo: ALWAYS use random 8-15s (hardcode, NOT from UI)
+          randomDelay = Math.random() * (15000 - 8000) + 8000;
+          console.log('  → Using random 8-15s for check promo (hardcode):', randomDelay);
+        } else if (window.profileData?.captchaDelay !== undefined) {
+          // Registration: dùng giá trị từ UI
+          randomDelay = window.profileData.captchaDelay;
+          console.log('  → Using profileData.captchaDelay (from UI):', randomDelay);
+        } else {
+          // Fallback: dùng window.captchaDelay hoặc 0
+          randomDelay = window.captchaDelay || 0;
+          console.log('  → Using fallback:', randomDelay);
+        }
+        const delaySeconds = Math.round(randomDelay / 1000);
+        console.log(`⏳ Waiting ${delaySeconds}s before submitting captcha...`);
+
+        // Gửi countdown qua API để hiện trên dashboard (không hiển thị notification trên page)
+        const startTime = Date.now();
+        const countdownInterval = setInterval(() => {
+          const elapsedMs = Date.now() - startTime;
+          const remainingMs = Math.max(0, randomDelay - elapsedMs);
+          const remainingSeconds = Math.ceil(remainingMs / 1000);
+          if (window.profileData && window.profileData.profileId) {
+            fetch('http://localhost:3000/api/automation/status', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                profileId: window.profileData.profileId,
+                username: window.profileData.username,
+                status: 'running',
+                message: `⏳ Chờ ${remainingSeconds}s trước khi submit captcha...`,
+                timestamp: new Date().toISOString()
+              })
+            }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
+          }
+        }, 2000);
+
+        await new Promise(resolve => setTimeout(resolve, randomDelay));
+        clearInterval(countdownInterval);
 
         // Click submit button
         const submitBtn = document.querySelector('button.audio-captcha-submit') ||
@@ -4200,7 +4258,28 @@ async function solveAudioCaptchaAuto(audioUrl) {
           // If this is check promo flow, try to click "Nhận khuyến mãi" automatically
           if (window.isCheckingPromo) {
             console.log('🎁 Check promo flow - will try to auto-click "Nhận khuyến mãi"');
-            showNotification('✅ Đã xác thực captcha!\n\n⏳ Đang tự động click "Nhận KM"...');
+
+            // Send status: captcha submitted
+            if (window.profileData && window.profileData.profileId) {
+              fetch('http://localhost:3000/api/automation/status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  profileId: window.profileData.profileId,
+                  username: window.profileData.username,
+                  status: 'running',
+                  message: `✅ Đã submit captcha, chờ xử lý...`,
+                  timestamp: new Date().toISOString()
+                })
+              }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+            }
+
+            // Wait for server to process captcha (3-5s)
+            const serverProcessDelay = Math.random() * (5000 - 3000) + 3000;
+            const serverDelaySeconds = Math.round(serverProcessDelay / 1000);
+            console.log(`⏳ Waiting ${serverDelaySeconds}s for server to process captcha...`);
+
+            await new Promise(resolve => setTimeout(resolve, serverProcessDelay));
 
             // Find button first
             const promoBtn = document.getElementById('casinoSubmit') ||
@@ -4212,27 +4291,76 @@ async function solveAudioCaptchaAuto(audioUrl) {
 
               let buttonClicked = false;
 
-              const clickWhenEnabled = () => {
+              const clickWhenEnabled = async () => {
                 if (!buttonClicked && !promoBtn.disabled) {
                   buttonClicked = true;
-                  console.log('✅ Button enabled, clicking immediately!');
+
+                  // Random delay trước click "Nhận KM" (20-60s)
+                  const randomDelay = Math.random() * (60000 - 20000) + 20000;
+                  const delaySeconds = Math.round(randomDelay / 1000);
+                  console.log(`⏳ Waiting ${delaySeconds}s before clicking "Nhận KM"...`);
+
+                  // Hiện countdown (update mỗi 3s, không nhảy liên tục)
+                  const startTime = Date.now();
+                  const countdownInterval = setInterval(() => {
+                    const elapsedMs = Date.now() - startTime;
+                    const remainingMs = Math.max(0, randomDelay - elapsedMs);
+                    const remainingSeconds = Math.ceil(remainingMs / 1000);
+
+                    // Gửi countdown qua API để hiện trên dashboard (không bị mất khi page redirect)
+                    if (window.profileData && window.profileData.profileId) {
+                      fetch('http://localhost:3000/api/automation/status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          profileId: window.profileData.profileId,
+                          username: window.profileData.username,
+                          status: 'running',
+                          message: `⏳ Chờ ${remainingSeconds}s trước khi click "Nhận KM"...`,
+                          timestamp: new Date().toISOString()
+                        })
+                      }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
+                    }
+                  }, 3000);
+
+                  await new Promise(resolve => setTimeout(resolve, randomDelay));
+                  clearInterval(countdownInterval);
+
+                  console.log('✅ Button enabled, clicking now!');
+
+                  // Send status: about to click
+                  if (window.profileData && window.profileData.profileId) {
+                    fetch('http://localhost:3000/api/automation/status', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        profileId: window.profileData.profileId,
+                        username: window.profileData.username,
+                        status: 'running',
+                        message: `🎁 Đang click "Nhận khuyến mãi"...`,
+                        timestamp: new Date().toISOString()
+                      })
+                    }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+                  }
+
                   promoBtn.click();
+                  console.log('🎁 "Nhận khuyến mãi" button clicked successfully');
                   window.promoButtonClickedSuccess = true;
-                  showNotification('✅ Đã click "Nhận khuyến mãi"!');
                   return true;
                 }
                 return false;
               };
 
               // Check immediately
-              if (clickWhenEnabled()) {
-                console.log('✅ Button already enabled, clicked immediately');
+              const result = await clickWhenEnabled();
+              if (result) {
+                console.log('✅ Button already enabled, clicked with delay');
               } else {
                 console.log('⏳ Button disabled, watching for enable event...');
 
                 // Watch for disabled attribute change
-                const observer = new MutationObserver(() => {
-                  if (clickWhenEnabled()) {
+                const observer = new MutationObserver(async () => {
+                  if (await clickWhenEnabled()) {
                     observer.disconnect();
                   }
                 });
@@ -4243,33 +4371,43 @@ async function solveAudioCaptchaAuto(audioUrl) {
                 });
 
                 // Also poll every 100ms for faster detection
-                const pollInterval = setInterval(() => {
-                  if (clickWhenEnabled()) {
+                const pollInterval = setInterval(async () => {
+                  if (await clickWhenEnabled()) {
                     clearInterval(pollInterval);
                     observer.disconnect();
                   }
                 }, 100);
 
-                // Timeout after 5 seconds (reduced from 10s)
-                setTimeout(() => {
+                // Timeout after 90 seconds (account for 20-60s random delay + processing)
+                setTimeout(async () => {
                   clearInterval(pollInterval);
                   observer.disconnect();
                   if (!buttonClicked) {
-                    console.log('⏰ Observer timeout after 5s');
+                    console.log('⏰ Observer timeout after 90s');
                     if (!promoBtn.disabled) {
                       console.log('✅ Button enabled, clicking now');
-                      promoBtn.click();
-                      window.promoButtonClickedSuccess = true;
-                      showNotification('✅ Đã click "Nhận khuyến mãi"!');
+                      await clickWhenEnabled();
                     } else {
-                      console.log('⚠️ Button still disabled after 5s');
+                      console.log('⚠️ Button still disabled after 90s');
                       showNotification('⚠️ Vui lòng click "Nhận khuyến mãi" thủ công');
                     }
                   }
-                }, 5000);
+                }, 90000);
               }
             } else {
-              console.log('❌ Button not found');
+              console.log('❌ Button not found with selectors: #casinoSubmit, button.submit-btn');
+
+              // Debug: try to find button with different selectors
+              const allButtons = document.querySelectorAll('button');
+              console.log(`🔍 Found ${allButtons.length} total buttons on page`);
+
+              allButtons.forEach((btn, idx) => {
+                const text = btn.textContent.trim().substring(0, 50);
+                const id = btn.id || 'no-id';
+                const classes = btn.className || 'no-class';
+                console.log(`  [${idx}] id="${id}" class="${classes}" text="${text}"`);
+              });
+
               showNotification('⚠️ Không tìm thấy nút "Nhận khuyến mãi"');
             }
           } else {

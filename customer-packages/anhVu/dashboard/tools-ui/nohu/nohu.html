@@ -238,6 +238,7 @@
                     <span class="start-icon">▶️</span>
                     <span class="start-text">START</span>
                 </button>
+
             </div>
         </div>
 
@@ -350,6 +351,8 @@
                 </div>
             </div>
         </div>
+
+
     </div>
     <!-- End Results Section -->
 
@@ -429,21 +432,23 @@
                 <div class="modal-sites-column">
                     <!-- Promo Type Selection (Only show in Auto tab) -->
                     <div id="promoTypeSelector"
-                        style="margin-bottom: 12px; padding: 10px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
-                        <h4 style="margin: 0 0 8px 0; color: #4a5568; font-size: 13px; font-weight: 600;">🎯 Chọn Loại
-                            Khuyến Mãi</h4>
-                        <div style="display: flex; flex-direction: column; gap: 8px;">
-                            <label
-                                style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: #f9fafb; border-radius: 6px;">
+                        style="margin-bottom: 12px; padding: 8px; background: white; border-radius: 8px; border: 1px solid #e5e7eb;">
+                        <h4 style="margin: 0 0 6px 0; color: #4a5568; font-size: 12px; font-weight: 600;">🎯 Loại KM
+                        </h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                            <label class="promo-type-card"
+                                style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; padding: 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s; text-align: center;">
                                 <input type="radio" name="promoType" value="app" checked onchange="togglePromoSites()"
-                                    style="width: 16px; height: 16px; cursor: pointer;">
-                                <span style="font-size: 12px; font-weight: 600;">📱 Tải App</span>
+                                    style="display: none;">
+                                <span style="font-size: 16px;">📱</span>
+                                <span style="font-size: 11px; font-weight: 600;">Tải App</span>
                             </label>
-                            <label
-                                style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 8px; background: #f9fafb; border-radius: 6px;">
+                            <label class="promo-type-card"
+                                style="display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; padding: 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s; text-align: center;">
                                 <input type="radio" name="promoType" value="sms" onchange="togglePromoSites()"
-                                    style="width: 16px; height: 16px; cursor: pointer;">
-                                <span style="font-size: 12px; font-weight: 600;">💬 Tin Nhắn SMS</span>
+                                    style="display: none;">
+                                <span style="font-size: 16px;">💬</span>
+                                <span style="font-size: 11px; font-weight: 600;">SMS</span>
                             </label>
                         </div>
                     </div>
@@ -454,41 +459,7 @@
                             📱 Khuyến Mãi Tải App
                         </h4>
                         <div class="sites-grid" id="appPromoSites">
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="Go99">
-                                <div class="site-icon go99">GO</div>
-                                <div class="site-name">Go99</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="NOHU">
-                                <div class="site-icon nohu">NO</div>
-                                <div class="site-name">NOHU</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="TT88">
-                                <div class="site-icon tt88">TT</div>
-                                <div class="site-name">TT88</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="MMOO">
-                                <div class="site-icon mmoo">MM</div>
-                                <div class="site-name">MMOO</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="789P">
-                                <div class="site-icon p789">789</div>
-                                <div class="site-name">789P</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="33WIN">
-                                <div class="site-icon win33">33</div>
-                                <div class="site-name">33WIN</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check" data-name="88VV">
-                                <div class="site-icon vv88">88</div>
-                                <div class="site-name">88VV</div>
-                            </label>
+                            <!-- Sites will be rendered dynamically -->
                         </div>
                         <div class="site-actions">
                             <button class="btn btn-sm" onclick="selectAppPromoSites()">✅ Chọn Tất Cả</button>
@@ -564,41 +535,7 @@
                             💬 Khuyến Mãi Tin Nhắn SMS
                         </h4>
                         <div class="sites-grid" id="smsPromoSites">
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="Go99-SMS">
-                                <div class="site-icon go99">GO</div>
-                                <div class="site-name">Go99</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="NOHU-SMS">
-                                <div class="site-icon nohu">NO</div>
-                                <div class="site-name">NOHU</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="TT88-SMS">
-                                <div class="site-icon tt88">TT</div>
-                                <div class="site-name">TT88</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="MMOO-SMS">
-                                <div class="site-icon mmoo">MM</div>
-                                <div class="site-name">MMOO</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="789P-SMS">
-                                <div class="site-icon p789">789</div>
-                                <div class="site-name">789P</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="33WIN-SMS">
-                                <div class="site-icon win33">33</div>
-                                <div class="site-name">33WIN</div>
-                            </label>
-                            <label class="site-card">
-                                <input type="checkbox" class="site-check site-check-sms" data-name="88VV-SMS">
-                                <div class="site-icon vv88">88</div>
-                                <div class="site-name">88VV</div>
-                            </label>
+                            <!-- Sites will be rendered dynamically -->
                         </div>
                         <div class="site-actions">
                             <button class="btn btn-sm" onclick="selectSmsPromoSites()">✅ Chọn Tất Cả</button>
@@ -612,12 +549,12 @@
                 <div class="modal-form-column">
                     <!-- Tab Content: Auto -->
                     <div class="tab-content active" id="tab-auto">
-                        <div class="form-section">
+                        <div class="form-section" style="padding: 12px; margin-bottom: 12px;">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">📋 Chọn Profile</h3>
-                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()"
-                                    title="Tải lại profiles">🔄
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="margin: 0; font-size: 13px;">📋 Chọn Profile</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel(true)"
+                                    title="Tải lại profiles" style="padding: 4px 8px; font-size: 11px;">🔄
                                     Tải Lại</button>
                             </div>
 
@@ -628,7 +565,7 @@
                                         onclick="scrollProfileCarousel('auto', -1)">‹</button>
                                     <div class="profile-carousel" id="autoProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>Click "Tải Lại" để xem profiles</p>
+                                            <p style="font-size: 12px;">Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -669,12 +606,12 @@
 
                     <!-- Tab Content: Register -->
                     <div class="tab-content" id="tab-register">
-                        <div class="form-section">
+                        <div class="form-section" style="padding: 12px; margin-bottom: 12px;">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">📋 Chọn Profile</h3>
-                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()"
-                                    title="Tải lại profiles">🔄
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="margin: 0; font-size: 13px;">📋 Chọn Profile</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel(true)"
+                                    title="Tải lại profiles" style="padding: 4px 8px; font-size: 11px;">🔄
                                     Tải Lại</button>
                             </div>
 
@@ -685,7 +622,7 @@
                                         onclick="scrollProfileCarousel('reg', -1)">‹</button>
                                     <div class="profile-carousel" id="regProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>Click "Tải Lại" để xem profiles</p>
+                                            <p style="font-size: 12px;">Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -707,12 +644,12 @@
 
                     <!-- Tab Content: Login -->
                     <div class="tab-content" id="tab-login">
-                        <div class="form-section">
+                        <div class="form-section" style="padding: 12px; margin-bottom: 12px;">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">📋 Chọn Profile</h3>
-                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()"
-                                    title="Tải lại profiles">🔄
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="margin: 0; font-size: 13px;">📋 Chọn Profile</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel(true)"
+                                    title="Tải lại profiles" style="padding: 4px 8px; font-size: 11px;">🔄
                                     Tải Lại</button>
                             </div>
 
@@ -723,7 +660,7 @@
                                         onclick="scrollProfileCarousel('login', -1)">‹</button>
                                     <div class="profile-carousel" id="loginProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>Click "Tải Lại" để xem profiles</p>
+                                            <p style="font-size: 12px;">Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -748,12 +685,12 @@
                             này.
                         </div>
 
-                        <div class="form-section">
+                        <div class="form-section" style="padding: 12px; margin-bottom: 12px;">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">📋 Chọn Profile</h3>
-                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()"
-                                    title="Tải lại profiles">🔄
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="margin: 0; font-size: 13px;">📋 Chọn Profile</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel(true)"
+                                    title="Tải lại profiles" style="padding: 4px 8px; font-size: 11px;">🔄
                                     Tải Lại</button>
                             </div>
 
@@ -764,7 +701,7 @@
                                         onclick="scrollProfileCarousel('bank', -1)">‹</button>
                                     <div class="profile-carousel" id="bankProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>Click "Tải Lại" để xem profiles</p>
+                                            <p style="font-size: 12px;">Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -774,7 +711,7 @@
                         </div>
 
                         <div class="form-section">
-                            <h3>💳 Thông Tin Ngân Hàng</h3>
+                            <h3 style="font-size: 13px;">💳 Thông Tin Ngân Hàng</h3>
                             <div class="form-grid">
                                 <select id="bankBankName">
                                     <option value="">Chọn ngân hàng...</option>
@@ -787,12 +724,12 @@
 
                     <!-- Tab Content: Promo -->
                     <div class="tab-content" id="tab-promo">
-                        <div class="form-section">
+                        <div class="form-section" style="padding: 12px; margin-bottom: 12px;">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">📋 Chọn Profile</h3>
-                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel()"
-                                    title="Tải lại profiles">🔄
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <h3 style="margin: 0; font-size: 13px;">📋 Chọn Profile</h3>
+                                <button class="btn btn-secondary btn-sm" onclick="loadProfilesCarousel(true)"
+                                    title="Tải lại profiles" style="padding: 4px 8px; font-size: 11px;">🔄
                                     Tải Lại</button>
                             </div>
 
@@ -803,7 +740,7 @@
                                         onclick="scrollProfileCarousel('promo', -1)">‹</button>
                                     <div class="profile-carousel" id="promoProfileCarousel">
                                         <div class="profile-carousel-empty">
-                                            <p>Click "Tải Lại" để xem profiles</p>
+                                            <p style="font-size: 12px;">Click "Tải Lại" để xem profiles</p>
                                         </div>
                                     </div>
                                     <button class="carousel-btn carousel-next"
@@ -813,7 +750,7 @@
                         </div>
 
                         <div class="form-section">
-                            <h3>👤 Thông Tin Tài Khoản</h3>
+                            <h3 style="font-size: 13px;">👤 Thông Tin Tài Khoản</h3>
                             <input type="text" id="promoUsername" placeholder="Tên tài khoản" class="full-width">
                         </div>
 
@@ -899,6 +836,47 @@
 
 <!-- NOHU Tool JavaScript -->
 <script>
+    // Helper function to disable button until server responds
+    function disableButton(button) {
+        if (!button) return;
+
+        button.disabled = true;
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+        button.style.pointerEvents = 'none';
+    }
+
+    // Helper function to enable button after server responds
+    function enableButton(button) {
+        if (!button) return;
+
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+        button.style.pointerEvents = 'auto';
+    }
+
+    // Helper function to disable button for 0.5s to prevent double-click (deprecated, use disableButton/enableButton instead)
+    function disableButtonTemporarily(button, duration = 500) {
+        if (!button) return;
+
+        const originalOpacity = button.style.opacity;
+        const originalCursor = button.style.cursor;
+        const originalPointerEvents = button.style.pointerEvents;
+
+        button.disabled = true;
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+        button.style.pointerEvents = 'none';
+
+        setTimeout(() => {
+            button.disabled = false;
+            button.style.opacity = originalOpacity || '1';
+            button.style.cursor = originalCursor || 'pointer';
+            button.style.pointerEvents = originalPointerEvents || 'auto';
+        }, duration);
+    }
+
     // Initialize tool when loaded
     window.initToolUI = function (tool) {
         console.log('🎰 Initializing NOHU Tool UI...', tool);
@@ -966,6 +944,41 @@
         }
 
         return { valid: true, key: trimmed };
+    }
+
+    // Wait for server to actually start automation (check if it's in running status)
+    async function waitForServerStart(username, maxWaitTime = 30000) {
+        const startTime = Date.now();
+        const checkInterval = 500; // Check every 500ms
+
+        console.log(`⏳ Waiting for server to start automation for ${username}...`);
+
+        while (Date.now() - startTime < maxWaitTime) {
+            try {
+                const response = await fetch('/api/automation/statuses');
+                const data = await response.json();
+
+                if (data.success && data.statuses) {
+                    // Check if this username is in running status
+                    const isRunning = data.statuses.some(status =>
+                        status.username === username && status.status === 'running'
+                    );
+
+                    if (isRunning) {
+                        console.log(`✅ Server confirmed automation started for ${username}`);
+                        return { success: true, waitTime: Date.now() - startTime };
+                    }
+                }
+            } catch (error) {
+                console.warn('⚠️ Error checking server status:', error.message);
+            }
+
+            // Wait before next check
+            await new Promise(resolve => setTimeout(resolve, checkInterval));
+        }
+
+        console.warn(`⚠️ Server start confirmation timeout after ${maxWaitTime}ms`);
+        return { success: false, timeout: true, waitTime: Date.now() - startTime };
     }
 
     // Execution mode toggle
@@ -1270,10 +1283,16 @@
 
     // Run action based on current active tab
     function runCurrentTabAction() {
+        const btn = document.getElementById('btnRunAction');
+        if (btn) disableButton(btn);
+
         const activeTab = document.querySelector('.modal-tab.active');
         if (!activeTab) return;
 
         const tabName = activeTab.getAttribute('data-tab');
+
+        // Enable button immediately after starting (not waiting for completion)
+        if (btn) enableButton(btn);
 
         switch (tabName) {
             case 'auto':
@@ -1296,158 +1315,238 @@
 
     // Automation functions
     async function runAutoSequence() {
-        if (!profileManager.selectedProfileId) {
-            showToast('warning', 'Chưa chọn profile', 'Vui lòng chọn profile từ sidebar');
-            return;
+        // Disable button to prevent multiple clicks
+        const btnRunAction = document.getElementById('btnRunAction');
+        if (btnRunAction) {
+            btnRunAction.disabled = true;
+            btnRunAction.style.opacity = '0.5';
+            btnRunAction.style.cursor = 'not-allowed';
         }
-
-        // Sync profile status from Hidemium before running
-        console.log('🔄 Syncing profile status from Hidemium...');
-        await profileManager.loadAll();
-        await loadProfilesCarousel();
-
-        // Check if profile is already running
-        if (profileManager.isRunning(profileManager.selectedProfileId)) {
-            showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
-            return;
-        }
-
-        // Get selected promo type
-        const promoType = document.querySelector('input[name="promoType"]:checked')?.value || 'app';
-        console.log('Selected promo type:', promoType);
-
-        // Get sites based on selected type
-        let sites = [];
-        let actionType = 'full'; // default for app
-
-        if (promoType === 'app') {
-            // Get App Promo sites - CENTRALIZED CONFIG (Cách 1)
-            // Chỉ pass name, URLs sẽ được lấy từ optimized-automation.js
-            document.querySelectorAll('#appPromoSites .site-check:checked').forEach(checkbox => {
-                const name = checkbox.getAttribute('data-name');
-                sites.push({ name }); // Chỉ pass name, không cần URL
-            });
-            actionType = 'full'; // Full sequence with promo check
-        } else {
-            // Get SMS Promo sites - CENTRALIZED CONFIG (Cách 1)
-            // Chỉ pass name, URLs sẽ được lấy từ optimized-automation.js
-            document.querySelectorAll('#smsPromoSites .site-check-sms:checked').forEach(checkbox => {
-                const name = checkbox.getAttribute('data-name');
-                sites.push({ name }); // Chỉ pass name, không cần URL
-            });
-            actionType = 'sms'; // SMS sequence (register + add bank only)
-        }
-
-        if (sites.length === 0) {
-            showToast('warning', 'Chưa chọn trang', 'Vui lòng chọn ít nhất 1 trang');
-            return;
-        }
-
-        const config = {
-            username: document.getElementById('autoUsername').value,
-            fullname: document.getElementById('autoFullname').value,
-            password: document.getElementById('autoPassword').value,
-            withdrawPassword: document.getElementById('autoWithdrawPassword').value,
-            bankName: document.getElementById('autoBankName').value,
-            bankBranch: document.getElementById('autoBankBranch').value,
-            accountNumber: document.getElementById('autoAccountNumber').value,
-            apiKey: apiKeyManager.get(),
-            sites: sites,
-            captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value || '10') * 1000
-        };
-
-        // Validate required fields
-        if (!config.username || !config.password) {
-            showToast('warning', 'Thiếu thông tin', 'Vui lòng điền đầy đủ thông tin');
-            return;
-        }
-
-        // Validate API key (required for captcha solving)
-        const apiKey = config.apiKey;
-
-        if (!apiKey || apiKey.trim() === '') {
-            showToast('error', 'Thiếu API Key', '⚠️ Vui lòng thêm Captcha API Key ở sidebar bên trái trước khi chạy automation!\n\n📝 Lấy API key tại: autocaptcha.pro', 8000);
-            return;
-        }
-
-        // Validate API key format
-        const apiValidation = validateApiKeyFormat(apiKey);
-        if (!apiValidation.valid) {
-            showToast('error', 'API Key không hợp lệ', '❌ ' + apiValidation.error + '\n\n💡 Vui lòng kiểm tra lại API Key ở sidebar bên trái!', 8000);
-            return;
-        }
-
-        console.log('✅ API Key validated:', apiKey.substring(0, 10) + '...');
-
-        // Add action type for SMS
-        if (actionType === 'sms') {
-            config.action = 'sms';
-        } else {
-            config.checkPromo = true; // Enable promo check for app type
-        }
-
-        const currentProfileId = profileManager.selectedProfileId;
-
-        // Mark profile as running
-        profileManager.runningProfiles.add(currentProfileId);
-
-        // Track start time to prevent premature sync removal
-        if (!profileManager.runningStartTimes) {
-            profileManager.runningStartTimes = new Map();
-        }
-        profileManager.runningStartTimes.set(currentProfileId, Date.now());
-
-        profileManager.saveRunningProfiles();
-
-        // Refresh carousel to show running status
-        await loadProfilesCarousel();
-
-        const promoTypeLabel = promoType === 'app' ? '📱 Tải App' : '💬 SMS';
-        // showToast('info', 'Đang chạy', `Automation ${promoTypeLabel} đang chạy trên ${sites.length} trang...`);
 
         try {
-            // Get execution mode settings
-            let executionMode = 'parallel'; // Default
-            const radioChecked = document.querySelector('input[name="executionMode"]:checked');
-            if (radioChecked) {
-                executionMode = radioChecked.value;
+            if (!profileManager.selectedProfileId) {
+                showToast('warning', 'Chưa chọn profile', 'Vui lòng chọn profile từ sidebar');
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
             }
-            const parallelCountEl = document.getElementById('parallelCount');
-            const parallelCount = parseInt(parallelCountEl?.value || '3');
 
-            // Add execution mode to config
-            config.executionMode = executionMode;
-            config.parallelCount = executionMode === 'parallel' ? parallelCount : 1;
+            // Sync profile status from Hidemium before running
+            console.log('🔄 Syncing profile status from Hidemium...');
+            await profileManager.loadAll();
+            await loadProfilesCarousel();
 
-            console.log(`🚀 Running ${promoType} sequence for ${sites.length} sites...`);
-            console.log(`🔧 Execution Mode: ${executionMode}, Parallel Count: ${config.parallelCount}`);
+            // Check if profile is already running
+            if (profileManager.isRunning(profileManager.selectedProfileId)) {
+                showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
 
-            // Use relative URL to automatically use current port
-            const response = await fetch('/api/automation/run', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ toolId: 'nohu-tool', profileId: currentProfileId, config: config })
-            });
-            const data = await response.json();
+            // Get selected promo type
+            const promoType = document.querySelector('input[name="promoType"]:checked')?.value || 'app';
+            console.log('Selected promo type:', promoType);
 
-            if (data.success) {
-                showToast('success', 'Đã bắt đầu', `Automation ${promoTypeLabel} đang chạy trong background`, 5000);
-                // Clear form after successful start
-                clearAutoForm();
+            // Get sites based on selected type
+            let sites = [];
+            let actionType = 'full'; // default for app
+
+            if (promoType === 'app') {
+                // Get App Promo sites - CENTRALIZED CONFIG (Cách 1)
+                // Chỉ pass name, URLs sẽ được lấy từ optimized-automation.js
+                document.querySelectorAll('#appPromoSites .site-check:checked').forEach(checkbox => {
+                    const name = checkbox.getAttribute('data-name');
+                    sites.push({ name }); // Chỉ pass name, không cần URL
+                });
+                actionType = 'full'; // Full sequence with promo check
             } else {
-                throw new Error(data.error || 'Unknown error');
+                // Get SMS Promo sites - CENTRALIZED CONFIG (Cách 1)
+                // Chỉ pass name, URLs sẽ được lấy từ optimized-automation.js
+                document.querySelectorAll('#smsPromoSites .site-check-sms:checked').forEach(checkbox => {
+                    const name = checkbox.getAttribute('data-name');
+                    sites.push({ name }); // Chỉ pass name, không cần URL
+                });
+                actionType = 'sms'; // SMS sequence (register + add bank only)
             }
 
+            if (sites.length === 0) {
+                showToast('warning', 'Chưa chọn trang', 'Vui lòng chọn ít nhất 1 trang');
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            const config = {
+                username: document.getElementById('autoUsername').value,
+                fullname: document.getElementById('autoFullname').value,
+                password: document.getElementById('autoPassword').value,
+                withdrawPassword: document.getElementById('autoWithdrawPassword').value,
+                bankName: document.getElementById('autoBankName').value,
+                bankBranch: document.getElementById('autoBankBranch').value,
+                accountNumber: document.getElementById('autoAccountNumber').value,
+                apiKey: apiKeyManager.get(),
+                sites: sites,
+                captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value ?? '0') * 1000
+            };
+
+            // Validate required fields
+            if (!config.username || !config.password) {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng điền đầy đủ thông tin');
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            // Validate API key (required for captcha solving)
+            const apiKey = config.apiKey;
+
+            if (!apiKey || apiKey.trim() === '') {
+                showToast('error', 'Thiếu API Key', '⚠️ Vui lòng thêm Captcha API Key ở sidebar bên trái trước khi chạy automation!\n\n📝 Lấy API key tại: autocaptcha.pro', 8000);
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            // Validate API key format
+            const apiValidation = validateApiKeyFormat(apiKey);
+            if (!apiValidation.valid) {
+                showToast('error', 'API Key không hợp lệ', '❌ ' + apiValidation.error + '\n\n💡 Vui lòng kiểm tra lại API Key ở sidebar bên trái!', 8000);
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            console.log('✅ API Key validated:', apiKey.substring(0, 10) + '...');
+
+            // Add action type for SMS
+            if (actionType === 'sms') {
+                config.action = 'sms';
+            } else {
+                config.checkPromo = true; // Enable promo check for app type
+            }
+
+            const currentProfileId = profileManager.selectedProfileId;
+            console.log('🎯 Selected Profile ID:', currentProfileId);
+            console.log('🎯 Selected Profile Name:', profileManager.getSelected()?.name);
+
+            // Mark profile as running
+            profileManager.runningProfiles.add(currentProfileId);
+
+            // Track start time to prevent premature sync removal
+            if (!profileManager.runningStartTimes) {
+                profileManager.runningStartTimes = new Map();
+            }
+            profileManager.runningStartTimes.set(currentProfileId, Date.now());
+
+            profileManager.saveRunningProfiles();
+
+            // Refresh carousel to show running status
+            await loadProfilesCarousel();
+
+            const promoTypeLabel = promoType === 'app' ? '📱 Tải App' : '💬 SMS';
+            // showToast('info', 'Đang chạy', `Automation ${promoTypeLabel} đang chạy trên ${sites.length} trang...`);
+
+            try {
+                // Get execution mode settings
+                let executionMode = 'parallel'; // Default
+                const radioChecked = document.querySelector('input[name="executionMode"]:checked');
+                if (radioChecked) {
+                    executionMode = radioChecked.value;
+                }
+                const parallelCountEl = document.getElementById('parallelCount');
+                const parallelCount = parseInt(parallelCountEl?.value || '3');
+
+                // Add execution mode to config
+                config.executionMode = executionMode;
+                config.parallelCount = executionMode === 'parallel' ? parallelCount : 1;
+
+                console.log(`🚀 Running ${promoType} sequence for ${sites.length} sites...`);
+                console.log(`🔧 Execution Mode: ${executionMode}, Parallel Count: ${config.parallelCount}`);
+
+                // Use relative URL to automatically use current port
+                console.log('📤 Sending automation request with profileId:', currentProfileId);
+                const response = await fetch('/api/automation/run', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ toolId: 'nohu-tool', profileId: currentProfileId, config: config })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Wait for server to actually start automation
+                    const waitResult = await waitForServerStart(config.username, 30000);
+
+                    if (waitResult.success) {
+                        showToast('success', 'Đã bắt đầu', `Automation ${promoTypeLabel} đang chạy trong background`, 5000);
+                    } else {
+                        showToast('success', 'Đã gửi', `Automation ${promoTypeLabel} đã được gửi tới server`, 5000);
+                    }
+
+                    // Clear form after successful start
+                    clearAutoForm();
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+
+            } catch (error) {
+                showToast('error', 'Lỗi', error.message);
+                // Unmark on error
+                profileManager.runningProfiles.delete(currentProfileId);
+                profileManager.saveRunningProfiles();
+                await loadProfilesCarousel();
+            } finally {
+                // Re-enable button after waiting for server confirmation
+                const btnRunAction = document.getElementById('btnRunAction');
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+            }
+
+            // Note: Profile will be unmarked when user manually stops it or restarts dashboard
+            // For auto-unmark when done, need server-side callback (future enhancement)
         } catch (error) {
+            console.error('❌ Outer try-catch error:', error);
             showToast('error', 'Lỗi', error.message);
             // Unmark on error
-            profileManager.runningProfiles.delete(currentProfileId);
+            profileManager.runningProfiles.delete(profileManager.selectedProfileId);
             profileManager.saveRunningProfiles();
             await loadProfilesCarousel();
+        } finally {
+            // Re-enable button if not already enabled
+            const btnRunAction = document.getElementById('btnRunAction');
+            if (btnRunAction && btnRunAction.disabled) {
+                btnRunAction.disabled = false;
+                btnRunAction.style.opacity = '1';
+                btnRunAction.style.cursor = 'pointer';
+            }
         }
-
-        // Note: Profile will be unmarked when user manually stops it or restarts dashboard
-        // For auto-unmark when done, need server-side callback (future enhancement)
     }
 
     // Helper function to run automation with profile marking
@@ -1698,13 +1797,59 @@
 
         // showToast('info', 'Đang chạy', `Thêm ngân hàng cho ${sites.length} trang...`);
 
+        // Store initial form values to detect success
+        const initialBankName = bankName;
+        const initialAccountNumber = accountNumber;
+
         await runAutomationWithMarking('nohu-tool', 'addBankOnly', {
             bankName,
             bankBranch,
             accountNumber,
             apiKey: apiKeyManager.get(),
-            sites: fullSites
+            sites: fullSites,
+            // Pass initial values to detect success
+            _initialBankName: initialBankName,
+            _initialAccountNumber: initialAccountNumber
         });
+
+        // Monitor form to detect success (form cleared = success)
+        monitorFormForSuccess('bank', {
+            bankName: initialBankName,
+            accountNumber: initialAccountNumber
+        });
+    }
+
+    // Monitor form values to detect automation success
+    // Success = form values are populated (not empty) after automation
+    function monitorFormForSuccess(formType, initialValues) {
+        let checkCount = 0;
+        const maxChecks = 120; // Check for 2 minutes (120 * 1s)
+
+        const interval = setInterval(() => {
+            checkCount++;
+
+            if (formType === 'bank') {
+                const currentBankName = document.getElementById('bankBankName').value.trim();
+                const currentAccountNumber = document.getElementById('bankAccountNumber').value.trim();
+
+                // Success detected if form values are populated (not empty)
+                // This means the form was reloaded with data after automation
+                if (currentBankName !== '' && currentAccountNumber !== '') {
+                    console.log('✅ Form values populated - automation succeeded!');
+                    console.log(`   Bank: ${currentBankName}`);
+                    console.log(`   Account: ${currentAccountNumber}`);
+                    showToast('success', 'Thêm Bank Thành Công', `${currentBankName} - ${currentAccountNumber}`);
+                    clearInterval(interval);
+                    return;
+                }
+            }
+
+            // Stop checking after max attempts
+            if (checkCount >= maxChecks) {
+                console.log('⏱️ Form monitoring timeout');
+                clearInterval(interval);
+            }
+        }, 1000); // Check every 1 second
     }
 
     async function runCheckPromo() {
@@ -1755,13 +1900,27 @@
 
         // showToast('info', 'Đang chạy', `Check khuyến mãi trên ${sites.length} trang...`);
 
-        await runAutomationWithMarking('nohu-tool', 'checkPromoOnly', {
-            username: username,
-            apiKey: apiKeyManager.get(), // Required for captcha solving
-            checkPromo: true,
-            captchaDelay: captchaDelay,
-            sites: fullSites
-        });
+        try {
+            await runAutomationWithMarking('nohu-tool', 'checkPromoOnly', {
+                username: username,
+                apiKey: apiKeyManager.get(), // Required for captcha solving
+                checkPromo: true,
+                captchaDelay: captchaDelay,
+                sites: fullSites
+            });
+        } finally {
+            // Clear running status after checkPromoOnly completes
+            const currentProfileId = profileManager.selectedProfileId;
+            if (currentProfileId && profileManager.runningProfiles.has(currentProfileId)) {
+                profileManager.runningProfiles.delete(currentProfileId);
+                if (profileManager.runningStartTimes) {
+                    profileManager.runningStartTimes.delete(currentProfileId);
+                }
+                profileManager.saveRunningProfiles();
+                await loadProfilesCarousel();
+                console.log(`✅ Cleared running flag for checkPromoOnly`);
+            }
+        }
     }
 
     // ============================================
@@ -1770,7 +1929,7 @@
 
     let allProfilesData = [];
 
-    async function loadProfilesCarousel() {
+    async function loadProfilesCarousel(showNotification = false) {
         const result = await profileManager.loadAll();
 
         if (result.success && result.profiles) {
@@ -1783,10 +1942,14 @@
                 displayProfilesInCarousel(tabPrefix, allProfilesData);
             });
 
-            showToast('success', 'Đã tải lại', `${allProfilesData.length} profiles`);
+            if (showNotification) {
+                showToast('success', 'Đã tải lại', `${allProfilesData.length} profiles`);
+            }
             console.log(`✅ Loaded ${allProfilesData.length} profiles into carousels`);
         } else {
-            showToast('error', 'Lỗi tải profiles', result.error);
+            if (showNotification) {
+                showToast('error', 'Lỗi tải profiles', result.error);
+            }
             console.error('❌ Failed to load profiles:', result.error);
         }
     }
@@ -1875,6 +2038,9 @@
 
             carousel.appendChild(card);
         });
+
+        // Re-enable drag scroll after rendering profiles
+        enableDragScroll(carousel);
     }
 
     function selectProfileFromCarousel(tabPrefix, uuid) {
@@ -1997,6 +2163,7 @@
         let startX;
         let scrollLeft;
 
+        // Mouse events
         carousel.addEventListener('mousedown', (e) => {
             // Don't drag if clicking on button
             if (e.target.closest('.btn-select-profile')) return;
@@ -2024,6 +2191,27 @@
             const x = e.pageX - carousel.offsetLeft;
             const walk = (x - startX) * 2; // Scroll speed
             carousel.scrollLeft = scrollLeft - walk;
+        });
+
+        // Touch events for mobile/tablet
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].pageX - carousel.offsetLeft;
+            scrollLeft = carousel.scrollLeft;
+        });
+
+        carousel.addEventListener('touchmove', (e) => {
+            const x = e.touches[0].pageX - carousel.offsetLeft;
+            const walk = (x - startX) * 2; // Same scroll speed
+            carousel.scrollLeft = scrollLeft - walk;
+        });
+
+        // Wheel scroll
+        carousel.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            carousel.scrollBy({
+                left: e.deltaY < 0 ? -100 : 100,
+                behavior: 'smooth'
+            });
         });
 
         // Set initial cursor
@@ -2182,6 +2370,12 @@
             return resultsData[b].lastTimestamp - resultsData[a].lastTimestamp;
         });
 
+        console.log(`🔄 refreshResultsTable called: ${sortedKeys.length} entries`);
+        sortedKeys.forEach(key => {
+            const entry = resultsData[key];
+            console.log(`  - ${key}: status=${entry.status}, message="${entry.message}"`);
+        });
+
         // Store previous total for comparison
         const previousTotal = totalResults;
         const newTotal = sortedKeys.length;
@@ -2310,7 +2504,14 @@
             let statusHtml = '';
             if (isRunning) {
                 // Show running status for the whole automation
-                statusHtml = `<span class="status-badge running">🔄 Đang chạy...</span>`;
+                console.log(`🔍 Rendering for ${group.username}: isRunning=${isRunning}, message="${group.message}", messageType=${typeof group.message}`);
+                const message = group.message ? `<div style="font-size: 12px; color: #2563eb; margin-top: 8px; font-weight: 600; word-break: break-word; white-space: normal; max-width: 350px; padding: 6px 8px; background-color: #eff6ff; border-left: 3px solid #2563eb; border-radius: 4px;">${group.message}</div>` : '';
+                if (group.message) {
+                    console.log(`📊 Displaying message for ${group.username}: "${group.message}"`);
+                } else {
+                    console.log(`⚠️ No message to display for ${group.username}`);
+                }
+                statusHtml = `<div><span class="status-badge running">🔄 Đang chạy...</span>${message}</div>`;
             } else {
                 // Show detailed status after completion
                 if (successCount > 0) statusHtml += `<span class="status-badge success">✅ ${successCount}</span> `;
@@ -2616,6 +2817,19 @@
                                 <div style="grid-column: 1 / -1;">
                                     <strong style="color: #4a5568;">📅 Ngày đăng ký:</strong><br>
                                     <span style="color: #718096;">${new Date(acc.registeredAt).toLocaleString('vi-VN')}</span>
+                                </div>
+                                <div style="grid-column: 1 / -1;">
+                                    <strong style="color: #4a5568;">📱 Các trang được đăng ký:</strong><br>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                                        ${acc.sites && acc.sites.length > 0
+                            ? acc.sites.map(site => `
+                                                <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                                    ${site}
+                                                </span>
+                                            `).join('')
+                            : '<span style="color: #718096; font-style: italic;">Không có thông tin</span>'
+                        }
+                                    </div>
                                 </div>
                             </div>
                             <div style="margin-top: 15px; padding: 12px; background: #e6fffa; border-radius: 8px; border-left: 4px solid #38b2ac;">
@@ -2964,8 +3178,20 @@
 
                 // Add running statuses to table
                 data.statuses.forEach(status => {
+                    if (status.message) {
+                        console.log(`📡 Received status with message: "${status.message}" for ${status.username}`);
+                    }
                     if (status.status === 'running') {
                         currentlyRunning.add(status.username);
+
+                        // Re-enable button when server confirms start
+                        const btnRunAction = document.getElementById('btnRunAction');
+                        if (btnRunAction && btnRunAction.disabled) {
+                            btnRunAction.disabled = false;
+                            btnRunAction.style.opacity = '1';
+                            btnRunAction.style.cursor = 'pointer';
+                            console.log('✅ Button re-enabled after server confirmed start');
+                        }
 
                         // Add as running result
                         const sessionId = status.sessionId || 'running'; // Use 'running' as temp sessionId
@@ -2980,11 +3206,26 @@
                                 screenshots: [],
                                 checkTimes: [],
                                 status: 'running',
+                                message: status.message || '',
                                 firstTimestamp: status.timestamp || Date.now(),
                                 lastTimestamp: status.timestamp || Date.now()
                             };
 
                             refreshResultsTable();
+                        } else {
+                            // Update message for existing running entry
+                            // Always update if message exists (even if empty string)
+                            if ('message' in status) {
+                                console.log(`📊 Before update - resultsData[${key}].message = "${resultsData[key].message}"`);
+                                resultsData[key].message = status.message || '';
+                                resultsData[key].lastTimestamp = status.timestamp || Date.now();
+                                console.log(`📊 After update - resultsData[${key}].message = "${resultsData[key].message}"`);
+                                console.log(`📊 Calling refreshResultsTable() for key: ${key}`);
+                                refreshResultsTable();
+                                console.log(`📊 Updated running entry message: "${status.message}"`);
+                            } else {
+                                console.log(`⚠️ Status has no message property for key: ${key}`);
+                            }
                         }
                     } else if (status.status === 'completed' || status.status === 'error') {
                         // Remove running entry when completed/error
@@ -2997,11 +3238,21 @@
                             refreshResultsTable();
                         }
 
-                        // Clear running flag for profile when automation completes
+                        // Clear running flag for profile when automation completes/errors
                         if (typeof profileManager !== 'undefined') {
-                            const profile = profileManager.profiles.find(p => p.name === status.username);
+                            // Try to find profile by profileId first (most accurate)
+                            let profile = null;
+                            if (status.profileId) {
+                                profile = profileManager.profiles.find(p => p.uuid === status.profileId);
+                            }
+                            // Fallback: find by username
+                            if (!profile) {
+                                profile = profileManager.profiles.find(p => p.name === status.username);
+                            }
+
                             if (profile && profileManager.runningProfiles.has(profile.uuid)) {
                                 profileManager.runningProfiles.delete(profile.uuid);
+                                console.log(`✅ Cleared running flag for profile: ${profile.name} (status: ${status.status})`);
 
                                 // Cleanup start time tracking
                                 if (profileManager.runningStartTimes) {
@@ -3099,19 +3350,19 @@
                 /*
                 if (profilesWithResults.size > 0 && typeof profileManager !== 'undefined') {
                     let clearedCount = 0;
-
+ 
                     // Get all running profiles
                     const runningProfiles = Array.from(profileManager.runningProfiles);
-
+ 
                     // Check each running profile
                     for (const profileId of runningProfiles) {
                         const profile = profileManager.profiles.find(p => p.uuid === profileId);
-
+ 
                         if (!profile || !profilesWithResults.has(profile.name)) continue;
-
+ 
                         // Count screenshots for this profile's latest session
                         const profileResults = data.results.filter(r => r.profileName === profile.name);
-
+ 
                         // Group by session
                         const sessionGroups = {};
                         profileResults.forEach(r => {
@@ -3119,7 +3370,7 @@
                             if (!sessionGroups[sid]) sessionGroups[sid] = [];
                             sessionGroups[sid].push(r);
                         });
-
+ 
                         // Get latest session
                         const latestSession = Object.entries(sessionGroups)
                             .sort((a, b) => {
@@ -3127,19 +3378,19 @@
                                 const bTime = Math.max(...b[1].map(r => r.timestamp));
                                 return bTime - aTime;
                             })[0];
-
+ 
                         if (!latestSession) continue;
-
+ 
                         const screenshotCount = latestSession[1].length;
                         const lastScreenshotTime = Math.max(...latestSession[1].map(s => s.timestamp));
                         const timeSinceLastScreenshot = Date.now() - lastScreenshotTime;
-
+ 
                         // Heuristic: Consider completed if:
                         // - Has 5+ screenshots (most sites) AND no new screenshots for 30s
                         // OR has 7 screenshots (all sites)
                         const isStale = timeSinceLastScreenshot > 30000;
                         const isCompleted = screenshotCount >= 7 || (screenshotCount >= 5 && isStale);
-
+ 
                         if (isCompleted) {
                             profileManager.runningProfiles.delete(profileId);
                             clearedCount++;
@@ -3152,7 +3403,7 @@
                     if (clearedCount > 0) {
                         profileManager.saveRunningProfiles();
                         console.log(`🔄 Auto-cleared ${clearedCount} completed profiles`);
-
+ 
                         // Reload profile carousel to update UI
                         if (typeof loadProfilesCarousel === 'function') {
                             await loadProfilesCarousel();
@@ -3224,11 +3475,11 @@
     // This prevents pagination jumping issues
     // Manual refresh available via "Tải Lại" button
 
-    // Optional: Only check for running automation status updates (lightweight)
+    // Check for running automation status updates (more frequent for better UX)
     setInterval(() => {
-        loadAutomationStatuses(); // Only check running status, don't reload results
-        checkForAutomationCompletion(); // Check if automation completed to trigger smart refresh
-    }, 30000); // Check every 30 seconds (much less frequent)
+        loadAutomationStatuses(); // Check running status
+        checkForAutomationCompletion(); // Check if automation completed
+    }, 5000); // Check every 5 seconds for faster updates
 
     // Recalculate page size when window is resized
     let resizeTimeout;
@@ -3461,6 +3712,117 @@
 
         console.log('✅ All data refreshed for NOHU Tool');
     };
+
+
+
+    // Load custom sites for NOHU
+    function loadCustomSitesForNohu() {
+        return JSON.parse(localStorage.getItem('nohu_custom_sites') || '[]');
+    }
+
+    // Render NOHU sites dynamically
+    async function renderNohuSites() {
+        try {
+            // Fetch NOHU sites from API
+            const response = await fetch('/api/nohu-automation/sites');
+            const result = await response.json();
+
+            if (!result.success || !result.data || !result.data.sites) {
+                console.error('Failed to load NOHU sites');
+                return;
+            }
+
+            // Icon mapping for NOHU sites
+            const iconMap = {
+                'Go99': 'go99',
+                'NOHU': 'nohu',
+                'TT88': 'tt88',
+                'MMOO': 'mmoo',
+                '789P': 'p789',
+                '33WIN': 'win33',
+                '88VV': 'vv88'
+            };
+
+            const appSites = result.data.sites.map(site => ({
+                name: site.name,
+                icon: iconMap[site.name] || 'go99',
+                text: site.name.substring(0, 3).toUpperCase()
+            }));
+
+            const customSites = loadCustomSitesForNohu();
+            const allAppSites = [...appSites, ...customSites.map(s => ({ name: s.name, icon: 'custom', text: s.name.substring(0, 3).toUpperCase() }))];
+
+            // Render App Promo Sites
+            const appGrid = document.getElementById('appPromoSites');
+            if (appGrid) {
+                appGrid.innerHTML = allAppSites.map(site => {
+                    const isCustom = customSites.some(s => s.name === site.name);
+                    const iconClass = isCustom ? 'site-icon' : `site-icon ${site.icon}`;
+                    const iconStyle = isCustom ? 'background-color: #9333ea;' : '';
+                    return `
+<label class="site-card">
+    <input type="checkbox" class="site-check" data-name="${site.name}">
+    <div class="${iconClass}" style="${iconStyle}">${site.text}</div>
+    <div class="site-name">${site.name}</div>
+</label>
+`;
+                }).join('');
+            }
+
+            // Fetch SMS site configs from server (with cache-busting)
+            let smsSiteConfigs = {};
+            try {
+                const timestamp = new Date().getTime();
+                const smsConfigResponse = await fetch(`/api/nohu-automation/sms-config?t=${timestamp}`);
+                const smsConfigData = await smsConfigResponse.json();
+                if (smsConfigData.success) {
+                    smsSiteConfigs = smsConfigData.data;
+                    console.log('✅ SMS Config loaded:', smsSiteConfigs);
+                } else {
+                    console.warn('⚠️ SMS Config response not successful:', smsConfigData);
+                }
+            } catch (err) {
+                console.warn('⚠️ Failed to load SMS config:', err);
+            }
+
+            console.log('📊 Final smsSiteConfigs:', smsSiteConfigs);
+
+            // Render SMS Promo Sites
+            const smsGrid = document.getElementById('smsPromoSites');
+            if (smsGrid) {
+                smsGrid.innerHTML = allAppSites.map(site => {
+                    const isCustom = customSites.some(s => s.name === site.name);
+                    const smsConfig = smsSiteConfigs[site.name];
+                    const hasSmsUrl = smsConfig && smsConfig.registerSmsUrl !== null && smsConfig.registerSmsUrl !== undefined;
+                    console.log(`📱 ${site.name}: hasSmsUrl=${hasSmsUrl}, config=${JSON.stringify(smsConfig)}`);
+                    const iconClass = isCustom ? 'site-icon' : `site-icon ${site.icon}`;
+                    const iconStyle = isCustom ? 'background-color: #9333ea;' : '';
+                    const disabledStyle = !hasSmsUrl ? 'opacity: 0.5; cursor: not-allowed;' : '';
+                    const disabledAttr = !hasSmsUrl ? 'disabled' : '';
+
+                    return `
+<label class="site-card" style="${disabledStyle}" title="${!hasSmsUrl ? '⚠️ SMS URL chưa cấu hình' : ''}">
+    <input type="checkbox" class="site-check site-check-sms" data-name="${site.name}-SMS" ${disabledAttr}>
+    <div class="${iconClass}" style="${iconStyle}">${site.text}</div>
+    <div class="site-name">${site.name}${!hasSmsUrl ? ' ⚠️' : ''}</div>
+</label>
+`;
+                }).join('');
+            }
+
+            console.log(`✅ Rendered ${allAppSites.length} NOHU sites`);
+        } catch (error) {
+            console.error('❌ Error rendering NOHU sites:', error);
+        }
+    }
+
+    // Initialize sites on page load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderNohuSites);
+    } else {
+        // DOM is already loaded
+        renderNohuSites();
+    }
 
     console.log('✅ NOHU Tool JavaScript loaded (V2 Design)');
 </script>

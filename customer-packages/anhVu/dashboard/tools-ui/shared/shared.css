@@ -716,10 +716,10 @@
 
 .profile-carousel {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     overflow-x: auto;
     scroll-behavior: smooth;
-    padding: 16px 4px;
+    padding: 8px 4px;
     flex: 1;
     /* Hide scrollbar */
     -ms-overflow-style: none;
@@ -733,21 +733,23 @@
 .profile-carousel-empty {
     width: 100%;
     text-align: center;
-    padding: 48px;
+    padding: 20px;
     color: #9ca3af;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .profile-carousel-card {
-    min-width: 220px;
-    max-width: 220px;
+    min-width: 160px;
+    max-width: 160px;
     flex-shrink: 0;
     background: white;
     border: 2px solid #e5e7eb;
     border-radius: 12px;
-    padding: 12px;
+    padding: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
 .profile-carousel-card:hover {
@@ -770,14 +772,14 @@
 .profile-card-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 6px;
+    margin-bottom: 4px;
     position: relative;
 }
 
 .profile-avatar {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: var(--tool-gradient);
     color: white;
@@ -785,15 +787,19 @@
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    font-size: 16px;
+    font-size: 14px;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    flex-shrink: 0;
 }
 
 .profile-card-name {
     font-weight: 700;
     color: #111827;
-    font-size: 14px;
+    font-size: 12px;
     flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .running-badge,
@@ -825,45 +831,51 @@
 .profile-card-info {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 10px;
+    gap: 2px;
+    margin-bottom: 4px;
 }
 
 .info-item {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 6px 10px;
+    gap: 6px;
+    padding: 4px 8px;
     background: #f9fafb;
     border-radius: 6px;
+    font-size: 11px;
 }
 
 .info-icon {
-    font-size: 14px;
-    width: 18px;
+    font-size: 12px;
+    width: 16px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 .info-text {
-    font-size: 12px;
+    font-size: 11px;
     color: #374151;
     font-weight: 500;
 }
 
 .profile-card-footer {
-    padding-top: 10px;
+    padding-top: 4px;
     border-top: 1px solid #e5e7eb;
+    margin-top: auto;
 }
 
 .profile-status-text {
     width: 100%;
-    padding: 8px;
+    padding: 4px;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 600;
     text-align: center;
     transition: all 0.3s;
     border: 2px solid transparent;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .profile-status-text.available {

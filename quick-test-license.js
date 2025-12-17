@@ -17,7 +17,6 @@ const testKeys = {
 const type = process.argv[2] || 'nohu';
 
 if (!testKeys[type]) {
-    console.log('❌ Invalid type. Use: nohu, sms, or both');
     process.exit(1);
 }
 
@@ -28,21 +27,15 @@ const descriptions = {
     'both': 'NOHU + SMS Tools'
 };
 
-console.log(`🔑 Activating license: ${descriptions[type]}`);
-console.log(`Key: ${key.substring(0, 50)}...`);
-
 // Save license
 const saved = licenseManager.saveLicense(key);
 
 if (saved) {
     console.log('✅ License activated successfully!');
-    console.log('🌐 Now open dashboard at: http://localhost:3000');
-    console.log(`📋 Expected tools: ${type === 'nohu' ? 'NOHU only' : type === 'sms' ? 'SMS only' : 'NOHU + SMS'}`);
 
     // Validate
     const validation = licenseManager.validateKey(key);
     if (validation.valid) {
-        console.log(`🛠️  Allowed tools: ${validation.data.allowedTools.join(', ')}`);
     }
 } else {
     console.log('❌ Failed to save license');

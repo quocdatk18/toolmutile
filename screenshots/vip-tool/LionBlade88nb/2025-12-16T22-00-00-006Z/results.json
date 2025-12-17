@@ -1,0 +1,23 @@
+[
+  {
+    "site": "U888",
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "ABC8",
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  },
+  {
+    "site": "888clb",
+    "checkPromo": {
+      "success": true,
+      "message": "Check promo submitted successfully"
+    }
+  }
+]

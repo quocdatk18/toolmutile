@@ -18,4 +18,3 @@ const encoded = Buffer.from(JSON.stringify(licenseData)).toString('base64');
 const signature = crypto.createHmac('sha256', SECRET_KEY).update(encoded).digest('hex');
 const licenseKey = `${encoded}.${signature}`;
 
-console.log(licenseKey);

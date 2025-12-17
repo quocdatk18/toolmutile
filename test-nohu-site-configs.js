@@ -1,5 +1,4 @@
 // Test NOHU Site Configs
-console.log('🧪 Testing NOHU Site Configs...');
 
 // Simulate the siteConfigs from NOHU optimized-automation.js
 const nohuSiteConfigs = {
@@ -52,36 +51,20 @@ const testNohuSitesFromUI = [
     { name: 'INVALID_NOHU_SITE' } // Test invalid site
 ];
 
-console.log('📋 Available NOHU Site Configs:', Object.keys(nohuSiteConfigs));
-console.log('📤 Test NOHU Sites from UI:', testNohuSitesFromUI.map(s => s.name));
-
-console.log('\n🔍 Testing NOHU Site Lookups:');
 testNohuSitesFromUI.forEach(site => {
     const config = nohuSiteConfigs[site.name];
     if (config) {
-        console.log(`✅ ${site.name}: Found config - ${config.type} - ${config.registerUrl}`);
     } else {
-        console.log(`❌ ${site.name}: NO CONFIG FOUND`);
     }
 });
 
-console.log('\n🎯 NOHU Summary:');
 const foundNohuSites = testNohuSitesFromUI.filter(site => nohuSiteConfigs[site.name]);
 const missingNohuSites = testNohuSitesFromUI.filter(site => !nohuSiteConfigs[site.name]);
 
-console.log(`✅ Found configs: ${foundNohuSites.length}/${testNohuSitesFromUI.length}`);
-console.log(`❌ Missing configs: ${missingNohuSites.map(s => s.name).join(', ')}`);
-
 // Test data format từ UI
-console.log('\n📊 Data Format Test:');
-console.log('NOHU UI sends:', JSON.stringify(testNohuSitesFromUI.slice(0, 3), null, 2));
 
 // Simulate what happens in processSingleSite
-console.log('\n🔧 Simulation Test:');
 testNohuSitesFromUI.slice(0, 3).forEach(site => {
-    console.log(`Processing site object:`, site);
-    console.log(`Looking for config with key: "${site.name}"`);
-    console.log(`Config found:`, !!nohuSiteConfigs[site.name]);
 });
 
 console.log('\n✅ NOHU Test completed!');

@@ -202,7 +202,6 @@ class AdvancedObfuscator {
             ]
         });
 
-        console.log(`🔍 Found ${jsFiles.length} JavaScript files`);
         return jsFiles;
     }
 
@@ -211,14 +210,12 @@ class AdvancedObfuscator {
      */
     obfuscateFile(inputFile, outputFile, options, securityLevel) {
         try {
-            console.log(`📝 [${securityLevel}] Processing: ${path.relative(this.projectRoot, inputFile)}`);
 
             // Read source code
             const sourceCode = fs.readFileSync(inputFile, 'utf8');
 
             // Skip empty files
             if (sourceCode.trim().length === 0) {
-                console.log(`   ⚠️ Skipped: Empty file`);
                 this.skippedCount++;
                 return;
             }
@@ -239,9 +236,6 @@ class AdvancedObfuscator {
             const obfuscatedSize = fs.statSync(outputFile).size;
             const compressionRatio = ((obfuscatedSize / originalSize) * 100).toFixed(1);
 
-            console.log(`   ✅ Created: ${path.relative(this.projectRoot, outputFile)}`);
-            console.log(`   📊 Size: ${originalSize} → ${obfuscatedSize} bytes (${compressionRatio}%)`);
-
             this.successCount++;
         } catch (error) {
             console.log(`   ❌ Failed: ${error.message}`);
@@ -253,12 +247,8 @@ class AdvancedObfuscator {
      * Create obfuscated version of entire project
      */
     async obfuscateProject() {
-        console.log('🔒 Advanced Obfuscation System Starting...\n');
-        console.log('📋 Whitelist (files that will NOT be obfuscated):');
         this.whitelist.forEach(pattern => {
-            console.log(`   - ${pattern}`);
         });
-        console.log('');
 
         const jsFiles = this.findJavaScriptFiles();
         const obfuscatedDir = path.join(this.projectRoot, 'obfuscated-project');
@@ -269,15 +259,12 @@ class AdvancedObfuscator {
         }
         fs.mkdirSync(obfuscatedDir, { recursive: true });
 
-        console.log(`📁 Output directory: ${obfuscatedDir}\n`);
-
         for (const inputFile of jsFiles) {
             const relativePath = path.relative(this.projectRoot, inputFile);
             const outputFile = path.join(obfuscatedDir, relativePath);
 
             // Check if file should be skipped
             if (this.shouldSkipFile(inputFile)) {
-                console.log(`⏭️ Skipped (whitelist): ${relativePath}`);
 
                 // Copy original file to maintain structure
                 const outputDir = path.dirname(outputFile);
@@ -313,7 +300,6 @@ class AdvancedObfuscator {
      * Copy non-JavaScript files to maintain project structure
      */
     async copyNonJSFiles(obfuscatedDir) {
-        console.log('\n📁 Copying non-JavaScript files...');
 
         const allFiles = glob.sync('**/*', {
             cwd: this.projectRoot,
@@ -343,34 +329,18 @@ class AdvancedObfuscator {
             copiedCount++;
         }
 
-        console.log(`✅ Copied ${copiedCount} non-JavaScript files`);
     }
 
     /**
      * Print summary
      */
     printSummary(obfuscatedDir) {
-        console.log('\n========================================');
-        console.log('🔒 ADVANCED OBFUSCATION COMPLETE');
-        console.log('========================================');
         console.log(`✅ Obfuscated: ${this.successCount} files`);
-        console.log(`⏭️ Skipped: ${this.skippedCount} files`);
         console.log(`❌ Failed: ${this.failCount} files`);
-        console.log('========================================');
-        console.log(`📁 Output: ${obfuscatedDir}`);
-        console.log('========================================\n');
 
         if (this.successCount > 0) {
             console.log('🎉 Project successfully obfuscated!');
-            console.log('📝 All JavaScript files have been obfuscated with appropriate security levels');
-            console.log('🔧 Critical files use HIGH security obfuscation');
-            console.log('📋 Regular files use MEDIUM security obfuscation');
-            console.log('⚪ Whitelisted files remain readable for maintenance\n');
 
-            console.log('🚀 Next steps:');
-            console.log('1. Test the obfuscated project');
-            console.log('2. Create customer package from obfuscated-project folder');
-            console.log('3. Distribute to customers\n');
         }
     }
 
@@ -378,7 +348,6 @@ class AdvancedObfuscator {
      * Obfuscate specific files only
      */
     async obfuscateSpecificFiles(filePatterns) {
-        console.log('🎯 Obfuscating specific files...\n');
 
         for (const pattern of filePatterns) {
             const files = glob.sync(pattern, {
@@ -388,7 +357,6 @@ class AdvancedObfuscator {
 
             for (const inputFile of files) {
                 if (!fs.existsSync(inputFile)) {
-                    console.log(`❌ File not found: ${pattern}`);
                     continue;
                 }
 
@@ -419,13 +387,6 @@ if (require.main === module) {
         const filePatterns = args.slice(1);
         obfuscator.obfuscateSpecificFiles(filePatterns);
     } else {
-        console.log('Usage:');
-        console.log('  node advanced-obfuscate.js                    # Obfuscate entire project');
-        console.log('  node advanced-obfuscate.js --files <patterns> # Obfuscate specific files');
-        console.log('');
-        console.log('Examples:');
-        console.log('  node advanced-obfuscate.js');
-        console.log('  node advanced-obfuscate.js --files "core/*.js" "tools/**/*.js"');
     }
 }
 

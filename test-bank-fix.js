@@ -16,16 +16,11 @@ async function testBankFix() {
         const automation = new NohuAutomation();
         const safeSequence = new AutoSequenceSafe(automation);
 
-        console.log('🚀 Starting test automation...');
         const result = await safeSequence.runParallelSequences(profileId, testSites);
-
-        console.log('📊 Test Results:');
-        console.log(JSON.stringify(result, null, 2));
 
         // Kiểm tra kết quả
         if (result.success && result.results.length > 0) {
             const siteResult = result.results[0];
-            console.log('\n✅ Test Summary:');
             console.log(`Register: ${siteResult.register?.success ? '✅' : '❌'}`);
             console.log(`Login: ${siteResult.login?.success ? '✅' : '❌'}`);
             console.log(`Add Bank: ${siteResult.addBank?.success ? '✅' : '❌'}`);

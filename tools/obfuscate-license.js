@@ -15,8 +15,6 @@ const projectRoot = path.join(__dirname, '..');
 const inputFile = path.join(projectRoot, 'core', 'license-manager.js');
 const outputFile = path.join(projectRoot, 'core', 'license-manager.obfuscated.js');
 
-console.log('🔒 Obfuscating license-manager.js...\n');
-
 // Read source code
 const sourceCode = fs.readFileSync(inputFile, 'utf8');
 
@@ -56,9 +54,3 @@ const obfuscatedCode = JavaScriptObfuscator.obfuscate(sourceCode, {
 // Save obfuscated code
 fs.writeFileSync(outputFile, obfuscatedCode, 'utf8');
 
-console.log('✅ Obfuscated file created:', outputFile);
-console.log('\n📝 Next steps:');
-console.log('   1. Backup original: core/license-manager.js');
-console.log('   2. Replace with obfuscated version');
-console.log('   3. Test to make sure it works');
-console.log('   4. Send to customer\n');

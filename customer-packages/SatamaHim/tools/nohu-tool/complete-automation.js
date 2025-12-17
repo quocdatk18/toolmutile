@@ -488,6 +488,14 @@ class CompleteAutomation {
         }
 
         console.log('    💉 Injecting content.js (FULL LOGIC)...');
+
+        // Set profileData on window before injecting content.js (for countdown notifications)
+        if (this.settings && this.settings.profileData) {
+            await page.evaluate((profileData) => {
+                window.profileData = profileData;
+            }, this.settings.profileData);
+        }
+
         await page.evaluate(this.scripts.contentScript);
     }
 
@@ -1696,38 +1704,19 @@ class CompleteAutomation {
      * - User is already logged in from FreeLXB TRUE
      * - Can be called directly after Add Bank or standalone
      */
+    /**
+     * Wrapper: Tab riêng gọi runCheckPromotionFull
+     */
     async runCheckPromotion(browser, url, username, apiKey) {
-        const page = await this.setupPage(browser, url);
-
+        const context = await browser.createBrowserContext();
         try {
-            // SPEED: Fast tab activation
-            console.log('    ⚡ Activating tab...');
-            await page.bringToFront();
-            await wait(500);
-
-            const actions = new AutomationActions(page);
-            const result = await actions.completeCheckPromotion(username, apiKey);
-
-            console.log('    ℹ️  Keeping page open for inspection...');
-            return result;
-
-        } catch (error) {
-            console.error('    ❌ Error:', error.message);
-
-            // Handle TAB_CLOSED error gracefully
-            if (isTabClosedError(error)) {
-                console.log('    ⛔ Check promotion stopped: Tab was closed by user');
-                // Send status to dashboard to update isRunning
-                const siteName = new URL(url).hostname;
-                await sendTabClosedStatus(username, siteName);
-                return {
-                    success: false,
-                    error: 'TAB_CLOSED',
-                    message: 'Tab was closed during check promotion - operation cancelled'
-                };
+            return await this.runCheckPromotionFull(context, null, url, null, username, apiKey);
+        } finally {
+            try {
+                await context.close();
+            } catch (e) {
+                // Ignore
             }
-
-            return { success: false, promotions: [], message: error.message };
         }
     }
 
@@ -1981,7 +1970,7 @@ class CompleteAutomation {
                 // Increased timeout for slow network or slow captcha API
                 await promoPage.waitForNavigation({
                     waitUntil: 'networkidle2',
-                    timeout: 120000 // 120 seconds (2 minutes) for slow sites/network
+                    timeout: 300000 // 300 seconds (5 minutes) for slow sites/network + 8-15s captcha delay + 20-60s click delay
                 });
                 console.log('    ✅ Page navigation completed');
             } catch (navError) {
@@ -1990,11 +1979,11 @@ class CompleteAutomation {
             }
 
             // Wait for modal to render, but check continuously (don't wait full timeout)
-            console.log('    ⏳ Waiting for result modal to render (max 30s)...');
+            console.log('    ⏳ Waiting for result modal to render (max 60s)...');
 
             let modalRendered = false;
             let waitAttempts = 0;
-            const maxWaitAttempts = 30; // Check for 30 seconds max
+            const maxWaitAttempts = 60; // Check for 60 seconds max (account for 20-60s click delay)
             let timeoutScreenshotTaken = false;
 
             while (waitAttempts < maxWaitAttempts && !modalRendered) {
@@ -2030,7 +2019,7 @@ class CompleteAutomation {
 
             // Take screenshot 1s before timeout if no content rendered (capture error state)
             if (!modalRendered && !timeoutScreenshotTaken) {
-                console.log('    📸 Taking timeout screenshot (no content after 30s)...');
+                console.log('    📸 Taking timeout screenshot (no content after 60s)...');
                 try {
                     const fs = require('fs');
                     const path = require('path');
@@ -2062,7 +2051,7 @@ class CompleteAutomation {
             }
 
             if (!modalRendered) {
-                console.log('    ⚠️  No content rendered after 30s - timeout screenshot taken');
+                console.log('    ⚠️  No content rendered after 60s - timeout screenshot taken');
             } else {
                 // Wait a bit more for modal animation if content loaded
                 await wait(2000);

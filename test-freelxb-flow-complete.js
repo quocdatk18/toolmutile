@@ -33,16 +33,10 @@ async function testFreeLXBFlowComplete() {
             accountNumber: '1234567890'
         };
 
-        console.log('📋 Test Profile Data:');
-        console.log(`   Username: ${profileData.username}`);
-        console.log(`   Password: ${profileData.password}`);
         console.log(`   Bank: ${profileData.bankName}`);
-        console.log(`   Account: ${profileData.accountNumber}\n`);
 
         // STEP 1: Navigate to register page
         const registerUrl = 'https://m.ghhdj-567dhdhhmm.asia/Account/Register?f=3528698&app=1';
-        console.log('📍 STEP 1: Navigating to register page...');
-        console.log(`   URL: ${registerUrl}`);
 
         await page.goto(registerUrl, {
             waitUntil: 'domcontentloaded',
@@ -53,7 +47,6 @@ async function testFreeLXBFlowComplete() {
         await new Promise(resolve => setTimeout(resolve, 3000));
 
         // STEP 2: Inject content-fixed.js
-        console.log('\n💉 STEP 2: Injecting content-fixed.js...');
         const contentFixedScript = fs.readFileSync(
             path.join(__dirname, 'tools/nohu-tool/extension/content-fixed.js'),
             'utf8'
@@ -102,7 +95,7 @@ async function testFreeLXBFlowComplete() {
         }
 
         // Wait for registration to complete
-        console.log('\n⏳ Waiting for registration to complete...');
+        
         await new Promise(resolve => setTimeout(resolve, 5000));
 
         // STEP 4: Navigate to withdraw page
@@ -166,7 +159,6 @@ async function testFreeLXBFlowComplete() {
         }
 
         // STEP 6: Check form state
-        console.log('\n🔍 STEP 6: Checking final form state...');
         const formState = await page.evaluate(() => {
             const bankDropdown = document.querySelector('[formcontrolname="bankName"]') ||
                 document.querySelector('select[name*="bank"]');
@@ -183,14 +175,9 @@ async function testFreeLXBFlowComplete() {
             };
         });
 
-        console.log('   Form found:', formState.formFound ? '✅' : '❌');
         console.log('   Bank field:', formState.bankValue);
-        console.log('   Branch field:', formState.branchValue);
-        console.log('   Account field:', formState.accountValue);
 
         // Summary
-        console.log('\n📊 COMPLETE FLOW TEST SUMMARY:');
-        console.log('===============================');
 
         const tests = [
             { name: 'Registration', result: registerResult.success },
@@ -199,7 +186,6 @@ async function testFreeLXBFlowComplete() {
         ];
 
         tests.forEach((test, i) => {
-            console.log(`${i + 1}. ${test.name}: ${test.result ? '✅ PASS' : '❌ FAIL'}`);
         });
 
         const passedTests = tests.filter(t => t.result).length;
@@ -214,15 +200,11 @@ async function testFreeLXBFlowComplete() {
         } else if (passedTests >= 2) {
             console.log('✅ Partial success. Most steps working.');
         } else {
-            console.log('⚠️ Flow needs more work.');
         }
 
-        console.log('\n📝 Next Steps:');
         console.log('1. Check browser tabs - both register and withdraw pages should be filled');
         console.log('2. Verify bank dropdown, branch, and account fields are populated');
-        console.log('3. Test with dashboard to confirm full integration');
 
-        console.log('\n⏳ Keeping browser open for 60 seconds for inspection...');
         await new Promise(resolve => setTimeout(resolve, 60000));
 
     } catch (error) {

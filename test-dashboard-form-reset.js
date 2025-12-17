@@ -4,8 +4,6 @@
  * Fix: Gọi resetCreateProfileForm() ngay sau khi tạo thành công và không đóng modal
  */
 
-console.log('🧪 Testing Dashboard Form Reset Fix...\n');
-
 // Simulate DOM elements
 const mockElements = {
     profilePrefix: { value: 'TestProfile123' },
@@ -88,12 +86,10 @@ function mockQuerySelector(selector) {
 
 // Mock updateAdvancedOptionsForOS function
 function mockUpdateAdvancedOptionsForOS() {
-    console.log('   📋 Advanced options updated for OS');
 }
 
 // Simulate the improved resetCreateProfileForm function
 function resetCreateProfileForm() {
-    console.log('🔄 Resetting create profile form...');
 
     try {
         // Reset basic fields
@@ -161,33 +157,9 @@ function resetCreateProfileForm() {
 // Test the fix
 function runTest() {
     console.log('📋 Test 1: Check initial form state (simulating user input)');
-    console.log('Initial values:');
-    console.log('  - Profile Prefix:', mockElements.profilePrefix.value);
-    console.log('  - OS: Mac selected:', mockElements.profileOS.mac.checked);
-    console.log('  - Browser: Firefox selected:', mockElements.profileBrowser.firefox.checked);
-    console.log('  - Use Proxy:', mockElements.useProxy.checked);
-    console.log('  - Proxy Host:', mockElements.proxyHost.value);
-    console.log('  - Proxy Port:', mockElements.proxyPort.value);
-    console.log('  - Resolution Index:', mockElements.profileResolution.selectedIndex);
-    console.log('  - Language:', mockElements.profileLanguage.value);
-    console.log('');
 
     console.log('📋 Test 2: Simulate successful profile creation and form reset');
-    console.log('Calling resetCreateProfileForm()...');
     resetCreateProfileForm();
-    console.log('');
-
-    console.log('📋 Test 3: Verify form was reset to defaults');
-    console.log('Values after reset:');
-    console.log('  - Profile Prefix:', mockElements.profilePrefix.value);
-    console.log('  - OS: Windows selected:', mockElements.profileOS.win.checked);
-    console.log('  - Browser: Chrome selected:', mockElements.profileBrowser.chrome.checked);
-    console.log('  - Use Proxy:', mockElements.useProxy.checked);
-    console.log('  - Proxy Host:', mockElements.proxyHost.value);
-    console.log('  - Proxy Port:', mockElements.proxyPort.value);
-    console.log('  - Resolution Index:', mockElements.profileResolution.selectedIndex);
-    console.log('  - Language:', mockElements.profileLanguage.value);
-    console.log('');
 
     // Verify results
     const tests = [
@@ -206,19 +178,12 @@ function runTest() {
     let passedTests = 0;
     let totalTests = tests.length;
 
-    console.log('📊 Test Results:');
     tests.forEach(test => {
         const passed = test.actual === test.expected;
-        console.log(`  ${passed ? '✅' : '❌'} ${test.name}: ${test.actual} ${passed ? '(PASS)' : `(FAIL - expected: ${test.expected})`}`);
         if (passed) passedTests++;
     });
 
-    console.log('');
-    console.log(`🏁 Final Results: ${passedTests}/${totalTests} tests passed`);
-
     if (passedTests === totalTests) {
-        console.log('🎉 ALL TESTS PASSED! Form reset fix is working correctly.');
-        console.log('✅ Modal will now stay open after creating profile for easy multiple creation');
         console.log('✅ Form will be reset to defaults after each successful creation');
     } else {
         console.log('⚠️ Some tests failed. Please check the implementation.');

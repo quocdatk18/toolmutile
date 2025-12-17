@@ -424,10 +424,13 @@ class VIPAutomation {
                         addBankResult = await this.addBankStep(browser, category, siteConfig, profileData, registerResult.page);
                     }
 
-                    // Skip checkPromo nếu addBank failed
+                    // Skip checkPromo nếu addBank failed hoặc category là ABCVIP
                     let checkPromoResult = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                    if (addBankResult?.success) {
+                    if (addBankResult?.success && category !== 'abcvip') {
                         checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
+                    } else if (category === 'abcvip') {
+                        console.log(`⏭️ Skipping checkPromo for ${siteName} (ABCVIP - no promo)`);
+                        checkPromoResult = { success: true, skipped: true, message: 'Skipped - ABCVIP no promo' };
                     } else {
                         console.log(`⏭️ Skipping checkPromo for ${siteName} (add bank failed)`);
                     }
@@ -472,7 +475,7 @@ class VIPAutomation {
 
                 // Run batch in parallel
                 const batchPromises = batch.map(async (siteName) => {
-                    const result = await this.processSite(browser, category, siteName, profileData, mode, sharedPromoContext);
+                    const result = await this.processSite(browser, category, siteName, profileData, mode, sharedPromoContext, sites);
                     // Mark tab as completed in rotator
                     tabRotator.complete(result.page);
                     return result;
@@ -491,7 +494,7 @@ class VIPAutomation {
     /**
      * Process a single site (used by both sequential and parallel)
      */
-    async processSite(browser, category, siteName, profileData, mode, sharedPromoContext) {
+    async processSite(browser, category, siteName, profileData, mode, sharedPromoContext, sites = []) {
         const categoryConfig = this.getSitesByCategory(category);
         const siteConfig = categoryConfig.sites.find(s => s.name === siteName);
 
@@ -515,7 +518,11 @@ class VIPAutomation {
                     // Save account info after successful registration
                     console.log(`📝 Attempting to save account info for ${siteName}...`);
                     try {
-                        await this.saveAccountInfo(profileData, category, siteName, sites);
+                        // Convert sites array to site names if needed
+                        const siteNames = Array.isArray(sites) && sites.length > 0
+                            ? (typeof sites[0] === 'string' ? sites : sites.map(s => s.name || s))
+                            : [];
+                        await this.saveAccountInfo(profileData, category, siteName, siteNames);
                         console.log(`✅ Account info saved successfully for ${siteName}`);
                     } catch (err) {
                         console.error(`❌ Account save failed for ${siteName}:`, err.message);
@@ -525,10 +532,13 @@ class VIPAutomation {
                     addBankResult = await this.addBankStep(browser, category, siteConfig, profileData, registerResult.page);
                 }
 
-                // Skip checkPromo nếu addBank failed
+                // Skip checkPromo nếu addBank failed hoặc category là ABCVIP
                 let checkPromoResult = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                if (addBankResult?.success) {
+                if (addBankResult?.success && category !== 'abcvip') {
                     checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
+                } else if (category === 'abcvip') {
+                    console.log(`⏭️ Skipping checkPromo for ${siteName} (ABCVIP - no promo)`);
+                    checkPromoResult = { success: true, skipped: true, message: 'Skipped - ABCVIP no promo' };
                 } else {
                     console.log(`⏭️ Skipping checkPromo for ${siteName} (add bank failed)`);
                 }
@@ -590,7 +600,10 @@ class VIPAutomation {
                 if (!captchaSolved) {
                     console.warn('⚠️ Captcha solve failed, continuing anyway...');
                 }
-                await new Promise(r => setTimeout(r, 3000));
+                // Tăng delay cho ABCVIP (10s), bình thường 3s
+                const captchaDelay = category === 'abcvip' ? 10000 : 3000;
+                console.log(`⏳ Waiting ${captchaDelay}ms after captcha solve...`);
+                await new Promise(r => setTimeout(r, captchaDelay));
             } else {
                 console.warn('⚠️ No captcha API key provided');
             }
@@ -609,7 +622,8 @@ class VIPAutomation {
             console.log(`⏳ Waiting for token/redirect...`);
             let hasToken = false;
             let waitAttempts = 0;
-            const maxWaitAttempts = 20; // Max 10 seconds (20 * 500ms)
+            // Tăng timeout cho ABCVIP (có random delay 20-60s), bình thường 10s
+            const maxWaitAttempts = category === 'abcvip' ? 200 : 20; // ABCVIP: max 100s, others: max 10s
             const checkInterval = 500; // 500ms per check
 
             let initialUrl = await page.evaluate(() => window.location.href);
@@ -662,6 +676,14 @@ class VIPAutomation {
 
             // Token found - no need to wait for navigation, can proceed immediately
             console.log(`✅ Token acquired, register successful`);
+
+            // Thêm random delay 20-60s trước redirect sang Add Bank cho ABCVIP
+            if (category === 'abcvip') {
+                const randomDelay = Math.random() * (60000 - 20000) + 20000; // 20-60s
+                console.log(`⏳ ABCVIP: Waiting ${Math.round(randomDelay / 1000)}s before redirect to Add Bank...`);
+                await new Promise(r => setTimeout(r, randomDelay));
+            }
+
             return { success: true, message: 'Register completed successfully', page };
         } catch (error) {
             console.error(`❌ Register Error:`, error.message);
@@ -873,13 +895,13 @@ class VIPAutomation {
 
                 console.log('📊 Extracted bank info:', bankInfo);
 
-                // Check each field
-                const fullnameMatch = bankInfo['Họ và tên']?.includes(expectedData.fullname.toUpperCase());
-                const bankNameMatch = bankInfo['Ngân hàng']?.includes(expectedData.bankName.toUpperCase());
+                // Check: Họ tên thật, Chi nhánh, 4 số cuối tài khoản (bỏ qua ngân hàng vì format có thể khác)
+                const fullnameMatch = bankInfo['Họ tên thật']?.includes(expectedData.fullname.trim().toUpperCase()) ||
+                    bankInfo['Họ và tên']?.includes(expectedData.fullname.trim().toUpperCase());
                 const cityMatch = bankInfo['Chi nhánh ngân hàng']?.includes(expectedData.city);
                 const accountMatch = bankInfo['Số tài khoản']?.includes(expectedData.accountNumber.slice(-4));
 
-                if (fullnameMatch && bankNameMatch && cityMatch && accountMatch) {
+                if (fullnameMatch && cityMatch && accountMatch) {
                     return {
                         success: true,
                         verified: true,
@@ -893,15 +915,14 @@ class VIPAutomation {
                     success: false,
                     message: 'Bank info verification failed',
                     expected: {
-                        fullname: expectedData.fullname.toUpperCase(),
-                        bankName: expectedData.bankName.toUpperCase(),
+                        fullname: expectedData.fullname.trim().toUpperCase(),
                         city: expectedData.city,
                         accountNumber: expectedData.accountNumber.slice(-4)
                     },
                     actual: bankInfo
                 };
             }, {
-                fullname: profileData.fullname,
+                fullname: profileData.fullname.trim(),
                 bankName: profileData.bankName,
                 city: 'TP. Hồ Chí Minh',
                 accountNumber: profileData.accountNumber
@@ -1103,13 +1124,13 @@ class VIPAutomation {
 
                 console.log('📊 Extracted bank info:', bankInfo);
 
-                // Check each field
-                const fullnameMatch = bankInfo['Họ và tên']?.includes(expectedData.fullname.toUpperCase());
-                const bankNameMatch = bankInfo['Ngân hàng']?.includes(expectedData.bankName.toUpperCase());
+                // Check: Họ tên thật, Chi nhánh, 4 số cuối tài khoản (bỏ qua ngân hàng vì format có thể khác)
+                const fullnameMatch = bankInfo['Họ tên thật']?.includes(expectedData.fullname.trim().toUpperCase()) ||
+                    bankInfo['Họ và tên']?.includes(expectedData.fullname.trim().toUpperCase());
                 const cityMatch = bankInfo['Chi nhánh ngân hàng']?.includes(expectedData.city);
                 const accountMatch = bankInfo['Số tài khoản']?.includes(expectedData.accountNumber.slice(-4));
 
-                if (fullnameMatch && bankNameMatch && cityMatch && accountMatch) {
+                if (fullnameMatch && cityMatch && accountMatch) {
                     return {
                         success: true,
                         verified: true,
@@ -1123,15 +1144,14 @@ class VIPAutomation {
                     success: false,
                     message: 'Bank info verification failed',
                     expected: {
-                        fullname: expectedData.fullname.toUpperCase(),
-                        bankName: expectedData.bankName.toUpperCase(),
+                        fullname: expectedData.fullname.trim().toUpperCase(),
                         city: expectedData.city,
                         accountNumber: expectedData.accountNumber.slice(-4)
                     },
                     actual: bankInfo
                 };
             }, {
-                fullname: profileData.fullname,
+                fullname: profileData.fullname.trim(),
                 bankName: profileData.bankName,
                 city: 'TP. Hồ Chí Minh',
                 accountNumber: profileData.accountNumber
@@ -1527,6 +1547,9 @@ class VIPAutomation {
      * Get site URLs by category and site name
      */
     getSitesByCategory(category) {
+        const fs = require('fs');
+        const path = require('path');
+
         const categoryConfigs = {
             'okvip': {
                 name: 'OKVIP',
@@ -1572,21 +1595,21 @@ class VIPAutomation {
                 sites: [
                     {
                         name: 'U888',
-                        registerUrl: 'https://m.u888qj.link/Account/Register',
+                        registerUrl: 'https://m.u888at.link/Account/Register?f=2551606&app=1',
                         checkPromoUrl: 'https://88u888.club/'
                     },
                     {
                         name: 'J88',
-                        registerUrl: 'https://m.j859.xyz/Account/Register',
+                        registerUrl: 'https://m.j859.xyz/Account/Register?f=4556781&app=1',
                         checkPromoUrl: 'https://j8j88.com/'
                     },
                     {
                         name: 'ABC8',
-                        registerUrl: 'https://m.0sftd.fun/Account/Register',
+                        registerUrl: 'https://m.abc11.link/Account/Register?f=109114&app=1',
                         checkPromoUrl: 'https://www.88abc8.cc/'
                     }, {
                         name: '888clb',
-                        registerUrl: 'https://m.88clb2jt.buzz/Account/Register',
+                        registerUrl: 'https://88clb2jt.buzz/Account/Register?f=889534&app=1',
                         checkPromoUrl: 'https://88clb88.xyz/'
                     }
                 ]
@@ -1637,7 +1660,24 @@ class VIPAutomation {
             }
         };
 
-        return categoryConfigs[category] || null;
+        const config = categoryConfigs[category];
+        if (!config) return null;
+
+        // Load custom sites từ file
+        try {
+            const customSitesFile = path.join(__dirname, '..', '..', 'config', 'vip-custom-sites.json');
+            if (fs.existsSync(customSitesFile)) {
+                const customSitesData = JSON.parse(fs.readFileSync(customSitesFile, 'utf8'));
+                const customSites = customSitesData[category] || [];
+                // Merge custom sites với built-in sites
+                config.sites = [...config.sites, ...customSites];
+                console.log(`✅ Loaded ${customSites.length} custom sites for ${category}`);
+            }
+        } catch (error) {
+            console.warn(`⚠️ Could not load custom sites for ${category}:`, error.message);
+        }
+
+        return config;
     }
 
     /**
@@ -1731,20 +1771,71 @@ class VIPAutomation {
     }
 
     /**
+     * Auto-detect category from site URL
+     * Phát hiện category dựa trên domain của site
+     */
+    autoDetectCategory(siteUrl) {
+        try {
+            const url = new URL(siteUrl);
+            const domain = url.hostname.toLowerCase();
+
+            // OKVIP sites
+            if (domain.includes('okvip') || domain.includes('ok-vip') ||
+                domain.includes('hi88') || domain.includes('f8bet') ||
+                domain.includes('shbet') || domain.includes('tigerstorm') ||
+                domain.includes('new88') || domain.includes('mb66') ||
+                domain.includes('789bet')) {
+                return 'okvip';
+            }
+
+            // ABCVIP sites
+            if (domain.includes('abcvip') || domain.includes('abc-vip') ||
+                domain.includes('u888') || domain.includes('j88') ||
+                domain.includes('abc8') || domain.includes('888clb')) {
+                return 'abcvip';
+            }
+
+            // JUN88 sites
+            if (domain.includes('jun88') || domain.includes('jun-88')) {
+                return 'jun88';
+            }
+
+            // KJC sites
+            if (domain.includes('kjc') || domain.includes('k-jc')) {
+                return 'kjc';
+            }
+
+            console.warn(`⚠️ Could not auto-detect category for: ${domain}`);
+            return 'okvip'; // Default to OKVIP
+        } catch (error) {
+            console.error('❌ Error auto-detecting category:', error.message);
+            return 'okvip'; // Default to OKVIP
+        }
+    }
+
+    /**
      * Save account info after successful registration
      */
     async saveAccountInfo(profileData, category, siteName, allSites = []) {
         try {
-            console.log(`💾 Saving account info for ${category}/${siteName}...`);
+            console.log(`💾 Saving account info for ${category.toUpperCase()}/${siteName}...`);
+            console.log(`📍 Category: ${category}, Username: ${profileData.username}`);
 
             const fs = require('fs');
             const path = require('path');
 
-            // Create accounts folder structure: accounts/vip/{category}/{username}/
+            // Create accounts folder structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
             const accountsDir = path.join(__dirname, '..', '..', 'accounts');
             const vipCategoryDir = path.join(accountsDir, 'vip', category);
+
+            // Get today's date in YYYY-MM-DD format
+            const today = new Date();
+            const dateFolder = today.toISOString().split('T')[0]; // YYYY-MM-DD
+
             const username = profileData.username;
-            const userAccountDir = path.join(vipCategoryDir, username);
+            const userAccountDir = path.join(vipCategoryDir, dateFolder, username);
+
+            console.log(`📁 Account directory: ${userAccountDir}`);
 
             if (!fs.existsSync(userAccountDir)) {
                 fs.mkdirSync(userAccountDir, { recursive: true });
@@ -1797,12 +1888,14 @@ ${sitesText}
             // Save as category-specific JSON file
             const accountJsonFile = path.join(userAccountDir, `${category}.json`);
             fs.writeFileSync(accountJsonFile, JSON.stringify(accountInfo, null, 2));
-            console.log(`✅ Account info saved to: ${accountJsonFile}`);
+            console.log(`✅ Account JSON saved to: ${accountJsonFile}`);
 
             // Also save as readable text file
             const accountTextFile = path.join(userAccountDir, `${category}.txt`);
             fs.writeFileSync(accountTextFile, accountText);
             console.log(`✅ Account text saved to: ${accountTextFile}`);
+
+            console.log(`✅ Account info saved successfully for ${category.toUpperCase()}/${username}`);
 
         } catch (error) {
             console.error(`❌ Error saving account info for ${category}/${siteName}:`, error.message);

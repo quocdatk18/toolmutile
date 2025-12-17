@@ -5,31 +5,24 @@
  * 2. Bật chế độ redirect ngay khi có token
  */
 
-console.log('🚀 NOHU Quick Fix starting...');
-
 // ===== 1. XÓA THÔNG BÁO SAFE MODE =====
 function removeSafeModeNotifications() {
-    console.log('🗑️ Removing SAFE MODE notifications...');
 
     let removed = 0;
     const allDivs = document.querySelectorAll('div');
 
     allDivs.forEach(div => {
         if (div.innerHTML && div.innerHTML.includes('SAFE MODE COMPLETE')) {
-            console.log('🗑️ Found and removing SAFE MODE notification');
             div.remove();
             removed++;
         }
     });
-
-    console.log(`✅ Removed ${removed} SAFE MODE notifications`);
 
     // Ngăn chặn thông báo mới
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             mutation.addedNodes.forEach((node) => {
                 if (node.nodeType === 1 && node.innerHTML && node.innerHTML.includes('SAFE MODE COMPLETE')) {
-                    console.log('🚫 Blocking new SAFE MODE notification');
                     node.remove();
                 }
             });
@@ -37,7 +30,6 @@ function removeSafeModeNotifications() {
     });
 
     observer.observe(document.body, { childList: true, subtree: true });
-    console.log('🛡️ SAFE MODE notification blocker active');
 
     return removed;
 }
@@ -68,7 +60,6 @@ function setupImmediateRedirect() {
                     tokenFound = true;
 
                     console.log(`🎉 TOKEN FOUND! ${name} = ${match[1].substring(0, 20)}...`);
-                    console.log(`⚡ Detected after ${checkCount} checks`);
 
                     // Redirect ngay lập tức
                     const withdrawUrl = window.location.origin + '/Financial?type=withdraw';
@@ -137,7 +128,6 @@ function setupUrlMonitor() {
             const oldUrl = currentUrl;
             currentUrl = window.location.href;
 
-            console.log('🔄 URL CHANGED:', {
                 from: oldUrl.split('/').pop(),
                 to: currentUrl.split('/').pop()
             });
@@ -150,36 +140,27 @@ function setupUrlMonitor() {
         }
     }, 100);
 
-    console.log('👁️ URL change monitor active');
-
     // Dừng sau 5 phút
     setTimeout(() => clearInterval(urlCheck), 300000);
 }
 
 // ===== THỰC THI =====
-console.log('🎯 Executing NOHU Quick Fix...');
 
 // 1. Xóa thông báo ngay lập tức
 const removedCount = removeSafeModeNotifications();
 
 // 2. Bật redirect ngay nếu đang ở trang Register
 if (window.location.href.includes('/Register')) {
-    console.log('📝 On Register page - enabling immediate redirect');
     setupImmediateRedirect();
 } else {
-    console.log('ℹ️ Not on Register page - redirect will activate on next registration');
+    
 }
 
 // 3. Monitor URL changes
 setupUrlMonitor();
 
 // 4. Thông báo hoàn thành
-console.log('✅ NOHU Quick Fix COMPLETE!');
-console.log('📋 Features active:');
-console.log('   🗑️ SAFE MODE notifications removed and blocked');
 console.log('   ⚡ Immediate redirect on token detection (100ms intervals)');
-console.log('   👁️ URL change monitoring');
-console.log('');
 console.log('🎯 Ready! Next registration will redirect immediately when token appears.');
 
 // Export functions for manual use

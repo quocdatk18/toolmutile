@@ -424,10 +424,13 @@ class VIPAutomation {
                         addBankResult = await this.addBankStep(browser, category, siteConfig, profileData, registerResult.page);
                     }
 
-                    // Skip checkPromo nếu addBank failed
+                    // Skip checkPromo nếu addBank failed hoặc category là ABCVIP
                     let checkPromoResult = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                    if (addBankResult?.success) {
+                    if (addBankResult?.success && category !== 'abcvip') {
                         checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
+                    } else if (category === 'abcvip') {
+                        console.log(`⏭️ Skipping checkPromo for ${siteName} (ABCVIP - no promo)`);
+                        checkPromoResult = { success: true, skipped: true, message: 'Skipped - ABCVIP no promo' };
                     } else {
                         console.log(`⏭️ Skipping checkPromo for ${siteName} (add bank failed)`);
                     }
@@ -529,10 +532,13 @@ class VIPAutomation {
                     addBankResult = await this.addBankStep(browser, category, siteConfig, profileData, registerResult.page);
                 }
 
-                // Skip checkPromo nếu addBank failed
+                // Skip checkPromo nếu addBank failed hoặc category là ABCVIP
                 let checkPromoResult = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                if (addBankResult?.success) {
+                if (addBankResult?.success && category !== 'abcvip') {
                     checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
+                } else if (category === 'abcvip') {
+                    console.log(`⏭️ Skipping checkPromo for ${siteName} (ABCVIP - no promo)`);
+                    checkPromoResult = { success: true, skipped: true, message: 'Skipped - ABCVIP no promo' };
                 } else {
                     console.log(`⏭️ Skipping checkPromo for ${siteName} (add bank failed)`);
                 }
@@ -594,7 +600,10 @@ class VIPAutomation {
                 if (!captchaSolved) {
                     console.warn('⚠️ Captcha solve failed, continuing anyway...');
                 }
-                await new Promise(r => setTimeout(r, 3000));
+                // Tăng delay cho ABCVIP (10s), bình thường 3s
+                const captchaDelay = category === 'abcvip' ? 10000 : 3000;
+                console.log(`⏳ Waiting ${captchaDelay}ms after captcha solve...`);
+                await new Promise(r => setTimeout(r, captchaDelay));
             } else {
                 console.warn('⚠️ No captcha API key provided');
             }
@@ -613,7 +622,8 @@ class VIPAutomation {
             console.log(`⏳ Waiting for token/redirect...`);
             let hasToken = false;
             let waitAttempts = 0;
-            const maxWaitAttempts = 20; // Max 10 seconds (20 * 500ms)
+            // Tăng timeout cho ABCVIP (có random delay 20-60s), bình thường 10s
+            const maxWaitAttempts = category === 'abcvip' ? 200 : 20; // ABCVIP: max 100s, others: max 10s
             const checkInterval = 500; // 500ms per check
 
             let initialUrl = await page.evaluate(() => window.location.href);
@@ -666,6 +676,14 @@ class VIPAutomation {
 
             // Token found - no need to wait for navigation, can proceed immediately
             console.log(`✅ Token acquired, register successful`);
+
+            // Thêm random delay 20-60s trước redirect sang Add Bank cho ABCVIP
+            if (category === 'abcvip') {
+                const randomDelay = Math.random() * (60000 - 20000) + 20000; // 20-60s
+                console.log(`⏳ ABCVIP: Waiting ${Math.round(randomDelay / 1000)}s before redirect to Add Bank...`);
+                await new Promise(r => setTimeout(r, randomDelay));
+            }
+
             return { success: true, message: 'Register completed successfully', page };
         } catch (error) {
             console.error(`❌ Register Error:`, error.message);
@@ -1577,21 +1595,21 @@ class VIPAutomation {
                 sites: [
                     {
                         name: 'U888',
-                        registerUrl: 'https://m.u888at.link/?f=2551606&app=1/Account/Register',
+                        registerUrl: 'https://m.u888at.link/Account/Register?f=2551606&app=1',
                         checkPromoUrl: 'https://88u888.club/'
                     },
                     {
                         name: 'J88',
-                        registerUrl: 'https://m.j859.xyz/?f=4556781&app=1/Account/Register',
+                        registerUrl: 'https://m.j859.xyz/Account/Register?f=4556781&app=1',
                         checkPromoUrl: 'https://j8j88.com/'
                     },
                     {
                         name: 'ABC8',
-                        registerUrl: 'https://m.abc11.link/?f=109114&app=1/Account/Register',
+                        registerUrl: 'https://m.abc11.link/Account/Register?f=109114&app=1',
                         checkPromoUrl: 'https://www.88abc8.cc/'
                     }, {
                         name: '888clb',
-                        registerUrl: 'https://88clb2jt.buzz/?f=889534&app=1/Account/Register',
+                        registerUrl: 'https://88clb2jt.buzz/Account/Register?f=889534&app=1',
                         checkPromoUrl: 'https://88clb88.xyz/'
                     }
                 ]
