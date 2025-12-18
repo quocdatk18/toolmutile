@@ -1,0 +1,19 @@
+[
+  {
+    "site": "Jun881",
+    "register": {
+      "success": false,
+      "error": "Node is either not clickable or not an Element"
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  }
+]

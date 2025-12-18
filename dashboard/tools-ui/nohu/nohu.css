@@ -124,6 +124,13 @@
     box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
 }
 
+.nohu-tool-container .profile-carousel-card.running {
+    border-color: #ef4444;
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+    opacity: 0.8;
+}
+
 .nohu-tool-container .profile-card-header {
     margin-bottom: 6px !important;
     gap: 6px !important;
@@ -172,6 +179,30 @@
 
 .nohu-tool-container .selected-badge {
     background: #6366f1;
+}
+
+.nohu-tool-container .running-badge {
+    background: #ef4444;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.nohu-tool-container .profile-status-text.running {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
 }
 
 .nohu-tool-container .carousel-btn {

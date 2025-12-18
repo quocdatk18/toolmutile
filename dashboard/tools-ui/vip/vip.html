@@ -14,26 +14,57 @@
     let vipConfig = null;
     let configLoaded = false;
 
-    // Load config from file
+    // Load config from server API (dynamic from vip-automation.js)
     async function loadVipConfig() {
         try {
-            const response = await fetch('tools-ui/vip/vip-config.json');
-            vipConfig = await response.json();
+            // First, try to load from server API to get dynamic config from vip-automation.js
+            // Disabled categories: jun88v2 (maintenance)
+            const categories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
+            const sitesData = {};
+
+            for (const category of categories) {
+                try {
+                    const response = await fetch(`/api/vip-automation/category/${category}`);
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.sites) {
+                        sitesData[category] = result.data.sites;
+                        console.log(`✅ Loaded ${result.data.sites.length} sites for ${category} from server`);
+                    }
+                } catch (e) {
+                    console.warn(`⚠️ Failed to load ${category} from server, will use fallback`);
+                }
+            }
+
+            // Build config with server data
+            vipConfig = {
+                categories: [
+                    { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
+                    { id: 'abcvip', icon: '🎲', name: 'ABCVIP', color: '#0066cc' },
+                    { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
+                    { id: '78win', icon: '🎯', name: '78WIN', color: '#ff9900' },
+                    // { id: 'jun88v2', icon: '🎯', name: 'JUN88V2 (Bảo trì)', color: '#0099cc' }, // Disabled - Maintenance
+                    { id: 'kjc', icon: '🎪', name: 'KJC', color: '#cc0000' }
+                ],
+                sites: sitesData
+            };
+
             configLoaded = true;
-            console.log('✅ VIP Config loaded:', vipConfig);
+            console.log('✅ VIP Config loaded from server:', vipConfig);
             // Trigger any pending operations
             if (window.pendingCategoryLoad) {
                 loadCategoryManagementContent(window.pendingCategoryLoad);
                 window.pendingCategoryLoad = null;
             }
         } catch (error) {
-            console.error('❌ Failed to load VIP config:', error);
+            console.error('❌ Failed to load VIP config from server:', error);
             // Fallback to default config
             vipConfig = {
                 categories: [
                     { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
                     { id: 'abcvip', icon: '🎲', name: 'ABCVIP', color: '#0066cc' },
                     { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
+                    { id: '78win', icon: '🎯', name: '78WIN', color: '#ff9900' },
+                    // { id: 'jun88v2', icon: '🎯', name: 'JUN88V2', color: '#0099cc' }, // Disabled - Maintenance
                     { id: 'kjc', icon: '🎪', name: 'KJC', color: '#cc0000' }
                 ],
                 sites: {
@@ -52,9 +83,10 @@
                         { name: '888clb', registerUrl: 'https://88clb2jt.buzz/?f=889534&app=1/Account/Register', checkPromoUrl: 'https://88clb88.xyz/' }
                     ],
                     'jun88': [
-                        { name: 'Jun881', registerUrl: 'https://jun881.com/register', checkPromoUrl: 'https://jun881.com/promo' },
-                        { name: 'Jun882', registerUrl: 'https://jun882.com/register', checkPromoUrl: 'https://jun882.com/promo' },
-                        { name: 'Jun883', registerUrl: 'https://jun883.com/register', checkPromoUrl: 'https://jun883.com/promo' }
+                        { name: 'Jun881', registerUrl: 'https://sasa2.xn--8866-um1g.com/signup', checkPromoUrl: 'https://trungtam.khuyenmaijun881.win/?promo_id=FR58' }
+                    ],
+                    '78win': [
+                        { name: '78WIN1', registerUrl: 'https://www.78win6.zone/signup', checkPromoUrl: 'https://daily78win.net/' }
                     ],
                     'kjc': [
                         { name: 'KJC1', registerUrl: 'https://kjc1.com/register', checkPromoUrl: 'https://kjc1.com/promo' },
@@ -91,6 +123,10 @@
                 </button>
                 <button class="btn btn-warning btn-sm" onclick="deleteSelectedResults()">
                     🗑️ Xóa Đã Chọn
+                </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAllResults()"
+                    style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;">
+                    🗑️ Xóa Tất Cả
                 </button>
                 <button class="btn btn-start" onclick="openFormModal()">
                     <span class="start-icon">▶️</span>
@@ -242,12 +278,26 @@
                                 <span style="font-size: 11px; font-weight: 600;">🎲 ABCVIP</span>
                             </label>
                             <label
-                                style="display: flex; align-items: center; gap: 6px; cursor: not-allowed; padding: 6px 8px; background: #f3f4f6; border-radius: 6px; border: 2px solid #d1d5db; transition: all 0.2s; opacity: 0.5;"
-                                class="category-label" title="Chưa hoàn thành - sẽ bật lại sau">
+                                style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s;"
+                                class="category-label">
                                 <input type="radio" name="vipCategory" value="jun88" onchange="toggleCategorySites()"
+                                    style="width: 14px; height: 14px; cursor: pointer;">
+                                <span style="font-size: 11px; font-weight: 600;">🎯 JUN88</span>
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s;"
+                                class="category-label">
+                                <input type="radio" name="vipCategory" value="78win" onchange="toggleCategorySites()"
+                                    style="width: 14px; height: 14px; cursor: pointer;">
+                                <span style="font-size: 11px; font-weight: 600;">🎯 78WIN</span>
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 6px; cursor: not-allowed; padding: 6px 8px; background: #f3f4f6; border-radius: 6px; border: 2px solid #d1d5db; transition: all 0.2s; opacity: 0.5;"
+                                class="category-label" title="Bảo trì - sẽ bật lại sau">
+                                <input type="radio" name="vipCategory" value="jun88v2" onchange="toggleCategorySites()"
                                     style="width: 14px; height: 14px; cursor: not-allowed;" disabled>
-                                <span style="font-size: 11px; font-weight: 600; color: #9ca3af;">🎯 JUN88 (Sắp
-                                    tới)</span>
+                                <span style="font-size: 11px; font-weight: 600; color: #9ca3af;">🎯 JUN88V2 (Bảo
+                                    trì)</span>
                             </label>
                             <label
                                 style="display: flex; align-items: center; gap: 6px; cursor: not-allowed; padding: 6px 8px; background: #f3f4f6; border-radius: 6px; border: 2px solid #d1d5db; transition: all 0.2s; opacity: 0.5;"
@@ -382,11 +432,12 @@
                                 <input type="text" id="autoUsername" placeholder="Tên tài khoản" class="form-input">
                                 <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)"
                                     class="form-input">
-                                <input type="password" id="autoPassword" placeholder="Mật khẩu" class="form-input">
-                                <input type="password" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền"
+                                <input type="text" id="autoPassword" placeholder="Mật khẩu" class="form-input">
+                                <input type="text" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền"
                                     class="form-input">
                                 <input type="email" id="autoEmail" placeholder="Email" class="form-input">
-                                <input type="tel" id="autoPhone" placeholder="Số điện thoại" class="form-input">
+                                <input type="tel" id="autoPhone" placeholder="Số điện thoại (10-11 chữ số)"
+                                    class="form-input">
                                 <select id="autoBankName" class="form-input">
                                     <option value="">-- Chọn ngân hàng --</option>
                                     <option value="VIETINBANK">VIETINBANK</option>
@@ -730,26 +781,14 @@
         const activeTab = document.querySelector('.modal-tab.active');
         const tabName = activeTab?.getAttribute('data-tab');
 
-        // Enable button immediately after starting (not waiting for completion)
-        if (btn) enableButton(btn);
-
         if (tabName === 'auto') {
-            runAutoAutomation();
+            await runAutoAutomation();
         } else if (tabName === 'promo') {
-            runCheckPromo();
+            await runCheckPromo();
         }
-
-        // Reset form inputs AFTER automation completes
-        resetFormInputs();
     }
 
     async function runAutoAutomation() {
-        // Disable button to prevent multiple clicks
-        const btnRunAction = document.getElementById('btnRunAction');
-        if (btnRunAction) {
-            btnRunAction.disabled = true;
-        }
-
         // Get selected category
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
 
@@ -760,9 +799,7 @@
         if (selectedSites.length === 0) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn ít nhất 1 site');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -771,9 +808,7 @@
         if (!selectedProfile) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn profile');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -781,9 +816,7 @@
         if (profileManager.isRunning(selectedProfile.uuid)) {
             showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -795,14 +828,14 @@
             localStorage.getItem('hidemium_global_api_key') || '';
 
         const profileData = {
-            username: document.getElementById('autoUsername').value,
-            password: document.getElementById('autoPassword').value,
-            withdrawPassword: document.getElementById('autoWithdrawPassword').value,
-            fullname: document.getElementById('autoFullname').value,
-            email: document.getElementById('autoEmail').value,
-            phone: document.getElementById('autoPhone').value,
-            bankName: document.getElementById('autoBankName').value,
-            accountNumber: document.getElementById('autoAccountNumber').value,
+            username: document.getElementById('autoUsername').value.trim(),
+            password: document.getElementById('autoPassword').value.trim(),
+            withdrawPassword: document.getElementById('autoWithdrawPassword').value.trim(),
+            fullname: document.getElementById('autoFullname').value.trim(),
+            email: document.getElementById('autoEmail').value.trim(),
+            phone: document.getElementById('autoPhone').value.trim(),
+            bankName: document.getElementById('autoBankName').value.trim(),
+            accountNumber: document.getElementById('autoAccountNumber').value.trim(),
             apiKey: apiKey
         };
 
@@ -810,28 +843,38 @@
         if (!profileData.username || !profileData.password) {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập username và password');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        // Validate phone number if provided (10-11 digits)
+        if (profileData.phone && !/^\d{10,11}$/.test(profileData.phone)) {
+            showToast('warning', 'SĐT không hợp lệ', 'SĐT phải có 10-11 chữ số');
+            // Re-enable button on error
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
         // Validate bank info
-        if (!profileData.bankName || profileData.bankName.trim() === '') {
+        if (!profileData.bankName || profileData.bankName === '') {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn ngân hàng');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
-        if (!profileData.accountNumber || profileData.accountNumber.trim() === '') {
+        if (!profileData.accountNumber || profileData.accountNumber === '') {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập số tài khoản ngân hàng');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        // Validate account number (must be numbers only)
+        if (!/^\d+$/.test(profileData.accountNumber)) {
+            showToast('warning', 'Số tài khoản không hợp lệ', 'Số tài khoản chỉ được chứa chữ số');
+            // Re-enable button on error
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -839,9 +882,7 @@
         if (!profileData.apiKey || profileData.apiKey.trim() === '') {
             showToast('error', 'Thiếu API Key', 'Vui lòng thêm Captcha API Key ở sidebar bên trái');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -918,6 +959,12 @@
                         });
                     });
                 }
+
+                // Reset form only after successful automation start
+                resetFormInputs();
+
+                // Refresh results table immediately to show running status
+                loadResultsFromAPI();
             } else {
                 showToast('error', 'Lỗi', result.error);
             }
@@ -934,14 +981,13 @@
         } finally {
             // Re-enable button after waiting for server confirmation
             const btnRunAction = document.getElementById('btnRunAction');
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
 
     async function runCheckPromo() {
+        const btnRunAction = document.getElementById('btnRunAction');
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
         const selectedSites = Array.from(document.querySelectorAll('#vipSitesGrid .site-check:checked'))
             .map(cb => cb.getAttribute('data-name'));
@@ -949,17 +995,20 @@
 
         if (selectedSites.length === 0) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn ít nhất 1 site');
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
         if (!username || username.trim() === '') {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập tên đăng nhập');
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
         const selectedProfile = getSelectedProfile();
         if (!selectedProfile) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn profile');
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -970,6 +1019,7 @@
         // Validate API key
         if (!apiKey || apiKey.trim() === '') {
             showToast('error', 'Thiếu API Key', 'Vui lòng thêm Captcha API Key ở sidebar bên trái');
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -1009,6 +1059,11 @@
 
             if (result.success) {
                 showToast('success', 'Hoàn thành', `Check promo completed for ${selectedSites.length} sites`);
+                // Reset promo form only after successful start
+                document.getElementById('promoUsername').value = '';
+
+                // Refresh results table immediately to show running status
+                loadResultsFromAPI();
             } else {
                 showToast('error', 'Lỗi', result.error);
             }
@@ -1023,6 +1078,9 @@
             profileManager.saveRunningProfiles();
             await loadProfilesCarousel();
         } finally {
+            // Re-enable button after waiting for server confirmation
+            const btnRunAction = document.getElementById('btnRunAction');
+            if (btnRunAction) enableButton(btnRunAction);
             // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
@@ -1096,8 +1154,13 @@
 
     // Random toàn bộ form
     function randomAllForm() {
-        // Random username
-        const username = generateRandomUsername();
+        // Random username (lowercase only, max 7 characters)
+        const usernameLength = 5 + Math.floor(Math.random() * 3); // 5-7 chars
+        const lowerChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let username = '';
+        for (let i = 0; i < usernameLength; i++) {
+            username += lowerChars[Math.floor(Math.random() * lowerChars.length)];
+        }
         document.getElementById('autoUsername').value = username;
 
         // Random fullname (Vietnamese names)
@@ -1132,8 +1195,13 @@
         const withdrawPassword = Math.floor(100000 + Math.random() * 900000).toString();
         document.getElementById('autoWithdrawPassword').value = withdrawPassword;
 
-        // Random email
-        const email = `${username}${Math.floor(Math.random() * 10000)}@gmail.com`;
+        // Random email (lowercase only, max 7 chars before @)
+        const emailLength = 5 + Math.floor(Math.random() * 3); // 5-7 chars
+        let email = '';
+        for (let i = 0; i < emailLength; i++) {
+            email += lowerChars[Math.floor(Math.random() * lowerChars.length)];
+        }
+        email += '@gmail.com';
         document.getElementById('autoEmail').value = email;
 
         // Random phone
@@ -1151,15 +1219,17 @@
         const accountLength = 10 + Math.floor(Math.random() * 5);
         let accountNumber = '';
         for (let i = 0; i < accountLength; i++) { accountNumber += Math.floor(Math.random() * 10); }
-        document.getElementById('autoAccountNumber').value = accountNumber; // Visual feedback const
-        inputs = ['autoUsername', 'autoFullname', 'autoPassword', 'autoWithdrawPassword', 'autoEmail', 'autoPhone'
-            , 'autoBankName', 'autoAccountNumber']; inputs.forEach(id => {
-                const input = document.getElementById(id);
-                if (input && input.value) {
-                    input.style.background = 'linear-gradient(135deg, #ebf4ff, #e0e7ff)';
-                    setTimeout(() => { input.style.background = ''; }, 1000);
-                }
-            });
+        document.getElementById('autoAccountNumber').value = accountNumber;
+
+        // Visual feedback
+        const inputs = ['autoUsername', 'autoFullname', 'autoPassword', 'autoWithdrawPassword', 'autoEmail', 'autoPhone', 'autoBankName', 'autoAccountNumber'];
+        inputs.forEach(id => {
+            const input = document.getElementById(id);
+            if (input && input.value) {
+                input.style.background = 'linear-gradient(135deg, #ebf4ff, #e0e7ff)';
+                setTimeout(() => { input.style.background = ''; }, 1000);
+            }
+        });
 
         console.log('✅ Random form completed');
     }
@@ -1628,6 +1698,35 @@
         }
     }
 
+    async function deleteAllResults() {
+        if (!confirm('Bạn có chắc muốn xóa TẤT CẢ kết quả?')) {
+            return;
+        }
+
+        try {
+            showToast('info', 'Đang xóa...', 'Đang xóa tất cả kết quả...');
+
+            // Call API to delete all results for VIP tool
+            const response = await fetch('/api/results/clear', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ toolId: 'vip-tool' })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                vipResults = [];
+                updateResultsTable();
+                showToast('success', 'Đã xóa', `Đã xóa ${data.deletedFiles || 0} file kết quả`);
+            } else {
+                showToast('error', 'Lỗi', data.error || 'Không thể xóa kết quả');
+            }
+        } catch (error) {
+            console.error('Error deleting all results:', error);
+            showToast('error', 'Lỗi', error.message);
+        }
+    }
+
     async function deleteResult(id) {
         const btn = event?.target;
         if (btn) disableButtonTemporarily(btn);
@@ -1994,6 +2093,21 @@
     setInterval(() => {
         loadVipAutomationStatuses();
     }, 5000);
+
+    // Auto-refresh results table when automation is running
+    let lastVipResultsRefresh = 0;
+    setInterval(() => {
+        const now = Date.now();
+        // Only refresh if there are running profiles and it's been at least 5 seconds since last refresh
+        if (typeof profileManager !== 'undefined' &&
+            profileManager.runningProfiles &&
+            profileManager.runningProfiles.size > 0 &&
+            now - lastVipResultsRefresh > 5000) {
+            lastVipResultsRefresh = now;
+            console.log('🔄 Auto-refreshing VIP results table (automation running)...');
+            loadResultsFromAPI();
+        }
+    }, 5000); // Check every 5 seconds
 
     // Also check on page load
     document.addEventListener('DOMContentLoaded', () => {

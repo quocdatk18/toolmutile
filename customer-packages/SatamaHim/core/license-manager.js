@@ -269,7 +269,6 @@ class LicenseManager {
         let finalKey = key;
 
         if (data.machineId === null) {
-            console.log('🔒 First activation - binding to this machine...');
 
             // Bind to current machine
             const currentMachineId = this.getMachineId();
@@ -288,7 +287,6 @@ class LicenseManager {
                 .digest('hex');
             finalKey = Buffer.from(dataString).toString('base64') + '.' + signature;
 
-            console.log('✅ License bound to machine:', currentMachineId);
         }
 
         // Save license (with machine binding if applicable)
@@ -313,7 +311,7 @@ class LicenseManager {
             }
         } catch (err) {
             // Ignore if delete-zip.js doesn't exist (master version)
-            console.log('ℹ️  Auto-delete ZIP not available (master version)');
+            console.log('ℹ️  Cleanup script not available');
         }
 
         return {

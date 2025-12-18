@@ -92,6 +92,10 @@
                 <button class="btn btn-warning btn-sm" onclick="deleteSelectedResults()">
                     🗑️ Xóa Đã Chọn
                 </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAllResults()"
+                    style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;">
+                    🗑️ Xóa Tất Cả
+                </button>
                 <button class="btn btn-start" onclick="openFormModal()">
                     <span class="start-icon">▶️</span>
                     <span class="start-text">START</span>
@@ -382,11 +386,12 @@
                                 <input type="text" id="autoUsername" placeholder="Tên tài khoản" class="form-input">
                                 <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)"
                                     class="form-input">
-                                <input type="password" id="autoPassword" placeholder="Mật khẩu" class="form-input">
-                                <input type="password" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền"
+                                <input type="text" id="autoPassword" placeholder="Mật khẩu" class="form-input">
+                                <input type="text" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền"
                                     class="form-input">
                                 <input type="email" id="autoEmail" placeholder="Email" class="form-input">
-                                <input type="tel" id="autoPhone" placeholder="Số điện thoại" class="form-input">
+                                <input type="tel" id="autoPhone" placeholder="Số điện thoại (10-11 chữ số)"
+                                    class="form-input">
                                 <select id="autoBankName" class="form-input">
                                     <option value="">-- Chọn ngân hàng --</option>
                                     <option value="VIETINBANK">VIETINBANK</option>
@@ -730,26 +735,14 @@
         const activeTab = document.querySelector('.modal-tab.active');
         const tabName = activeTab?.getAttribute('data-tab');
 
-        // Enable button immediately after starting (not waiting for completion)
-        if (btn) enableButton(btn);
-
         if (tabName === 'auto') {
-            runAutoAutomation();
+            await runAutoAutomation();
         } else if (tabName === 'promo') {
-            runCheckPromo();
+            await runCheckPromo();
         }
-
-        // Reset form inputs AFTER automation completes
-        resetFormInputs();
     }
 
     async function runAutoAutomation() {
-        // Disable button to prevent multiple clicks
-        const btnRunAction = document.getElementById('btnRunAction');
-        if (btnRunAction) {
-            btnRunAction.disabled = true;
-        }
-
         // Get selected category
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
 
@@ -760,9 +753,7 @@
         if (selectedSites.length === 0) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn ít nhất 1 site');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -771,9 +762,7 @@
         if (!selectedProfile) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn profile');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -781,9 +770,7 @@
         if (profileManager.isRunning(selectedProfile.uuid)) {
             showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -795,14 +782,14 @@
             localStorage.getItem('hidemium_global_api_key') || '';
 
         const profileData = {
-            username: document.getElementById('autoUsername').value,
-            password: document.getElementById('autoPassword').value,
-            withdrawPassword: document.getElementById('autoWithdrawPassword').value,
-            fullname: document.getElementById('autoFullname').value,
-            email: document.getElementById('autoEmail').value,
-            phone: document.getElementById('autoPhone').value,
-            bankName: document.getElementById('autoBankName').value,
-            accountNumber: document.getElementById('autoAccountNumber').value,
+            username: document.getElementById('autoUsername').value.trim(),
+            password: document.getElementById('autoPassword').value.trim(),
+            withdrawPassword: document.getElementById('autoWithdrawPassword').value.trim(),
+            fullname: document.getElementById('autoFullname').value.trim(),
+            email: document.getElementById('autoEmail').value.trim(),
+            phone: document.getElementById('autoPhone').value.trim(),
+            bankName: document.getElementById('autoBankName').value.trim(),
+            accountNumber: document.getElementById('autoAccountNumber').value.trim(),
             apiKey: apiKey
         };
 
@@ -810,28 +797,38 @@
         if (!profileData.username || !profileData.password) {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập username và password');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        // Validate phone number if provided (10-11 digits)
+        if (profileData.phone && !/^\d{10,11}$/.test(profileData.phone)) {
+            showToast('warning', 'SĐT không hợp lệ', 'SĐT phải có 10-11 chữ số');
+            // Re-enable button on error
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
         // Validate bank info
-        if (!profileData.bankName || profileData.bankName.trim() === '') {
+        if (!profileData.bankName || profileData.bankName === '') {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn ngân hàng');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
-        if (!profileData.accountNumber || profileData.accountNumber.trim() === '') {
+        if (!profileData.accountNumber || profileData.accountNumber === '') {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập số tài khoản ngân hàng');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        // Validate account number (must be numbers only)
+        if (!/^\d+$/.test(profileData.accountNumber)) {
+            showToast('warning', 'Số tài khoản không hợp lệ', 'Số tài khoản chỉ được chứa chữ số');
+            // Re-enable button on error
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -839,9 +836,7 @@
         if (!profileData.apiKey || profileData.apiKey.trim() === '') {
             showToast('error', 'Thiếu API Key', 'Vui lòng thêm Captcha API Key ở sidebar bên trái');
             // Re-enable button on error
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -918,6 +913,12 @@
                         });
                     });
                 }
+
+                // Reset form only after successful automation start
+                resetFormInputs();
+
+                // Refresh results table immediately to show running status
+                loadResultsFromAPI();
             } else {
                 showToast('error', 'Lỗi', result.error);
             }
@@ -934,14 +935,13 @@
         } finally {
             // Re-enable button after waiting for server confirmation
             const btnRunAction = document.getElementById('btnRunAction');
-            if (btnRunAction) {
-                btnRunAction.disabled = false;
-            }
+            if (btnRunAction) enableButton(btnRunAction);
             // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
 
     async function runCheckPromo() {
+        const btnRunAction = document.getElementById('btnRunAction');
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
         const selectedSites = Array.from(document.querySelectorAll('#vipSitesGrid .site-check:checked'))
             .map(cb => cb.getAttribute('data-name'));
@@ -949,17 +949,20 @@
 
         if (selectedSites.length === 0) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn ít nhất 1 site');
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
         if (!username || username.trim() === '') {
             showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập tên đăng nhập');
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
         const selectedProfile = getSelectedProfile();
         if (!selectedProfile) {
             showToast('warning', 'Chưa chọn', 'Vui lòng chọn profile');
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -970,6 +973,7 @@
         // Validate API key
         if (!apiKey || apiKey.trim() === '') {
             showToast('error', 'Thiếu API Key', 'Vui lòng thêm Captcha API Key ở sidebar bên trái');
+            if (btnRunAction) enableButton(btnRunAction);
             return;
         }
 
@@ -1009,6 +1013,11 @@
 
             if (result.success) {
                 showToast('success', 'Hoàn thành', `Check promo completed for ${selectedSites.length} sites`);
+                // Reset promo form only after successful start
+                document.getElementById('promoUsername').value = '';
+
+                // Refresh results table immediately to show running status
+                loadResultsFromAPI();
             } else {
                 showToast('error', 'Lỗi', result.error);
             }
@@ -1023,6 +1032,9 @@
             profileManager.saveRunningProfiles();
             await loadProfilesCarousel();
         } finally {
+            // Re-enable button after waiting for server confirmation
+            const btnRunAction = document.getElementById('btnRunAction');
+            if (btnRunAction) enableButton(btnRunAction);
             // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
@@ -1628,6 +1640,35 @@
         }
     }
 
+    async function deleteAllResults() {
+        if (!confirm('Bạn có chắc muốn xóa TẤT CẢ kết quả?')) {
+            return;
+        }
+
+        try {
+            showToast('info', 'Đang xóa...', 'Đang xóa tất cả kết quả...');
+
+            // Call API to delete all results for VIP tool
+            const response = await fetch('/api/results/clear', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ toolId: 'vip-tool' })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                vipResults = [];
+                updateResultsTable();
+                showToast('success', 'Đã xóa', `Đã xóa ${data.deletedFiles || 0} file kết quả`);
+            } else {
+                showToast('error', 'Lỗi', data.error || 'Không thể xóa kết quả');
+            }
+        } catch (error) {
+            console.error('Error deleting all results:', error);
+            showToast('error', 'Lỗi', error.message);
+        }
+    }
+
     async function deleteResult(id) {
         const btn = event?.target;
         if (btn) disableButtonTemporarily(btn);
@@ -1994,6 +2035,21 @@
     setInterval(() => {
         loadVipAutomationStatuses();
     }, 5000);
+
+    // Auto-refresh results table when automation is running
+    let lastVipResultsRefresh = 0;
+    setInterval(() => {
+        const now = Date.now();
+        // Only refresh if there are running profiles and it's been at least 5 seconds since last refresh
+        if (typeof profileManager !== 'undefined' &&
+            profileManager.runningProfiles &&
+            profileManager.runningProfiles.size > 0 &&
+            now - lastVipResultsRefresh > 5000) {
+            lastVipResultsRefresh = now;
+            console.log('🔄 Auto-refreshing VIP results table (automation running)...');
+            loadResultsFromAPI();
+        }
+    }, 5000); // Check every 5 seconds
 
     // Also check on page load
     document.addEventListener('DOMContentLoaded', () => {

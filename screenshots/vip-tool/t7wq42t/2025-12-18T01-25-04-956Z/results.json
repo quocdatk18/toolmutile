@@ -1,0 +1,22 @@
+[
+  {
+    "site": "Jun881",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": false,
+      "message": "Form validation error"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  }
+]

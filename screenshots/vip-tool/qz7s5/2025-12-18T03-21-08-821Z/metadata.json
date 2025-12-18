@@ -1,0 +1,12 @@
+{
+  "profileName": "Dr. Miguel Stiedemann",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "jun88v2",
+  "sites": [
+    "JUN88V2-1"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2025-12-18T03:21:08.822Z"
+}

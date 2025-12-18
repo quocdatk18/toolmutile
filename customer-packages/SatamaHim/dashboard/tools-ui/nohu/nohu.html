@@ -234,6 +234,10 @@
                 <button class="btn btn-warning btn-sm" onclick="deleteSelectedResults()">
                     🗑️ Xóa Đã Chọn
                 </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAllResults()"
+                    style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;">
+                    🗑️ Xóa Tất Cả
+                </button>
                 <button class="btn btn-start" onclick="openFormModal()">
                     <span class="start-icon">▶️</span>
                     <span class="start-text">START</span>
@@ -586,8 +590,8 @@
                             <div class="form-grid">
                                 <input type="text" id="autoUsername" placeholder="Tên tài khoản">
                                 <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)">
-                                <input type="password" id="autoPassword" placeholder="Mật khẩu">
-                                <input type="password" id="autoWithdrawPassword" placeholder="MK rút tiền">
+                                <input type="text" id="autoPassword" placeholder="Mật khẩu">
+                                <input type="text" id="autoWithdrawPassword" placeholder="MK rút tiền">
                             </div>
                         </div>
 
@@ -636,8 +640,8 @@
                             <div class="form-grid">
                                 <input type="text" id="regUsername" placeholder="Tên tài khoản">
                                 <input type="text" id="regFullname" placeholder="Họ và Tên (IN HOA)">
-                                <input type="password" id="regPassword" placeholder="Mật khẩu">
-                                <input type="password" id="regWithdrawPassword" placeholder="MK rút tiền">
+                                <input type="text" id="regPassword" placeholder="Mật khẩu">
+                                <input type="text" id="regWithdrawPassword" placeholder="MK rút tiền">
                             </div>
                         </div>
                     </div>
@@ -673,7 +677,7 @@
                             <h3>🔐 Thông Tin Đăng Nhập</h3>
                             <div class="form-grid">
                                 <input type="text" id="loginUsername" placeholder="Tên tài khoản">
-                                <input type="password" id="loginPassword" placeholder="Mật khẩu">
+                                <input type="text" id="loginPassword" placeholder="Mật khẩu">
                             </div>
                         </div>
                     </div>
@@ -1390,13 +1394,13 @@
             }
 
             const config = {
-                username: document.getElementById('autoUsername').value,
-                fullname: document.getElementById('autoFullname').value,
-                password: document.getElementById('autoPassword').value,
-                withdrawPassword: document.getElementById('autoWithdrawPassword').value,
-                bankName: document.getElementById('autoBankName').value,
-                bankBranch: document.getElementById('autoBankBranch').value,
-                accountNumber: document.getElementById('autoAccountNumber').value,
+                username: document.getElementById('autoUsername').value.trim(),
+                fullname: document.getElementById('autoFullname').value.trim(),
+                password: document.getElementById('autoPassword').value.trim(),
+                withdrawPassword: document.getElementById('autoWithdrawPassword').value.trim(),
+                bankName: document.getElementById('autoBankName').value.trim(),
+                bankBranch: document.getElementById('autoBankBranch').value.trim(),
+                accountNumber: document.getElementById('autoAccountNumber').value.trim(),
                 apiKey: apiKeyManager.get(),
                 sites: sites,
                 captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value ?? '0') * 1000
@@ -1405,6 +1409,30 @@
             // Validate required fields
             if (!config.username || !config.password) {
                 showToast('warning', 'Thiếu thông tin', 'Vui lòng điền đầy đủ thông tin');
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            // Validate bank name (must be selected)
+            if (!config.bankName || config.bankName === '') {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn ngân hàng');
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            // Validate account number (must be numbers only)
+            if (config.accountNumber && !/^\d+$/.test(config.accountNumber)) {
+                showToast('warning', 'Số tài khoản không hợp lệ', 'Số tài khoản chỉ được chứa chữ số');
                 // Re-enable button on error
                 if (btnRunAction) {
                     btnRunAction.disabled = false;
@@ -1509,6 +1537,9 @@
 
                     // Clear form after successful start
                     clearAutoForm();
+
+                    // Refresh results table immediately to show running status
+                    loadResultsFromServer();
                 } else {
                     throw new Error(data.error || 'Unknown error');
                 }
@@ -2365,9 +2396,18 @@
             return;
         }
 
-        // Sort by last timestamp (newest first)
+        // Sort by: running first, then by last timestamp (newest first)
         const sortedKeys = Object.keys(resultsData).sort((a, b) => {
-            return resultsData[b].lastTimestamp - resultsData[a].lastTimestamp;
+            const aRunning = resultsData[a].status === 'running' ? 0 : 1;
+            const bRunning = resultsData[b].status === 'running' ? 0 : 1;
+
+            // If both running or both not running, sort by timestamp
+            if (aRunning === bRunning) {
+                return resultsData[b].lastTimestamp - resultsData[a].lastTimestamp;
+            }
+
+            // Running entries come first
+            return aRunning - bRunning;
         });
 
         console.log(`🔄 refreshResultsTable called: ${sortedKeys.length} entries`);
@@ -2504,14 +2544,7 @@
             let statusHtml = '';
             if (isRunning) {
                 // Show running status for the whole automation
-                console.log(`🔍 Rendering for ${group.username}: isRunning=${isRunning}, message="${group.message}", messageType=${typeof group.message}`);
-                const message = group.message ? `<div style="font-size: 12px; color: #2563eb; margin-top: 8px; font-weight: 600; word-break: break-word; white-space: normal; max-width: 350px; padding: 6px 8px; background-color: #eff6ff; border-left: 3px solid #2563eb; border-radius: 4px;">${group.message}</div>` : '';
-                if (group.message) {
-                    console.log(`📊 Displaying message for ${group.username}: "${group.message}"`);
-                } else {
-                    console.log(`⚠️ No message to display for ${group.username}`);
-                }
-                statusHtml = `<div><span class="status-badge running">🔄 Đang chạy...</span>${message}</div>`;
+                statusHtml = `<div><span class="status-badge running">🔄 Đang chạy...</span></div>`;
             } else {
                 // Show detailed status after completion
                 if (successCount > 0) statusHtml += `<span class="status-badge success">✅ ${successCount}</span> `;
@@ -3106,6 +3139,11 @@
         }
     }
 
+    // Delete all results (alias for clearResultsTable)
+    async function deleteAllResults() {
+        return clearResultsTable();
+    }
+
     // Clear all results
     async function clearResultsTable() {
         if (!confirm('Bạn có chắc muốn xóa TẤT CẢ kết quả?')) {
@@ -3218,6 +3256,7 @@
                             if ('message' in status) {
                                 console.log(`📊 Before update - resultsData[${key}].message = "${resultsData[key].message}"`);
                                 resultsData[key].message = status.message || '';
+                                resultsData[key].status = 'running'; // Ensure status is marked as running
                                 resultsData[key].lastTimestamp = status.timestamp || Date.now();
                                 console.log(`📊 After update - resultsData[${key}].message = "${resultsData[key].message}"`);
                                 console.log(`📊 Calling refreshResultsTable() for key: ${key}`);
@@ -3342,6 +3381,32 @@
                     }
                 });
 
+                // Check if there are any running automations on server
+                try {
+                    const statusResponse = await fetch('/api/automation/statuses');
+                    const statusData = await statusResponse.json();
+
+                    if (statusData.success && statusData.statuses) {
+                        // Get list of running usernames from server
+                        const runningUsernames = new Set(
+                            statusData.statuses
+                                .filter(s => s.status === 'running')
+                                .map(s => s.username)
+                        );
+
+                        // Remove running entries that are no longer running on server
+                        Object.keys(resultsData).forEach(key => {
+                            const entry = resultsData[key];
+                            if (entry.status === 'running' && !runningUsernames.has(entry.username)) {
+                                console.log(`🗑️ Removing stale running entry: ${key} (not running on server)`);
+                                delete resultsData[key];
+                            }
+                        });
+                    }
+                } catch (err) {
+                    console.error('⚠️ Failed to check running statuses:', err);
+                }
+
                 // Clear the auto-refresh flag
                 window.isAutoRefreshInProgress = false;
 
@@ -3413,6 +3478,9 @@
                 */
 
                 console.log(`✅ Loaded ${data.results.length} results from screenshots folder`);
+
+                // Refresh table display
+                refreshResultsTable();
             }
         } catch (error) {
             console.error('Failed to load results from server:', error);
@@ -3439,7 +3507,9 @@
     };
 
     // Listen for automation completion to trigger refresh
-    let lastAutomationCheck = 0;
+    // Only refresh when ALL sites are completed (status = 'completed'), not when individual sites complete
+    let lastCompletedCheck = 0;
+    let lastCompletedTimestamp = 0;
     function checkForAutomationCompletion() {
         const now = Date.now();
 
@@ -3447,22 +3517,25 @@
         if (typeof profileManager !== 'undefined' &&
             profileManager.runningProfiles &&
             profileManager.runningProfiles.size > 0 &&
-            now - lastAutomationCheck > 30000) { // Check every 30 seconds
+            now - lastCompletedCheck > 30000) { // Check every 30 seconds
 
-            lastAutomationCheck = now;
+            lastCompletedCheck = now;
 
-            // Check if any automation completed recently
+            // Check if automation completed (all sites done)
             fetch('/api/automation/statuses')
                 .then(response => response.json())
                 .then(data => {
                     if (data.success && data.statuses) {
-                        const completedRecently = Object.values(data.statuses).some(status =>
-                            (status.status === 'completed' || status.status === 'error') &&
-                            now - status.timestamp < 60000 // Completed in last minute
+                        // Only refresh if status is 'completed' (all sites done)
+                        // Don't refresh for individual site completions
+                        const completedStatus = Object.values(data.statuses).find(status =>
+                            status.status === 'completed' &&
+                            status.timestamp > lastCompletedTimestamp // New completion
                         );
 
-                        if (completedRecently) {
-                            console.log('🎯 Automation completed recently, refreshing results...');
+                        if (completedStatus) {
+                            lastCompletedTimestamp = completedStatus.timestamp;
+                            console.log('🎯 All sites completed, refreshing results...');
                             refreshResultsIfNeeded();
                         }
                     }
@@ -3480,6 +3553,21 @@
         loadAutomationStatuses(); // Check running status
         checkForAutomationCompletion(); // Check if automation completed
     }, 5000); // Check every 5 seconds for faster updates
+
+    // Auto-refresh results table when automation is running
+    let lastResultsRefresh = 0;
+    setInterval(() => {
+        const now = Date.now();
+        // Only refresh if there are running profiles and it's been at least 5 seconds since last refresh
+        if (typeof profileManager !== 'undefined' &&
+            profileManager.runningProfiles &&
+            profileManager.runningProfiles.size > 0 &&
+            now - lastResultsRefresh > 5000) {
+            lastResultsRefresh = now;
+            console.log('🔄 Auto-refreshing results table (automation running)...');
+            loadResultsFromServer();
+        }
+    }, 5000); // Check every 5 seconds
 
     // Recalculate page size when window is resized
     let resizeTimeout;

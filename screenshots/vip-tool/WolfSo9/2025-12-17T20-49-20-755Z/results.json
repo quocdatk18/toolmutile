@@ -1,0 +1,21 @@
+[
+  {
+    "site": "Jun881",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Bank submission completed"
+    },
+    "checkPromo": {
+      "success": false,
+      "error": "Attempted to use detached Frame '4CF5AE4C9343CBC737C911D2D71D9A4F'."
+    }
+  }
+]

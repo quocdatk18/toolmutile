@@ -234,6 +234,10 @@
                 <button class="btn btn-warning btn-sm" onclick="deleteSelectedResults()">
                     🗑️ Xóa Đã Chọn
                 </button>
+                <button class="btn btn-danger btn-sm" onclick="deleteAllResults()"
+                    style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;">
+                    🗑️ Xóa Tất Cả
+                </button>
                 <button class="btn btn-start" onclick="openFormModal()">
                     <span class="start-icon">▶️</span>
                     <span class="start-text">START</span>
@@ -586,8 +590,8 @@
                             <div class="form-grid">
                                 <input type="text" id="autoUsername" placeholder="Tên tài khoản">
                                 <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)">
-                                <input type="password" id="autoPassword" placeholder="Mật khẩu">
-                                <input type="password" id="autoWithdrawPassword" placeholder="MK rút tiền">
+                                <input type="text" id="autoPassword" placeholder="Mật khẩu">
+                                <input type="text" id="autoWithdrawPassword" placeholder="MK rút tiền">
                             </div>
                         </div>
 
@@ -636,8 +640,8 @@
                             <div class="form-grid">
                                 <input type="text" id="regUsername" placeholder="Tên tài khoản">
                                 <input type="text" id="regFullname" placeholder="Họ và Tên (IN HOA)">
-                                <input type="password" id="regPassword" placeholder="Mật khẩu">
-                                <input type="password" id="regWithdrawPassword" placeholder="MK rút tiền">
+                                <input type="text" id="regPassword" placeholder="Mật khẩu">
+                                <input type="text" id="regWithdrawPassword" placeholder="MK rút tiền">
                             </div>
                         </div>
                     </div>
@@ -673,7 +677,7 @@
                             <h3>🔐 Thông Tin Đăng Nhập</h3>
                             <div class="form-grid">
                                 <input type="text" id="loginUsername" placeholder="Tên tài khoản">
-                                <input type="password" id="loginPassword" placeholder="Mật khẩu">
+                                <input type="text" id="loginPassword" placeholder="Mật khẩu">
                             </div>
                         </div>
                     </div>
@@ -1390,13 +1394,13 @@
             }
 
             const config = {
-                username: document.getElementById('autoUsername').value,
-                fullname: document.getElementById('autoFullname').value,
-                password: document.getElementById('autoPassword').value,
-                withdrawPassword: document.getElementById('autoWithdrawPassword').value,
-                bankName: document.getElementById('autoBankName').value,
-                bankBranch: document.getElementById('autoBankBranch').value,
-                accountNumber: document.getElementById('autoAccountNumber').value,
+                username: document.getElementById('autoUsername').value.trim(),
+                fullname: document.getElementById('autoFullname').value.trim(),
+                password: document.getElementById('autoPassword').value.trim(),
+                withdrawPassword: document.getElementById('autoWithdrawPassword').value.trim(),
+                bankName: document.getElementById('autoBankName').value.trim(),
+                bankBranch: document.getElementById('autoBankBranch').value.trim(),
+                accountNumber: document.getElementById('autoAccountNumber').value.trim(),
                 apiKey: apiKeyManager.get(),
                 sites: sites,
                 captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value ?? '0') * 1000
@@ -1405,6 +1409,30 @@
             // Validate required fields
             if (!config.username || !config.password) {
                 showToast('warning', 'Thiếu thông tin', 'Vui lòng điền đầy đủ thông tin');
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            // Validate bank name (must be selected)
+            if (!config.bankName || config.bankName === '') {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn ngân hàng');
+                // Re-enable button on error
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            // Validate account number (must be numbers only)
+            if (config.accountNumber && !/^\d+$/.test(config.accountNumber)) {
+                showToast('warning', 'Số tài khoản không hợp lệ', 'Số tài khoản chỉ được chứa chữ số');
                 // Re-enable button on error
                 if (btnRunAction) {
                     btnRunAction.disabled = false;
@@ -1509,6 +1537,9 @@
 
                     // Clear form after successful start
                     clearAutoForm();
+
+                    // Refresh results table immediately to show running status
+                    loadResultsFromServer();
                 } else {
                     throw new Error(data.error || 'Unknown error');
                 }
@@ -1518,6 +1549,10 @@
                 // Unmark on error
                 profileManager.runningProfiles.delete(currentProfileId);
                 profileManager.saveRunningProfiles();
+
+                // Update card UI immediately to remove running status
+                updateProfileCardStatus(currentProfileId);
+
                 await loadProfilesCarousel();
             } finally {
                 // Re-enable button after waiting for server confirmation
@@ -1535,8 +1570,13 @@
             console.error('❌ Outer try-catch error:', error);
             showToast('error', 'Lỗi', error.message);
             // Unmark on error
-            profileManager.runningProfiles.delete(profileManager.selectedProfileId);
+            const profileId = profileManager.selectedProfileId;
+            profileManager.runningProfiles.delete(profileId);
             profileManager.saveRunningProfiles();
+
+            // Update card UI immediately to remove running status
+            updateProfileCardStatus(profileId);
+
             await loadProfilesCarousel();
         } finally {
             // Re-enable button if not already enabled
@@ -1576,6 +1616,10 @@
         profileManager.runningStartTimes.set(currentProfileId, Date.now());
 
         profileManager.saveRunningProfiles();
+
+        // Update card UI immediately to show running status
+        updateProfileCardStatus(currentProfileId);
+
         await loadProfilesCarousel();
 
         try {
@@ -1654,6 +1698,10 @@
             // Unmark on error
             profileManager.runningProfiles.delete(currentProfileId);
             profileManager.saveRunningProfiles();
+
+            // Update card UI immediately to remove running status
+            updateProfileCardStatus(currentProfileId);
+
             await loadProfilesCarousel();
             return { success: false };
         }
@@ -1917,9 +1965,20 @@
                     profileManager.runningStartTimes.delete(currentProfileId);
                 }
                 profileManager.saveRunningProfiles();
+
+                // Update card UI immediately to remove running status
+                updateProfileCardStatus(currentProfileId);
+
                 await loadProfilesCarousel();
                 console.log(`✅ Cleared running flag for checkPromoOnly`);
             }
+
+            // Refresh results table after check promo completes
+            // Add delay to ensure server has processed the completion status
+            setTimeout(() => {
+                console.log('🔄 Refreshing results table after check promo...');
+                loadResultsFromServer();
+            }, 1000);
         }
     }
 
@@ -2107,6 +2166,70 @@
 
         const profile = profileManager.getSelected();
         showToast('success', 'Profile đã chọn', profile?.name || 'Unknown');
+    }
+
+    // Update profile card UI status without reloading entire carousel
+    function updateProfileCardStatus(profileId) {
+        const carousels = ['auto', 'reg', 'login', 'bank', 'promo'];
+        const isRunning = profileManager.isRunning(profileId);
+
+        carousels.forEach(tabPrefix => {
+            const carousel = document.getElementById(`${tabPrefix}ProfileCarousel`);
+            if (!carousel) return;
+
+            const card = carousel.querySelector(`[data-uuid="${profileId}"]`);
+            if (!card) return;
+
+            if (isRunning) {
+                // Add running class and badge
+                card.classList.add('running');
+
+                // Update or add running badge
+                let runningBadge = card.querySelector('.running-badge');
+                if (!runningBadge) {
+                    const header = card.querySelector('.profile-card-header');
+                    if (header) {
+                        runningBadge = document.createElement('span');
+                        runningBadge.className = 'running-badge';
+                        runningBadge.textContent = '● Running';
+                        header.appendChild(runningBadge);
+                    }
+                }
+
+                // Update status text
+                const statusText = card.querySelector('.profile-status-text');
+                if (statusText) {
+                    statusText.textContent = '🔴 Đang Chạy';
+                    statusText.className = 'profile-status-text running';
+                }
+
+                // Disable click
+                card.style.cursor = 'not-allowed';
+            } else {
+                // Remove running class and badge
+                card.classList.remove('running');
+                const runningBadge = card.querySelector('.running-badge');
+                if (runningBadge) {
+                    runningBadge.remove();
+                }
+
+                // Update status text
+                const statusText = card.querySelector('.profile-status-text');
+                if (statusText) {
+                    const isSelected = profileManager.selectedProfileId === profileId;
+                    if (isSelected) {
+                        statusText.textContent = '✓ Đã Chọn';
+                        statusText.className = 'profile-status-text selected';
+                    } else {
+                        statusText.textContent = '👆 Click để chọn';
+                        statusText.className = 'profile-status-text available';
+                    }
+                }
+
+                // Enable click
+                card.style.cursor = 'pointer';
+            }
+        });
     }
 
     function scrollProfileCarousel(tabPrefix, direction) {
@@ -3108,6 +3231,11 @@
         }
     }
 
+    // Delete all results (alias for clearResultsTable)
+    async function deleteAllResults() {
+        return clearResultsTable();
+    }
+
     // Clear all results
     async function clearResultsTable() {
         if (!confirm('Bạn có chắc muốn xóa TẤT CẢ kết quả?')) {
@@ -3442,6 +3570,9 @@
                 */
 
                 console.log(`✅ Loaded ${data.results.length} results from screenshots folder`);
+
+                // Refresh table display
+                refreshResultsTable();
             }
         } catch (error) {
             console.error('Failed to load results from server:', error);
@@ -3514,6 +3645,21 @@
         loadAutomationStatuses(); // Check running status
         checkForAutomationCompletion(); // Check if automation completed
     }, 5000); // Check every 5 seconds for faster updates
+
+    // Auto-refresh results table when automation is running
+    let lastResultsRefresh = 0;
+    setInterval(() => {
+        const now = Date.now();
+        // Only refresh if there are running profiles and it's been at least 5 seconds since last refresh
+        if (typeof profileManager !== 'undefined' &&
+            profileManager.runningProfiles &&
+            profileManager.runningProfiles.size > 0 &&
+            now - lastResultsRefresh > 5000) {
+            lastResultsRefresh = now;
+            console.log('🔄 Auto-refreshing results table (automation running)...');
+            loadResultsFromServer();
+        }
+    }, 5000); // Check every 5 seconds
 
     // Recalculate page size when window is resized
     let resizeTimeout;

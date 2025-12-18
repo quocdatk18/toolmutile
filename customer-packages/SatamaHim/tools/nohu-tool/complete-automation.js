@@ -440,10 +440,30 @@ class CompleteAutomation {
         });
 
         console.log('    💉 Injecting banks.js...');
-        await page.evaluate(this.scripts.banksScript);
+        // Check if BANK_NAME_MAPPING already exists to avoid duplicate declaration error
+        const hasBanksScript = await page.evaluate(() => {
+            return typeof window.BANK_NAME_MAPPING !== 'undefined';
+        });
+
+        if (!hasBanksScript) {
+            await page.evaluate(this.scripts.banksScript);
+            console.log('    ✅ banks.js injected');
+        } else {
+            console.log('    ♻️  banks.js already injected, skipping');
+        }
 
         console.log('    💉 Injecting captcha-solver.js...');
-        await page.evaluate(this.scripts.captchaSolver);
+        // Check if CaptchaSolver already exists to avoid duplicate declaration error
+        const hasCaptchaSolver = await page.evaluate(() => {
+            return typeof window.CaptchaSolver !== 'undefined';
+        });
+
+        if (!hasCaptchaSolver) {
+            await page.evaluate(this.scripts.captchaSolver);
+            console.log('    ✅ captcha-solver.js injected');
+        } else {
+            console.log('    ♻️  captcha-solver.js already injected, skipping');
+        }
 
         console.log('    💉 Injecting Puppeteer API helper (bypass CORS)...');
         // Check if already exposed to avoid "already exists" error
@@ -1856,49 +1876,62 @@ class CompleteAutomation {
 
         // Also setup response interceptor as backup
         console.log('    🌐 Setting up network response interceptor for audio URL...');
+        let captchaVerified = false; // Flag to stop logging after captcha verified
+
         promoPage.on('response', async (response) => {
             const url = response.url();
             // Check if response contains audio URL
             if (url.includes('admin-ajax.php')) {
-                console.log('    📡 Intercepted admin-ajax.php response');
                 try {
                     const text = await response.text();
-                    console.log('    📄 Response length:', text.length, 'chars');
 
-                    // Try multiple patterns to find audio URL
-                    const patterns = [
-                        /http[s]?:\/\/[^\s"']+audio-captcha-cache[^\s"']+\.mp3/i,
-                        /http[s]?:\/\/[^\s"'<>]+\.mp3/i,
-                        /"audio_url":\s*"([^"]+)"/i,
-                        /'audio_url':\s*'([^']+)'/i
-                    ];
-
-                    let audioUrl = null;
-                    for (const pattern of patterns) {
-                        const match = text.match(pattern);
-                        if (match) {
-                            audioUrl = match[1] || match[0];
-                            console.log('    ✅ Found audio URL with pattern:', pattern);
-                            break;
-                        }
+                    // Check if captcha was verified
+                    if (text.includes('"verified":true') || text.includes('Captcha verified')) {
+                        captchaVerified = true;
+                        console.log('    ✅ Captcha verified - stopping response logging');
+                        return; // Stop logging after verification
                     }
 
-                    if (audioUrl) {
-                        audioUrl = audioUrl.replace('http://', 'https://');
-                        console.log('    🎵 🔥 CAPTURED AUDIO URL FROM NETWORK:', audioUrl);
-                        // Inject audio URL into page
-                        await promoPage.evaluate((url) => {
-                            console.log('💉 Injecting audio URL into page:', url);
-                            if (typeof addAudioUrl === 'function') {
-                                addAudioUrl(url);
-                            } else {
-                                console.error('❌ addAudioUrl function not found!');
+                    // Only log if captcha not yet verified
+                    if (!captchaVerified) {
+                        console.log('    📡 Intercepted admin-ajax.php response');
+                        console.log('    📄 Response length:', text.length, 'chars');
+
+                        // Try multiple patterns to find audio URL
+                        const patterns = [
+                            /http[s]?:\/\/[^\s"']+audio-captcha-cache[^\s"']+\.mp3/i,
+                            /http[s]?:\/\/[^\s"'<>]+\.mp3/i,
+                            /"audio_url":\s*"([^"]+)"/i,
+                            /'audio_url':\s*'([^']+)'/i
+                        ];
+
+                        let audioUrl = null;
+                        for (const pattern of patterns) {
+                            const match = text.match(pattern);
+                            if (match) {
+                                audioUrl = match[1] || match[0];
+                                console.log('    ✅ Found audio URL with pattern:', pattern);
+                                break;
                             }
-                        }, audioUrl);
-                    } else {
-                        console.log('    ⚠️  No audio URL found in response');
-                        // Log first 200 chars of response for debugging
-                        console.log('    📝 Response preview:', text.substring(0, 200));
+                        }
+
+                        if (audioUrl) {
+                            audioUrl = audioUrl.replace('http://', 'https://');
+                            console.log('    🎵 🔥 CAPTURED AUDIO URL FROM NETWORK:', audioUrl);
+                            // Inject audio URL into page
+                            await promoPage.evaluate((url) => {
+                                console.log('💉 Injecting audio URL into page:', url);
+                                if (typeof addAudioUrl === 'function') {
+                                    addAudioUrl(url);
+                                } else {
+                                    console.error('❌ addAudioUrl function not found!');
+                                }
+                            }, audioUrl);
+                        } else {
+                            console.log('    ⚠️  No audio URL found in response');
+                            // Log first 200 chars of response for debugging
+                            console.log('    📝 Response preview:', text.substring(0, 200));
+                        }
                     }
                 } catch (e) {
                     console.error('    ❌ Error processing response:', e.message);
@@ -1912,7 +1945,54 @@ class CompleteAutomation {
             await promoPage.goto(promoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
         } catch (navError) {
             checkPageValid(); // Check if tab was closed
-            throw navError;
+
+            // If initial page load fails (timeout/network error), take screenshot and close tab
+            console.log('    ❌ Initial page load failed:', navError.message);
+            console.log('    📸 Taking screenshot of load error...');
+
+            try {
+                const fs = require('fs');
+                const path = require('path');
+                const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
+                const sessionId = this.settings.sessionId || new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                const userDir = path.join(screenshotsDir, username);
+                const sessionDir = path.join(userDir, sessionId);
+
+                if (!fs.existsSync(sessionDir)) {
+                    fs.mkdirSync(sessionDir, { recursive: true });
+                }
+
+                const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
+                const errorFilename = `${siteName}-load-error.png`;
+                const errorFilepath = path.join(sessionDir, errorFilename);
+
+                try {
+                    await promoPage.screenshot({
+                        path: errorFilepath,
+                        fullPage: true,
+                        timeout: 5000
+                    });
+                    console.log(`    ✅ Load error screenshot saved: ${errorFilename}`);
+                } catch (screenshotErr) {
+                    console.log('    ⚠️  Screenshot failed:', screenshotErr.message);
+                }
+            } catch (e) {
+                console.log('    ⚠️  Error saving screenshot:', e.message);
+            }
+
+            // Close tab
+            try {
+                await promoPage.close();
+                console.log('    ✅ Promo tab closed after load error');
+            } catch (closeErr) {
+                console.log('    ⚠️  Error closing tab:', closeErr.message);
+            }
+
+            return {
+                success: false,
+                error: 'PAGE_LOAD_TIMEOUT',
+                message: `Failed to load promo page: ${navError.message}`
+            };
         }
 
         // 🔥 Check if tab still valid after navigation
@@ -1954,7 +2034,61 @@ class CompleteAutomation {
             console.log('    📊 Username:', username);
             console.log('    📊 API Key:', apiKey ? `${apiKey.substring(0, 5)}...` : 'undefined');
 
-            const result = await actions.completeCheckPromotion(username, apiKey);
+            let result;
+            try {
+                result = await actions.completeCheckPromotion(username, apiKey);
+            } catch (formError) {
+                console.log('    ❌ Check promo form error:', formError.message);
+
+                // If form not loaded, take screenshot and return error
+                if (formError.message.includes('CHECK_PROMO_FORM_ERROR')) {
+                    console.log('    📸 Taking screenshot of error state...');
+                    try {
+                        const fs = require('fs');
+                        const path = require('path');
+                        const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
+                        const sessionId = this.settings.sessionId || new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                        const userDir = path.join(screenshotsDir, username);
+                        const sessionDir = path.join(userDir, sessionId);
+
+                        // Ensure directories exist
+                        if (!fs.existsSync(sessionDir)) {
+                            fs.mkdirSync(sessionDir, { recursive: true });
+                        }
+
+                        const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
+                        const errorFilename = `${siteName}-form-error.png`;
+                        const errorFilepath = path.join(sessionDir, errorFilename);
+
+                        await promoPage.screenshot({
+                            path: errorFilepath,
+                            fullPage: true,
+                            timeout: 5000
+                        });
+
+                        console.log(`    ✅ Error screenshot saved: ${errorFilename}`);
+
+                        // Send result with screenshot
+                        return {
+                            success: false,
+                            error: 'FORM_NOT_LOADED',
+                            message: formError.message,
+                            screenshot: `/screenshots/${username}/${sessionId}/${errorFilename}`,
+                            screenshotPath: errorFilepath
+                        };
+                    } catch (screenshotErr) {
+                        console.log('    ⚠️  Error screenshot failed:', screenshotErr.message);
+                        return {
+                            success: false,
+                            error: 'FORM_NOT_LOADED',
+                            message: formError.message
+                        };
+                    }
+                }
+
+                // Re-throw other errors
+                throw formError;
+            }
 
             // 🔥 Check if tab still valid after checkPromotion
             checkPageValid();
@@ -1975,6 +2109,65 @@ class CompleteAutomation {
                 console.log('    ✅ Page navigation completed');
             } catch (navError) {
                 console.log('    ⚠️  Navigation timeout or no navigation occurred');
+
+                // Check if page is still on captcha modal (page didn't load)
+                try {
+                    const stillOnCaptcha = await promoPage.evaluate(() => {
+                        const captchaModal = document.querySelector('.modal, .dialog, [role="dialog"], .captcha-modal');
+                        const captchaInput = document.querySelector('input[id*="captcha"], input[placeholder*="captcha"]');
+                        return !!(captchaModal || captchaInput);
+                    });
+
+                    if (stillOnCaptcha) {
+                        console.log('    ❌ Page still on captcha modal after timeout - page load failed');
+
+                        // Take screenshot of timeout error state
+                        console.log('    📸 Taking screenshot of timeout error...');
+                        try {
+                            const fs = require('fs');
+                            const path = require('path');
+                            const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
+                            const sessionId = this.settings.sessionId || new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                            const userDir = path.join(screenshotsDir, username);
+                            const sessionDir = path.join(userDir, sessionId);
+
+                            if (!fs.existsSync(sessionDir)) {
+                                fs.mkdirSync(sessionDir, { recursive: true });
+                            }
+
+                            const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
+                            const timeoutFilename = `${siteName}-timeout-error.png`;
+                            const timeoutFilepath = path.join(sessionDir, timeoutFilename);
+
+                            await promoPage.screenshot({
+                                path: timeoutFilepath,
+                                fullPage: true,
+                                timeout: 5000
+                            });
+
+                            console.log(`    ✅ Timeout error screenshot saved: ${timeoutFilename}`);
+                        } catch (screenshotErr) {
+                            console.log('    ⚠️  Timeout error screenshot failed:', screenshotErr.message);
+                        }
+
+                        // Close tab
+                        try {
+                            await promoPage.close();
+                            console.log('    ✅ Promo tab closed after timeout');
+                        } catch (closeErr) {
+                            console.log('    ⚠️  Error closing tab:', closeErr.message);
+                        }
+
+                        return {
+                            success: false,
+                            error: 'PAGE_LOAD_FAILED',
+                            message: 'Page did not load after clicking "Nhận KM" - network error or page error'
+                        };
+                    }
+                } catch (e) {
+                    console.log('    ⚠️  Could not check page state:', e.message);
+                }
+
                 console.log('    ℹ️  Will check current page state and take screenshot anyway...');
             }
 

@@ -1,0 +1,19 @@
+[
+  {
+    "site": "JUN88V2",
+    "register": {
+      "success": false,
+      "error": "Token not found and no redirect after registration"
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  }
+]

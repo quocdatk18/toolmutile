@@ -1,0 +1,19 @@
+[
+  {
+    "site": "JUN88V2-1",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '61BC5F00BE415B60F5A8D33F2429BF00'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  }
+]
