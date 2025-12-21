@@ -1,0 +1,43 @@
+{
+  "username": "SkyPower1b",
+  "password": "n8u6fxfctq4",
+  "withdrawPassword": "849169",
+  "fullname": "VO THANH TAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10369048106291601",
+    "accountHolder": "VO THANH TAM"
+  },
+  "registeredAt": "2025-12-19T16:15:33.495Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-19T16:15:33.495Z",
+  "bankVerified": false
+}

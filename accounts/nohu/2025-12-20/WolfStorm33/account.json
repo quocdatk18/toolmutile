@@ -1,0 +1,43 @@
+{
+  "username": "WolfStorm33",
+  "password": "74umzja07",
+  "withdrawPassword": "315269",
+  "fullname": "HOANG MINH KHANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10360048106412338",
+    "accountHolder": "HOANG MINH KHANH"
+  },
+  "registeredAt": "2025-12-20T16:59:52.891Z",
+  "firstSite": "NOHU",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T16:59:52.891Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "WolfFury88b",
+  "password": "6k41dx8vof3b",
+  "withdrawPassword": "925650",
+  "fullname": "TRAN QUANG LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "10369048106273113",
+    "accountHolder": "TRAN QUANG LINH"
+  },
+  "registeredAt": "2025-12-19T13:57:17.474Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-19T13:57:17.474Z",
+  "bankVerified": false
+}

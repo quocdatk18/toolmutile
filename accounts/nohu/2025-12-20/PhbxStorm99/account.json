@@ -1,0 +1,43 @@
+{
+  "username": "PhbxStorm99",
+  "password": "f9o8s6gjri1k",
+  "withdrawPassword": "303980",
+  "fullname": "NGO GIA BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10360048106313490",
+    "accountHolder": "NGO GIA BAO"
+  },
+  "registeredAt": "2025-12-20T00:22:13.733Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T00:22:13.733Z",
+  "bankVerified": false
+}

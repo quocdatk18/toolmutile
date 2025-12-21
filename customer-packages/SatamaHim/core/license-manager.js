@@ -11,6 +11,7 @@ const path = require('path');
 class LicenseManager {
     constructor() {
         this.licenseFile = path.join(__dirname, '..', '.license');
+        this.machineIdFile = path.join(__dirname, '..', '.machine-id');
         // ⚠️ QUAN TRỌNG: Thay đổi secret key này trước khi gửi cho khách hàng!
         // Mỗi bản gửi khách nên có secret key khác nhau
         // Ví dụ: 'SECRET_CUSTOMER_001', 'SECRET_CUSTOMER_002', v.v.
@@ -18,9 +19,10 @@ class LicenseManager {
     }
 
     /**
-     * Lấy Machine ID (unique cho mỗi máy)
+     * Tạo Machine ID từ MAC address + hostname
+     * (Hàm nội bộ, không lưu)
      */
-    getMachineId() {
+    _generateMachineId() {
         const networkInterfaces = os.networkInterfaces();
         const macs = [];
 
@@ -35,6 +37,37 @@ class LicenseManager {
         // Combine MAC addresses + hostname
         const machineString = macs.join('-') + os.hostname();
         return crypto.createHash('sha256').update(machineString).digest('hex').substring(0, 16);
+    }
+
+    /**
+     * Lấy Machine ID (lưu vào file lần đầu, tái sử dụng lần sau)
+     * Đảm bảo mã máy không thay đổi giữa các lần chạy
+     */
+    getMachineId() {
+        // Kiểm tra xem mã máy đã được lưu chưa
+        if (fs.existsSync(this.machineIdFile)) {
+            try {
+                const savedMachineId = fs.readFileSync(this.machineIdFile, 'utf8').trim();
+                if (savedMachineId && savedMachineId.length === 16) {
+                    return savedMachineId;
+                }
+            } catch (err) {
+                console.warn('⚠️ Error reading saved machine ID:', err.message);
+            }
+        }
+
+        // Tạo mã máy mới nếu chưa có
+        const newMachineId = this._generateMachineId();
+
+        // Lưu vào file để tái sử dụng lần sau
+        try {
+            fs.writeFileSync(this.machineIdFile, newMachineId, 'utf8');
+            console.log(`✅ Machine ID saved: ${newMachineId}`);
+        } catch (err) {
+            console.warn('⚠️ Error saving machine ID:', err.message);
+        }
+
+        return newMachineId;
     }
 
     /**

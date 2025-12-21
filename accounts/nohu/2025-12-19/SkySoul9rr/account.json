@@ -1,0 +1,43 @@
+{
+  "username": "SkySoul9rr",
+  "password": "6fc7xcvedur",
+  "withdrawPassword": "777053",
+  "fullname": "PHAN THANH TAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10369048106281060",
+    "accountHolder": "PHAN THANH TAM"
+  },
+  "registeredAt": "2025-12-19T14:52:46.715Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-19T14:52:46.715Z",
+  "bankVerified": false
+}

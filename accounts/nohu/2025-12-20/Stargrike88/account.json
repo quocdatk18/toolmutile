@@ -1,0 +1,43 @@
+{
+  "username": "Stargrike88",
+  "password": "57a6uvy4pz",
+  "withdrawPassword": "856258",
+  "fullname": "VU ANH PHONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10360048106308923",
+    "accountHolder": "VU ANH PHONG"
+  },
+  "registeredAt": "2025-12-19T22:36:46.493Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-19T22:36:46.493Z",
+  "bankVerified": false
+}

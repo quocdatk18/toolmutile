@@ -1,0 +1,43 @@
+{
+  "username": "FireSoul22",
+  "password": "pn24x4n6j",
+  "withdrawPassword": "753311",
+  "fullname": "VU THANH CUONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10360048106412427",
+    "accountHolder": "VU THANH CUONG"
+  },
+  "registeredAt": "2025-12-20T16:57:13.517Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T16:57:13.517Z",
+  "bankVerified": false
+}

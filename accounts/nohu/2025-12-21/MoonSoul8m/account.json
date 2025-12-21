@@ -1,0 +1,43 @@
+{
+  "username": "MoonSoul8m",
+  "password": "9qgece6qb112",
+  "withdrawPassword": "832478",
+  "fullname": "TRAN QUANG KHANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10361048106425233",
+    "accountHolder": "TRAN QUANG KHANH"
+  },
+  "registeredAt": "2025-12-20T19:24:29.572Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T19:24:29.572Z",
+  "bankVerified": false
+}

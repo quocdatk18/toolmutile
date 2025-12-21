@@ -1,0 +1,24 @@
+{
+  "username": "smpzc3",
+  "password": "89lzfc1bu",
+  "withdrawPassword": "660932",
+  "fullname": "CHAU TRINH TRI",
+  "email": "poa05@gmail.com",
+  "phone": "0993188497",
+  "bank": {
+    "name": "DBSBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10368048106054584",
+    "accountHolder": "CHAU TRINH TRI"
+  },
+  "registeredAt": "2025-12-18T09:26:47.325Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

@@ -10,6 +10,9 @@ const fetch = global.fetch || require('node-fetch');
 // Import tab rotator
 const tabRotator = require('./tab-rotator');
 
+// Import common form filler
+const CommonFormFiller = require('../common/form-filler');
+
 // Bank name mapping (VietQR API name → Dropdown option text)
 const BANK_NAME_MAPPING = {
     'Vietcombank': 'VIETCOMBANK',
@@ -76,6 +79,14 @@ class VIPAutomation {
                 bank: '/Financial?type=withdraw'
             },
             'jun88': {
+                withdrawPassword: '/Account/ChangeMoneyPassword', // jun88 k cần
+                bank: '/account/withdrawaccounts/bankcards'
+            },
+            '78win': {
+                withdrawPassword: '/Account/ChangeMoneyPassword',
+                bank: '/account/withdrawaccounts/bankcards'
+            },
+            'jun88v2': {
                 withdrawPassword: '/Account/ChangeMoneyPassword',
                 bank: '/Financial?type=withdraw'
             },
@@ -127,6 +138,13 @@ class VIPAutomation {
             console.error('❌ Invalid URL:', url);
             return null;
         }
+    }
+
+    /**
+     * Helper: Calculate random delay (2-10s) - dùng chung cho tất cả category
+     */
+    getRandomDelay(minMs = 2000, maxMs = 10000) {
+        return Math.random() * (maxMs - minMs) + minMs;
     }
 
     /**
@@ -243,6 +261,193 @@ class VIPAutomation {
             return null;
         } catch (error) {
             console.error('❌ Captcha API error:', error.message);
+            return null;
+        }
+    }
+
+    /**
+     * Solve Cloudflare Turnstile via autocaptcha.pro API
+     */
+    async solveTurnstileViaAPI(page, apiKey) {
+        try {
+            if (!apiKey) {
+                console.warn('⚠️ No API key for Turnstile solving');
+                return null;
+            }
+
+            console.log('🔐 Solving Cloudflare Turnstile via autocaptcha.pro API...');
+
+            // Wait for Turnstile widget to load (max 15 seconds - it loads dynamically)
+            try {
+                await page.waitForSelector('.turnstile-container, [data-sitekey], [id*="turnstile"]', { timeout: 15000 }).catch(() => null);
+                console.log('✅ Turnstile widget detected');
+                // Wait extra time for Turnstile to fully initialize
+                await new Promise(r => setTimeout(r, 2000));
+            } catch (e) {
+                console.warn('⚠️ Turnstile widget not found after waiting');
+            }
+
+            // Step 1: Get sitekey from page
+            const sitekey = await page.evaluate(() => {
+                // Try multiple ways to find sitekey
+
+                // Method 1: Try to find in data attributes (most common)
+                let turnstileContainer = document.querySelector('[data-sitekey]');
+                if (turnstileContainer) {
+                    return turnstileContainer.getAttribute('data-sitekey');
+                }
+
+                // Method 2: Try to find in script tag from Cloudflare
+                const scriptTag = document.querySelector('script[src*="challenges.cloudflare.com"]');
+                if (scriptTag) {
+                    const src = scriptTag.src;
+                    const match = src.match(/\/turnstile\/v0\/([a-z0-9]+)/i);
+                    if (match) {
+                        return match[1];
+                    }
+                }
+
+                // Method 3: Try to find in window object (Cloudflare sets this)
+                if (window.turnstileSitekey) {
+                    return window.turnstileSitekey;
+                }
+
+                // Method 4: Try to find in any div with class containing 'turnstile'
+                turnstileContainer = document.querySelector('div[class*="turnstile"]');
+                if (turnstileContainer && turnstileContainer.getAttribute('data-sitekey')) {
+                    return turnstileContainer.getAttribute('data-sitekey');
+                }
+
+                // Method 5: Try to find in any element with id containing 'turnstile'
+                const turnstileById = document.querySelector('[id*="turnstile"]');
+                if (turnstileById && turnstileById.getAttribute('data-sitekey')) {
+                    return turnstileById.getAttribute('data-sitekey');
+                }
+
+                // Method 6: Try to extract from Cloudflare's inline script
+                const scripts = document.querySelectorAll('script');
+                for (const script of scripts) {
+                    if (script.textContent && script.textContent.includes('turnstile')) {
+                        // Look for sitekey in format: "sitekey":"xxxxx" or sitekey: "xxxxx"
+                        const match = script.textContent.match(/["\']?sitekey["\']?\s*:\s*["\']([a-z0-9\-]+)["\']/i);
+                        if (match && match[1] && match[1].length > 10) {
+                            // Sitekey should be longer than 10 chars
+                            return match[1];
+                        }
+                    }
+                }
+
+                // Method 7: Check for Cloudflare's global object
+                if (window.cf && window.cf.turnstile) {
+                    // Try to get from Cloudflare's turnstile object
+                    const containers = document.querySelectorAll('.turnstile-container');
+                    if (containers.length > 0) {
+                        // Sitekey might be in data attributes of parent or siblings
+                        const parent = containers[0].parentElement;
+                        if (parent && parent.getAttribute('data-sitekey')) {
+                            return parent.getAttribute('data-sitekey');
+                        }
+                    }
+                }
+
+                return null;
+            });
+
+            if (!sitekey) {
+                console.warn('⚠️ Could not find Turnstile sitekey');
+                // Log debug info
+                const debugInfo = await page.evaluate(() => {
+                    const info = {
+                        dataAttr: [],
+                        turnstileElements: [],
+                        allScripts: []
+                    };
+
+                    // Find all elements with data-sitekey
+                    const elements = document.querySelectorAll('[data-sitekey]');
+                    info.dataAttr = Array.from(elements).map(el => ({
+                        tag: el.tagName,
+                        class: el.className,
+                        id: el.id,
+                        sitekey: el.getAttribute('data-sitekey')
+                    }));
+
+                    // Find all turnstile-related elements
+                    const turnstileEls = document.querySelectorAll('[class*="turnstile"], [id*="turnstile"]');
+                    info.turnstileElements = Array.from(turnstileEls).slice(0, 5).map(el => ({
+                        tag: el.tagName,
+                        class: el.className,
+                        id: el.id
+                    }));
+
+                    // Find all script tags
+                    const scripts = document.querySelectorAll('script[src*="challenges.cloudflare.com"], script[src*="turnstile"]');
+                    info.allScripts = Array.from(scripts).map(s => s.src);
+
+                    return info;
+                });
+
+                console.log('📊 Debug Info:', debugInfo);
+                return null;
+            }
+
+            console.log(`📝 Found sitekey: ${sitekey}`);
+
+            // Get page URL
+            const pageUrl = page.url();
+            console.log(`📄 Page URL: ${pageUrl}`);
+
+            // Step 2: Submit Turnstile task to autocaptcha.pro
+            const submitResponse = await fetch('https://autocaptcha.pro/apiv3/process', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'TurnstileTask',
+                    websiteURL: pageUrl,
+                    websiteKey: sitekey,
+                    key: apiKey
+                })
+            });
+
+            const submitData = await submitResponse.json();
+            console.log('📤 Turnstile submit response:', submitData);
+
+            // Handle error
+            if (submitData.errorId !== undefined && submitData.errorId !== 0) {
+                console.error('❌ Failed to submit Turnstile:', submitData.message || 'Unknown error');
+                return null;
+            }
+
+            // Handle polling format {errorId: 0, taskId: "xxx"}
+            if (submitData.taskId) {
+                const taskId = submitData.taskId;
+                console.log(`📝 Turnstile submitted, task ID: ${taskId}`);
+
+                // Poll for result (max 60 seconds for Turnstile)
+                for (let i = 0; i < 60; i++) {
+                    await new Promise(r => setTimeout(r, 2000));
+
+                    const resultResponse = await fetch(`https://autocaptcha.pro/apiv3/result?key=${apiKey}&taskId=${taskId}`);
+                    const resultData = await resultResponse.json();
+
+                    if (resultData.errorId === 0 && resultData.solution && resultData.solution.cf_clearance) {
+                        console.log(`✅ Turnstile solved`);
+                        return resultData.solution.cf_clearance;
+                    }
+
+                    if (i % 10 === 0) {
+                        console.log(`⏳ Waiting for Turnstile result (${i}s)...`);
+                    }
+                }
+
+                console.error('❌ Turnstile solve timeout');
+                return null;
+            }
+
+            console.error('❌ Unknown API response format:', submitData);
+            return null;
+        } catch (error) {
+            console.error('❌ Turnstile API error:', error.message);
             return null;
         }
     }
@@ -422,11 +627,25 @@ class VIPAutomation {
 
                         // Reuse page from registerResult
                         addBankResult = await this.addBankStep(browser, category, siteConfig, profileData, registerResult.page);
+
+                        // Update account info with bank data if addBank succeeded
+                        if (addBankResult?.success) {
+                            console.log(`💾 Updating account info with bank data for ${siteName}...`);
+                            try {
+                                const siteNames = Array.isArray(sites)
+                                    ? (typeof sites[0] === 'string' ? sites : sites.map(s => s.name || s))
+                                    : [];
+                                await this.saveAccountInfo(profileData, category, siteName, siteNames);
+                                console.log(`✅ Account info updated with bank data`);
+                            } catch (err) {
+                                console.warn(`⚠️ Error updating account info:`, err.message);
+                            }
+                        }
                     }
 
-                    // Skip checkPromo nếu addBank failed hoặc category là ABCVIP/OKVIP (use separate tab)
+                    // Skip checkPromo nếu addBank failed hoặc category là ABCVIP/OKVIP/JUN88/78WIN (use separate tab)
                     let checkPromoResult = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                    if (addBankResult?.success && category !== 'abcvip' && category !== 'okvip') {
+                    if (addBankResult?.success && category !== 'abcvip' && category !== 'okvip' && category !== 'jun88' && category !== '78win') {
                         checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
                     } else if (category === 'abcvip') {
                         console.log(`⏭️ Skipping checkPromo for ${siteName} (ABCVIP - use separate tab)`);
@@ -434,6 +653,12 @@ class VIPAutomation {
                     } else if (category === 'okvip') {
                         console.log(`⏭️ Skipping checkPromo for ${siteName} (OKVIP - use separate tab)`);
                         checkPromoResult = { success: true, skipped: true, message: 'Skipped - OKVIP use separate tab' };
+                    } else if (category === 'jun88') {
+                        console.log(`⏭️ Skipping checkPromo for ${siteName} (JUN88 - use separate tab)`);
+                        checkPromoResult = { success: true, skipped: true, message: 'Skipped - JUN88 use separate tab' };
+                    } else if (category === '78win') {
+                        console.log(`⏭️ Skipping checkPromo for ${siteName} (78WIN - use separate tab)`);
+                        checkPromoResult = { success: true, skipped: true, message: 'Skipped - 78WIN use separate tab' };
                     } else {
                         console.log(`⏭️ Skipping checkPromo for ${siteName} (add bank failed)`);
                     }
@@ -533,11 +758,25 @@ class VIPAutomation {
 
                     // Reuse page from registerResult
                     addBankResult = await this.addBankStep(browser, category, siteConfig, profileData, registerResult.page);
+
+                    // Update account info with bank data if addBank succeeded
+                    if (addBankResult?.success) {
+                        console.log(`💾 Updating account info with bank data for ${siteName}...`);
+                        try {
+                            const siteNames = Array.isArray(sites) && sites.length > 0
+                                ? (typeof sites[0] === 'string' ? sites : sites.map(s => s.name || s))
+                                : [];
+                            await this.saveAccountInfo(profileData, category, siteName, siteNames);
+                            console.log(`✅ Account info updated with bank data`);
+                        } catch (err) {
+                            console.warn(`⚠️ Error updating account info:`, err.message);
+                        }
+                    }
                 }
 
-                // Skip checkPromo nếu addBank failed hoặc category là ABCVIP/OKVIP (use separate tab)
+                // Skip checkPromo nếu addBank failed hoặc category là ABCVIP/OKVIP/JUN88/78WIN (use separate tab)
                 let checkPromoResult = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                if (addBankResult?.success && category !== 'abcvip' && category !== 'okvip') {
+                if (addBankResult?.success && category !== 'abcvip' && category !== 'okvip' && category !== 'jun88' && category !== '78win') {
                     checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
                 } else if (category === 'abcvip') {
                     console.log(`⏭️ Skipping checkPromo for ${siteName} (ABCVIP - use separate tab)`);
@@ -545,6 +784,12 @@ class VIPAutomation {
                 } else if (category === 'okvip') {
                     console.log(`⏭️ Skipping checkPromo for ${siteName} (OKVIP - use separate tab)`);
                     checkPromoResult = { success: true, skipped: true, message: 'Skipped - OKVIP use separate tab' };
+                } else if (category === 'jun88') {
+                    console.log(`⏭️ Skipping checkPromo for ${siteName} (JUN88 - use separate tab)`);
+                    checkPromoResult = { success: true, skipped: true, message: 'Skipped - JUN88 use separate tab' };
+                } else if (category === '78win') {
+                    console.log(`⏭️ Skipping checkPromo for ${siteName} (78WIN - use separate tab)`);
+                    checkPromoResult = { success: true, skipped: true, message: 'Skipped - 78WIN use separate tab' };
                 } else {
                     console.log(`⏭️ Skipping checkPromo for ${siteName} (add bank failed)`);
                 }
@@ -585,18 +830,91 @@ class VIPAutomation {
             await page.goto(siteConfig.registerUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
             await new Promise(r => setTimeout(r, 3000));
 
-            // Inject scripts (captcha-solver, etc.)
-            try {
-                await this.injectScripts(page);
-            } catch (injectError) {
-                console.warn('⚠️ Script injection failed:', injectError.message);
+            // Inject scripts (captcha-solver, etc.) - skip for manual captcha categories
+            const manualCaptchaCategories = ['jun88', '78win', 'jun88v2'];
+            if (!manualCaptchaCategories.includes(category)) {
+                try {
+                    await this.injectScripts(page);
+                } catch (injectError) {
+                    console.warn('⚠️ Script injection failed:', injectError.message);
+                }
+            } else {
+                console.log(`⏭️ Skipping auto-captcha for ${category} (manual captcha required)`);
+            }
+
+            // For JUN88V2: Wait for user to solve Turnstile, then click "Đăng Ký" button
+            if (category === 'jun88v2') {
+                console.log('🔐 JUN88V2: Waiting for Turnstile to be solved...');
+                console.log('⏳ Please solve the Cloudflare Turnstile captcha manually...');
+
+                // Wait for Turnstile to be solved (check if cf-turnstile-response has value)
+                let turnstileSolved = false;
+                for (let i = 0; i < 120; i++) {
+                    const hasToken = await page.evaluate(() => {
+                        const field = document.querySelector('input[name="cf-turnstile-response"]');
+                        return field && field.value && field.value.length > 0;
+                    });
+
+                    if (hasToken) {
+                        console.log('✅ Turnstile solved by user');
+                        turnstileSolved = true;
+                        break;
+                    }
+
+                    await new Promise(r => setTimeout(r, 1000));
+                    if (i % 10 === 0) {
+                        console.log(`⏳ Waiting for Turnstile... (${i}s)`);
+                    }
+                }
+
+                if (!turnstileSolved) {
+                    console.warn('⚠️ Turnstile not solved after 120 seconds');
+                }
+
+                // Wait extra time for Cloudflare to process token
+                console.log('⏳ Waiting for Cloudflare to process token...');
+                await new Promise(r => setTimeout(r, 3000));
+
+                // Now click the "Đăng Ký" button
+                console.log('🔐 Clicking "Đăng Ký" button to enter registration form...');
+                try {
+                    const clicked = await page.evaluate(() => {
+                        // Search for button with text "Đăng Ký"
+                        const buttons = document.querySelectorAll('div, button');
+                        for (const btn of buttons) {
+                            if (btn.textContent.trim() === 'Đăng Ký' || btn.textContent.includes('Đăng Ký')) {
+                                btn.click();
+                                console.log('✅ Clicked "Đăng Ký" button');
+                                return true;
+                            }
+                        }
+                        return false;
+                    });
+
+                    if (clicked) {
+                        // Wait for form to load
+                        await new Promise(r => setTimeout(r, 3000));
+                        console.log('✅ Registration form loaded');
+                    } else {
+                        console.warn('⚠️ Could not find "Đăng Ký" button');
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Error clicking "Đăng Ký" button:', error.message);
+                }
             }
 
             // Gọi form filler riêng cho category
             await this.fillRegisterForm(page, category, profileData, siteConfig);
 
-            // Delay sau khi fill form
+            // Delay sau khi fill form (give React time to process changes)
             await new Promise(r => setTimeout(r, 3000));
+
+            // Inject scripts (captcha-solver, etc.)
+            try {
+                await this.injectScripts(page);
+            } catch (injectError) {
+                console.warn('⚠️ Failed to inject scripts:', injectError.message);
+            }
 
             // Solve captcha nếu có API key
             const apiKey = this.settings?.captchaApiKey || process.env.CAPTCHA_API_KEY;
@@ -614,17 +932,152 @@ class VIPAutomation {
                 console.warn('⚠️ No captcha API key provided');
             }
 
-            // Add random delay 5-20s before submit (all categories)
-            const delayBeforeSubmit = Math.random() * (20000 - 5000) + 5000; // 5-20s
-            console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit registration...`);
-            await new Promise(r => setTimeout(r, delayBeforeSubmit));
+            // For JUN88 categories: add extra anti-bot measures
+            const isJUN88Category = ['jun88', '78win', 'jun88v2'].includes(category);
+            if (isJUN88Category) {
+                console.log('🤖 JUN88 anti-bot: Adding extra delays and human-like interactions...');
+
+                // Scroll page to simulate user reading form
+                await page.evaluate(() => {
+                    window.scrollBy(0, 200);
+                });
+                await new Promise(r => setTimeout(r, 1500));
+
+                // Scroll back up
+                await page.evaluate(() => {
+                    window.scrollBy(0, -200);
+                });
+                await new Promise(r => setTimeout(r, 1500));
+
+                // Random delay 15-35s before submit (JUN88V2 needs more time for Cloudflare)
+                const delayBeforeSubmit = this.getRandomDelay(15000, 35000);
+                console.log(`⏳ JUN88 anti-bot: Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
+                await new Promise(r => setTimeout(r, delayBeforeSubmit));
+            } else {
+                // Add random delay 5-20s before submit (other categories)
+                const delayBeforeSubmit = this.getRandomDelay(5000, 20000);
+                console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit registration...`);
+                await new Promise(r => setTimeout(r, delayBeforeSubmit));
+            }
 
             // Submit form
             console.log(`📤 Submitting registration form for ${siteConfig.name}...`);
-            await page.evaluate(() => {
-                const submitBtn = document.querySelector('button[type="submit"]');
-                if (submitBtn) submitBtn.click();
-            });
+
+            // For JUN88: use slower, more human-like click
+            if (isJUN88Category) {
+                try {
+                    // Find and scroll button into view
+                    const buttonFound = await page.evaluate(() => {
+                        const buttons = document.querySelectorAll('button');
+                        let submitBtn = null;
+
+                        // Find submit button - try multiple text patterns
+                        for (const btn of buttons) {
+                            const text = btn.textContent.trim().toUpperCase();
+                            if (text.includes('ĐĂNG KÝ') || text.includes('OK') || text.includes('REGISTER') || text.includes('SUBMIT')) {
+                                submitBtn = btn;
+                                break;
+                            }
+                        }
+
+                        if (!submitBtn) {
+                            // Try by class or id
+                            submitBtn = document.querySelector('button.submit') ||
+                                document.querySelector('button[type="submit"]') ||
+                                document.querySelector('button.btn-primary') ||
+                                document.querySelector('button.btn-success');
+                        }
+
+                        if (submitBtn) {
+                            // Scroll button into view
+                            submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    if (!buttonFound) {
+                        console.warn('⚠️ Submit button not found, trying alternative methods...');
+                    }
+
+                    // Wait for scroll to complete
+                    await new Promise(r => setTimeout(r, 1500));
+
+                    // Now click with human-like interaction
+                    const clickSuccess = await page.evaluate(() => {
+                        const buttons = document.querySelectorAll('button');
+                        let submitBtn = null;
+
+                        // Find submit button
+                        for (const btn of buttons) {
+                            const text = btn.textContent.trim().toUpperCase();
+                            if (text.includes('ĐĂNG KÝ') || text.includes('OK') || text.includes('REGISTER') || text.includes('SUBMIT')) {
+                                submitBtn = btn;
+                                break;
+                            }
+                        }
+
+                        if (!submitBtn) {
+                            submitBtn = document.querySelector('button.submit') ||
+                                document.querySelector('button[type="submit"]') ||
+                                document.querySelector('button.btn-primary') ||
+                                document.querySelector('button.btn-success');
+                        }
+
+                        if (submitBtn && submitBtn.offsetParent !== null) { // Check if visible
+                            // Simulate human-like interaction
+                            submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                            submitBtn.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+                            setTimeout(() => {
+                                submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                                setTimeout(() => {
+                                    submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                                    submitBtn.click();
+                                    submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+                                }, 100);
+                            }, 200);
+                            return true;
+                        }
+                        return false;
+                    });
+
+                    if (!clickSuccess) {
+                        console.warn('⚠️ Could not click submit button via evaluate, trying Puppeteer click...');
+                        // Try using Puppeteer's click method
+                        try {
+                            await page.click('button');
+                        } catch (e) {
+                            console.warn('⚠️ Puppeteer click also failed:', e.message);
+                        }
+                    }
+                } catch (error) {
+                    console.error('❌ Error clicking submit button:', error.message);
+                }
+            } else {
+                // Original click for other categories
+                await page.evaluate(() => {
+                    let submitBtn = document.querySelector('button[type="submit"]');
+
+                    if (!submitBtn) {
+                        const buttons = document.querySelectorAll('button[type="button"]');
+                        for (const btn of buttons) {
+                            if (btn.textContent.includes('ĐĂNG KÝ') || btn.textContent.includes('OK')) {
+                                submitBtn = btn;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (submitBtn) {
+                        submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                        submitBtn.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+                        submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                        submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                        submitBtn.click();
+                        submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+                    }
+                });
+            }
 
             // Delay sau khi submit
             await new Promise(r => setTimeout(r, 3000));
@@ -633,8 +1086,16 @@ class VIPAutomation {
             console.log(`⏳ Waiting for token/redirect...`);
             let hasToken = false;
             let waitAttempts = 0;
-            const maxWaitAttempts = 20; // Max 10s for all categories
+
+            // Determine max wait time based on category
+            const isManualCaptcha = manualCaptchaCategories.includes(category);
+            const maxWaitTime = isManualCaptcha ? 120000 : 10000; // 120s for manual, 10s for auto
             const checkInterval = 500; // 500ms per check
+            const maxWaitAttempts = Math.ceil(maxWaitTime / checkInterval);
+
+            if (isManualCaptcha) {
+                console.log(`📝 Manual captcha mode: Waiting up to 120s for user to solve captcha...`);
+            }
 
             let initialUrl = await page.evaluate(() => window.location.href);
             console.log(`📍 Initial URL: ${initialUrl}`);
@@ -671,7 +1132,11 @@ class VIPAutomation {
                         break;
                     }
 
-                    console.log(`⏳ [${waitAttempts}/${maxWaitAttempts}] No token/redirect yet, waiting...`);
+                    if (isManualCaptcha) {
+                        console.log(`⏳ [${waitAttempts}/${maxWaitAttempts}] Waiting for manual captcha (${Math.round(waitAttempts * checkInterval / 1000)}s)...`);
+                    } else {
+                        console.log(`⏳ [${waitAttempts}/${maxWaitAttempts}] No token/redirect yet, waiting...`);
+                    }
                     await new Promise(resolve => setTimeout(resolve, checkInterval));
                 } catch (e) {
                     console.log(`⚠️ Token check failed (attempt ${waitAttempts}):`, e.message);
@@ -686,6 +1151,22 @@ class VIPAutomation {
 
             // Token found - no need to wait for navigation, can proceed immediately
             console.log(`✅ Token acquired, register successful`);
+
+            // For jun88, 78win, jun88v2: wait delay then redirect to addbank page
+            if (isManualCaptcha) {
+                // Add random delay 2-10s before redirect to bank (like OKVIP)
+                const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
+                console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to addbank...`);
+                await new Promise(r => setTimeout(r, delayBeforeBank));
+
+                console.log(`🔄 Redirecting to addbank page for ${category}...`);
+                const domain = this.getDomain(siteConfig.registerUrl);
+                const bankPath = this.categoryPaths[category]?.bank || '/Financial?type=withdraw';
+                const bankUrl = domain + bankPath;
+                console.log(`📍 Navigating to: ${bankUrl}`);
+                await page.goto(bankUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+                await new Promise(r => setTimeout(r, 3000));
+            }
 
             return { success: true, message: 'Register completed successfully', page };
         } catch (error) {
@@ -705,6 +1186,10 @@ class VIPAutomation {
             return await this.addBankABCVIP(browser, siteConfig, profileData, existingPage);
         } else if (category === 'jun88') {
             return await this.addBankJUN88(browser, siteConfig, profileData, existingPage);
+        } else if (category === '78win') {
+            return await this.addBank78WIN(browser, siteConfig, profileData, existingPage);
+        } else if (category === 'jun88v2') {
+            return await this.addBankJUN88V2(browser, siteConfig, profileData, existingPage);
         } else if (category === 'kjc') {
             return await this.addBankKJC(browser, siteConfig, profileData, existingPage);
         }
@@ -729,7 +1214,7 @@ class VIPAutomation {
             console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
 
             // Add random delay 2-10s before redirect
-            const delayBeforeWithdraw = Math.random() * (10000 - 2000) + 2000; // 2-10s
+            const delayBeforeWithdraw = this.getRandomDelay(2000, 10000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
             await new Promise(r => setTimeout(r, delayBeforeWithdraw));
 
@@ -772,12 +1257,12 @@ class VIPAutomation {
                 console.log('⚠️ No navigation after withdraw password');
             });
 
-            // Bước 2: Vào trang submit bank
+            // Bước 2: Vào trang submit bank (OKVIP)
             const bankUrl = domain + paths.bank;
             console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
-            const delayBeforeBank = Math.random() * (10000 - 2000) + 2000; // 2-10s
+            const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
@@ -980,7 +1465,7 @@ class VIPAutomation {
             console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
 
             // Add random delay 2-10s before redirect
-            const delayBeforeWithdraw = Math.random() * (10000 - 2000) + 2000; // 2-10s
+            const delayBeforeWithdraw = this.getRandomDelay(2000, 10000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
             await new Promise(r => setTimeout(r, delayBeforeWithdraw));
 
@@ -1023,12 +1508,12 @@ class VIPAutomation {
                 console.log('⚠️ No navigation after withdraw password');
             });
 
-            // Bước 2: Vào trang submit bank
+            // Bước 2: Vào trang submit bank (ABCVIP)
             const bankUrl = domain + paths.bank;
             console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
-            const delayBeforeBank = Math.random() * (10000 - 2000) + 2000; // 2-10s
+            const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
@@ -1213,11 +1698,910 @@ class VIPAutomation {
     }
 
     /**
-     * JUN88 Add Bank (placeholder)
+     * 78WIN Register Form (Form 2 - playerid, password, firstname, mobile - NO EMAIL)
+     * Anti-bot measures: slow typing, delays between fields, human-like interactions
      */
-    async addBankJUN88(browser, siteConfig, profileData) {
-        // TODO: Implement JUN88 add bank logic
-        return { success: true, message: 'JUN88 add bank - TODO' };
+    async fill78WINRegisterForm(page, profileData) {
+        try {
+            console.log('🤖 78WIN Form - Anti-bot mode enabled');
+            const filler = new CommonFormFiller();
+
+            // Wait for form to be interactive
+            await filler.waitForForm(page, 'input[id="playerid"]', 10000);
+            await new Promise(r => setTimeout(r, 1000));
+
+            // Prepare phone (remove leading 0)
+            let phone = profileData.phone || '';
+            if (phone.startsWith('0')) {
+                phone = phone.substring(1);
+            }
+
+            // Fill fields using common filler
+            const fields = [
+                { selector: 'input[id="playerid"]', value: profileData.username, label: 'username' },
+                { selector: 'input[id="password"]', value: profileData.password, label: 'password' },
+                { selector: 'input[id="firstname"]', value: profileData.fullname || '', label: 'fullname' },
+                { selector: 'input[type="tel"]', value: phone, label: 'mobile' }
+            ];
+
+            await filler.fillMultipleFields(page, fields, {
+                charDelay: 150,
+                beforeFocus: 300,
+                afterField: 800
+            });
+
+            // Handle agree checkbox - skip if already checked
+            console.log('✅ Checking agree checkbox...');
+            try {
+                const isChecked = await page.evaluate(() => {
+                    const checkbox = document.querySelector('input[id="agree"]');
+                    return checkbox ? checkbox.checked : false;
+                });
+
+                if (!isChecked) {
+                    const agreeCheckbox = await page.$('input[id="agree"]');
+                    if (agreeCheckbox) {
+                        await page.hover('input[id="agree"]');
+                        await new Promise(r => setTimeout(r, 200));
+                        await page.click('input[id="agree"]');
+                        await new Promise(r => setTimeout(r, 500));
+                    }
+                } else {
+                    console.log('✅ Agree checkbox already checked');
+                }
+            } catch (error) {
+                console.warn('⚠️ Could not interact with agree checkbox:', error.message);
+            }
+
+            // Trigger change events for all fields (React compatibility)
+            await page.evaluate(() => {
+                const fields = [
+                    'input[id="playerid"]',
+                    'input[id="password"]',
+                    'input[id="firstname"]',
+                    'input[type="tel"]',
+                    'input[id="agree"]'
+                ];
+
+                fields.forEach(selector => {
+                    const field = document.querySelector(selector);
+                    if (field) {
+                        field.dispatchEvent(new Event('input', { bubbles: true }));
+                        field.dispatchEvent(new Event('change', { bubbles: true }));
+                        field.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                });
+            });
+
+            console.log('✅ 78WIN form filled successfully');
+        } catch (error) {
+            console.error('❌ Error filling 78WIN form:', error.message);
+            throw error;
+        }
+    }
+
+    /**
+     * JUN88V2 Register Form (Form 3 - fullname, username, password, phone - JOJODIOS)
+     * Anti-bot measures: slow typing, delays between fields, human-like interactions
+     */
+    async fillJUN88V2RegisterForm(page, profileData) {
+        try {
+            console.log('🤖 JUN88V2 Form - Anti-bot mode enabled');
+            const filler = new CommonFormFiller();
+
+            // Wait for form to be interactive
+            await filler.waitForForm(page, 'input[id="fullname"]', 10000);
+
+            // For JUN88V2: Wait for Turnstile to auto-verify (it usually verifies within 1-3 seconds)
+            console.log('⏳ Waiting for Turnstile to auto-verify...');
+            let turnstileVerified = false;
+            for (let i = 0; i < 10; i++) {
+                const verified = await page.evaluate(() => {
+                    const field = document.querySelector('input[name="cf-turnstile-response"]');
+                    return field && field.value && field.value.length > 0;
+                });
+
+                if (verified) {
+                    console.log('✅ Turnstile auto-verified');
+                    turnstileVerified = true;
+                    break;
+                }
+
+                await new Promise(r => setTimeout(r, 500));
+            }
+
+            if (!turnstileVerified) {
+                console.warn('⚠️ Turnstile not auto-verified, proceeding anyway...');
+            }
+
+            // Wait a bit more for page to settle
+            await new Promise(r => setTimeout(r, 1000));
+
+            // Simulate human-like interactions
+            await filler.simulateHumanInteraction(page);
+
+            // Click on first field to show interest
+            await page.click('input[id="fullname"]').catch(() => null);
+            await new Promise(r => setTimeout(r, 600));
+
+            // Prepare phone (remove leading 0)
+            let phone = profileData.phone || '';
+            if (phone.startsWith('0')) {
+                phone = phone.substring(1);
+            }
+
+            // Fill fields using common filler
+            const fields = [
+                { selector: 'input[id="fullname"]', value: profileData.fullname || '', label: 'fullname' },
+                { selector: 'input[id="username"]', value: profileData.username, label: 'username' },
+                { selector: 'input[id="password"]', value: profileData.password, label: 'password' },
+                { selector: 'input[placeholder*="Số điện thoại"]', value: phone, label: 'mobile' }
+            ];
+
+            await filler.fillMultipleFields(page, fields, {
+                charDelay: 150,
+                beforeFocus: 500,
+                afterField: 1200
+            });
+
+            // Trigger change events for all fields (React compatibility)
+            await page.evaluate(() => {
+                const fields = [
+                    'input[id="fullname"]',
+                    'input[id="username"]',
+                    'input[id="password"]',
+                    'input[type="text"][inputmode="numeric"]',
+                    'input[pattern="[0-9]*"]'
+                ];
+
+                fields.forEach(selector => {
+                    const field = document.querySelector(selector);
+                    if (field) {
+                        field.dispatchEvent(new Event('input', { bubbles: true }));
+                        field.dispatchEvent(new Event('change', { bubbles: true }));
+                        field.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                });
+            });
+
+            console.log('✅ JUN88V2 form filled successfully');
+        } catch (error) {
+            console.error('❌ Error filling JUN88V2 form:', error.message);
+            throw error;
+        }
+    }
+
+    /**
+     * JUN88 Add Bank: Click bank field → select bank → fill account & password → submit
+     */
+    async addBankJUN88(browser, siteConfig, profileData, existingPage = null) {
+        const page = existingPage || await browser.newPage();
+        try {
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (JUN88)...`);
+
+            // Add random delay before starting
+            const delayBeforeAddBank = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
+            await new Promise(r => setTimeout(r, delayBeforeAddBank));
+
+            // Step 1: Click "Thêm ngân hàng +" button to show form
+            console.log(`🔍 Looking for "Thêm ngân hàng +" button...`);
+            const addBankButtonClicked = await page.evaluate(() => {
+                // Try multiple selectors for the add bank button
+                const selectors = [
+                    'button.nrc-button',
+                    'button[title=""]',
+                    'button:contains("Thêm ngân hàng")',
+                    'button'
+                ];
+
+                let addBankBtn = null;
+
+                // Try exact text match first
+                const buttons = document.querySelectorAll('button');
+                for (const btn of buttons) {
+                    if (btn.textContent.includes('Thêm ngân hàng')) {
+                        addBankBtn = btn;
+                        break;
+                    }
+                }
+
+                if (addBankBtn) {
+                    console.log('Found add bank button, clicking...');
+                    addBankBtn.click();
+                    return true;
+                }
+
+                return false;
+            });
+
+            if (!addBankButtonClicked) {
+                console.warn('⚠️ "Thêm ngân hàng +" button not found, trying alternative...');
+            } else {
+                console.log('✅ Clicked "Thêm ngân hàng +" button');
+            }
+
+            // Wait for form to appear
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Step 2: Wait for bank form to load
+            try {
+                await page.waitForSelector('input[id="bankid"]', { timeout: 5000 });
+                console.log('✅ Bank form loaded');
+            } catch (e) {
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
+            }
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 3: Click bank field to open dropdown
+            console.log(`🏦 Opening bank dropdown...`);
+            await page.evaluate(() => {
+                const bankField = document.querySelector('input[id="bankid"]');
+                if (bankField) {
+                    bankField.click();
+                }
+            });
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Select bank from dropdown
+            const mappedBankName = this.mapBankName(profileData.bankName);
+            console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
+
+            await page.evaluate((bankName) => {
+                const bankItems = document.querySelectorAll('.mc-bank-item');
+                let found = false;
+
+                // Try exact match first
+                for (const item of bankItems) {
+                    const itemText = item.querySelector('.mc-bank-name')?.textContent?.trim().toUpperCase();
+                    if (itemText === bankName.toUpperCase()) {
+                        item.click();
+                        found = true;
+                        break;
+                    }
+                }
+
+                // Try partial match if exact not found
+                if (!found) {
+                    for (const item of bankItems) {
+                        const itemText = item.querySelector('.mc-bank-name')?.textContent?.trim().toUpperCase();
+                        if (itemText.includes(bankName.toUpperCase())) {
+                            item.click();
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!found && bankItems.length > 0) {
+                    console.warn(`⚠️ Bank not found, selecting first option`);
+                    bankItems[0].click();
+                }
+            }, mappedBankName);
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Fill account number and password - use slow typing like register form
+            console.log(`📝 Filling account and password...`);
+
+            // Field 1: Account number
+            try {
+                console.log(`💳 Filling account number: ${profileData.accountNumber}`);
+                await page.focus('input[id="bankaccount"]');
+                await new Promise(r => setTimeout(r, 300));
+                await page.type('input[id="bankaccount"]', profileData.accountNumber, { delay: 100 });
+                await new Promise(r => setTimeout(r, 800));
+                console.log(`✅ Account number filled`);
+            } catch (error) {
+                console.warn(`⚠️ Error filling account number:`, error.message);
+                // Fallback: use evaluate
+                await page.evaluate((accountNumber) => {
+                    const accountField = document.querySelector('input[id="bankaccount"]');
+                    if (accountField) {
+                        accountField.value = accountNumber;
+                        accountField.dispatchEvent(new Event('input', { bubbles: true }));
+                        accountField.dispatchEvent(new Event('change', { bubbles: true }));
+                        accountField.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                }, profileData.accountNumber);
+            }
+
+            // Field 2: Password
+            try {
+                console.log(`🔐 Filling password...`);
+                await page.focus('input[id="password"]');
+                await new Promise(r => setTimeout(r, 300));
+                await page.type('input[id="password"]', profileData.password, { delay: 100 });
+                await new Promise(r => setTimeout(r, 800));
+                console.log(`✅ Password filled`);
+            } catch (error) {
+                console.warn(`⚠️ Error filling password:`, error.message);
+                // Fallback: use evaluate
+                await page.evaluate((password) => {
+                    const passwordField = document.querySelector('input[id="password"]');
+                    if (passwordField) {
+                        passwordField.value = password;
+                        passwordField.dispatchEvent(new Event('input', { bubbles: true }));
+                        passwordField.dispatchEvent(new Event('change', { bubbles: true }));
+                        passwordField.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                }, profileData.password);
+            }
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Submit form - find OK button
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
+
+            // Add delay before submit
+            const delayBeforeSubmit = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
+            await new Promise(r => setTimeout(r, delayBeforeSubmit));
+
+            const submitSuccess = await page.evaluate(() => {
+                // Find OK button
+                const buttons = document.querySelectorAll('button');
+                let submitBtn = null;
+
+                // Try to find button with text "OK"
+                for (const btn of buttons) {
+                    if (btn.textContent.trim().toUpperCase() === 'OK') {
+                        submitBtn = btn;
+                        break;
+                    }
+                }
+
+                // Fallback: find button[type="button"]
+                if (!submitBtn) {
+                    submitBtn = document.querySelector('button[type="button"]');
+                }
+
+                if (submitBtn) {
+                    // Scroll button into view
+                    submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Click with delay
+                    submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                    setTimeout(() => {
+                        submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                        setTimeout(() => {
+                            submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                            submitBtn.click();
+                            submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+                        }, 100);
+                    }, 200);
+                    return true;
+                }
+                return false;
+            });
+
+            if (!submitSuccess) {
+                console.warn('⚠️ Submit button not found');
+            } else {
+                console.log('✅ Submit button clicked');
+            }
+
+            // Wait for response
+            console.log(`⏳ Waiting for bank submission response...`);
+            await new Promise(r => setTimeout(r, 3000));
+
+            // Check if successful
+            const result = await page.evaluate(() => {
+                // Check for success message or error
+                const errorMsg = document.querySelector('.error-msg');
+                const successMsg = document.querySelector('.success-msg');
+
+                if (errorMsg && errorMsg.textContent.includes('Bắt buộc')) {
+                    return { success: false, message: 'Form validation error' };
+                }
+
+                if (successMsg) {
+                    return { success: true, message: 'Bank added successfully' };
+                }
+
+                // If no error visible, assume success
+                return { success: true, message: 'Bank submission completed' };
+            });
+
+            console.log(`✅ Bank result:`, result);
+
+            // Mark tab as completed in rotator
+            if (result.success) {
+                tabRotator.complete(page);
+            }
+
+            return result;
+        } catch (error) {
+            console.error(`❌ JUN88 Add Bank Error:`, error.message);
+
+            // Mark tab as completed even on error
+            tabRotator.complete(page);
+
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
+     * 78WIN Add Bank (same as JUN88 - click button, select bank, fill account & password)
+     */
+    async addBank78WIN(browser, siteConfig, profileData, existingPage = null) {
+        const page = existingPage || await browser.newPage();
+        try {
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (78WIN)...`);
+
+            // Add random delay before starting
+            const delayBeforeAddBank = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
+            await new Promise(r => setTimeout(r, delayBeforeAddBank));
+
+            // Step 1: Click "Thêm ngân hàng +" button to show form
+            console.log(`🔍 Looking for "Thêm ngân hàng +" button...`);
+            const addBankButtonClicked = await page.evaluate(() => {
+                const buttons = document.querySelectorAll('button');
+                let addBankBtn = null;
+
+                // Find button with text "Thêm ngân hàng"
+                for (const btn of buttons) {
+                    if (btn.textContent.includes('Thêm ngân hàng')) {
+                        addBankBtn = btn;
+                        break;
+                    }
+                }
+
+                if (addBankBtn) {
+                    addBankBtn.click();
+                    return true;
+                }
+                return false;
+            });
+
+            if (!addBankButtonClicked) {
+                console.warn('⚠️ "Thêm ngân hàng +" button not found');
+            } else {
+                console.log('✅ Clicked "Thêm ngân hàng +" button');
+            }
+
+            // Wait for form to appear
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Step 2: Wait for bank form to load
+            try {
+                await page.waitForSelector('input[id="bankid"]', { timeout: 5000 });
+                console.log('✅ Bank form loaded');
+            } catch (e) {
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
+            }
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 3: Click bank field to open dropdown
+            console.log(`🏦 Opening bank dropdown...`);
+            await page.evaluate(() => {
+                const bankField = document.querySelector('input[id="bankid"]');
+                if (bankField) {
+                    bankField.click();
+                }
+            });
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 4: Select bank from dropdown
+            const mappedBankName = this.mapBankName(profileData.bankName);
+            console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
+
+            await page.evaluate((bankName) => {
+                const bankItems = document.querySelectorAll('.mc-bank-item, [class*="bank-item"]');
+                let found = false;
+
+                // Try exact match first
+                for (const item of bankItems) {
+                    const itemText = item.querySelector('.mc-bank-name, [class*="bank-name"]')?.textContent?.trim().toUpperCase();
+                    if (itemText === bankName.toUpperCase()) {
+                        item.click();
+                        found = true;
+                        break;
+                    }
+                }
+
+                // Try partial match if exact not found
+                if (!found) {
+                    for (const item of bankItems) {
+                        const itemText = item.querySelector('.mc-bank-name, [class*="bank-name"]')?.textContent?.trim().toUpperCase();
+                        if (itemText && itemText.includes(bankName.toUpperCase())) {
+                            item.click();
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!found && bankItems.length > 0) {
+                    console.warn(`⚠️ Bank not found, selecting first option`);
+                    bankItems[0].click();
+                }
+            }, mappedBankName);
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 5: Fill account number and password - use slow typing
+            console.log(`📝 Filling account and password...`);
+
+            // Field 1: Account number
+            try {
+                console.log(`💳 Filling account number: ${profileData.accountNumber}`);
+                await page.focus('input[id="bankaccount"]');
+                await new Promise(r => setTimeout(r, 300));
+                await page.type('input[id="bankaccount"]', profileData.accountNumber, { delay: 100 });
+                await new Promise(r => setTimeout(r, 800));
+                console.log(`✅ Account number filled`);
+            } catch (error) {
+                console.warn(`⚠️ Error filling account number:`, error.message);
+                // Fallback: use evaluate
+                await page.evaluate((accountNumber) => {
+                    const accountField = document.querySelector('input[id="bankaccount"]');
+                    if (accountField) {
+                        accountField.value = accountNumber;
+                        accountField.dispatchEvent(new Event('input', { bubbles: true }));
+                        accountField.dispatchEvent(new Event('change', { bubbles: true }));
+                        accountField.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                }, profileData.accountNumber);
+            }
+
+            // Field 2: Password
+            try {
+                console.log(`🔐 Filling password...`);
+                await page.focus('input[id="password"]');
+                await new Promise(r => setTimeout(r, 300));
+                await page.type('input[id="password"]', profileData.password, { delay: 100 });
+                await new Promise(r => setTimeout(r, 800));
+                console.log(`✅ Password filled`);
+            } catch (error) {
+                console.warn(`⚠️ Error filling password:`, error.message);
+                // Fallback: use evaluate
+                await page.evaluate((password) => {
+                    const passwordField = document.querySelector('input[id="password"]');
+                    if (passwordField) {
+                        passwordField.value = password;
+                        passwordField.dispatchEvent(new Event('input', { bubbles: true }));
+                        passwordField.dispatchEvent(new Event('change', { bubbles: true }));
+                        passwordField.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                }, profileData.password);
+            }
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 6: Submit form - find OK button
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
+
+            // Add delay before submit
+            const delayBeforeSubmit = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
+            await new Promise(r => setTimeout(r, delayBeforeSubmit));
+
+            const submitSuccess = await page.evaluate(() => {
+                // Find OK button
+                const buttons = document.querySelectorAll('button');
+                let submitBtn = null;
+
+                // Try to find button with text "OK"
+                for (const btn of buttons) {
+                    if (btn.textContent.trim().toUpperCase() === 'OK') {
+                        submitBtn = btn;
+                        break;
+                    }
+                }
+
+                // Fallback: find button[type="button"]
+                if (!submitBtn) {
+                    submitBtn = document.querySelector('button[type="button"]');
+                }
+
+                if (submitBtn) {
+                    // Scroll button into view
+                    submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Click with delay
+                    submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                    setTimeout(() => {
+                        submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                        setTimeout(() => {
+                            submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                            submitBtn.click();
+                            submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+                        }, 100);
+                    }, 200);
+                    return true;
+                }
+                return false;
+            });
+
+            if (!submitSuccess) {
+                console.warn('⚠️ Submit button not found');
+            } else {
+                console.log('✅ Submit button clicked');
+            }
+
+            // Wait for response
+            console.log(`⏳ Waiting for bank submission response...`);
+            await new Promise(r => setTimeout(r, 3000));
+
+            // Check if successful
+            const result = await page.evaluate(() => {
+                // Check for success message or error
+                const errorMsg = document.querySelector('.error-msg');
+                const successMsg = document.querySelector('.success-msg');
+
+                if (errorMsg && errorMsg.textContent.includes('Bắt buộc')) {
+                    return { success: false, message: 'Form validation error' };
+                }
+
+                if (successMsg) {
+                    return { success: true, message: 'Bank added successfully' };
+                }
+
+                // If no error visible, assume success
+                return { success: true, message: 'Bank submission completed' };
+            });
+
+            console.log(`✅ Bank result:`, result);
+
+            // Mark tab as completed in rotator
+            if (result.success) {
+                tabRotator.complete(page);
+            }
+
+            return result;
+        } catch (error) {
+            console.error(`❌ 78WIN Add Bank Error:`, error.message);
+
+            // Mark tab as completed even on error
+            tabRotator.complete(page);
+
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
+     * JUN88V2 Add Bank (same as JUN88 - click button, select bank, fill account & password)
+     */
+    async addBankJUN88V2(browser, siteConfig, profileData, existingPage = null) {
+        const page = existingPage || await browser.newPage();
+        try {
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (JUN88V2)...`);
+
+            // Add random delay before starting
+            const delayBeforeAddBank = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
+            await new Promise(r => setTimeout(r, delayBeforeAddBank));
+
+            // Step 1: Click "Thêm ngân hàng +" button to show form
+            console.log(`🔍 Looking for "Thêm ngân hàng +" button...`);
+            const addBankButtonClicked = await page.evaluate(() => {
+                const buttons = document.querySelectorAll('button');
+                let addBankBtn = null;
+
+                // Find button with text "Thêm ngân hàng"
+                for (const btn of buttons) {
+                    if (btn.textContent.includes('Thêm ngân hàng')) {
+                        addBankBtn = btn;
+                        break;
+                    }
+                }
+
+                if (addBankBtn) {
+                    addBankBtn.click();
+                    return true;
+                }
+                return false;
+            });
+
+            if (!addBankButtonClicked) {
+                console.warn('⚠️ "Thêm ngân hàng +" button not found');
+            } else {
+                console.log('✅ Clicked "Thêm ngân hàng +" button');
+            }
+
+            // Wait for form to appear
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Step 2: Wait for bank form to load
+            try {
+                await page.waitForSelector('input[id="bankid"]', { timeout: 5000 });
+                console.log('✅ Bank form loaded');
+            } catch (e) {
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
+            }
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 3: Click bank field to open dropdown
+            console.log(`🏦 Opening bank dropdown...`);
+            await page.evaluate(() => {
+                const bankField = document.querySelector('input[id="bankid"]');
+                if (bankField) {
+                    bankField.click();
+                }
+            });
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 4: Select bank from dropdown
+            const mappedBankName = this.mapBankName(profileData.bankName);
+            console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
+
+            await page.evaluate((bankName) => {
+                const bankItems = document.querySelectorAll('.mc-bank-item, [class*="bank-item"]');
+                let found = false;
+
+                // Try exact match first
+                for (const item of bankItems) {
+                    const itemText = item.querySelector('.mc-bank-name, [class*="bank-name"]')?.textContent?.trim().toUpperCase();
+                    if (itemText === bankName.toUpperCase()) {
+                        item.click();
+                        found = true;
+                        break;
+                    }
+                }
+
+                // Try partial match if exact not found
+                if (!found) {
+                    for (const item of bankItems) {
+                        const itemText = item.querySelector('.mc-bank-name, [class*="bank-name"]')?.textContent?.trim().toUpperCase();
+                        if (itemText && itemText.includes(bankName.toUpperCase())) {
+                            item.click();
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!found && bankItems.length > 0) {
+                    console.warn(`⚠️ Bank not found, selecting first option`);
+                    bankItems[0].click();
+                }
+            }, mappedBankName);
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 5: Fill account number and password - use slow typing
+            console.log(`📝 Filling account and password...`);
+
+            // Field 1: Account number
+            try {
+                console.log(`💳 Filling account number: ${profileData.accountNumber}`);
+                await page.focus('input[id="bankaccount"]');
+                await new Promise(r => setTimeout(r, 300));
+                await page.type('input[id="bankaccount"]', profileData.accountNumber, { delay: 100 });
+                await new Promise(r => setTimeout(r, 800));
+                console.log(`✅ Account number filled`);
+            } catch (error) {
+                console.warn(`⚠️ Error filling account number:`, error.message);
+                // Fallback: use evaluate
+                await page.evaluate((accountNumber) => {
+                    const accountField = document.querySelector('input[id="bankaccount"]');
+                    if (accountField) {
+                        accountField.value = accountNumber;
+                        accountField.dispatchEvent(new Event('input', { bubbles: true }));
+                        accountField.dispatchEvent(new Event('change', { bubbles: true }));
+                        accountField.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                }, profileData.accountNumber);
+            }
+
+            // Field 2: Password
+            try {
+                console.log(`🔐 Filling password...`);
+                await page.focus('input[id="password"]');
+                await new Promise(r => setTimeout(r, 300));
+                await page.type('input[id="password"]', profileData.password, { delay: 100 });
+                await new Promise(r => setTimeout(r, 800));
+                console.log(`✅ Password filled`);
+            } catch (error) {
+                console.warn(`⚠️ Error filling password:`, error.message);
+                // Fallback: use evaluate
+                await page.evaluate((password) => {
+                    const passwordField = document.querySelector('input[id="password"]');
+                    if (passwordField) {
+                        passwordField.value = password;
+                        passwordField.dispatchEvent(new Event('input', { bubbles: true }));
+                        passwordField.dispatchEvent(new Event('change', { bubbles: true }));
+                        passwordField.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                }, profileData.password);
+            }
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Step 6: Submit form - find OK button
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
+
+            // Add delay before submit
+            const delayBeforeSubmit = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
+            await new Promise(r => setTimeout(r, delayBeforeSubmit));
+
+            const submitSuccess = await page.evaluate(() => {
+                // Find OK button
+                const buttons = document.querySelectorAll('button');
+                let submitBtn = null;
+
+                // Try to find button with text "OK"
+                for (const btn of buttons) {
+                    if (btn.textContent.trim().toUpperCase() === 'OK') {
+                        submitBtn = btn;
+                        break;
+                    }
+                }
+
+                // Fallback: find button[type="button"]
+                if (!submitBtn) {
+                    submitBtn = document.querySelector('button[type="button"]');
+                }
+
+                if (submitBtn) {
+                    // Scroll button into view
+                    submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Click with delay
+                    submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                    setTimeout(() => {
+                        submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                        setTimeout(() => {
+                            submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                            submitBtn.click();
+                            submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+                        }, 100);
+                    }, 200);
+                    return true;
+                }
+                return false;
+            });
+
+            if (!submitSuccess) {
+                console.warn('⚠️ Submit button not found');
+            } else {
+                console.log('✅ Submit button clicked');
+            }
+
+            // Wait for response
+            console.log(`⏳ Waiting for bank submission response...`);
+            await new Promise(r => setTimeout(r, 3000));
+
+            // Check if successful
+            const result = await page.evaluate(() => {
+                // Check for success message or error
+                const errorMsg = document.querySelector('.error-msg');
+                const successMsg = document.querySelector('.success-msg');
+
+                if (errorMsg && errorMsg.textContent.includes('Bắt buộc')) {
+                    return { success: false, message: 'Form validation error' };
+                }
+
+                if (successMsg) {
+                    return { success: true, message: 'Bank added successfully' };
+                }
+
+                // If no error visible, assume success
+                return { success: true, message: 'Bank submission completed' };
+            });
+
+            console.log(`✅ Bank result:`, result);
+
+            // Mark tab as completed in rotator
+            if (result.success) {
+                tabRotator.complete(page);
+            }
+
+            return result;
+        } catch (error) {
+            console.error(`❌ JUN88V2 Add Bank Error:`, error.message);
+
+            // Mark tab as completed even on error
+            tabRotator.complete(page);
+
+            return { success: false, error: error.message };
+        }
     }
 
     /**
@@ -1237,7 +2621,7 @@ class VIPAutomation {
             console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
-            const delayBeforeBank = Math.random() * (10000 - 2000) + 2000; // 2-10s
+            const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
@@ -1481,6 +2865,10 @@ class VIPAutomation {
             await this.fillABCVIPRegisterForm(page, profileData);
         } else if (category === 'jun88') {
             await this.fillJUN88RegisterForm(page, profileData);
+        } else if (category === '78win') {
+            await this.fill78WINRegisterForm(page, profileData);
+        } else if (category === 'jun88v2') {
+            await this.fillJUN88V2RegisterForm(page, profileData);
         } else if (category === 'kjc') {
             await this.fillKJCRegisterForm(page, profileData);
         }
@@ -1607,18 +2995,8 @@ class VIPAutomation {
                 sites: [
                     {
                         name: 'Jun881',
-                        registerUrl: 'https://jun881.com/register',
-                        checkPromoUrl: 'https://jun881.com/promo'
-                    },
-                    {
-                        name: 'Jun882',
-                        registerUrl: 'https://jun882.com/register',
-                        checkPromoUrl: 'https://jun882.com/promo'
-                    },
-                    {
-                        name: 'Jun883',
-                        registerUrl: 'https://jun883.com/register',
-                        checkPromoUrl: 'https://jun883.com/promo'
+                        registerUrl: 'https://sasa2.xn--8866-um1g.com/signup',
+                        checkPromoUrl: 'https://trungtam.khuyenmaijun881.win/?promo_id=FR58'
                     }
                 ]
             },
@@ -1641,6 +3019,30 @@ class VIPAutomation {
                         name: 'KJC3',
                         registerUrl: 'https://kjc3.com/register',
                         checkPromoUrl: 'https://kjc3.com/promo'
+                    }
+                ]
+            },
+            '78win': {
+                name: '78WIN',
+                icon: '78W',
+                color: '#ff9900',
+                sites: [
+                    {
+                        name: '78WIN1',
+                        registerUrl: 'https://www.78win6.zone/signup',
+                        checkPromoUrl: 'https://daily78win.net/'
+                    }
+                ]
+            },
+            'jun88v2': {
+                name: 'JUN88V2',
+                icon: 'J8V2',
+                color: '#0099cc',
+                sites: [
+                    {
+                        name: 'JUN88V2',
+                        registerUrl: 'https://www.ufhtoiklhkfkjguhd7eoij8icxhkjk9.com/signup',
+                        checkPromoUrl: 'https://jun88ok99.com/?promo_id=FR58'
                     }
                 ]
             }
@@ -1711,25 +3113,88 @@ class VIPAutomation {
     }
 
     /**
-     * JUN88 Register Form
+     * JUN88 Register Form (Form 1 - playerid, password, firstname, email, mobile)
+     * Anti-bot measures: slow typing, delays between fields, human-like interactions
      */
     async fillJUN88RegisterForm(page, profileData) {
-        await page.evaluate((data) => {
-            const userField = document.querySelector('input[id="username"]');
-            const pwdField = document.querySelector('input[id="password"]');
-            const nameField = document.querySelector('input[id="fullname"]');
+        try {
+            console.log('🤖 JUN88 Form - Anti-bot mode enabled');
+            const filler = new CommonFormFiller();
 
-            if (userField) userField.value = data.username;
-            if (pwdField) pwdField.value = data.password;
-            if (nameField) nameField.value = data.fullname || '';
+            // Wait for form to be interactive
+            await filler.waitForForm(page, 'input[id="playerid"]', 10000);
+            await new Promise(r => setTimeout(r, 1000));
 
-            [userField, pwdField, nameField].forEach(field => {
-                if (field) {
-                    field.dispatchEvent(new Event('input', { bubbles: true }));
-                    field.dispatchEvent(new Event('change', { bubbles: true }));
-                }
+            // Prepare phone (remove leading 0)
+            let phone = profileData.phone || '';
+            if (phone.startsWith('0')) {
+                phone = phone.substring(1);
+            }
+
+            // Fill fields using common filler
+            const fields = [
+                { selector: 'input[id="playerid"]', value: profileData.username, label: 'username' },
+                { selector: 'input[id="password"]', value: profileData.password, label: 'password' },
+                { selector: 'input[id="firstname"]', value: profileData.fullname || '', label: 'fullname' },
+                { selector: 'input[id="email"]', value: profileData.email || '', label: 'email' },
+                { selector: 'input[id="mobile"]', value: phone, label: 'mobile' }
+            ];
+
+            await filler.fillMultipleFields(page, fields, {
+                charDelay: 150,
+                beforeFocus: 300,
+                afterField: 800
             });
-        }, profileData);
+
+            // Handle agree checkbox - skip if already checked
+            console.log('✅ Checking agree checkbox...');
+            try {
+                const isChecked = await page.evaluate(() => {
+                    const checkbox = document.querySelector('input[id="agree"]');
+                    return checkbox ? checkbox.checked : false;
+                });
+
+                if (!isChecked) {
+                    const agreeCheckbox = await page.$('input[id="agree"]');
+                    if (agreeCheckbox) {
+                        await page.hover('input[id="agree"]');
+                        await new Promise(r => setTimeout(r, 200));
+                        await page.click('input[id="agree"]');
+                        await new Promise(r => setTimeout(r, 500));
+                    }
+                } else {
+                    console.log('✅ Agree checkbox already checked');
+                }
+            } catch (error) {
+                console.warn('⚠️ Could not interact with agree checkbox:', error.message);
+            }
+
+            // Trigger change events for all fields (React compatibility)
+            await page.evaluate(() => {
+                const fields = [
+                    'input[id="playerid"]',
+                    'input[id="password"]',
+                    'input[id="firstname"]',
+                    'input[id="email"]',
+                    'input[id="mobile"]',
+                    'input[id="agree"]'
+                ];
+
+                fields.forEach(selector => {
+                    const field = document.querySelector(selector);
+                    if (field) {
+                        field.dispatchEvent(new Event('input', { bubbles: true }));
+                        field.dispatchEvent(new Event('change', { bubbles: true }));
+                        field.dispatchEvent(new Event('blur', { bubbles: true }));
+                    }
+                });
+            });
+
+            console.log('✅ JUN88 form filled successfully');
+        } catch (error) {
+            console.error('❌ Error filling JUN88 form:', error.message);
+            throw error;
+        }
     }
 
     /**
@@ -1781,9 +3246,20 @@ class VIPAutomation {
                 return 'abcvip';
             }
 
-            // JUN88 sites
+            // JUN88 sites (Form 1 - có email)
             if (domain.includes('jun88') || domain.includes('jun-88')) {
                 return 'jun88';
+            }
+
+            // 78WIN sites (Form 2 - không email)
+            if (domain.includes('78win') || domain.includes('78-win')) {
+                return '78win';
+            }
+
+            // JUN88V2 sites (Form 3 - JOJODIOS)
+            if (domain.includes('jun88v2') || domain.includes('jun-88v2') ||
+                domain.includes('jojodios')) {
+                return 'jun88v2';
             }
 
             // KJC sites
@@ -1801,32 +3277,11 @@ class VIPAutomation {
 
     /**
      * Save account info after successful registration
+     * Lưu thông tin tài khoản vào dashboard API
      */
     async saveAccountInfo(profileData, category, siteName, allSites = []) {
         try {
-            console.log(`💾 Saving account info for ${category.toUpperCase()}/${siteName}...`);
-            console.log(`📍 Category: ${category}, Username: ${profileData.username}`);
-
-            const fs = require('fs');
-            const path = require('path');
-
-            // Create accounts folder structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-            const accountsDir = path.join(__dirname, '..', '..', 'accounts');
-            const vipCategoryDir = path.join(accountsDir, 'vip', category);
-
-            // Get today's date in YYYY-MM-DD format
-            const today = new Date();
-            const dateFolder = today.toISOString().split('T')[0]; // YYYY-MM-DD
-
-            const username = profileData.username;
-            const userAccountDir = path.join(vipCategoryDir, dateFolder, username);
-
-            console.log(`📁 Account directory: ${userAccountDir}`);
-
-            if (!fs.existsSync(userAccountDir)) {
-                fs.mkdirSync(userAccountDir, { recursive: true });
-                console.log(`📁 Created account directory: ${userAccountDir}`);
-            }
+            console.log(`    💾 Saving ${category.toUpperCase()} account info via API...`);
 
             // Prepare account info
             const accountInfo = {
@@ -1834,57 +3289,47 @@ class VIPAutomation {
                 password: profileData.password,
                 withdrawPassword: profileData.withdrawPassword,
                 fullname: profileData.fullname,
-                bankName: profileData.bankName,
-                bankBranch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
-                accountNumber: profileData.accountNumber,
+                email: profileData.email || '',
+                phone: profileData.phone || '',
+                bank: {
+                    name: profileData.bankName,
+                    branch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
+                    accountNumber: profileData.accountNumber,
+                    accountHolder: profileData.fullname
+                },
                 registeredAt: new Date().toISOString(),
+                firstSite: siteName,
+                sites: Array.isArray(allSites)
+                    ? allSites.map(s => typeof s === 'string' ? s : s.name || s)
+                    : [],
+                status: 'active',
                 category: category,
-                site: siteName,
-                sites: allSites // Lưu danh sách tất cả sites
+                tool: 'vip-tool'
             };
 
-            // Format as readable text
-            const sitesText = allSites && allSites.length > 0
-                ? allSites.map(s => `   • ${s}`).join('\n')
-                : '   • N/A';
-            const accountText = `
-═══════════════════════════════════════════════════════════
-                    THÔNG TIN TÀI KHOẢN ${category.toUpperCase()}
-═══════════════════════════════════════════════════════════
+            // Get dashboard port (dynamic)
+            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+            const apiUrl = `http://localhost:${dashboardPort}/api/accounts/${category}/${profileData.username}`;
+            console.log(`    📍 API URL: ${apiUrl}`);
 
-👤 THÔNG TIN ĐĂNG NHẬP
-   • Tên đăng nhập: ${profileData.username}
-   • Mật khẩu: ${profileData.password}
-   • Mật khẩu rút tiền: ${profileData.withdrawPassword}
-   • Họ và tên: ${profileData.fullname}
+            // Call API to save account info
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(accountInfo)
+            });
 
-💳 THÔNG TIN NGÂN HÀNG
-   • Ngân hàng: ${profileData.bankName || 'N/A'}
-   • Chi nhánh: ${profileData.bankBranch || 'Thành phố Hồ Chí Minh'}
-   • Số tài khoản: ${profileData.accountNumber || 'N/A'}
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
 
-📱 CÁC TRANG ĐƯỢC ĐĂNG KÝ
-${sitesText}
-
-📅 Ngày đăng ký: ${new Date().toLocaleString('vi-VN')}
-
-═══════════════════════════════════════════════════════════
-`;
-
-            // Save as category-specific JSON file
-            const accountJsonFile = path.join(userAccountDir, `${category}.json`);
-            fs.writeFileSync(accountJsonFile, JSON.stringify(accountInfo, null, 2));
-            console.log(`✅ Account JSON saved to: ${accountJsonFile}`);
-
-            // Also save as readable text file
-            const accountTextFile = path.join(userAccountDir, `${category}.txt`);
-            fs.writeFileSync(accountTextFile, accountText);
-            console.log(`✅ Account text saved to: ${accountTextFile}`);
-
-            console.log(`✅ Account info saved successfully for ${category.toUpperCase()}/${username}`);
+            const result = await response.json();
+            console.log(`    ✅ Account info saved via API:`, result.message);
 
         } catch (error) {
-            console.error(`❌ Error saving account info for ${category}/${siteName}:`, error.message);
+            console.error(`    ❌ Error saving account info:`, error.message);
             throw error;
         }
     }

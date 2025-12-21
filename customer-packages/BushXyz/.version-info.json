@@ -1,0 +1,9 @@
+{
+  "customer": "BushXyz",
+  "version": "3.0.0",
+  "createdAt": "2025-12-20T07:37:26.636Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_BushXyz_50810_71820",
+  "machineId": null,
+  "obfuscated": true
+}

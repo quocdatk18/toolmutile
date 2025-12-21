@@ -1,0 +1,43 @@
+{
+  "username": "WolfBolt9n",
+  "password": "6p6qypqo5",
+  "withdrawPassword": "840041",
+  "fullname": "TRUONG DUC DUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10360048106315531",
+    "accountHolder": "TRUONG DUC DUC"
+  },
+  "registeredAt": "2025-12-20T01:20:11.656Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T01:20:11.656Z",
+  "bankVerified": false
+}

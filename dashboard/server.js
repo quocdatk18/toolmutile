@@ -87,6 +87,14 @@ function checkLicense(req, res, next) {
     next();
 }
 
+// Get server time (for countdown synchronization)
+app.get('/api/server-time', (req, res) => {
+    res.json({
+        success: true,
+        timestamp: Date.now()
+    });
+});
+
 // License APIs (không cần check license)
 app.get('/api/license/info', (req, res) => {
     const checkResult = licenseManager.checkLicense();
@@ -217,13 +225,13 @@ app.get('/api/profiles/all', async (req, res) => {
         const profiles = response.data?.data?.content || [];
         const total = response.data?.data?.total || profiles.length;
 
-        console.log(`📊 Hidemium response:`, {
-            contentLength: profiles.length,
-            total: total,
-            requestedLimit: limit,
-            offset: offset,
-            hasMore: profiles.length < total
-        });
+        // console.log(`📊 Hidemium response:`, {
+        //     contentLength: profiles.length,
+        //     total: total,
+        //     requestedLimit: limit,
+        //     offset: offset,
+        //     hasMore: profiles.length < total
+        // });
 
         // If Hidemium has pagination limit, load all profiles in batches
         let allProfiles = [...profiles];
@@ -1011,11 +1019,27 @@ app.get('/api/automation/results', (req, res) => {
 // Helper function to process user folder
 function processUserFolder(username, userDir, toolId, results, toolFilter = null) {
     // Check if user has account info (for full automation vs promo check)
-    // New path: ../accounts/nohu/username
+    // New path: ../accounts/nohu/{YYYY-MM-DD}/{username}/account.json
     const accountsDir = path.join(__dirname, '../accounts/nohu');
-    const userAccountDir = path.join(accountsDir, username);
-    const hasAccountInfo = fs.existsSync(userAccountDir) &&
-        fs.readdirSync(userAccountDir).some(f => f.endsWith('.txt') || f.endsWith('.json'));
+    let hasAccountInfo = false;
+
+    // Check if account exists in any date folder
+    if (fs.existsSync(accountsDir)) {
+        const dateFolders = fs.readdirSync(accountsDir, { withFileTypes: true })
+            .filter(item => item.isDirectory())
+            .map(item => item.name);
+
+        for (const dateFolder of dateFolders) {
+            const userAccountDir = path.join(accountsDir, dateFolder, username);
+            if (fs.existsSync(userAccountDir)) {
+                const files = fs.readdirSync(userAccountDir);
+                if (files.some(f => f === 'account.json' || f === 'account.txt')) {
+                    hasAccountInfo = true;
+                    break;
+                }
+            }
+        }
+    }
 
     // Check if this is old structure (files directly) or new structure (session folders)
     const items = fs.readdirSync(userDir, { withFileTypes: true });
@@ -1119,58 +1143,42 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
 app.get('/api/accounts/nohu/:username', (req, res) => {
     try {
         const { username } = req.params;
-        // Try multiple paths to find accounts folder
-        let nohuAccountDir = null;
-        const possiblePaths = [
-            path.join(__dirname, '../accounts/nohu', username),
-            path.join(__dirname, 'accounts/nohu', username),
-            path.join(process.cwd(), 'accounts/nohu', username)
-        ];
+        const accountsDir = path.join(__dirname, '../accounts');
+        const nohuDir = path.join(accountsDir, 'nohu');
 
-        for (const tryPath of possiblePaths) {
-            if (fs.existsSync(tryPath)) {
-                nohuAccountDir = tryPath;
-                console.log(`✅ Found account folder: ${tryPath}`);
-                break;
+        if (!fs.existsSync(nohuDir)) {
+            console.error(`❌ NOHU accounts directory not found: ${nohuDir}`);
+            return res.json({ success: false, error: 'NOHU accounts directory not found' });
+        }
+
+        // Get all date folders and sort by date (newest first)
+        const dateFolders = fs.readdirSync(nohuDir)
+            .filter(f => /^\d{4}-\d{2}-\d{2}$/.test(f)) // Match YYYY-MM-DD format
+            .sort()
+            .reverse(); // Newest first
+
+        console.log(`📁 Found date folders: ${dateFolders.join(', ')}`);
+
+        // Search for username in date folders (newest first)
+        for (const dateFolder of dateFolders) {
+            const userDir = path.join(nohuDir, dateFolder, username);
+            if (fs.existsSync(userDir)) {
+                console.log(`✅ Found account in: ${userDir}`);
+
+                // Read account.json
+                const accountFile = path.join(userDir, 'account.json');
+                if (fs.existsSync(accountFile)) {
+                    const accountData = JSON.parse(fs.readFileSync(accountFile, 'utf8'));
+                    if (!accountData.sites) {
+                        accountData.sites = [];
+                    }
+                    return res.json({ success: true, account: accountData });
+                }
             }
         }
 
-        if (!nohuAccountDir) {
-            console.error(`❌ Account folder not found for ${username}. Tried paths:`, possiblePaths);
-            return res.json({ success: false, error: 'User account folder not found' });
-        }
-
-        // Read shared account file (account.json)
-        const sharedAccountFile = path.join(nohuAccountDir, 'account.json');
-        console.log(`🔍 Looking for: ${sharedAccountFile}`);
-
-        if (fs.existsSync(sharedAccountFile)) {
-            console.log(`✅ Found shared account file for NOHU: account.json`);
-            const accountData = JSON.parse(fs.readFileSync(sharedAccountFile, 'utf8'));
-            // Ensure sites field exists (for backward compatibility with old data)
-            if (!accountData.sites) {
-                accountData.sites = [];
-            }
-            return res.json({ success: true, account: accountData });
-        }
-
-        // Fallback: Try to find any account file (for legacy data)
-        const files = fs.readdirSync(nohuAccountDir).filter(f => f.endsWith('.json'));
-        console.log(`📁 Files in folder:`, files);
-
-        if (files.length > 0) {
-            console.log(`📁 No shared account file, using first available: ${files[0]}`);
-            const accountPath = path.join(nohuAccountDir, files[0]);
-            const accountData = JSON.parse(fs.readFileSync(accountPath, 'utf8'));
-            // Ensure sites field exists (for backward compatibility with old data)
-            if (!accountData.sites) {
-                accountData.sites = [];
-            }
-            return res.json({ success: true, account: accountData });
-        }
-
-        console.error(`❌ No account file found in: ${nohuAccountDir}`);
-        return res.json({ success: false, error: 'No account file found' });
+        console.error(`❌ Account not found for username: ${username}`);
+        return res.json({ success: false, error: 'User account not found' });
     } catch (error) {
         console.error('❌ Error getting NOHU account info:', error);
         res.status(500).json({ success: false, error: error.message });
@@ -1187,16 +1195,17 @@ app.post('/api/accounts/nohu/:username', (req, res) => {
             return res.status(400).json({ success: false, error: 'Account data required' });
         }
 
-        // Try multiple paths
-        let nohuAccountDir = null;
-        const possiblePaths = [
-            path.join(__dirname, '../accounts/nohu', username),
-            path.join(__dirname, 'accounts/nohu', username),
-            path.join(process.cwd(), 'accounts/nohu', username)
-        ];
+        // Get today's date in YYYY-MM-DD format (using local timezone, not UTC)
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const dateFolder = `${year}-${month}-${day}`; // YYYY-MM-DD in local timezone
 
-        // Use first existing path or create in first path
-        nohuAccountDir = possiblePaths[0];
+        // Create directory structure: accounts/nohu/{YYYY-MM-DD}/{username}
+        const accountsDir = path.join(__dirname, '../accounts');
+        const nohuDir = path.join(accountsDir, 'nohu');
+        const nohuAccountDir = path.join(nohuDir, dateFolder, username);
 
         // Create directory if not exists
         if (!fs.existsSync(nohuAccountDir)) {
@@ -1342,6 +1351,58 @@ app.get('/api/accounts/vip/:username', (req, res) => {
     }
 });
 
+// Get account info for specific VIP category (NEW: /api/accounts/vip/:category/:username)
+app.get('/api/accounts/vip/:category/:username', (req, res) => {
+    try {
+        const { category, username } = req.params;
+        const accountsDir = path.join(__dirname, '../accounts');
+        const vipDir = path.join(accountsDir, 'vip');
+
+        if (!fs.existsSync(vipDir)) {
+            return res.json({ success: false, error: 'VIP accounts folder not found' });
+        }
+
+        // Validate category
+        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        if (!validCategories.includes(category.toLowerCase())) {
+            return res.json({ success: false, error: 'Invalid category' });
+        }
+
+        const categoryDir = path.join(vipDir, category);
+        if (!fs.existsSync(categoryDir)) {
+            return res.json({ success: false, error: `Category folder not found: ${category}` });
+        }
+
+        // Search through date folders (latest first)
+        const dateFolders = fs.readdirSync(categoryDir, { withFileTypes: true })
+            .filter(item => item.isDirectory())
+            .map(item => item.name)
+            .sort()
+            .reverse(); // Sort by date descending to get latest first
+
+        for (const dateFolder of dateFolders) {
+            const userCategoryDir = path.join(categoryDir, dateFolder, username);
+            const accountFile = path.join(userCategoryDir, `${category}.json`);
+            if (fs.existsSync(accountFile)) {
+                console.log(`📁 Found ${category} account file at ${dateFolder}`);
+                const accountData = JSON.parse(fs.readFileSync(accountFile, 'utf8'));
+
+                // Ensure sites field exists
+                if (!accountData.sites) {
+                    accountData.sites = [];
+                }
+
+                return res.json({ success: true, account: accountData });
+            }
+        }
+
+        return res.json({ success: false, error: `No account file found for ${username} in ${category}` });
+    } catch (error) {
+        console.error('❌ Error getting account info:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
 // Save account info for VIP categories (okvip, abcvip, jun88, kjc)
 app.post('/api/accounts/:category/:username', (req, res) => {
     try {
@@ -1361,9 +1422,12 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         const accountsDir = path.join(__dirname, '../accounts');
         const vipCategoryDir = path.join(accountsDir, 'vip', category);
 
-        // Get today's date in YYYY-MM-DD format
+        // Get today's date in YYYY-MM-DD format (using local timezone, not UTC)
         const today = new Date();
-        const dateFolder = today.toISOString().split('T')[0]; // YYYY-MM-DD
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const dateFolder = `${year}-${month}-${day}`; // YYYY-MM-DD in local timezone
 
         const userAccountDir = path.join(vipCategoryDir, dateFolder, username);
 
@@ -1544,34 +1608,35 @@ app.delete('/api/results/clear', (req, res) => {
 
         // Function to recursively delete files in a directory
         function deleteFilesRecursive(dir) {
-            const items = fs.readdirSync(dir);
+            try {
+                const items = fs.readdirSync(dir);
 
-            items.forEach(item => {
-                const itemPath = path.join(dir, item);
-                const stat = fs.statSync(itemPath);
+                items.forEach(item => {
+                    const itemPath = path.join(dir, item);
+                    const stat = fs.statSync(itemPath);
 
-                if (stat.isDirectory()) {
-                    // Recursively delete files in subdirectory
-                    deleteFilesRecursive(itemPath);
-
-                    // Remove empty directory
-                    try {
-                        fs.rmdirSync(itemPath);
-                        console.log(`📁 Deleted folder: ${item}`);
-                    } catch (err) {
-                        console.error(`❌ Failed to delete folder ${item}:`, err.message);
+                    if (stat.isDirectory()) {
+                        // Recursively delete entire directory with all contents
+                        try {
+                            fs.rmSync(itemPath, { recursive: true, force: true });
+                            console.log(`📁 Deleted folder: ${item}`);
+                        } catch (err) {
+                            console.error(`❌ Failed to delete folder ${item}:`, err.message);
+                        }
+                    } else if (stat.isFile() && /\.(png|jpg|jpeg|gif|webp)$/i.test(item)) {
+                        // Delete image file
+                        try {
+                            fs.unlinkSync(itemPath);
+                            deletedCount++;
+                            console.log(`🗑️  Deleted: ${item}`);
+                        } catch (err) {
+                            console.error(`❌ Failed to delete ${item}:`, err.message);
+                        }
                     }
-                } else if (stat.isFile() && /\.(png|jpg|jpeg|gif|webp)$/i.test(item)) {
-                    // Delete image file
-                    try {
-                        fs.unlinkSync(itemPath);
-                        deletedCount++;
-                        console.log(`🗑️  Deleted: ${item}`);
-                    } catch (err) {
-                        console.error(`❌ Failed to delete ${item}:`, err.message);
-                    }
-                }
-            });
+                });
+            } catch (err) {
+                console.error(`❌ Error reading directory:`, err.message);
+            }
         }
 
         // Delete all files and subfolders
@@ -1955,7 +2020,7 @@ async function runSMSAutomationInBackground(smsAutoSequence, profileId, config, 
             }
         });
 
-        console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
+        // console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
 
         // Extract connection info
         const data = openResponse.data.data || openResponse.data;
@@ -2150,7 +2215,7 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
             throw new Error(`Failed to open profile in Hidemium: ${errorMsg}`);
         }
 
-        console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
+        // console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
 
         // Extract connection info
         const data = openResponse.data.data || openResponse.data;
@@ -2298,12 +2363,19 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                 const result = await autoSequence.runSequence(browser, profileData, profileData.sites);
                 console.log('✅ NOHU automation completed:', result);
 
+                // Handle both array and object response formats
+                const resultsArray = Array.isArray(result) ? result : (result?.results || []);
+
                 // Check if automation truly completed all steps successfully
-                const isFullyCompleted = result && result.length > 0 &&
-                    result.every(siteResult =>
+                // If checkPromo is disabled, don't require checkPromo success
+                const checkPromoRequired = profileData.checkPromo !== false;
+                const isFullyCompleted = resultsArray && resultsArray.length > 0 &&
+                    resultsArray.every(siteResult =>
                         siteResult.register?.success &&
                         siteResult.addBank?.success &&
-                        (siteResult.checkPromo?.success || siteResult.checkPromo?.skipped)
+                        (checkPromoRequired
+                            ? (siteResult.checkPromo?.success || siteResult.checkPromo?.skipped)
+                            : true) // If checkPromo disabled, don't check it
                     );
 
                 if (isFullyCompleted) {
@@ -2323,48 +2395,45 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                         console.error('⚠️  Failed to send complete status:', err.message);
                     }
 
-                    // Create screenshot files for UI to detect completion
-                    try {
-                        const screenshotsDir = path.join(__dirname, '../screenshots');
-                        const toolDir = path.join(screenshotsDir, 'nohu-tool');
-                        const sessionDir = path.join(toolDir, username, config.sessionId);
+                    // 🔥 Only create screenshot files if checkPromo was run (has actual screenshots)
+                    // If checkPromo disabled, don't create dummy files
+                    if (profileData.checkPromo !== false) {
+                        try {
+                            const screenshotsDir = path.join(__dirname, '../screenshots');
+                            // 🔥 Use same folder structure as checkPromo: {username}/{sessionId}/
+                            const sessionDir = path.join(screenshotsDir, username, config.sessionId);
 
-                        // Create directories if not exist
-                        if (!fs.existsSync(sessionDir)) {
-                            fs.mkdirSync(sessionDir, { recursive: true });
+                            // Create directories if not exist
+                            if (!fs.existsSync(sessionDir)) {
+                                fs.mkdirSync(sessionDir, { recursive: true });
+                            }
+
+                            // Save results.json for reference (actual screenshots already saved by checkPromo)
+                            const resultsFile = path.join(sessionDir, 'results.json');
+                            if (!fs.existsSync(resultsFile)) {
+                                fs.writeFileSync(resultsFile, JSON.stringify(resultsArray, null, 2));
+                            }
+
+                            console.log(`✅ Saved results.json in: ${sessionDir}`);
+                        } catch (fileErr) {
+                            console.warn('⚠️ Failed to save results.json:', fileErr.message);
                         }
-
-                        // Create dummy screenshot files for each site (for UI display)
-                        if (result && Array.isArray(result)) {
-                            result.forEach(siteResult => {
-                                const siteName = siteResult.site || 'unknown';
-                                const screenshotFile = path.join(sessionDir, `${siteName}.png`);
-                                // Create empty file (UI will use this to detect results)
-                                if (!fs.existsSync(screenshotFile)) {
-                                    fs.writeFileSync(screenshotFile, '');
-                                }
-                            });
-                        }
-
-                        // Save results.json for reference
-                        const resultsFile = path.join(sessionDir, 'results.json');
-                        if (!fs.existsSync(resultsFile)) {
-                            fs.writeFileSync(resultsFile, JSON.stringify(result, null, 2));
-                        }
-
-                        console.log(`✅ Created screenshot files for UI detection in: ${sessionDir}`);
-                    } catch (fileErr) {
-                        console.warn('⚠️ Failed to create screenshot files:', fileErr.message);
+                    } else {
+                        console.log('ℹ️  CheckPromo disabled - skipping screenshot file creation');
                     }
                 } else {
                     console.log('⚠️  Automation incomplete - not sending "complete" status');
-                    console.log('   Result summary:', result?.results?.map(r => ({
-                        site: r.site,
-                        register: r.register?.success,
-                        login: r.login?.success,
-                        addBank: r.addBank?.success,
-                        checkPromo: r.checkPromo?.success || r.checkPromo?.skipped
-                    })));
+                    if (Array.isArray(resultsArray)) {
+                        console.log('   Result summary:', resultsArray.map(r => ({
+                            site: r.site,
+                            register: r.register?.success,
+                            login: r.login?.success,
+                            addBank: r.addBank?.success,
+                            checkPromo: r.checkPromo?.success || r.checkPromo?.skipped
+                        })));
+                    } else {
+                        console.log('   Result is not an array:', typeof resultsArray);
+                    }
 
                     // Send "error" status instead since automation didn't complete fully
                     try {
@@ -2437,7 +2506,7 @@ async function runAutomationInBackground(automation, profileId, config) {
             }
         });
 
-        console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
+        // console.log('📦 Hidemium response:', JSON.stringify(openResponse.data, null, 2));
 
         // Extract connection info from Hidemium response
         const data = openResponse.data.data || openResponse.data;
@@ -3102,6 +3171,22 @@ if (adminAPI) {
     app.post('/api/admin/build-package', async (req, res) => {
         try {
             const result = await adminAPI.buildPackage(req.body);
+
+            // Auto-add customer to customer-machines.json when creating new package
+            if (result.success && req.body.customerName) {
+                const customerManager = new CustomerMachineManager();
+                const existingCustomer = customerManager.getCustomer(req.body.customerName);
+
+                if (!existingCustomer) {
+                    // Add new customer with empty Machine ID (to be filled by admin when customer provides it)
+                    customerManager.addOrUpdateCustomer(
+                        req.body.customerName,
+                        '',  // Empty - admin will fill when customer provides Machine ID
+                        'Auto-added when package created'
+                    );
+                }
+            }
+
             res.json(result);
         } catch (error) {
             res.json({ success: false, message: error.message });
@@ -3184,9 +3269,21 @@ if (adminAPI) {
                 console.warn('⚠️ Could not find old secret key, will generate new one');
             }
 
-            // Step 3: Delete old package
+            // Step 3: Delete old package (but preserve customer data in customer-machines.json)
             console.log('📦 Step 3: Deleting old package...');
-            await adminAPI.deletePackage(customerName);
+            const packagePath = path.join(__dirname, '..', 'customer-packages', customerName);
+            if (fs.existsSync(packagePath)) {
+                fs.rmSync(packagePath, { recursive: true, force: true });
+                console.log(`✅ Old package folder deleted`);
+            }
+
+            // Also delete secret key file
+            if (fs.existsSync(secretKeyFile)) {
+                fs.unlinkSync(secretKeyFile);
+            }
+
+            // ⚠️ IMPORTANT: Do NOT delete customer from customer-machines.json
+            // This preserves license history and other customer data
 
             // Step 4: Build new package with latest code, REUSING OLD SECRET KEY
             console.log('📦 Step 4: Building new package with latest code...');
@@ -3218,7 +3315,18 @@ if (adminAPI) {
             console.log('📦 Step 6: Restoring Machine ID...');
             const CustomerMachineManager = require('./customer-machine-manager');
             const tempCustomerManager = new CustomerMachineManager();
-            tempCustomerManager.addOrUpdateCustomer(customerName, machineId, 'Upgraded package. Machine ID, Secret Key, and License preserved.');
+
+            // Check if customer already exists
+            const existingCustomer = tempCustomerManager.getCustomer(customerName);
+            if (existingCustomer) {
+                // Customer already exists, just update notes
+                existingCustomer.notes = 'Upgraded package. Machine ID, Secret Key, and License preserved.';
+                existingCustomer.updatedAt = new Date().toISOString();
+                tempCustomerManager.saveCustomers();
+            } else {
+                // Customer doesn't exist, add with placeholder (will be updated when customer provides real Machine ID)
+                tempCustomerManager.addOrUpdateCustomer(customerName, machineId, 'Upgraded package. Machine ID, Secret Key, and License preserved.');
+            }
 
             const keyStatus = oldLicenseContent && oldSecretKey
                 ? '✅ License key cũ VẪN HOẠT ĐỘNG!'
@@ -3244,11 +3352,12 @@ if (adminAPI) {
 
     // Customer Machine Management APIs
     const CustomerMachineManager = require('./customer-machine-manager');
-    const customerManager = new CustomerMachineManager();
 
     // Get all customers
     app.get('/api/admin/customers', (req, res) => {
         try {
+            // Create new instance each time to reload data from file
+            const customerManager = new CustomerMachineManager();
             const customers = customerManager.getAllCustomers();
             const stats = customerManager.getStats();
             res.json({ success: true, customers, stats });
@@ -3261,6 +3370,7 @@ if (adminAPI) {
     // Add or update customer
     app.post('/api/admin/customers', (req, res) => {
         try {
+            const customerManager = new CustomerMachineManager();
             const { customerName, machineId, displayName, notes } = req.body;
 
             // Allow displayName update without machineId
@@ -3296,6 +3406,7 @@ if (adminAPI) {
     // Get specific customer
     app.get('/api/admin/customers/:customerName', (req, res) => {
         try {
+            const customerManager = new CustomerMachineManager();
             const { customerName } = req.params;
             const customer = customerManager.getCustomer(customerName);
 
@@ -3316,6 +3427,7 @@ if (adminAPI) {
     // Delete customer
     app.delete('/api/admin/customers/:customerName', (req, res) => {
         try {
+            const customerManager = new CustomerMachineManager();
             const { customerName } = req.params;
             const success = customerManager.removeCustomer(customerName);
 
@@ -3336,6 +3448,7 @@ if (adminAPI) {
     // Generate license for customer
     app.post('/api/admin/customers/:customerName/generate-license', async (req, res) => {
         try {
+            const customerManager = new CustomerMachineManager();
             const { customerName } = req.params;
             const { expiryDays, allowedTools, notes } = req.body;
 
@@ -3388,6 +3501,7 @@ if (adminAPI) {
     // Search customers
     app.get('/api/admin/customers/search/:query', (req, res) => {
         try {
+            const customerManager = new CustomerMachineManager();
             const { query } = req.params;
             const customers = customerManager.searchCustomers(query);
             res.json({ success: true, customers });
@@ -3400,6 +3514,7 @@ if (adminAPI) {
     // Unlock Machine ID (admin only, for special cases)
     app.post('/api/admin/customers/:customerName/unlock-machine-id', (req, res) => {
         try {
+            const customerManager = new CustomerMachineManager();
             const { customerName } = req.params;
             const { reason } = req.body;
 
@@ -3433,6 +3548,7 @@ if (adminAPI) {
     // Get license history for customer
     app.get('/api/admin/customers/:customerName/license-history', (req, res) => {
         try {
+            const customerManager = new CustomerMachineManager();
             const { customerName } = req.params;
             console.log(`📋 Getting license history for customer: ${customerName}`);
 
@@ -3466,6 +3582,7 @@ if (adminAPI) {
     // Import customers from existing packages
     app.post('/api/admin/customers/import-from-packages', async (req, res) => {
         try {
+            const customerManager = new CustomerMachineManager();
             const packagesResult = await adminAPI.listPackages();
 
             if (!packagesResult.success) {
@@ -3481,6 +3598,8 @@ if (adminAPI) {
                     const existingCustomer = customerManager.getCustomer(pkg.name);
 
                     if (!existingCustomer) {
+                        // ⚠️ IMPORTANT: Only add NEW customers (never existed before)
+                        // Do NOT re-add deleted customers as it will clear their license history
                         // Add customer with placeholder Machine ID
                         customerManager.addOrUpdateCustomer(
                             pkg.name,
@@ -3489,6 +3608,7 @@ if (adminAPI) {
                         );
                         importedCount++;
                     }
+                    // If customer already exists, skip (preserve their license history)
                 } catch (error) {
                     errors.push(`${pkg.name}: ${error.message}`);
                 }

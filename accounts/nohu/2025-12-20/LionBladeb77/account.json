@@ -1,0 +1,43 @@
+{
+  "username": "LionBladeb77",
+  "password": "pi439s4vap7",
+  "withdrawPassword": "723545",
+  "fullname": "QUANG VAN TRUONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10360048106315522",
+    "accountHolder": "QUANG VAN TRUONG"
+  },
+  "registeredAt": "2025-12-20T01:20:57.709Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T01:20:57.709Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "StarStorm8n8",
+  "password": "v2008xkn",
+  "withdrawPassword": "413397",
+  "fullname": "nguyenquocdat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "DA NANG",
+    "accountNumber": "440664067",
+    "accountHolder": "nguyenquocdat"
+  },
+  "registeredAt": "2025-12-20T06:43:50.383Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T06:43:50.383Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "StarSoul7n",
+  "password": "3bt7gh8yjwiu",
+  "withdrawPassword": "591666",
+  "fullname": "PHAN MINH TAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10360048106310741",
+    "accountHolder": "PHAN MINH TAM"
+  },
+  "registeredAt": "2025-12-19T23:42:51.095Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-19T23:42:51.095Z",
+  "bankVerified": false
+}

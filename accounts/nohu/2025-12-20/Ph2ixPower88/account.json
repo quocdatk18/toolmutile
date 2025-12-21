@@ -1,0 +1,43 @@
+{
+  "username": "Ph2ixPower88",
+  "password": "g5ddxg45c",
+  "withdrawPassword": "149513",
+  "fullname": "DANG MINH BINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10360048106307700",
+    "accountHolder": "DANG MINH BINH"
+  },
+  "registeredAt": "2025-12-19T21:14:16.843Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-19T21:14:16.843Z",
+  "bankVerified": false
+}

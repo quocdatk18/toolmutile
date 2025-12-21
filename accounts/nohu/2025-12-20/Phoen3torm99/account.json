@@ -1,0 +1,43 @@
+{
+  "username": "Phoen3torm99",
+  "password": "udatnsetlf87",
+  "withdrawPassword": "896457",
+  "fullname": "nguyenquoc dat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "HA NOI",
+    "accountNumber": "640664067",
+    "accountHolder": "nguyenquoc dat"
+  },
+  "registeredAt": "2025-12-20T06:49:53.737Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T06:49:53.737Z",
+  "bankVerified": false
+}

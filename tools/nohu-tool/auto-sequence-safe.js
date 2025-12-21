@@ -656,6 +656,115 @@ class AutoSequenceSafe {
                     // Gửi countdown qua API (không bị mất khi page redirect)
                     const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
                     const startTime = Date.now();
+
+                    // Inject countdown timer into page (update every 100ms for smooth countdown)
+                    // Timer will persist across page redirects via localStorage
+                    await page.evaluate((delayMs, startTimeMs) => {
+                        // Save countdown state to localStorage (persists across redirects and domain changes)
+                        localStorage.setItem('countdownStartTime', startTimeMs);
+                        localStorage.setItem('countdownDuration', delayMs);
+                        localStorage.setItem('countdownActive', 'true');
+
+                        window.countdownStartTime = startTimeMs;
+                        window.countdownDuration = delayMs;
+
+                        // Function to create/update timer
+                        function createOrUpdateTimer() {
+                            let timerDiv = document.getElementById('countdown-timer');
+
+                            if (!timerDiv) {
+                                timerDiv = document.createElement('div');
+                                timerDiv.id = 'countdown-timer';
+                                timerDiv.style.cssText = `
+                                    position: fixed;
+                                    top: 20px;
+                                    right: 20px;
+                                    background: linear-gradient(135deg, #667eea, #764ba2);
+                                    color: white;
+                                    padding: 20px 30px;
+                                    border-radius: 12px;
+                                    font-size: 24px;
+                                    font-weight: bold;
+                                    z-index: 10000;
+                                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                                    text-align: center;
+                                    min-width: 150px;
+                                `;
+                                document.body.appendChild(timerDiv);
+                            }
+
+                            return timerDiv;
+                        }
+
+                        // Function to start/restart countdown
+                        function startCountdown() {
+                            // Clear existing interval if any
+                            if (window.countdownInterval) {
+                                clearInterval(window.countdownInterval);
+                            }
+
+                            // Check if countdown is still active (not expired)
+                            const isActive = localStorage.getItem('countdownActive') === 'true';
+                            if (!isActive) {
+                                console.log('Countdown already completed, skipping');
+                                return;
+                            }
+
+                            // Restore from localStorage if available (after redirect)
+                            const savedStartTime = localStorage.getItem('countdownStartTime');
+                            const savedDuration = localStorage.getItem('countdownDuration');
+
+                            if (savedStartTime && savedDuration) {
+                                window.countdownStartTime = parseInt(savedStartTime);
+                                window.countdownDuration = parseInt(savedDuration);
+                                console.log('Restored countdown from localStorage after redirect');
+                            }
+
+                            // Update timer every 100ms (will work even after page redirect)
+                            window.countdownInterval = setInterval(() => {
+                                const elapsedMs = Date.now() - window.countdownStartTime;
+                                const remainingMs = Math.max(0, window.countdownDuration - elapsedMs);
+                                const remainingSeconds = Math.ceil(remainingMs / 1000);
+
+                                const timerDiv = createOrUpdateTimer();
+                                timerDiv.textContent = `⏳ ${remainingSeconds}s\nChuyển sang Thêm Bank`;
+
+                                if (remainingMs <= 0) {
+                                    clearInterval(window.countdownInterval);
+                                    if (timerDiv) timerDiv.remove();
+                                    // Mark countdown as completed
+                                    localStorage.setItem('countdownActive', 'false');
+                                }
+                            }, 100);
+                        }
+
+                        // Start countdown immediately
+                        startCountdown();
+
+                        // Restart countdown if page reloads (for redirect scenarios)
+                        // Use multiple events to ensure it works after redirect
+                        window.addEventListener('load', () => {
+                            console.log('Page load event fired, restarting countdown timer...');
+                            setTimeout(() => startCountdown(), 100);
+                        });
+
+                        document.addEventListener('DOMContentLoaded', () => {
+                            console.log('DOMContentLoaded event fired, restarting countdown timer...');
+                            setTimeout(() => startCountdown(), 100);
+                        });
+
+                        // Also check periodically if timer is still running (fallback for redirect)
+                        setInterval(() => {
+                            const isActive = localStorage.getItem('countdownActive') === 'true';
+                            const timerExists = document.getElementById('countdown-timer');
+
+                            if (isActive && !timerExists && window.countdownStartTime) {
+                                console.log('Timer missing after redirect, restarting...');
+                                startCountdown();
+                            }
+                        }, 1000);
+                    }, randomDelay, Date.now());
+
                     const countdownInterval = setInterval(async () => {
                         try {
                             const elapsedMs = Date.now() - startTime;
@@ -1115,55 +1224,85 @@ class AutoSequenceSafe {
                             };
                         }
 
+                        // Trường hợp 6: Form vẫn visible nhưng KHÔNG có error modal → submit thành công
+                        // (Form không disappear là bình thường, chỉ cần không có error là được)
+                        if (!verifyResult.hasErrorModal && !verifyResult.isErrorContent) {
+                            return {
+                                success: true,
+                                verified: false,
+                                message: 'Bank form submitted successfully (no error detected) - form still visible but submission succeeded',
+                                verifyResult
+                            };
+                        }
+
                     }, `Add bank for ${siteName}`);
 
                     // Kiểm tra bankResult có tồn tại và có success property
                     if (bankResult && typeof bankResult === 'object' && bankResult.success) {
-                        if (bankResult.verified) {
-                            console.log(`✅ Bank info added and VERIFIED for ${siteName}`);
-                            results.addBank = { success: true, verified: true, method: 'freelxb_style', message: bankResult.message };
+                        // Submit thành công = bank đã được lưu vào hệ thống
+                        console.log(`✅ Bank info submitted successfully for ${siteName}`);
+                        results.addBank = { success: true, verified: bankResult.verified, method: 'freelxb_style', message: bankResult.message };
 
-                            // Send success status message
-                            try {
-                                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        profileId: profileData.profileId,
-                                        username: profileData.username,
-                                        status: 'running',
-                                        message: `✅ Thêm Bank thành công`,
-                                        timestamp: new Date().toISOString()
-                                    })
-                                }).catch(e => console.warn('⚠️ Could not send status:', e.message));
-                            } catch (e) {
-                                // Ignore errors
+                        // Cập nhật account info với bank data (submit thành công = bank đã lưu)
+                        console.log(`💾 Updating account info with bank data for ${siteName}...`);
+                        try {
+                            const updatedAccountInfo = {
+                                username: profileData.username,
+                                password: profileData.password,
+                                withdrawPassword: profileData.withdrawPassword,
+                                fullname: profileData.fullname,
+                                email: profileData.email || '',
+                                phone: profileData.phone || '',
+                                bank: {
+                                    name: profileData.bankName,
+                                    branch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
+                                    accountNumber: profileData.accountNumber,
+                                    accountHolder: profileData.fullname
+                                },
+                                registeredAt: new Date().toISOString(),
+                                firstSite: siteName,
+                                sites: profileData.sites || [],
+                                status: 'active',
+                                tool: 'nohu-sms',
+                                bankAddedAt: new Date().toISOString(),
+                                bankVerified: bankResult.verified || false
+                            };
+
+                            const updateResponse = await fetch(`http://localhost:${dashboardPort}/api/accounts/nohu/${profileData.username}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(updatedAccountInfo)
+                            });
+
+                            if (updateResponse.ok) {
+                                console.log(`✅ Account info updated with bank data`);
+                            } else {
+                                console.warn(`⚠️ Failed to update account info: ${updateResponse.status}`);
                             }
-
-                            // Mark tab as completed - no longer needs activation rotation
-                            this.markTabCompleted(siteName);
-                        } else {
-                            console.log(`⚠️ Bank info added but NOT VERIFIED for ${siteName} - will skip checkPromo`);
-                            // success: true vì form biến mất = bank đã submit thành công, chỉ là không verify được data
-                            results.addBank = { success: true, verified: false, method: 'freelxb_style', message: bankResult.message };
-
-                            // Send warning status message
-                            try {
-                                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
-                                    method: 'POST',
-                                    headers: { 'Content-Type': 'application/json' },
-                                    body: JSON.stringify({
-                                        profileId: profileData.profileId,
-                                        username: profileData.username,
-                                        status: 'running',
-                                        message: `⚠️ Thêm Bank nhưng không xác minh được`,
-                                        timestamp: new Date().toISOString()
-                                    })
-                                }).catch(e => console.warn('⚠️ Could not send status:', e.message));
-                            } catch (e) {
-                                // Ignore errors
-                            }
+                        } catch (e) {
+                            console.warn(`⚠️ Error updating account info:`, e.message);
                         }
+
+                        // Send status message
+                        try {
+                            const statusMsg = bankResult.verified ? '✅ Thêm Bank thành công' : '⚠️ Thêm Bank nhưng không xác minh được';
+                            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    profileId: profileData.profileId,
+                                    username: profileData.username,
+                                    status: 'running',
+                                    message: statusMsg,
+                                    timestamp: new Date().toISOString()
+                                })
+                            }).catch(e => console.warn('⚠️ Could not send status:', e.message));
+                        } catch (e) {
+                            // Ignore errors
+                        }
+
+                        // Mark tab as completed - no longer needs activation rotation
+                        this.markTabCompleted(siteName);
                     } else {
                         console.log(`❌ Bank info addition failed for ${siteName}:`, bankResult?.error || 'Unknown error');
                         results.addBank = { success: false, error: bankResult?.error || 'Bank result is undefined or invalid' };
@@ -1282,9 +1421,13 @@ class AutoSequenceSafe {
                 } else if (!results.addBank?.success) {
                     console.log(`⏭️ STEP 6: Skipping check promo for ${siteName} (add bank failed)`);
                     results.checkPromo = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                } else if (!results.addBank?.verified) {
-                    console.log(`⏭️ STEP 6: Skipping check promo for ${siteName} (add bank not verified)`);
-                    results.checkPromo = { success: false, skipped: true, message: 'Skipped - add bank not verified, please check manually' };
+                } else {
+                    // Run checkPromo if addBank.success === true (regardless of verified status)
+                    // verified: false just means we couldn't verify the data match, but bank was likely added
+                    console.log(`✅ STEP 6: Running check promo for ${siteName} (add bank success)`);
+                    if (results.addBank?.verified === false) {
+                        console.log(`⚠️ Note: Bank not verified but proceeding with checkPromo anyway`);
+                    }
                 }
             } else {
                 console.log(`❌ Registration failed for ${siteName}:`, registerResult.error);
@@ -1500,6 +1643,7 @@ class AutoSequenceSafe {
             const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
             const completionStatus = {
                 profileId: profileData.profileId,
+                profileName: profileData.profileName, // 🔥 Add profileName
                 username: profileData.username,
                 status: 'completed',
                 timestamp: new Date().toISOString(),
@@ -1557,10 +1701,10 @@ class AutoSequenceSafe {
                         console.error(`🚨 Page script error for ${siteName} promo:`, error.message);
                     });
 
-                    // Navigate to promo URL
+                    // Navigate to promo URL (increased timeout for slow servers)
                     await page.goto(promoUrl, {
                         waitUntil: 'domcontentloaded',
-                        timeout: 30000
+                        timeout: 60000  // Increased from 30s to 60s for slow servers
                     });
 
                     // Inject scripts

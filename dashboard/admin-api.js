@@ -926,7 +926,8 @@ ${licenseKey}
                 fs.unlinkSync(secretKeyFile);
             }
 
-            // Delete from customer-machines.json
+            // Delete from customer-machines.json (when deleting package, also remove customer data)
+            // Upgrade package preserves customer data, but delete package removes it completely
             const machinesFile = path.join(process.cwd(), 'customer-machines.json');
             if (fs.existsSync(machinesFile)) {
                 const machines = JSON.parse(fs.readFileSync(machinesFile, 'utf8'));

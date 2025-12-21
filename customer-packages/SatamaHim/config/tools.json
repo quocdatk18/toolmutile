@@ -64,7 +64,7 @@
       "icon": "🎲",
       "description": "Tự động đăng ký, đăng nhập, thêm bank, xác thực SĐT và nhận khuyến mãi cho các trang 22vip",
       "version": "1.0.0",
-      "status": "active",
+      "status": "maintenance",
       "maintenanceMessage": "Tool đang trong quá trình nâng cấp. Vui lòng quay lại sau!",
       "requiresApiKey": true,
       "requiresExtension": true,

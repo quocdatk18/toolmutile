@@ -14,26 +14,57 @@
     let vipConfig = null;
     let configLoaded = false;
 
-    // Load config from file
+    // Load config from server API (dynamic from vip-automation.js)
     async function loadVipConfig() {
         try {
-            const response = await fetch('tools-ui/vip/vip-config.json');
-            vipConfig = await response.json();
+            // First, try to load from server API to get dynamic config from vip-automation.js
+            // Disabled categories: jun88v2 (maintenance)
+            const categories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
+            const sitesData = {};
+
+            for (const category of categories) {
+                try {
+                    const response = await fetch(`/api/vip-automation/category/${category}`);
+                    const result = await response.json();
+                    if (result.success && result.data && result.data.sites) {
+                        sitesData[category] = result.data.sites;
+                        console.log(`✅ Loaded ${result.data.sites.length} sites for ${category} from server`);
+                    }
+                } catch (e) {
+                    console.warn(`⚠️ Failed to load ${category} from server, will use fallback`);
+                }
+            }
+
+            // Build config with server data
+            vipConfig = {
+                categories: [
+                    { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
+                    { id: 'abcvip', icon: '🎲', name: 'ABCVIP', color: '#0066cc' },
+                    { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
+                    { id: '78win', icon: '🎯', name: '78WIN', color: '#ff9900' },
+                    // { id: 'jun88v2', icon: '🎯', name: 'JUN88V2 (Bảo trì)', color: '#0099cc' }, // Disabled - Maintenance
+                    { id: 'kjc', icon: '🎪', name: 'KJC', color: '#cc0000' }
+                ],
+                sites: sitesData
+            };
+
             configLoaded = true;
-            console.log('✅ VIP Config loaded:', vipConfig);
+            console.log('✅ VIP Config loaded from server:', vipConfig);
             // Trigger any pending operations
             if (window.pendingCategoryLoad) {
                 loadCategoryManagementContent(window.pendingCategoryLoad);
                 window.pendingCategoryLoad = null;
             }
         } catch (error) {
-            console.error('❌ Failed to load VIP config:', error);
+            console.error('❌ Failed to load VIP config from server:', error);
             // Fallback to default config
             vipConfig = {
                 categories: [
                     { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
                     { id: 'abcvip', icon: '🎲', name: 'ABCVIP', color: '#0066cc' },
                     { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
+                    { id: '78win', icon: '🎯', name: '78WIN', color: '#ff9900' },
+                    // { id: 'jun88v2', icon: '🎯', name: 'JUN88V2', color: '#0099cc' }, // Disabled - Maintenance
                     { id: 'kjc', icon: '🎪', name: 'KJC', color: '#cc0000' }
                 ],
                 sites: {
@@ -52,9 +83,10 @@
                         { name: '888clb', registerUrl: 'https://88clb2jt.buzz/?f=889534&app=1/Account/Register', checkPromoUrl: 'https://88clb88.xyz/' }
                     ],
                     'jun88': [
-                        { name: 'Jun881', registerUrl: 'https://jun881.com/register', checkPromoUrl: 'https://jun881.com/promo' },
-                        { name: 'Jun882', registerUrl: 'https://jun882.com/register', checkPromoUrl: 'https://jun882.com/promo' },
-                        { name: 'Jun883', registerUrl: 'https://jun883.com/register', checkPromoUrl: 'https://jun883.com/promo' }
+                        { name: 'Jun881', registerUrl: 'https://sasa2.xn--8866-um1g.com/signup', checkPromoUrl: 'https://trungtam.khuyenmaijun881.win/?promo_id=FR58' }
+                    ],
+                    '78win': [
+                        { name: '78WIN1', registerUrl: 'https://www.78win6.zone/signup', checkPromoUrl: 'https://daily78win.net/' }
                     ],
                     'kjc': [
                         { name: 'KJC1', registerUrl: 'https://kjc1.com/register', checkPromoUrl: 'https://kjc1.com/promo' },
@@ -246,12 +278,26 @@
                                 <span style="font-size: 11px; font-weight: 600;">🎲 ABCVIP</span>
                             </label>
                             <label
-                                style="display: flex; align-items: center; gap: 6px; cursor: not-allowed; padding: 6px 8px; background: #f3f4f6; border-radius: 6px; border: 2px solid #d1d5db; transition: all 0.2s; opacity: 0.5;"
-                                class="category-label" title="Chưa hoàn thành - sẽ bật lại sau">
+                                style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s;"
+                                class="category-label">
                                 <input type="radio" name="vipCategory" value="jun88" onchange="toggleCategorySites()"
+                                    style="width: 14px; height: 14px; cursor: pointer;">
+                                <span style="font-size: 11px; font-weight: 600;">🎯 JUN88</span>
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s;"
+                                class="category-label">
+                                <input type="radio" name="vipCategory" value="78win" onchange="toggleCategorySites()"
+                                    style="width: 14px; height: 14px; cursor: pointer;">
+                                <span style="font-size: 11px; font-weight: 600;">🎯 78WIN</span>
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 6px; cursor: not-allowed; padding: 6px 8px; background: #f3f4f6; border-radius: 6px; border: 2px solid #d1d5db; transition: all 0.2s; opacity: 0.5;"
+                                class="category-label" title="Bảo trì - sẽ bật lại sau">
+                                <input type="radio" name="vipCategory" value="jun88v2" onchange="toggleCategorySites()"
                                     style="width: 14px; height: 14px; cursor: not-allowed;" disabled>
-                                <span style="font-size: 11px; font-weight: 600; color: #9ca3af;">🎯 JUN88 (Sắp
-                                    tới)</span>
+                                <span style="font-size: 11px; font-weight: 600; color: #9ca3af;">🎯 JUN88V2 (Bảo
+                                    trì)</span>
                             </label>
                             <label
                                 style="display: flex; align-items: center; gap: 6px; cursor: not-allowed; padding: 6px 8px; background: #f3f4f6; border-radius: 6px; border: 2px solid #d1d5db; transition: all 0.2s; opacity: 0.5;"
@@ -325,7 +371,7 @@
 
                     <!-- Delay Captcha -->
                     <div
-                        style="padding: 10px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe; margin-top: auto;">
+                        style="padding: 10px; background: #f0f9ff; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 12px;">
                         <h4 style="margin: 0 0 10px 0; color: #1e40af; font-size: 13px; font-weight: 600;">⏱️ Delay
                             Captcha</h4>
                         <label style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #1e40af;">
@@ -344,6 +390,8 @@
                             💡 Tránh detect bot, để tool tự động chạy
                         </div>
                     </div>
+
+
                 </div>
 
                 <!-- RIGHT COLUMN: Form Inputs -->
@@ -735,6 +783,9 @@
         const activeTab = document.querySelector('.modal-tab.active');
         const tabName = activeTab?.getAttribute('data-tab');
 
+        // Enable button immediately after starting (not waiting for completion)
+        if (btn) enableButton(btn);
+
         if (tabName === 'auto') {
             await runAutoAutomation();
         } else if (tabName === 'promo') {
@@ -1108,8 +1159,13 @@
 
     // Random toàn bộ form
     function randomAllForm() {
-        // Random username
-        const username = generateRandomUsername();
+        // Random username (lowercase only, max 7 characters)
+        const usernameLength = 5 + Math.floor(Math.random() * 3); // 5-7 chars
+        const lowerChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let username = '';
+        for (let i = 0; i < usernameLength; i++) {
+            username += lowerChars[Math.floor(Math.random() * lowerChars.length)];
+        }
         document.getElementById('autoUsername').value = username;
 
         // Random fullname (Vietnamese names)
@@ -1144,8 +1200,13 @@
         const withdrawPassword = Math.floor(100000 + Math.random() * 900000).toString();
         document.getElementById('autoWithdrawPassword').value = withdrawPassword;
 
-        // Random email
-        const email = `${username}${Math.floor(Math.random() * 10000)}@gmail.com`;
+        // Random email (lowercase only, max 7 chars before @)
+        const emailLength = 5 + Math.floor(Math.random() * 3); // 5-7 chars
+        let email = '';
+        for (let i = 0; i < emailLength; i++) {
+            email += lowerChars[Math.floor(Math.random() * lowerChars.length)];
+        }
+        email += '@gmail.com';
         document.getElementById('autoEmail').value = email;
 
         // Random phone
@@ -1163,15 +1224,17 @@
         const accountLength = 10 + Math.floor(Math.random() * 5);
         let accountNumber = '';
         for (let i = 0; i < accountLength; i++) { accountNumber += Math.floor(Math.random() * 10); }
-        document.getElementById('autoAccountNumber').value = accountNumber; // Visual feedback const
-        inputs = ['autoUsername', 'autoFullname', 'autoPassword', 'autoWithdrawPassword', 'autoEmail', 'autoPhone'
-            , 'autoBankName', 'autoAccountNumber']; inputs.forEach(id => {
-                const input = document.getElementById(id);
-                if (input && input.value) {
-                    input.style.background = 'linear-gradient(135deg, #ebf4ff, #e0e7ff)';
-                    setTimeout(() => { input.style.background = ''; }, 1000);
-                }
-            });
+        document.getElementById('autoAccountNumber').value = accountNumber;
+
+        // Visual feedback
+        const inputs = ['autoUsername', 'autoFullname', 'autoPassword', 'autoWithdrawPassword', 'autoEmail', 'autoPhone', 'autoBankName', 'autoAccountNumber'];
+        inputs.forEach(id => {
+            const input = document.getElementById(id);
+            if (input && input.value) {
+                input.style.background = 'linear-gradient(135deg, #ebf4ff, #e0e7ff)';
+                setTimeout(() => { input.style.background = ''; }, 1000);
+            }
+        });
 
         console.log('✅ Random form completed');
     }
@@ -1968,10 +2031,24 @@
             if (data.success && data.statuses) {
                 // Track which usernames are currently running
                 const currentlyRunning = new Set();
+                let needsRefresh = false;
 
                 for (const status of data.statuses) {
                     if (status.status === 'running') {
                         currentlyRunning.add(status.username);
+
+                        // Mark profile as running if not already marked
+                        if (typeof profileManager !== 'undefined') {
+                            const profile = availableProfiles.find(p => p.name === status.username);
+                            if (profile && !profileManager.runningProfiles.has(profile.uuid)) {
+                                profileManager.runningProfiles.add(profile.uuid);
+                                profileManager.runningStartTimes = profileManager.runningStartTimes || new Map();
+                                profileManager.runningStartTimes.set(profile.uuid, Date.now());
+                                profileManager.saveRunningProfiles();
+                                needsRefresh = true;
+                                console.log(`✅ Marked profile as running: ${profile.name}`);
+                            }
+                        }
                     } else if (status.status === 'completed' || status.status === 'error') {
                         // Clear running flag for profile when automation completes
                         if (typeof profileManager !== 'undefined') {
@@ -2021,6 +2098,11 @@
                         console.log(`✅ Synced: Removed running flag for profile ${profileId}`);
                     });
                     profileManager.saveRunningProfiles();
+                    needsRefresh = true;
+                }
+
+                // Refresh carousel if any changes detected
+                if (needsRefresh) {
                     const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
                     await loadProfilesCarousel();
                     renderProfileCarousel(activeTab);
@@ -2031,7 +2113,7 @@
         }
     }
 
-    // Start polling automation statuses every 5 seconds (faster updates)
+    // Start polling automation statuses every 5 seconds (same as nohu)
     setInterval(() => {
         loadVipAutomationStatuses();
     }, 5000);

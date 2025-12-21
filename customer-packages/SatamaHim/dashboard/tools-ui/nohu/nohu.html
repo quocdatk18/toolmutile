@@ -533,6 +533,22 @@
                         </div>
                     </div>
 
+                    <!-- CheckPromo Option -->
+                    <div
+                        style="padding: 10px; background: #f0fdf4; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 12px;">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #15803d; cursor: pointer;">
+                            <input type="checkbox" id="enableCheckPromo" checked
+                                style="width: 16px; height: 16px; cursor: pointer;">
+                            <span style="font-weight: 600;">🎁 Chạy Check Khuyến Mãi sau khi Thêm Bank</span>
+                        </label>
+                        <div
+                            style="font-size: 11px; color: #15803d; margin-top: 6px; margin-left: 24px; font-style: italic;">
+                            ✓ Bật: Tự động check khuyến mãi sau khi thêm bank thành công
+                            <br>✗ Tắt: Chỉ đăng ký + thêm bank, không check khuyến mãi
+                        </div>
+                    </div>
+
                     <!-- Group 2: Khuyến Mãi Tin Nhắn SMS -->
                     <div id="smsPromoGroup" style="margin-bottom: 12px; display: none;">
                         <h4 style="margin: 0 0 8px 0; color: #4a5568; font-size: 13px; font-weight: 600;">
@@ -1475,7 +1491,10 @@
             if (actionType === 'sms') {
                 config.action = 'sms';
             } else {
-                config.checkPromo = true; // Enable promo check for app type
+                // Check if user enabled checkPromo
+                const enableCheckPromo = document.getElementById('enableCheckPromo')?.checked ?? true;
+                config.checkPromo = enableCheckPromo; // Enable/disable promo check based on checkbox
+                console.log('🎁 CheckPromo enabled:', enableCheckPromo);
             }
 
             const currentProfileId = profileManager.selectedProfileId;
@@ -1549,6 +1568,10 @@
                 // Unmark on error
                 profileManager.runningProfiles.delete(currentProfileId);
                 profileManager.saveRunningProfiles();
+
+                // Update card UI immediately to remove running status
+                updateProfileCardStatus(currentProfileId);
+
                 await loadProfilesCarousel();
             } finally {
                 // Re-enable button after waiting for server confirmation
@@ -1566,8 +1589,13 @@
             console.error('❌ Outer try-catch error:', error);
             showToast('error', 'Lỗi', error.message);
             // Unmark on error
-            profileManager.runningProfiles.delete(profileManager.selectedProfileId);
+            const profileId = profileManager.selectedProfileId;
+            profileManager.runningProfiles.delete(profileId);
             profileManager.saveRunningProfiles();
+
+            // Update card UI immediately to remove running status
+            updateProfileCardStatus(profileId);
+
             await loadProfilesCarousel();
         } finally {
             // Re-enable button if not already enabled
@@ -1607,6 +1635,10 @@
         profileManager.runningStartTimes.set(currentProfileId, Date.now());
 
         profileManager.saveRunningProfiles();
+
+        // Update card UI immediately to show running status
+        updateProfileCardStatus(currentProfileId);
+
         await loadProfilesCarousel();
 
         try {
@@ -1685,6 +1717,10 @@
             // Unmark on error
             profileManager.runningProfiles.delete(currentProfileId);
             profileManager.saveRunningProfiles();
+
+            // Update card UI immediately to remove running status
+            updateProfileCardStatus(currentProfileId);
+
             await loadProfilesCarousel();
             return { success: false };
         }
@@ -1939,19 +1975,17 @@
                 captchaDelay: captchaDelay,
                 sites: fullSites
             });
-        } finally {
-            // Clear running status after checkPromoOnly completes
-            const currentProfileId = profileManager.selectedProfileId;
-            if (currentProfileId && profileManager.runningProfiles.has(currentProfileId)) {
-                profileManager.runningProfiles.delete(currentProfileId);
-                if (profileManager.runningStartTimes) {
-                    profileManager.runningStartTimes.delete(currentProfileId);
-                }
-                profileManager.saveRunningProfiles();
-                await loadProfilesCarousel();
-                console.log(`✅ Cleared running flag for checkPromoOnly`);
-            }
+        } catch (error) {
+            console.error('❌ Check promo error:', error);
+            showToast('error', 'Lỗi', error.message);
         }
+
+        // Refresh results table after check promo completes
+        // Add delay to ensure server has processed the completion status
+        setTimeout(() => {
+            console.log('🔄 Refreshing results table after check promo...');
+            loadResultsFromServer();
+        }, 1000);
     }
 
     // ============================================
@@ -2138,6 +2172,70 @@
 
         const profile = profileManager.getSelected();
         showToast('success', 'Profile đã chọn', profile?.name || 'Unknown');
+    }
+
+    // Update profile card UI status without reloading entire carousel
+    function updateProfileCardStatus(profileId) {
+        const carousels = ['auto', 'reg', 'login', 'bank', 'promo'];
+        const isRunning = profileManager.isRunning(profileId);
+
+        carousels.forEach(tabPrefix => {
+            const carousel = document.getElementById(`${tabPrefix}ProfileCarousel`);
+            if (!carousel) return;
+
+            const card = carousel.querySelector(`[data-uuid="${profileId}"]`);
+            if (!card) return;
+
+            if (isRunning) {
+                // Add running class and badge
+                card.classList.add('running');
+
+                // Update or add running badge
+                let runningBadge = card.querySelector('.running-badge');
+                if (!runningBadge) {
+                    const header = card.querySelector('.profile-card-header');
+                    if (header) {
+                        runningBadge = document.createElement('span');
+                        runningBadge.className = 'running-badge';
+                        runningBadge.textContent = '● Running';
+                        header.appendChild(runningBadge);
+                    }
+                }
+
+                // Update status text
+                const statusText = card.querySelector('.profile-status-text');
+                if (statusText) {
+                    statusText.textContent = '🔴 Đang Chạy';
+                    statusText.className = 'profile-status-text running';
+                }
+
+                // Disable click
+                card.style.cursor = 'not-allowed';
+            } else {
+                // Remove running class and badge
+                card.classList.remove('running');
+                const runningBadge = card.querySelector('.running-badge');
+                if (runningBadge) {
+                    runningBadge.remove();
+                }
+
+                // Update status text
+                const statusText = card.querySelector('.profile-status-text');
+                if (statusText) {
+                    const isSelected = profileManager.selectedProfileId === profileId;
+                    if (isSelected) {
+                        statusText.textContent = '✓ Đã Chọn';
+                        statusText.className = 'profile-status-text selected';
+                    } else {
+                        statusText.textContent = '👆 Click để chọn';
+                        statusText.className = 'profile-status-text available';
+                    }
+                }
+
+                // Enable click
+                card.style.cursor = 'pointer';
+            }
+        });
     }
 
     function scrollProfileCarousel(tabPrefix, direction) {
@@ -3215,12 +3313,33 @@
                 const currentlyRunning = new Set();
 
                 // Add running statuses to table
+                let needsCarouselRefresh = false;
                 data.statuses.forEach(status => {
                     if (status.message) {
                         console.log(`📡 Received status with message: "${status.message}" for ${status.username}`);
                     }
                     if (status.status === 'running') {
                         currentlyRunning.add(status.username);
+
+                        // Mark profile as running if not already marked
+                        if (typeof profileManager !== 'undefined') {
+                            let profile = null;
+                            if (status.profileId) {
+                                profile = allProfilesData.find(p => p.uuid === status.profileId);
+                            }
+                            if (!profile) {
+                                profile = allProfilesData.find(p => p.name === status.username);
+                            }
+
+                            if (profile && !profileManager.runningProfiles.has(profile.uuid)) {
+                                profileManager.runningProfiles.add(profile.uuid);
+                                profileManager.runningStartTimes = profileManager.runningStartTimes || new Map();
+                                profileManager.runningStartTimes.set(profile.uuid, Date.now());
+                                profileManager.saveRunningProfiles();
+                                needsCarouselRefresh = true;
+                                console.log(`✅ Marked profile as running: ${profile.name}`);
+                            }
+                        }
 
                         // Re-enable button when server confirms start
                         const btnRunAction = document.getElementById('btnRunAction');
@@ -3339,7 +3458,12 @@
                         console.log(`✅ Synced: Removed running flag for profile ${profileId} (not running on server for >30s)`);
                     });
                     profileManager.saveRunningProfiles();
-                    await loadProfilesCarousel(); // Refresh UI
+                    needsCarouselRefresh = true;
+                }
+
+                // Refresh carousel if any changes detected
+                if (needsCarouselRefresh && typeof loadProfilesCarousel === 'function') {
+                    await loadProfilesCarousel();
                 }
             }
         } catch (error) {
@@ -3692,6 +3816,12 @@
             return;
         }
 
+        // IMPORTANT: Check if profile already running (prevent duplicate runs)
+        if (profileManager.isRunning(profileManager.selectedProfileId)) {
+            showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
+            return;
+        }
+
         // Validate API key
         const apiKey = apiKeyManager.get();
         if (!apiKey || apiKey.trim() === '') {
@@ -3699,7 +3829,7 @@
             return;
         }
 
-        // Run check promo automation
+        // Run check promo automation (will disable button via runAutomationWithMarking)
         await runAutomationWithMarking('nohu-tool', 'checkPromoOnly', {
             username: 'checkpromo_' + Date.now(),
             apiKey: apiKey,

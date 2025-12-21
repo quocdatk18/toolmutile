@@ -14,6 +14,7 @@ screenshots/*.jpg
 
 # License files
 .license
+.machine-id
 license-records/
 
 # OS files

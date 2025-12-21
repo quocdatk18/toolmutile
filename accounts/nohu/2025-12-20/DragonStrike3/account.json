@@ -1,0 +1,43 @@
+{
+  "username": "DragonStrike3",
+  "password": "2ozo7bee",
+  "withdrawPassword": "578610",
+  "fullname": "DANG VAN LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10360048106308889",
+    "accountHolder": "DANG VAN LINH"
+  },
+  "registeredAt": "2025-12-19T22:35:08.059Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-19T22:35:08.059Z",
+  "bankVerified": false
+}

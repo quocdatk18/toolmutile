@@ -1,0 +1,43 @@
+{
+  "username": "Phoenixnsh99",
+  "password": "cddh9xd82tm",
+  "withdrawPassword": "770011",
+  "fullname": "PHAM THANH VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10360048106313463",
+    "accountHolder": "PHAM THANH VINH"
+  },
+  "registeredAt": "2025-12-20T00:21:59.250Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T00:21:59.250Z",
+  "bankVerified": false
+}

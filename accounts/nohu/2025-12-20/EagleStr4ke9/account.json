@@ -1,0 +1,43 @@
+{
+  "username": "EagleStr4ke9",
+  "password": "56hi0ctmtljv",
+  "withdrawPassword": "682035",
+  "fullname": "nguyen quoc dat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "340664067",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-20T05:22:34.110Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T05:22:34.110Z",
+  "bankVerified": false
+}

@@ -1,0 +1,24 @@
+{
+  "username": "qnamf343",
+  "password": "mq6m0hhr19u",
+  "withdrawPassword": "705153",
+  "fullname": "CHAU TRINH TRI",
+  "email": "lk8rny2@gmail.com",
+  "phone": "0993188497",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10368048106054584",
+    "accountHolder": "CHAU TRINH TRI"
+  },
+  "registeredAt": "2025-12-18T09:33:32.249Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

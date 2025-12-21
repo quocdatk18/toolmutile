@@ -1,0 +1,43 @@
+{
+  "username": "EagleBolt9n",
+  "password": "sivm06wo5",
+  "withdrawPassword": "805551",
+  "fullname": "LUU QUY NGOC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10360048106315577",
+    "accountHolder": "LUU QUY NGOC"
+  },
+  "registeredAt": "2025-12-20T01:19:21.166Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T01:19:21.166Z",
+  "bankVerified": false
+}

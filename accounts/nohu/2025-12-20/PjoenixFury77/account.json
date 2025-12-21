@@ -1,0 +1,43 @@
+{
+  "username": "PjoenixFury77",
+  "password": "t2e2n143rq6",
+  "withdrawPassword": "589934",
+  "fullname": "LE HOANG PHONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10360048106355658",
+    "accountHolder": "LE HOANG PHONG"
+  },
+  "registeredAt": "2025-12-20T05:21:19.794Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T05:21:19.794Z",
+  "bankVerified": false
+}

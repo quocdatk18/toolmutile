@@ -73,23 +73,23 @@ class CustomerMachineManager {
             // Update existing customer
             const existingCustomer = this.customers[customerName];
 
-            // Check if Machine ID is locked (not placeholder and already set)
-            const isPlaceholder = existingCustomer.machineId === 'PLACEHOLDER_MACHINE_ID';
+            // Check if Machine ID is locked (not placeholder, not empty, and already set)
+            const isPlaceholder = existingCustomer.machineId === 'PLACEHOLDER_MACHINE_ID' || existingCustomer.machineId === '';
             const isMachineIdLocked = !isPlaceholder && existingCustomer.machineIdLocked;
 
             if (isMachineIdLocked && machineId !== existingCustomer.machineId) {
                 throw new Error('Machine ID đã được khóa và không thể thay đổi. Liên hệ admin nếu cần thiết.');
             }
 
-            // Update machine ID and lock it if it's being set for the first time (from placeholder)
-            if (isPlaceholder && machineId !== 'PLACEHOLDER_MACHINE_ID') {
+            // Update machine ID and lock it if it's being set for the first time (from placeholder or empty)
+            if (isPlaceholder && machineId !== 'PLACEHOLDER_MACHINE_ID' && machineId !== '') {
                 this.customers[customerName].machineId = machineId;
                 this.customers[customerName].machineIdLocked = true;
                 this.customers[customerName].machineIdSetAt = now;
             } else if (!isMachineIdLocked) {
                 // Allow update if not locked yet
                 this.customers[customerName].machineId = machineId;
-                if (machineId !== 'PLACEHOLDER_MACHINE_ID') {
+                if (machineId !== 'PLACEHOLDER_MACHINE_ID' && machineId !== '') {
                     this.customers[customerName].machineIdLocked = true;
                     this.customers[customerName].machineIdSetAt = now;
                 }
@@ -103,7 +103,7 @@ class CustomerMachineManager {
             this.customers[customerName].updateCount = (this.customers[customerName].updateCount || 0) + 1;
         } else {
             // Add new customer
-            const isRealMachineId = machineId !== 'PLACEHOLDER_MACHINE_ID';
+            const isRealMachineId = machineId !== 'PLACEHOLDER_MACHINE_ID' && machineId !== '';
             this.customers[customerName] = {
                 customerName,
                 machineId,
@@ -251,16 +251,16 @@ class CustomerMachineManager {
         // Thêm license mới
         customer.licenseHistory.push(licenseRecord);
 
-        // Giới hạn tối đa 10 key, xóa key cũ nhất nếu vượt quá
-        if (customer.licenseHistory.length > 10) {
+        // Giới hạn tối đa 50 key per customer, xóa key cũ nhất nếu vượt quá
+        // Mỗi customer có tối đa 50 key trong lịch sử (tăng từ 10 để tránh xóa key quá sớm)
+        if (customer.licenseHistory.length > 50) {
             // Sắp xếp theo thời gian tạo (cũ nhất trước)
             customer.licenseHistory.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-            // Xóa key cũ nhất cho đến khi còn 10 key
-            while (customer.licenseHistory.length > 10) {
-                const removedKey = customer.licenseHistory.shift();
+            // Xóa key cũ nhất cho đến khi còn 50 key
+            while (customer.licenseHistory.length > 50) {
+                customer.licenseHistory.shift();
             }
-
         }
 
         this.saveCustomers();

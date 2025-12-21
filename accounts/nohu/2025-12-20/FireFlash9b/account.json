@@ -1,0 +1,43 @@
+{
+  "username": "FireFlash9b",
+  "password": "cox28fcdqjc",
+  "withdrawPassword": "462973",
+  "fullname": "nguyen quocdat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "540664067",
+    "accountHolder": "nguyen quocdat"
+  },
+  "registeredAt": "2025-12-20T06:48:32.046Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-20T06:48:32.046Z",
+  "bankVerified": false
+}

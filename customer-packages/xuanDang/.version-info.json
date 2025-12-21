@@ -1,0 +1,9 @@
+{
+  "customer": "xuanDang",
+  "version": "3.0.0",
+  "createdAt": "2025-12-20T16:45:29.337Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_xuanDang_94543_94392",
+  "machineId": null,
+  "obfuscated": true
+}
