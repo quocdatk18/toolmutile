@@ -1,0 +1,43 @@
+{
+  "username": "TigerFury9ggs",
+  "password": "coe15sgr9",
+  "withdrawPassword": "702412",
+  "fullname": "VU THANH QUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10362048106551549",
+    "accountHolder": "VU THANH QUAN"
+  },
+  "registeredAt": "2025-12-22T02:15:04.755Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T02:15:04.755Z",
+  "bankVerified": false
+}

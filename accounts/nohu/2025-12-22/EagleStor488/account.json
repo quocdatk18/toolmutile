@@ -1,0 +1,43 @@
+{
+  "username": "EagleStor488",
+  "password": "mhxr6pk95e7s",
+  "withdrawPassword": "435594",
+  "fullname": "NGUYENQUOCDAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "140674068",
+    "accountHolder": "NGUYENQUOCDAT"
+  },
+  "registeredAt": "2025-12-21T19:08:49.430Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-21T19:08:49.430Z",
+  "bankVerified": false
+}

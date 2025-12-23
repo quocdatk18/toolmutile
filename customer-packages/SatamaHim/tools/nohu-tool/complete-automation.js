@@ -1,6 +1,8 @@
 /**
  * Complete Automation - All automation workflows
  * Handles: Register, Login, Add Bank, Check Promotion
+ * 
+ * GIAI ĐOẠN 1 CẢI TIẾN: Ngẫu Nhiên Hóa Độ Trễ
  */
 
 const puppeteer = require('puppeteer-core');
@@ -9,6 +11,11 @@ const AutomationActions = require('./automation-actions');
 // Helper function to replace deprecated page.waitForTimeout()
 async function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// CẢI TIẾN: Helper function để tạo độ trễ ngẫu nhiên
+function randomDelay(min, max) {
+    return new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
 }
 
 // Helper function to check if error is due to tab being closed
@@ -1820,9 +1827,39 @@ class CompleteAutomation {
     async runCheckPromotionFull(promoContext, loginContext, promoUrl, loginUrl, username, apiKey) {
         console.log('    🎁 Running FULL check promotion (auto-click + captcha)...');
 
-        // Create new page in promo context
+        // Create new page in promo context with retry logic (handle "Connection closed" errors)
         console.log('    📋 Creating new page in promo context...');
-        const promoPage = await promoContext.newPage();
+        let promoPage = null;
+        let pageCreateRetries = 0;
+        const maxPageCreateRetries = 3;
+
+        while (!promoPage && pageCreateRetries < maxPageCreateRetries) {
+            try {
+                pageCreateRetries++;
+                promoPage = await promoContext.newPage();
+                console.log('    ✅ Page created successfully');
+            } catch (error) {
+                console.error(`    ❌ Failed to create page (attempt ${pageCreateRetries}/${maxPageCreateRetries}):`, error.message);
+
+                // Check if this is a connection error
+                if (error.message.includes('Connection closed') || error.message.includes('Target closed')) {
+                    if (pageCreateRetries < maxPageCreateRetries) {
+                        console.log(`    ⏳ Waiting 2 seconds before retry...`);
+                        await randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
+                    } else {
+                        console.error('    ❌ Failed to create page after all retries');
+                        return {
+                            success: false,
+                            error: 'CONNECTION_ERROR',
+                            message: `Failed to create promo page after ${maxPageCreateRetries} attempts: ${error.message}`
+                        };
+                    }
+                } else {
+                    // Non-connection error, don't retry
+                    throw error;
+                }
+            }
+        }
 
         // 🔥 Track if page/tab is closed during automation
         let isPageClosed = false;
@@ -1939,60 +1976,91 @@ class CompleteAutomation {
             }
         });
 
-        // Navigate to promo URL
+        // Navigate to promo URL with retry logic for connection errors
         console.log(`    🎁 Navigating to promo URL: ${promoUrl}`);
-        try {
-            await promoPage.goto(promoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        } catch (navError) {
-            checkPageValid(); // Check if tab was closed
+        let navigationSuccess = false;
+        let navRetries = 0;
+        const maxNavRetries = 2;
 
-            // If initial page load fails (timeout/network error), take screenshot and close tab
-            console.log('    ❌ Initial page load failed:', navError.message);
-            console.log('    📸 Taking screenshot of load error...');
-
+        while (!navigationSuccess && navRetries < maxNavRetries) {
             try {
-                const fs = require('fs');
-                const path = require('path');
-                const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
-                const sessionId = this.settings.sessionId || new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
-                const userDir = path.join(screenshotsDir, username);
-                const sessionDir = path.join(userDir, sessionId);
+                navRetries++;
+                await promoPage.goto(promoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+                navigationSuccess = true;
+                console.log('    ✅ Navigation successful');
+            } catch (navError) {
+                console.error(`    ❌ Navigation failed (attempt ${navRetries}/${maxNavRetries}):`, navError.message);
 
-                if (!fs.existsSync(sessionDir)) {
-                    fs.mkdirSync(sessionDir, { recursive: true });
+                // Check if this is a connection error
+                if (navError.message.includes('Connection closed') || navError.message.includes('Target closed')) {
+                    if (navRetries < maxNavRetries) {
+                        console.log(`    ⏳ Waiting 2 seconds before retry...`);
+                        await randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
+                    } else {
+                        console.error('    ❌ Navigation failed after all retries');
+                        try {
+                            await promoPage.close();
+                        } catch (e) {
+                            // Ignore close errors
+                        }
+                        return {
+                            success: false,
+                            error: 'CONNECTION_ERROR',
+                            message: `Failed to navigate to promo page after ${maxNavRetries} attempts: ${navError.message}`
+                        };
+                    }
+                } else {
+                    // Non-connection error, handle normally
+                    checkPageValid(); // Check if tab was closed
+
+                    // If initial page load fails (timeout/network error), take screenshot and close tab
+                    console.log('    📸 Taking screenshot of load error...');
+
+                    try {
+                        const fs = require('fs');
+                        const path = require('path');
+                        const screenshotsDir = path.join(__dirname, '..', '..', 'screenshots');
+                        const sessionId = this.settings.sessionId || new Date().toISOString().replace(/[:.]/g, '-').substring(0, 19);
+                        const userDir = path.join(screenshotsDir, username);
+                        const sessionDir = path.join(userDir, sessionId);
+
+                        if (!fs.existsSync(sessionDir)) {
+                            fs.mkdirSync(sessionDir, { recursive: true });
+                        }
+
+                        const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
+                        const errorFilename = `${siteName}-load-error.png`;
+                        const errorFilepath = path.join(sessionDir, errorFilename);
+
+                        try {
+                            await promoPage.screenshot({
+                                path: errorFilepath,
+                                fullPage: true,
+                                timeout: 5000
+                            });
+                            console.log(`    ✅ Load error screenshot saved: ${errorFilename}`);
+                        } catch (screenshotErr) {
+                            console.log('    ⚠️  Screenshot failed:', screenshotErr.message);
+                        }
+                    } catch (e) {
+                        console.log('    ⚠️  Error saving screenshot:', e.message);
+                    }
+
+                    // Close tab
+                    try {
+                        await promoPage.close();
+                        console.log('    ✅ Promo tab closed after load error');
+                    } catch (closeErr) {
+                        console.log('    ⚠️  Error closing tab:', closeErr.message);
+                    }
+
+                    return {
+                        success: false,
+                        error: 'PAGE_LOAD_TIMEOUT',
+                        message: `Failed to load promo page: ${navError.message}`
+                    };
                 }
-
-                const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
-                const errorFilename = `${siteName}-load-error.png`;
-                const errorFilepath = path.join(sessionDir, errorFilename);
-
-                try {
-                    await promoPage.screenshot({
-                        path: errorFilepath,
-                        fullPage: true,
-                        timeout: 5000
-                    });
-                    console.log(`    ✅ Load error screenshot saved: ${errorFilename}`);
-                } catch (screenshotErr) {
-                    console.log('    ⚠️  Screenshot failed:', screenshotErr.message);
-                }
-            } catch (e) {
-                console.log('    ⚠️  Error saving screenshot:', e.message);
             }
-
-            // Close tab
-            try {
-                await promoPage.close();
-                console.log('    ✅ Promo tab closed after load error');
-            } catch (closeErr) {
-                console.log('    ⚠️  Error closing tab:', closeErr.message);
-            }
-
-            return {
-                success: false,
-                error: 'PAGE_LOAD_TIMEOUT',
-                message: `Failed to load promo page: ${navError.message}`
-            };
         }
 
         // 🔥 Check if tab still valid after navigation
@@ -2057,7 +2125,7 @@ class CompleteAutomation {
                         }
 
                         const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
-                        const errorFilename = `${siteName}-form-error.png`;
+                        const errorFilename = `${siteName} -form - error.png`;
                         const errorFilepath = path.join(sessionDir, errorFilename);
 
                         await promoPage.screenshot({
@@ -2066,14 +2134,14 @@ class CompleteAutomation {
                             timeout: 5000
                         });
 
-                        console.log(`    ✅ Error screenshot saved: ${errorFilename}`);
+                        console.log(`    ✅ Error screenshot saved: ${errorFilename} `);
 
                         // Send result with screenshot
                         return {
                             success: false,
                             error: 'FORM_NOT_LOADED',
                             message: formError.message,
-                            screenshot: `/screenshots/${username}/${sessionId}/${errorFilename}`,
+                            screenshot: `/ screenshots / ${username} /${sessionId}/${errorFilename} `,
                             screenshotPath: errorFilepath
                         };
                     } catch (screenshotErr) {
@@ -2136,7 +2204,7 @@ class CompleteAutomation {
                             }
 
                             const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
-                            const timeoutFilename = `${siteName}-timeout-error.png`;
+                            const timeoutFilename = `${siteName} -timeout - error.png`;
                             const timeoutFilepath = path.join(sessionDir, timeoutFilename);
 
                             await promoPage.screenshot({
@@ -2145,7 +2213,7 @@ class CompleteAutomation {
                                 timeout: 5000
                             });
 
-                            console.log(`    ✅ Timeout error screenshot saved: ${timeoutFilename}`);
+                            console.log(`    ✅ Timeout error screenshot saved: ${timeoutFilename} `);
                         } catch (screenshotErr) {
                             console.log('    ⚠️  Timeout error screenshot failed:', screenshotErr.message);
                         }
@@ -2203,7 +2271,7 @@ class CompleteAutomation {
 
                 if (hasContent) {
                     modalRendered = true;
-                    console.log(`    ✅ Content rendered after ${waitAttempts}s`);
+                    console.log(`    ✅ Content rendered after ${waitAttempts} s`);
                     break;
                 }
 
@@ -2227,7 +2295,7 @@ class CompleteAutomation {
                     }
 
                     const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
-                    const timeoutFilename = `${siteName}-timeout.png`;
+                    const timeoutFilename = `${siteName} -timeout.png`;
                     const timeoutFilepath = path.join(sessionDir, timeoutFilename);
 
                     await promoPage.screenshot({
@@ -2236,7 +2304,7 @@ class CompleteAutomation {
                         timeout: 5000
                     });
 
-                    console.log(`    ✅ Timeout screenshot saved: ${timeoutFilename}`);
+                    console.log(`    ✅ Timeout screenshot saved: ${timeoutFilename} `);
                     timeoutScreenshotTaken = true;
                 } catch (err) {
                     console.log('    ⚠️  Timeout screenshot failed:', err.message);
@@ -2317,14 +2385,14 @@ class CompleteAutomation {
                     const userDir = path.join(screenshotsDir, username);
                     if (!fs.existsSync(userDir)) {
                         fs.mkdirSync(userDir, { recursive: true });
-                        console.log(`    📁 Created user directory: ${username}`);
+                        console.log(`    📁 Created user directory: ${username} `);
                     }
 
                     // Create session folder (one per automation run)
                     const sessionDir = path.join(userDir, sessionId);
                     if (!fs.existsSync(sessionDir)) {
                         fs.mkdirSync(sessionDir, { recursive: true });
-                        console.log(`    📁 Created session directory: ${sessionId}`);
+                        console.log(`    📁 Created session directory: ${sessionId} `);
                     }
 
                     const siteName = new URL(promoUrl).hostname.replace('www.', '').replace(/\./g, '-');
@@ -2365,7 +2433,7 @@ class CompleteAutomation {
                         console.log(`    ✅ File verified: ${stats.size} bytes`);
 
                         // Add screenshot path to result (include sessionId in path)
-                        result.screenshot = `/screenshots/${username}/${sessionId}/${filename}`;
+                        result.screenshot = `/ screenshots / ${username} /${sessionId}/${filename} `;
                         result.screenshotPath = filepath;
 
                         // Send result to dashboard API

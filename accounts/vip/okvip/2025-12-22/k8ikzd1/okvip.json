@@ -1,0 +1,23 @@
+{
+  "username": "k8ikzd1",
+  "password": "d48dxdkuo",
+  "withdrawPassword": "842006",
+  "fullname": "LE MINH HAI THANH",
+  "email": "2dzxr8@gmail.com",
+  "phone": "0996233481",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10362048106526462",
+    "accountHolder": "LE MINH HAI THANH"
+  },
+  "registeredAt": "2025-12-21T19:39:05.448Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

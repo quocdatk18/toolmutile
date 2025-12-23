@@ -1,0 +1,43 @@
+{
+  "username": "StarBlade9h",
+  "password": "c2m3ma0a",
+  "withdrawPassword": "196122",
+  "fullname": "MANG TRAN HOANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10362048106648134",
+    "accountHolder": "MANG TRAN HOANG"
+  },
+  "registeredAt": "2025-12-22T08:25:35.809Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T08:25:35.809Z",
+  "bankVerified": false
+}

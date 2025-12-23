@@ -1,0 +1,43 @@
+{
+  "username": "PhoenixBolt7bb",
+  "password": "ed1u5h56hb",
+  "withdrawPassword": "517374",
+  "fullname": "TONG PHAN NHUT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10363048106733263",
+    "accountHolder": "TONG PHAN NHUT"
+  },
+  "registeredAt": "2025-12-22T19:05:11.191Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T19:05:11.191Z",
+  "bankVerified": false
+}

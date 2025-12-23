@@ -1,0 +1,27 @@
+{
+  "username": "WolfPower88h",
+  "password": "5hj6btragz53",
+  "withdrawPassword": "508205",
+  "fullname": "Y QUANG HWING",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10361048106453372",
+    "accountHolder": "Y QUANG HWING"
+  },
+  "registeredAt": "2025-12-21T05:36:46.909Z",
+  "firstSite": "Go99",
+  "sites": [
+    "Go99",
+    "NOHU",
+    "TT88",
+    "MMOO",
+    "789P",
+    "33WIN",
+    "88VV"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

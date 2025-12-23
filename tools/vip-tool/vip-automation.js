@@ -151,6 +151,28 @@ class VIPAutomation {
     }
 
     /**
+     * Helper: Send status update to dashboard
+     */
+    async sendStatusUpdate(profileData, status, message) {
+        try {
+            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profileId: profileData.profileId,
+                    username: profileData.username,
+                    status: status,
+                    message: message,
+                    timestamp: new Date().toISOString()
+                })
+            });
+        } catch (err) {
+            console.warn('⚠️ Failed to send status update:', err.message);
+        }
+    }
+
+    /**
      * Inject required scripts vào page (captcha-solver, content script)
      */
     async injectScripts(page) {
@@ -610,6 +632,30 @@ class VIPAutomation {
         // Keep shared context open for user to see results
         if (sharedPromoContext) {
             console.log(`📌 Keeping shared browser context open for inspection`);
+        }
+
+        // Send completed status to dashboard
+        try {
+            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+            const successCount = results.filter(r => r.register?.success || r.addBank?.success || r.checkPromo?.success).length;
+            const totalCount = results.length;
+
+            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profileId: profileData.profileId,
+                    username: profileData.username,
+                    status: 'completed',
+                    category: category,
+                    message: `✅ Hoàn thành: ${successCount}/${totalCount} site(s) thành công`,
+                    results: results,
+                    timestamp: new Date().toISOString()
+                })
+            });
+            console.log('📤 Sent completed status to dashboard');
+        } catch (err) {
+            console.warn('⚠️ Failed to send completed status:', err.message);
         }
 
         return results;
@@ -1206,9 +1252,46 @@ class VIPAutomation {
                 await new Promise(r => setTimeout(r, 3000));
             }
 
+            // Send status update to dashboard
+            try {
+                const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profileId: profileData.profileId,
+                        username: profileData.username,
+                        status: 'running',
+                        message: `✅ Đăng ký thành công - Chuyển sang thêm bank...`,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to send register status:', err.message);
+            }
+
             return { success: true, message: 'Register completed successfully', page };
         } catch (error) {
             console.error(`❌ Register Error:`, error.message);
+
+            // Send error status to dashboard
+            try {
+                const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profileId: profileData.profileId,
+                        username: profileData.username,
+                        status: 'error',
+                        message: `❌ Đăng ký thất bại: ${error.message}`,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to send error status:', err.message);
+            }
+
             return { success: false, error: error.message };
         }
         // Note: Keep page open for inspection/debugging
@@ -1468,6 +1551,25 @@ class VIPAutomation {
 
             console.log(`✅ Bank result:`, result);
 
+            // Send status update to dashboard
+            try {
+                const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                const statusMsg = result.success ? '✅ Thêm bank thành công' : `❌ Thêm bank thất bại: ${result.message}`;
+                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profileId: profileData.profileId,
+                        username: profileData.username,
+                        status: result.success ? 'running' : 'error',
+                        message: statusMsg,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to send addbank status:', err.message);
+            }
+
             // Mark tab as completed in rotator
             if (result.success) {
                 tabRotator.complete(page);
@@ -1477,8 +1579,23 @@ class VIPAutomation {
         } catch (error) {
             console.error(`❌ OKVIP Add Bank Error:`, error.message);
 
-            // Mark tab as completed even on error
-            tabRotator.complete(page);
+            // Send error status to dashboard
+            try {
+                const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profileId: profileData.profileId,
+                        username: profileData.username,
+                        status: 'error',
+                        message: `❌ Thêm bank thất bại: ${error.message}`,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to send error status:', err.message);
+            }
 
             return { success: false, error: error.message };
         }

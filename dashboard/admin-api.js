@@ -834,6 +834,7 @@ Machine ID: Will be provided by customer
 
     /**
      * Generate new license key for existing package
+     * Format: Compact base64 data + short signature for minimal key length
      */
     async generateNewKey(options) {
         const { packageName, licenseType, machineBinding, machineId } = options;
@@ -859,23 +860,32 @@ Machine ID: Will be provided by customer
 
             const secretKey = secretKeyMatch[1].trim();
 
-            // Generate new license key
-            // Machine ID should be provided by customer (from their dashboard)
+            // Generate new license key with compact format
             const finalMachineId = machineBinding ? machineId : null;
             const days = licenseType;
-            const now = Date.now();
-            const expiry = days === -1 ? -1 : now + (days * 24 * 60 * 60 * 1000);
+            const now = Math.floor(Date.now() / 1000);
+            const expiry = days === -1 ? -1 : now + (days * 24 * 60 * 60);
 
+            // Compact license data - minimal field names
             const licenseData = {
-                username: packageName,
-                machineId: finalMachineId,
-                expiry: expiry,
-                created: now
+                u: packageName,
+                m: finalMachineId,
+                e: expiry
             };
 
             const dataString = JSON.stringify(licenseData);
-            const signature = crypto.createHmac('sha256', secretKey).update(dataString).digest('hex');
-            const licenseKey = Buffer.from(dataString).toString('base64') + '.' + signature;
+
+            // Create signature and use only first 16 chars (128-bit) for compactness
+            const fullSignature = crypto.createHmac('sha256', secretKey).update(dataString).digest('hex');
+            const shortSignature = fullSignature.substring(0, 16);
+
+            // Use URL-safe base64 encoding (replace +/ with -_)
+            const base64Data = Buffer.from(dataString).toString('base64')
+                .replace(/\+/g, '-')
+                .replace(/\//g, '_')
+                .replace(/=/g, '');
+
+            const licenseKey = base64Data + '.' + shortSignature;
 
             // Save new license key to package
             const licenseKeyContent = `

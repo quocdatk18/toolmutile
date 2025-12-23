@@ -1,0 +1,43 @@
+{
+  "username": "TigerSoul88gg",
+  "password": "d52na6hgj92",
+  "withdrawPassword": "886727",
+  "fullname": "HOA THI THU HA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10362048106547546",
+    "accountHolder": "HOA THI THU HA"
+  },
+  "registeredAt": "2025-12-22T01:56:47.131Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T01:56:47.131Z",
+  "bankVerified": false
+}

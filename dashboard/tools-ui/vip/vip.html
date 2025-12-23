@@ -19,7 +19,7 @@
         try {
             // First, try to load from server API to get dynamic config from vip-automation.js
             // Disabled categories: jun88v2 (maintenance)
-            const categories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
+            const categories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
             const sitesData = {};
 
             for (const category of categories) {
@@ -2240,7 +2240,7 @@
             // If not found or category is undefined, try all categories
             if (!data || !data.success) {
                 console.log('🔍 Category not found or undefined, trying all categories...');
-                const categories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+                const categories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
 
                 for (const cat of categories) {
                     response = await fetch(`/api/accounts/vip/${cat}/${username}`);

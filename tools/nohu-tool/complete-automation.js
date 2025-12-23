@@ -1,6 +1,8 @@
 /**
  * Complete Automation - All automation workflows
  * Handles: Register, Login, Add Bank, Check Promotion
+ * 
+ * GIAI ĐOẠN 1 CẢI TIẾN: Ngẫu Nhiên Hóa Độ Trễ
  */
 
 const puppeteer = require('puppeteer-core');
@@ -9,6 +11,11 @@ const AutomationActions = require('./automation-actions');
 // Helper function to replace deprecated page.waitForTimeout()
 async function wait(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// CẢI TIẾN: Helper function để tạo độ trễ ngẫu nhiên
+function randomDelay(min, max) {
+    return new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
 }
 
 // Helper function to check if error is due to tab being closed
@@ -1838,7 +1845,7 @@ class CompleteAutomation {
                 if (error.message.includes('Connection closed') || error.message.includes('Target closed')) {
                     if (pageCreateRetries < maxPageCreateRetries) {
                         console.log(`    ⏳ Waiting 2 seconds before retry...`);
-                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        await randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
                     } else {
                         console.error('    ❌ Failed to create page after all retries');
                         return {
@@ -1988,7 +1995,7 @@ class CompleteAutomation {
                 if (navError.message.includes('Connection closed') || navError.message.includes('Target closed')) {
                     if (navRetries < maxNavRetries) {
                         console.log(`    ⏳ Waiting 2 seconds before retry...`);
-                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        await randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
                     } else {
                         console.error('    ❌ Navigation failed after all retries');
                         try {
@@ -2073,6 +2080,24 @@ class CompleteAutomation {
         await wait(1000); // Wait for scripts to initialize
         await this.verifyScripts(promoPage);
 
+        // 🔥 Set flags for checkPromo in separate tab
+        console.log('    🚩 Setting checkPromo flags for content.js...');
+        await promoPage.evaluate((apiKeyParam, usernameParam) => {
+            window.isCheckingPromo = true;
+            window.currentApiKey = apiKeyParam;
+            window.disableAutoSolve = true; // Disable auto-solve in content.js - we'll solve manually
+            // Tab checkPromo riêng chỉ có username, không có password hay thông tin khác
+            window.profileData = {
+                username: usernameParam
+            };
+            console.log('✅ CheckPromo flags set:', {
+                isCheckingPromo: window.isCheckingPromo,
+                hasApiKey: !!window.currentApiKey,
+                disableAutoSolve: window.disableAutoSolve,
+                username: window.profileData.username
+            });
+        }, apiKey, username);
+
         // 🔥 Check if tab still valid after script injection
         checkPageValid();
 
@@ -2091,13 +2116,13 @@ class CompleteAutomation {
             const actions = new AutomationActions(promoPage);
             console.log('    ✅ AutomationActions created');
 
-            console.log('    📞 Calling completeCheckPromotion...');
+            console.log('    📞 Calling checkPromotion...');
             console.log('    📊 Username:', username);
             console.log('    📊 API Key:', apiKey ? `${apiKey.substring(0, 5)}...` : 'undefined');
 
             let result;
             try {
-                result = await actions.completeCheckPromotion(username, apiKey);
+                result = await actions.checkPromotion(username, apiKey);
             } catch (formError) {
                 console.log('    ❌ Check promo form error:', formError.message);
 
@@ -2156,7 +2181,7 @@ class CompleteAutomation {
 
             console.log('    📊 Check promo result:', result);
 
-            // After completeCheckPromotion, page will reload when "Nhận KM" is clicked
+            // After checkPromotion, page will reload when "Nhận KM" is clicked
             // Wait for navigation to complete, then check result and take screenshot
             console.log('    ⏳ Waiting for page navigation after "Nhận KM" click...');
 

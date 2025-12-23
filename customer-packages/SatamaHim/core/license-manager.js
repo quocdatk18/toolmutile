@@ -71,9 +71,11 @@ class LicenseManager {
     }
 
     /**
-     * Tạo license key mới
+     * Tạo license key mới (rút gọn)
+     * Format: V1:EXPIRY:MACHINE:SIGNATURE
+     * Ví dụ: V1:1735689600:abc123:def456
      * @param {Object} options - { expiryDays, machineId, username, allowedTools }
-     * @returns {string} License key
+     * @returns {string} License key (rút gọn)
      */
     generateKey(options = {}) {
         const {
@@ -84,30 +86,39 @@ class LicenseManager {
         } = options;
 
         const now = Date.now();
-        const expiry = expiryDays === -1 ? -1 : now + (expiryDays * 24 * 60 * 60 * 1000);
+        const expiry = expiryDays === -1 ? -1 : Math.floor((now + (expiryDays * 24 * 60 * 60 * 1000)) / 1000); // Unix timestamp in seconds
 
-        const data = {
-            username,
-            machineId,
-            expiry,
-            created: now,
-            allowedTools // Danh sách tools được phép sử dụng
-        };
+        // Rút gọn machineId hash (8 ký tự)
+        const machineHash = machineId
+            ? crypto.createHash('md5').update(machineId).digest('hex').substring(0, 8)
+            : '00000000';
 
-        const dataString = JSON.stringify(data);
+        // Rút gọn allowedTools thành bitmask (1 byte)
+        const toolMap = { 'nohu-tool': 1, 'vip-tool': 2, 'sms-tool': 4 };
+        let toolBits = 0;
+        allowedTools.forEach(tool => {
+            if (toolMap[tool]) toolBits |= toolMap[tool];
+        });
+        const toolByte = toolBits.toString(16).padStart(2, '0');
+
+        // Format: V1:EXPIRY:MACHINE:TOOLS
+        const dataString = `V1:${expiry}:${machineHash}:${toolByte}`;
+
+        // Tạo signature ngắn (8 ký tự)
         const signature = crypto
             .createHmac('sha256', this.secretKey)
             .update(dataString)
-            .digest('hex');
+            .digest('hex')
+            .substring(0, 8);
 
-        // Format: BASE64(data).SIGNATURE
-        const key = Buffer.from(dataString).toString('base64') + '.' + signature;
+        // Format cuối: V1:EXPIRY:MACHINE:TOOLS:SIGNATURE
+        const key = `${dataString}:${signature}`;
 
         return key;
     }
 
     /**
-     * Validate license key
+     * Validate license key (rút gọn)
      * @param {string} key - License key
      * @returns {Object} { valid, message, data }
      */
@@ -117,6 +128,89 @@ class LicenseManager {
                 return { valid: false, message: 'Định dạng key không hợp lệ' };
             }
 
+            const parts = key.split(':');
+            if (parts.length !== 5 || parts[0] !== 'V1') {
+                // Fallback: try old format (BASE64.SIGNATURE)
+                return this._validateKeyLegacy(key);
+            }
+
+            const [version, expiryStr, machineHash, toolByteStr, signature] = parts;
+
+            // Verify signature
+            const dataString = `${version}:${expiryStr}:${machineHash}:${toolByteStr}`;
+            const expectedSignature = crypto
+                .createHmac('sha256', this.secretKey)
+                .update(dataString)
+                .digest('hex')
+                .substring(0, 8);
+
+            if (signature !== expectedSignature) {
+                return { valid: false, message: 'Key không hợp lệ - Đã bị chỉnh sửa' };
+            }
+
+            const expiry = parseInt(expiryStr) * 1000; // Convert back to milliseconds
+            const now = Date.now();
+
+            // Check expiry
+            if (expiry !== -1000 && now > expiry) {
+                const expiryDate = new Date(expiry).toLocaleDateString('vi-VN');
+                return {
+                    valid: false,
+                    message: `Bản quyền đã hết hạn vào ngày ${expiryDate}`,
+                    data: { expiry }
+                };
+            }
+
+            // Decode tools from bitmask
+            const toolMap = { 1: 'nohu-tool', 2: 'vip-tool', 4: 'sms-tool' };
+            const toolBits = parseInt(toolByteStr, 16);
+            const allowedTools = [];
+            for (const [bit, tool] of Object.entries(toolMap)) {
+                if (toolBits & parseInt(bit)) allowedTools.push(tool);
+            }
+
+            // Calculate remaining time
+            let remainingDays = -1;
+            let remainingTime = null;
+            if (expiry !== -1000) {
+                const msRemaining = expiry - now;
+                remainingDays = Math.ceil(msRemaining / (24 * 60 * 60 * 1000));
+
+                const days = Math.floor(msRemaining / (24 * 60 * 60 * 1000));
+                const hours = Math.floor((msRemaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+                const minutes = Math.floor((msRemaining % (60 * 60 * 1000)) / (60 * 1000));
+                const seconds = Math.floor((msRemaining % (60 * 1000)) / 1000);
+
+                remainingTime = { days, hours, minutes, seconds, total: msRemaining };
+            }
+
+            return {
+                valid: true,
+                message: 'Bản quyền hợp lệ',
+                data: {
+                    machineId: machineHash !== '00000000' ? machineHash : null,
+                    expiry,
+                    created: now,
+                    remainingDays,
+                    remainingTime,
+                    isLifetime: expiry === -1000,
+                    allowedTools: allowedTools.length > 0 ? allowedTools : ['nohu-tool']
+                }
+            };
+
+        } catch (error) {
+            return {
+                valid: false,
+                message: 'Định dạng key không hợp lệ: ' + error.message
+            };
+        }
+    }
+
+    /**
+     * Validate legacy key format (BASE64.SIGNATURE)
+     */
+    _validateKeyLegacy(key) {
+        try {
             const parts = key.split('.');
             if (parts.length !== 2) {
                 return { valid: false, message: 'Định dạng key không hợp lệ' };
@@ -166,7 +260,6 @@ class LicenseManager {
                 const msRemaining = data.expiry - Date.now();
                 remainingDays = Math.ceil(msRemaining / (24 * 60 * 60 * 1000));
 
-                // Calculate detailed time for display
                 const days = Math.floor(msRemaining / (24 * 60 * 60 * 1000));
                 const hours = Math.floor((msRemaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
                 const minutes = Math.floor((msRemaining % (60 * 60 * 1000)) / (60 * 1000));

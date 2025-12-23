@@ -1,0 +1,22 @@
+{
+  "username": "fps11ug",
+  "password": "f97dq9kg3",
+  "withdrawPassword": "300331",
+  "fullname": "DANG VAN NAM PHONG",
+  "email": "aoayezx@gmail.com",
+  "phone": "0993178323",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10362048106588458",
+    "accountHolder": "DANG VAN NAM PHONG"
+  },
+  "registeredAt": "2025-12-22T04:30:20.434Z",
+  "firstSite": "Jun881",
+  "sites": [
+    "Jun881"
+  ],
+  "status": "active",
+  "category": "jun88",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,43 @@
+{
+  "username": "TigerSt2n99",
+  "password": "7d587bxvh",
+  "withdrawPassword": "338654",
+  "fullname": "TRAN QUANG HAI MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10362048106527121",
+    "accountHolder": "TRAN QUANG HAI MINH"
+  },
+  "registeredAt": "2025-12-21T20:31:43.538Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-21T20:31:43.538Z",
+  "bankVerified": false
+}

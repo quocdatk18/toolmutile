@@ -240,11 +240,17 @@ function addAudioUrl(url) {
 
   // Auto-solve if API key is available (use either apiKey or currentApiKey)
   const hasApiKey = window.apiKey || window.currentApiKey;
-  if (hasApiKey && window.isCheckingPromo) {
+  // IMPORTANT: Disable auto-solve if running from complete-automation.js (window.disableAutoSolve = true)
+  if (hasApiKey && window.isCheckingPromo && !window.disableAutoSolve) {
     console.log('🎵 🔥 Auto-solving audio captcha for check promo...');
+    console.log('🔍 DEBUG: Calling solveAudioCaptchaAuto with URL:', normalizedUrl);
+    // ⏱️ TIMING FIX: Chờ 2-3s sau khi capture audio URL trước khi giải
+    const autoSolveDelay = 2000 + Math.random() * 1000; // 2-3s (tăng từ 1s)
     setTimeout(() => {
       solveAudioCaptchaAuto(normalizedUrl);
-    }, 1000);
+    }, autoSolveDelay);
+  } else {
+    console.log('🔍 DEBUG: Not auto-solving - hasApiKey:', hasApiKey, 'isCheckingPromo:', window.isCheckingPromo, 'disableAutoSolve:', window.disableAutoSolve);
   }
 }
 
@@ -416,8 +422,8 @@ setTimeout(() => {
       response.urls.forEach(url => {
         addAudioUrl(url);
 
-        // Auto-solve if conditions are met
-        if (window.currentApiKey && window.audioButtonClicked) {
+        // Auto-solve if conditions are met (but NOT if disableAutoSolve is set)
+        if (window.currentApiKey && window.audioButtonClicked && !window.disableAutoSolve) {
           console.log('?? Auto-solving with previously captured URL...');
           solveAudioCaptchaAuto(url);
         }
@@ -437,8 +443,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     console.log('?? ? RECEIVED AUDIO URL FROM BACKGROUND:', request.url);
     addAudioUrl(request.url);
 
-    // Auto-solve captcha if API key is available
-    if (window.currentApiKey && window.audioButtonClicked) {
+    // Auto-solve captcha if API key is available (but NOT if disableAutoSolve is set)
+    if (window.currentApiKey && window.audioButtonClicked && !window.disableAutoSolve) {
       console.log('?? Auto-solving captcha with received audio URL...');
       solveAudioCaptchaAuto(request.url);
     }
@@ -3685,8 +3691,8 @@ async function clickCreateAudioButton(element) {
       const latestUrl = window.captchaAudioUrls[window.captchaAudioUrls.length - 1];
       console.log(`  Latest URL: ${latestUrl}`);
 
-      // Trigger auto-solve if in check promo mode
-      if (window.apiKey && window.isCheckingPromo) {
+      // Trigger auto-solve if in check promo mode (but NOT if disableAutoSolve is set)
+      if (window.apiKey && window.isCheckingPromo && !window.disableAutoSolve) {
         console.log('✅ Audio URL found from array, triggering auto-solve...');
         solveAudioCaptchaAuto(latestUrl);
       }

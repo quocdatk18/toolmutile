@@ -1,0 +1,43 @@
+{
+  "username": "StarStrike2",
+  "password": "f141pezwlu",
+  "withdrawPassword": "773561",
+  "fullname": "PHUONG BUI VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10362048106634531",
+    "accountHolder": "PHUONG BUI VINH"
+  },
+  "registeredAt": "2025-12-22T07:41:17.234Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T07:41:17.234Z",
+  "bankVerified": false
+}

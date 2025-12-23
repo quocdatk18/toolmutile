@@ -1,0 +1,43 @@
+{
+  "username": "LionBla4b88",
+  "password": "w5ekj163",
+  "withdrawPassword": "512347",
+  "fullname": "DANG VAN NAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10362048106579618",
+    "accountHolder": "DANG VAN NAM"
+  },
+  "registeredAt": "2025-12-22T04:00:35.823Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T04:00:35.823Z",
+  "bankVerified": false
+}

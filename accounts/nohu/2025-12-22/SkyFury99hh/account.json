@@ -1,0 +1,43 @@
+{
+  "username": "SkyFury99hh",
+  "password": "tjutfq11",
+  "withdrawPassword": "618492",
+  "fullname": "LAO TONG DUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10362048106648223",
+    "accountHolder": "LAO TONG DUC"
+  },
+  "registeredAt": "2025-12-22T08:27:14.226Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T08:27:14.226Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "PhhPower777",
+  "password": "b04xewdu74",
+  "withdrawPassword": "760317",
+  "fullname": "LE DUC QUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10361048106460756",
+    "accountHolder": "LE DUC QUAN"
+  },
+  "registeredAt": "2025-12-21T07:32:44.714Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-21T07:32:44.714Z",
+  "bankVerified": false
+}

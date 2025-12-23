@@ -1019,11 +1019,27 @@ app.get('/api/automation/results', (req, res) => {
 // Helper function to process user folder
 function processUserFolder(username, userDir, toolId, results, toolFilter = null) {
     // Check if user has account info (for full automation vs promo check)
-    // New path: ../accounts/nohu/username
+    // New path: ../accounts/nohu/{YYYY-MM-DD}/{username}/account.json
     const accountsDir = path.join(__dirname, '../accounts/nohu');
-    const userAccountDir = path.join(accountsDir, username);
-    const hasAccountInfo = fs.existsSync(userAccountDir) &&
-        fs.readdirSync(userAccountDir).some(f => f.endsWith('.txt') || f.endsWith('.json'));
+    let hasAccountInfo = false;
+
+    // Check if account exists in any date folder
+    if (fs.existsSync(accountsDir)) {
+        const dateFolders = fs.readdirSync(accountsDir, { withFileTypes: true })
+            .filter(item => item.isDirectory())
+            .map(item => item.name);
+
+        for (const dateFolder of dateFolders) {
+            const userAccountDir = path.join(accountsDir, dateFolder, username);
+            if (fs.existsSync(userAccountDir)) {
+                const files = fs.readdirSync(userAccountDir);
+                if (files.some(f => f === 'account.json' || f === 'account.txt')) {
+                    hasAccountInfo = true;
+                    break;
+                }
+            }
+        }
+    }
 
     // Check if this is old structure (files directly) or new structure (session folders)
     const items = fs.readdirSync(userDir, { withFileTypes: true });
@@ -1251,9 +1267,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, abcvip, jun88, kjc)
+        // Try to find any VIP category file (okvip, abcvip, jun88, 78win, kjc)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1335,7 +1351,59 @@ app.get('/api/accounts/vip/:username', (req, res) => {
     }
 });
 
-// Save account info for VIP categories (okvip, abcvip, jun88, kjc)
+// Get account info for specific VIP category (NEW: /api/accounts/vip/:category/:username)
+app.get('/api/accounts/vip/:category/:username', (req, res) => {
+    try {
+        const { category, username } = req.params;
+        const accountsDir = path.join(__dirname, '../accounts');
+        const vipDir = path.join(accountsDir, 'vip');
+
+        if (!fs.existsSync(vipDir)) {
+            return res.json({ success: false, error: 'VIP accounts folder not found' });
+        }
+
+        // Validate category
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
+        if (!validCategories.includes(category.toLowerCase())) {
+            return res.json({ success: false, error: 'Invalid category' });
+        }
+
+        const categoryDir = path.join(vipDir, category);
+        if (!fs.existsSync(categoryDir)) {
+            return res.json({ success: false, error: `Category folder not found: ${category}` });
+        }
+
+        // Search through date folders (latest first)
+        const dateFolders = fs.readdirSync(categoryDir, { withFileTypes: true })
+            .filter(item => item.isDirectory())
+            .map(item => item.name)
+            .sort()
+            .reverse(); // Sort by date descending to get latest first
+
+        for (const dateFolder of dateFolders) {
+            const userCategoryDir = path.join(categoryDir, dateFolder, username);
+            const accountFile = path.join(userCategoryDir, `${category}.json`);
+            if (fs.existsSync(accountFile)) {
+                console.log(`📁 Found ${category} account file at ${dateFolder}`);
+                const accountData = JSON.parse(fs.readFileSync(accountFile, 'utf8'));
+
+                // Ensure sites field exists
+                if (!accountData.sites) {
+                    accountData.sites = [];
+                }
+
+                return res.json({ success: true, account: accountData });
+            }
+        }
+
+        return res.json({ success: false, error: `No account file found for ${username} in ${category}` });
+    } catch (error) {
+        console.error('❌ Error getting account info:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Save account info for VIP categories (okvip, abcvip, jun88, 78win, kjc)
 app.post('/api/accounts/:category/:username', (req, res) => {
     try {
         const { category, username } = req.params;
@@ -1346,7 +1414,7 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }
@@ -1540,34 +1608,35 @@ app.delete('/api/results/clear', (req, res) => {
 
         // Function to recursively delete files in a directory
         function deleteFilesRecursive(dir) {
-            const items = fs.readdirSync(dir);
+            try {
+                const items = fs.readdirSync(dir);
 
-            items.forEach(item => {
-                const itemPath = path.join(dir, item);
-                const stat = fs.statSync(itemPath);
+                items.forEach(item => {
+                    const itemPath = path.join(dir, item);
+                    const stat = fs.statSync(itemPath);
 
-                if (stat.isDirectory()) {
-                    // Recursively delete files in subdirectory
-                    deleteFilesRecursive(itemPath);
-
-                    // Remove empty directory
-                    try {
-                        fs.rmdirSync(itemPath);
-                        console.log(`📁 Deleted folder: ${item}`);
-                    } catch (err) {
-                        console.error(`❌ Failed to delete folder ${item}:`, err.message);
+                    if (stat.isDirectory()) {
+                        // Recursively delete entire directory with all contents
+                        try {
+                            fs.rmSync(itemPath, { recursive: true, force: true });
+                            console.log(`📁 Deleted folder: ${item}`);
+                        } catch (err) {
+                            console.error(`❌ Failed to delete folder ${item}:`, err.message);
+                        }
+                    } else if (stat.isFile() && /\.(png|jpg|jpeg|gif|webp)$/i.test(item)) {
+                        // Delete image file
+                        try {
+                            fs.unlinkSync(itemPath);
+                            deletedCount++;
+                            console.log(`🗑️  Deleted: ${item}`);
+                        } catch (err) {
+                            console.error(`❌ Failed to delete ${item}:`, err.message);
+                        }
                     }
-                } else if (stat.isFile() && /\.(png|jpg|jpeg|gif|webp)$/i.test(item)) {
-                    // Delete image file
-                    try {
-                        fs.unlinkSync(itemPath);
-                        deletedCount++;
-                        console.log(`🗑️  Deleted: ${item}`);
-                    } catch (err) {
-                        console.error(`❌ Failed to delete ${item}:`, err.message);
-                    }
-                }
-            });
+                });
+            } catch (err) {
+                console.error(`❌ Error reading directory:`, err.message);
+            }
         }
 
         // Delete all files and subfolders
@@ -2294,12 +2363,19 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                 const result = await autoSequence.runSequence(browser, profileData, profileData.sites);
                 console.log('✅ NOHU automation completed:', result);
 
+                // Handle both array and object response formats
+                const resultsArray = Array.isArray(result) ? result : (result?.results || []);
+
                 // Check if automation truly completed all steps successfully
-                const isFullyCompleted = result && result.length > 0 &&
-                    result.every(siteResult =>
+                // If checkPromo is disabled, don't require checkPromo success
+                const checkPromoRequired = profileData.checkPromo !== false;
+                const isFullyCompleted = resultsArray && resultsArray.length > 0 &&
+                    resultsArray.every(siteResult =>
                         siteResult.register?.success &&
                         siteResult.addBank?.success &&
-                        (siteResult.checkPromo?.success || siteResult.checkPromo?.skipped)
+                        (checkPromoRequired
+                            ? (siteResult.checkPromo?.success || siteResult.checkPromo?.skipped)
+                            : true) // If checkPromo disabled, don't check it
                     );
 
                 if (isFullyCompleted) {
@@ -2319,48 +2395,45 @@ async function runNohuAutomationInBackground(autoSequence, profileId, config, to
                         console.error('⚠️  Failed to send complete status:', err.message);
                     }
 
-                    // Create screenshot files for UI to detect completion
-                    try {
-                        const screenshotsDir = path.join(__dirname, '../screenshots');
-                        const toolDir = path.join(screenshotsDir, 'nohu-tool');
-                        const sessionDir = path.join(toolDir, username, config.sessionId);
+                    // 🔥 Only create screenshot files if checkPromo was run (has actual screenshots)
+                    // If checkPromo disabled, don't create dummy files
+                    if (profileData.checkPromo !== false) {
+                        try {
+                            const screenshotsDir = path.join(__dirname, '../screenshots');
+                            // 🔥 Use same folder structure as checkPromo: {username}/{sessionId}/
+                            const sessionDir = path.join(screenshotsDir, username, config.sessionId);
 
-                        // Create directories if not exist
-                        if (!fs.existsSync(sessionDir)) {
-                            fs.mkdirSync(sessionDir, { recursive: true });
+                            // Create directories if not exist
+                            if (!fs.existsSync(sessionDir)) {
+                                fs.mkdirSync(sessionDir, { recursive: true });
+                            }
+
+                            // Save results.json for reference (actual screenshots already saved by checkPromo)
+                            const resultsFile = path.join(sessionDir, 'results.json');
+                            if (!fs.existsSync(resultsFile)) {
+                                fs.writeFileSync(resultsFile, JSON.stringify(resultsArray, null, 2));
+                            }
+
+                            console.log(`✅ Saved results.json in: ${sessionDir}`);
+                        } catch (fileErr) {
+                            console.warn('⚠️ Failed to save results.json:', fileErr.message);
                         }
-
-                        // Create dummy screenshot files for each site (for UI display)
-                        if (result && Array.isArray(result)) {
-                            result.forEach(siteResult => {
-                                const siteName = siteResult.site || 'unknown';
-                                const screenshotFile = path.join(sessionDir, `${siteName}.png`);
-                                // Create empty file (UI will use this to detect results)
-                                if (!fs.existsSync(screenshotFile)) {
-                                    fs.writeFileSync(screenshotFile, '');
-                                }
-                            });
-                        }
-
-                        // Save results.json for reference
-                        const resultsFile = path.join(sessionDir, 'results.json');
-                        if (!fs.existsSync(resultsFile)) {
-                            fs.writeFileSync(resultsFile, JSON.stringify(result, null, 2));
-                        }
-
-                        console.log(`✅ Created screenshot files for UI detection in: ${sessionDir}`);
-                    } catch (fileErr) {
-                        console.warn('⚠️ Failed to create screenshot files:', fileErr.message);
+                    } else {
+                        console.log('ℹ️  CheckPromo disabled - skipping screenshot file creation');
                     }
                 } else {
                     console.log('⚠️  Automation incomplete - not sending "complete" status');
-                    console.log('   Result summary:', result?.results?.map(r => ({
-                        site: r.site,
-                        register: r.register?.success,
-                        login: r.login?.success,
-                        addBank: r.addBank?.success,
-                        checkPromo: r.checkPromo?.success || r.checkPromo?.skipped
-                    })));
+                    if (Array.isArray(resultsArray)) {
+                        console.log('   Result summary:', resultsArray.map(r => ({
+                            site: r.site,
+                            register: r.register?.success,
+                            login: r.login?.success,
+                            addBank: r.addBank?.success,
+                            checkPromo: r.checkPromo?.success || r.checkPromo?.skipped
+                        })));
+                    } else {
+                        console.log('   Result is not an array:', typeof resultsArray);
+                    }
 
                     // Send "error" status instead since automation didn't complete fully
                     try {

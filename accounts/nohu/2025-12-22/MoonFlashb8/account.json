@@ -1,0 +1,43 @@
+{
+  "username": "MoonFlashb8",
+  "password": "30j1do2oe4",
+  "withdrawPassword": "921656",
+  "fullname": "KACO VO THI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10362048106620742",
+    "accountHolder": "KACO VO THI"
+  },
+  "registeredAt": "2025-12-22T06:57:22.855Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T06:57:22.855Z",
+  "bankVerified": false
+}

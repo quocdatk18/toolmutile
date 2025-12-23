@@ -1,0 +1,27 @@
+{
+  "username": "Ph5Strike99",
+  "password": "Quocdat123",
+  "withdrawPassword": "1",
+  "fullname": "BUI QUY BUU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10361048106458019",
+    "accountHolder": "BUI QUY BUU"
+  },
+  "registeredAt": "2025-12-21T06:34:56.207Z",
+  "firstSite": "Go99",
+  "sites": [
+    "Go99",
+    "NOHU",
+    "TT88",
+    "MMOO",
+    "789P",
+    "33WIN",
+    "88VV"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

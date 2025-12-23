@@ -850,7 +850,20 @@ app.get('/api/automation/statuses', (req, res) => {
         }
 
         // Return ALL statuses (running, completed, error) so frontend can detect completion
-        const statuses = Array.from(global.automationStatuses.values());
+        const statuses = Array.from(global.automationStatuses.values()).map(status => {
+            // ⏱️ FIX: Tính remainingSeconds từ countdownStartTime & countdownDuration (server time)
+            if (status.countdownStartTime && status.countdownDuration) {
+                const serverElapsedMs = Date.now() - status.countdownStartTime;
+                const serverRemainingMs = Math.max(0, status.countdownDuration - serverElapsedMs);
+                const serverRemainingSeconds = Math.ceil(serverRemainingMs / 1000);
+
+                // Update message với remainingSeconds từ server
+                if (status.message && status.message.includes('Chờ')) {
+                    status.message = status.message.replace(/Chờ \d+s/, `Chờ ${serverRemainingSeconds}s`);
+                }
+            }
+            return status;
+        });
         res.json({ success: true, statuses });
     } catch (error) {
         console.error('❌ Error getting statuses:', error);
@@ -866,7 +879,20 @@ app.get('/api/vip-automation/statuses', (req, res) => {
         }
 
         // Return ALL statuses (running, completed, error) so frontend can detect completion
-        const statuses = Array.from(global.automationStatuses.values());
+        const statuses = Array.from(global.automationStatuses.values()).map(status => {
+            // ⏱️ FIX: Tính remainingSeconds từ countdownStartTime & countdownDuration (server time)
+            if (status.countdownStartTime && status.countdownDuration) {
+                const serverElapsedMs = Date.now() - status.countdownStartTime;
+                const serverRemainingMs = Math.max(0, status.countdownDuration - serverElapsedMs);
+                const serverRemainingSeconds = Math.ceil(serverRemainingMs / 1000);
+
+                // Update message với remainingSeconds từ server
+                if (status.message && status.message.includes('Chờ')) {
+                    status.message = status.message.replace(/Chờ \d+s/, `Chờ ${serverRemainingSeconds}s`);
+                }
+            }
+            return status;
+        });
         res.json({ success: true, statuses });
     } catch (error) {
         console.error('❌ Error getting VIP statuses:', error);
@@ -1022,20 +1048,51 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     // New path: ../accounts/nohu/{YYYY-MM-DD}/{username}/account.json
     const accountsDir = path.join(__dirname, '../accounts/nohu');
     let hasAccountInfo = false;
+    let category = 'okvip'; // Default category
 
-    // Check if account exists in any date folder
-    if (fs.existsSync(accountsDir)) {
-        const dateFolders = fs.readdirSync(accountsDir, { withFileTypes: true })
-            .filter(item => item.isDirectory())
-            .map(item => item.name);
+    // Check if account exists in any date folder (for VIP categories)
+    const vipCategoriesDir = path.join(__dirname, '../accounts/vip');
+    if (fs.existsSync(vipCategoriesDir)) {
+        const vipCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        for (const cat of vipCategories) {
+            const catDir = path.join(vipCategoriesDir, cat);
+            if (fs.existsSync(catDir)) {
+                const dateFolders = fs.readdirSync(catDir, { withFileTypes: true })
+                    .filter(item => item.isDirectory())
+                    .map(item => item.name);
 
-        for (const dateFolder of dateFolders) {
-            const userAccountDir = path.join(accountsDir, dateFolder, username);
-            if (fs.existsSync(userAccountDir)) {
-                const files = fs.readdirSync(userAccountDir);
-                if (files.some(f => f === 'account.json' || f === 'account.txt')) {
-                    hasAccountInfo = true;
-                    break;
+                for (const dateFolder of dateFolders) {
+                    const userAccountDir = path.join(catDir, dateFolder, username);
+                    if (fs.existsSync(userAccountDir)) {
+                        const files = fs.readdirSync(userAccountDir);
+                        if (files.some(f => f === `${cat}.json` || f === `${cat}.txt`)) {
+                            category = cat; // Found category
+                            hasAccountInfo = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasAccountInfo) break;
+            }
+        }
+    }
+
+    // Check if account exists in Nohu folder (for backward compatibility)
+    if (!hasAccountInfo) {
+        const accountsDir = path.join(__dirname, '../accounts/nohu');
+        if (fs.existsSync(accountsDir)) {
+            const dateFolders = fs.readdirSync(accountsDir, { withFileTypes: true })
+                .filter(item => item.isDirectory())
+                .map(item => item.name);
+
+            for (const dateFolder of dateFolders) {
+                const userAccountDir = path.join(accountsDir, dateFolder, username);
+                if (fs.existsSync(userAccountDir)) {
+                    const files = fs.readdirSync(userAccountDir);
+                    if (files.some(f => f === 'account.json' || f === 'account.txt')) {
+                        hasAccountInfo = true;
+                        break;
+                    }
                 }
             }
         }
@@ -1093,6 +1150,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
                         sessionId: sessionId, // Include session ID
                         runNumber: runNumber, // Include run number from metadata
                         toolId: sessionToolId, // Include tool ID
+                        category: category, // 🔥 Add category
                         siteName: siteName,
                         timestamp: stats.mtimeMs,
                         status: 'success',
@@ -1129,6 +1187,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
                 username: username,
                 sessionId: null, // No session for old structure
                 toolId: guessedToolId, // Guessed tool ID for old structure
+                category: category, // 🔥 Add category
                 siteName: siteName,
                 timestamp: stats.mtimeMs,
                 status: 'success',
@@ -1267,9 +1326,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, abcvip, jun88, kjc)
+        // Try to find any VIP category file (okvip, abcvip, jun88, 78win, jun88v2, kjc)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1363,7 +1422,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.json({ success: false, error: 'Invalid category' });
         }
@@ -1403,7 +1462,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
     }
 });
 
-// Save account info for VIP categories (okvip, abcvip, jun88, kjc)
+// Save account info for VIP categories (okvip, abcvip, jun88, 78win, kjc)
 app.post('/api/accounts/:category/:username', (req, res) => {
     try {
         const { category, username } = req.params;
@@ -1414,7 +1473,7 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }
@@ -3049,13 +3108,13 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 
 // NOHU app sites config (centralized - used by both frontend and backend)
 const nohuSitesConfig = {
-    'Go99': { name: 'Go99', registerUrl: ' https://m.1go99.vip/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
-    'NOHU': { name: 'NOHU', registerUrl: 'https://m.2nohu.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
-    'TT88': { name: 'TT88', registerUrl: 'https://m.1tt88.vip/Account/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
-    'MMOO': { name: 'MMOO', registerUrl: 'https://m.mmoo.team/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
-    '789P': { name: '789P', registerUrl: 'https://m.789p1.vip/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
-    '33WIN': { name: '33WIN', registerUrl: 'https://m.3333win.cc/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
-    '88VV': { name: '88VV', registerUrl: 'https://m.888vvv.bet/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
+    'Go99': { name: 'Go99', registerUrl: 'https://m.goshhh99uuu-66ooo.xyz/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
+    'NOHU': { name: 'NOHU', registerUrl: 'https://m.88807888.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
+    'TT88': { name: 'TT88', registerUrl: 'https://m.ttfffashhsh-88anjsje.vip/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
+    'MMOO': { name: 'MMOO', registerUrl: 'https://m.3mmoo.com/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
+    '789P': { name: '789P', registerUrl: 'https://m.nn789p.com/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
+    '33WIN': { name: '33WIN', registerUrl: 'https://m.330756.com/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
+    '88VV': { name: '88VV', registerUrl: 'https://m.88vv.gd/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
 };
 
 // Get NOHU sites config
@@ -3358,6 +3417,13 @@ if (adminAPI) {
         try {
             // Create new instance each time to reload data from file
             const customerManager = new CustomerMachineManager();
+
+            // Auto-cleanup expired licenses
+            const cleanedCount = customerManager.cleanupExpiredLicenses();
+            if (cleanedCount > 0) {
+                console.log(`🧹 Auto-cleanup: Removed ${cleanedCount} expired licenses`);
+            }
+
             const customers = customerManager.getAllCustomers();
             const stats = customerManager.getStats();
             res.json({ success: true, customers, stats });

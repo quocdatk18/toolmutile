@@ -1,0 +1,24 @@
+{
+  "username": "gd17dw",
+  "password": "d2gsv467",
+  "withdrawPassword": "397967",
+  "fullname": "CHAM PHAM THI",
+  "email": "r1al3@gmail.com",
+  "phone": "0993187485",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10362048106662910",
+    "accountHolder": "CHAM PHAM THI"
+  },
+  "registeredAt": "2025-12-22T17:22:59.337Z",
+  "firstSite": "F8BET",
+  "sites": [
+    "F8BET",
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

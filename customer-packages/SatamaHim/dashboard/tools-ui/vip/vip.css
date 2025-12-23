@@ -1253,8 +1253,11 @@
 }
 
 .vip-tool-container .profile-carousel-card.running {
-    border-left: 4px solid #10b981;
-    opacity: 0.7;
+    border: 2px solid #ef4444 !important;
+    background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2), 0 8px 24px rgba(239, 68, 68, 0.2) !important;
+    cursor: not-allowed !important;
+    opacity: 0.8;
 }
 
 .vip-tool-container .running-badge {

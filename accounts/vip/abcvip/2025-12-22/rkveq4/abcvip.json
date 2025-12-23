@@ -1,0 +1,23 @@
+{
+  "username": "rkveq4",
+  "password": "h155y4b82p",
+  "withdrawPassword": "626199",
+  "fullname": "LE MINH HAI THANH",
+  "email": "c6awklc@gmail.com",
+  "phone": "0996233481",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10362048106526462",
+    "accountHolder": "LE MINH HAI THANH"
+  },
+  "registeredAt": "2025-12-21T19:40:48.105Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

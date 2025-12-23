@@ -533,8 +533,8 @@
                         </div>
                     </div>
 
-                    <!-- CheckPromo Option -->
-                    <div
+                    <!-- CheckPromo Option (only for Auto tab) -->
+                    <div id="checkPromoOptionContainer"
                         style="padding: 10px; background: #f0fdf4; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 12px;">
                         <label
                             style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #15803d; cursor: pointer;">
@@ -2422,10 +2422,18 @@
             return;
         }
 
-        processedResults.add(resultId);
+        // Skip if this result is from a running automation (avoid duplicates)
+        // Running automations are tracked in resultsData with status='running'
         const username = result.username || 'N/A';
         const sessionId = result.sessionId || 'default';
-        const key = `${username}_${sessionId}`; // Group by username + sessionId (each run is separate)
+        const key = `${username}_${sessionId}`;
+
+        if (resultsData[key] && resultsData[key].status === 'running') {
+            console.log(`⏭️ Skipping file result for running automation: ${key}`);
+            return;
+        }
+
+        processedResults.add(resultId);
 
         // Initialize group if not exists
         if (!resultsData[key]) {
@@ -2641,8 +2649,9 @@
             // Status summary
             let statusHtml = '';
             if (isRunning) {
-                // Show running status for the whole automation
-                statusHtml = `<div><span class="status-badge running">🔄 Đang chạy...</span></div>`;
+                // Show running status with message from server if available
+                const message = group.message || '🔄 Đang chạy...';
+                statusHtml = `<div><span class="status-badge running">${message}</span></div>`;
             } else {
                 // Show detailed status after completion
                 if (successCount > 0) statusHtml += `<span class="status-badge success">✅ ${successCount}</span> `;
@@ -2654,7 +2663,9 @@
             const screenshotCount = group.screenshots.length;
             let screenshotHtml = '<span style="color: #a0aec0;">Chưa có</span>';
             if (isRunning) {
-                screenshotHtml = '<span style="color: #f59e0b;">⏳ Đang chạy...</span>';
+                // Show message from server if available (countdown, status, etc.)
+                const message = group.message || '⏳ Đang chạy...';
+                screenshotHtml = `<span style="color: #f59e0b; font-size: 12px;">${message}</span>`;
             } else if (screenshotCount > 0) {
                 // Hiển thị nút xem ảnh, và chỉ hiển thị nút xem thông tin tài khoản nếu có
                 const accountInfoBtn = group.hasAccountInfo ? `
@@ -2955,7 +2966,7 @@
                                         ${acc.sites && acc.sites.length > 0
                             ? acc.sites.map(site => `
                                                 <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                                    ${site}
+                                                    ${typeof site === 'object' ? site.name : site}
                                                 </span>
                                             `).join('')
                             : '<span style="color: #718096; font-style: italic;">Không có thông tin</span>'
@@ -3672,26 +3683,30 @@
     // This prevents pagination jumping issues
     // Manual refresh available via "Tải Lại" button
 
-    // Check for running automation status updates (more frequent for better UX)
+    // Check for running automation status updates (only when there are running profiles)
     setInterval(() => {
-        loadAutomationStatuses(); // Check running status
-        checkForAutomationCompletion(); // Check if automation completed
-    }, 5000); // Check every 5 seconds for faster updates
+        if (typeof profileManager !== 'undefined' &&
+            profileManager.runningProfiles &&
+            profileManager.runningProfiles.size > 0) {
+            loadAutomationStatuses(); // Check running status
+            checkForAutomationCompletion(); // Check if automation completed
+        }
+    }, 2000); // Check every 2 seconds when running
 
     // Auto-refresh results table when automation is running
     let lastResultsRefresh = 0;
     setInterval(() => {
         const now = Date.now();
-        // Only refresh if there are running profiles and it's been at least 5 seconds since last refresh
+        // Only refresh if there are running profiles and it's been at least 10 seconds since last refresh
         if (typeof profileManager !== 'undefined' &&
             profileManager.runningProfiles &&
             profileManager.runningProfiles.size > 0 &&
-            now - lastResultsRefresh > 5000) {
+            now - lastResultsRefresh > 10000) {
             lastResultsRefresh = now;
             console.log('🔄 Auto-refreshing results table (automation running)...');
             loadResultsFromServer();
         }
-    }, 5000); // Check every 5 seconds
+    }, 10000); // Check every 10 seconds
 
     // Recalculate page size when window is resized
     let resizeTimeout;
@@ -3788,6 +3803,33 @@
         }
     };
 
+    // Clear all running statuses
+    window.clearAllRunningStatuses = function () {
+        const count = profileManager.runningProfiles.size;
+
+        if (count === 0) {
+            showToast('info', 'Không có gì', 'Không có profile nào đang marked running');
+            return;
+        }
+
+        if (!confirm(`Bạn có chắc muốn clear ${count} profile(s) đang running?`)) {
+            return;
+        }
+
+        // Clear all running profiles
+        profileManager.runningProfiles.clear();
+        if (profileManager.runningStartTimes) {
+            profileManager.runningStartTimes.clear();
+        }
+        profileManager.saveRunningProfiles();
+
+        // Refresh carousel to update UI
+        loadProfilesCarousel();
+
+        showToast('success', 'Đã clear', `Đã clear ${count} profiles`);
+        console.log(`✅ Cleared ${count} running profiles`);
+    };
+
     // Confirm and run check promo from modal
     async function confirmCheckPromo() {
         // Get selected sites from modal
@@ -3863,17 +3905,20 @@
         const promoTypeSelector = document.getElementById('promoTypeSelector');
         const appGroup = document.getElementById('appPromoGroup');
         const smsGroup = document.getElementById('smsPromoGroup');
+        const checkPromoOptionContainer = document.getElementById('checkPromoOptionContainer');
 
         if (tabName === 'auto') {
-            // Auto tab: Show selector, allow toggle between app/sms
+            // Auto tab: Show selector, allow toggle between app/sms, show checkbox
             if (promoTypeSelector) promoTypeSelector.style.display = 'block';
+            if (checkPromoOptionContainer) checkPromoOptionContainer.style.display = 'block';
             // Keep current selection
             togglePromoSites();
         } else {
-            // Other tabs: Hide selector, always show app sites only
+            // Other tabs: Hide selector, always show app sites only, hide checkbox
             if (promoTypeSelector) promoTypeSelector.style.display = 'none';
             if (appGroup) appGroup.style.display = 'block';
             if (smsGroup) smsGroup.style.display = 'none';
+            if (checkPromoOptionContainer) checkPromoOptionContainer.style.display = 'none';
         }
     };
 

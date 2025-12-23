@@ -1,0 +1,43 @@
+{
+  "username": "TigerFje88",
+  "password": "f8c94bxo65k",
+  "withdrawPassword": "169138",
+  "fullname": "LE ANH TAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10361048106443801",
+    "accountHolder": "LE ANH TAM"
+  },
+  "registeredAt": "2025-12-21T04:13:02.510Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-21T04:13:02.510Z",
+  "bankVerified": false
+}

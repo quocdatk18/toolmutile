@@ -1,0 +1,27 @@
+{
+  "username": "EagleBolt9n",
+  "password": "fu70egcy",
+  "withdrawPassword": "458306",
+  "fullname": "TRINH ZO RAM BANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10361048106458849",
+    "accountHolder": "TRINH ZO RAM BANG"
+  },
+  "registeredAt": "2025-12-21T06:46:39.658Z",
+  "firstSite": "Go99",
+  "sites": [
+    "Go99",
+    "NOHU",
+    "TT88",
+    "MMOO",
+    "789P",
+    "33WIN",
+    "88VV"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

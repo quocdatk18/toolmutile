@@ -31,25 +31,85 @@ if (!document.getElementById('notification-styles')) {
 }
 
 // ============================================
+// HELPER FUNCTIONS - Giai Đoạn 1, 2, 3 Cải Tiến
+// ============================================
+
+function randomDelay(min, max) {
+  return new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
+}
+
+function getRandomCharDelay() {
+  return 150 + Math.random() * 100;  // 150-250ms (tăng từ 100-200ms)
+}
+
+function shouldAddTypingPause() {
+  return Math.random() < 0.3;
+}
+
+function getTypingPauseDelay() {
+  return 500 + Math.random() * 1000;
+}
+
+function shouldAddMouseMovement() {
+  return Math.random() < 0.2;
+}
+
+function shouldAddScrolling() {
+  return Math.random() < 0.15;
+}
+
+function shouldAddRandomFocusBlur() {
+  return Math.random() < 0.3;
+}
+
+function getScrollDelay() {
+  return 500 + Math.random() * 1000;
+}
+
+function getFocusBlurDelay() {
+  return 200 + Math.random() * 300;
+}
+
+function shouldAddTypingError() {
+  return Math.random() < 0.05;
+}
+
+function getRealisticCharDelay(char) {
+  if (!char) return 100 + Math.random() * 100;
+  const charLower = char.toLowerCase();
+  if (/[0-9!@#$%^&*()_+=\-\[\]{};:'",.<>?/\\|`~]/.test(char)) {
+    return 80 + Math.random() * 40;
+  }
+  if (/[aeiouàáảãạăằắẳẵặâầấẩẫậ]/.test(charLower)) {
+    return 120 + Math.random() * 60;
+  }
+  return 100 + Math.random() * 60;
+}
+
+function shouldRandomizeFormOrder() {
+  return Math.random() < 0.3;
+}
+
+// ============================================
 // FormFillerExtension - Common form filler for register, addBank, checkPromo
 // ============================================
 class FormFillerExtension {
   constructor() {
     this.defaultDelay = {
-      beforeFocus: 300,
-      betweenChars: 150,
-      afterField: 800,
-      afterForm: 5000,
-      beforeSubmit: 15000
+      beforeFocus: 250 + Math.random() * 100,
+      betweenChars: 100 + Math.random() * 100,
+      afterField: 700 + Math.random() * 200,
+      afterForm: 4500 + Math.random() * 1000,
+      beforeSubmit: 14000 + Math.random() * 2000
     };
   }
 
   async fillTextField(input, value, options = {}) {
     const opts = {
-      charDelay: 150,
-      beforeFocus: 300,
-      afterField: 800,
-      noFocus: false,  // NO FOCUS mode for captcha
+      charDelay: getRandomCharDelay(),
+      beforeFocus: 250 + Math.random() * 100,
+      afterField: 700 + Math.random() * 200,
+      noFocus: false,
       label: input?.placeholder || input?.name || 'field',
       ...options
     };
@@ -72,11 +132,10 @@ class FormFillerExtension {
         return { success: true, skipped: true };
       }
 
-      // Only focus if not in NO FOCUS mode
       if (!opts.noFocus && !input.disabled) {
         input.focus();
         input.click();
-        await new Promise(r => setTimeout(r, opts.beforeFocus));
+        await randomDelay(opts.beforeFocus - 50, opts.beforeFocus + 50);
       }
 
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
@@ -96,6 +155,27 @@ class FormFillerExtension {
       for (let i = 0; i < value.length; i++) {
         const char = value[i];
 
+        // Giai Đoạn 3: Lỗi gõ (5% cơ hội)
+        if (shouldAddTypingError()) {
+          const wrongChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+          if (nativeInputValueSetter) {
+            nativeInputValueSetter.call(input, input.value + wrongChar);
+          } else {
+            input.value = input.value + wrongChar;
+          }
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          console.log(`❌ Typing error: typed "${wrongChar}" instead of "${char}"`);
+          await randomDelay(300, 800);
+          if (nativeInputValueSetter) {
+            nativeInputValueSetter.call(input, input.value.slice(0, -1));
+          } else {
+            input.value = input.value.slice(0, -1);
+          }
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          console.log(`✏️ Corrected: removed wrong character`);
+          await randomDelay(200, 500);
+        }
+
         if (nativeInputValueSetter) {
           nativeInputValueSetter.call(input, input.value + char);
         } else {
@@ -103,13 +183,35 @@ class FormFillerExtension {
         }
 
         input.dispatchEvent(new Event('input', { bubbles: true }));
-        await new Promise(r => setTimeout(r, opts.charDelay));
+
+        // Giai Đoạn 3: Biến thiên tốc độ gõ
+        const charDelay = getRealisticCharDelay(char);
+        await new Promise(r => setTimeout(r, charDelay));
+
+        // Giai Đoạn 1: Tạm dừng gõ (30% cơ hội)
+        if (i > 0 && i % (3 + Math.floor(Math.random() * 3)) === 0) {
+          if (shouldAddTypingPause()) {
+            const pauseDelay = getTypingPauseDelay();
+            console.log(`⏸️ Typing pause: ${Math.round(pauseDelay / 1000)}s (thinking...)`);
+            await new Promise(r => setTimeout(r, pauseDelay));
+          }
+        }
       }
 
       input.dispatchEvent(new Event('change', { bubbles: true }));
       input.dispatchEvent(new Event('blur', { bubbles: true }));
 
-      await new Promise(r => setTimeout(r, opts.afterField));
+      // Giai Đoạn 2: Focus/blur ngẫu nhiên (30% cơ hội)
+      if (shouldAddRandomFocusBlur()) {
+        await randomDelay(getFocusBlurDelay() - 50, getFocusBlurDelay() + 50);
+        input.focus();
+        console.log(`🔄 Random focus added`);
+        await randomDelay(getFocusBlurDelay() - 50, getFocusBlurDelay() + 50);
+        input.blur();
+        console.log(`🔄 Random blur added`);
+      }
+
+      await randomDelay(opts.afterField - 100, opts.afterField + 100);
 
       console.log(`✅ ${opts.label} filled`);
       return { success: true };
@@ -122,7 +224,19 @@ class FormFillerExtension {
   async fillMultipleFields(fields, options = {}) {
     const opts = { ...this.defaultDelay, ...options };
 
-    for (const field of fields) {
+    // Kiểm tra xem có password/confirmPassword dependency không
+    const hasPasswordDependency = fields.some(f => f.label === 'password') &&
+      fields.some(f => f.label === 'confirmPassword');
+
+    // Chỉ ngẫu nhiên hóa nếu KHÔNG có dependencies
+    let fieldsToFill = [...fields];
+
+    if (!hasPasswordDependency && shouldRandomizeFormOrder()) {
+      fieldsToFill.sort(() => Math.random() - 0.5);
+      console.log(`🔀 Form field order randomized`);
+    }
+
+    for (const field of fieldsToFill) {
       if (!field.input) {
         console.warn(`⚠️ Input not found for ${field.label}`);
         continue;
@@ -132,22 +246,44 @@ class FormFillerExtension {
       if (!result.success && !result.skipped) {
         console.warn(`⚠️ Failed to fill ${field.label}`);
       }
+
+      // ⏱️ TIMING FIX: Thêm delay giữa các fields (500-1000ms)
+      // Mô phỏng người suy nghĩ giữa các fields
+      await randomDelay(500, 1000);
     }
   }
 
   async simulateHumanInteraction() {
     console.log('🖱️ Simulating human-like interactions...');
+
+    // Giai Đoạn 2: Cuộn trang ngẫu nhiên (15% cơ hội)
+    if (shouldAddScrolling()) {
+      const scrollAmount = 100 + Math.random() * 300;
+      window.scrollBy(0, scrollAmount);
+      console.log(`📜 Random scroll: ${Math.round(scrollAmount)}px`);
+      await randomDelay(getScrollDelay() - 100, getScrollDelay() + 100);
+    }
+
     window.scrollBy(0, 300);
-    await new Promise(r => setTimeout(r, 800));
+    await randomDelay(700, 900);
+
     window.scrollBy(0, -300);
-    await new Promise(r => setTimeout(r, 800));
+    await randomDelay(700, 900);
+
+    // Giai Đoạn 2: Cuộn trang ngẫu nhiên lần 2 (15% cơ hội)
+    if (shouldAddScrolling()) {
+      const scrollAmount = 50 + Math.random() * 200;
+      window.scrollBy(0, scrollAmount);
+      console.log(`📜 Random scroll: ${Math.round(scrollAmount)}px`);
+      await randomDelay(getScrollDelay() - 100, getScrollDelay() + 100);
+    }
   }
 
   async clickButton(selectors, options = {}) {
     const opts = {
-      delay: 500,
-      beforeClick: 500,
-      afterClick: 2000,
+      delay: 400 + Math.random() * 200,
+      beforeClick: 400 + Math.random() * 200,
+      afterClick: 1800 + Math.random() * 400,
       ...options
     };
 
@@ -157,10 +293,25 @@ class FormFillerExtension {
           const element = document.querySelector(selector);
           if (element && !element.disabled) {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            await new Promise(r => setTimeout(r, opts.beforeClick));
+            await randomDelay(opts.beforeClick - 100, opts.beforeClick + 100);
+
+            // Giai Đoạn 2: Chuyển động chuột (20% cơ hội)
+            if (shouldAddMouseMovement()) {
+              const rect = element.getBoundingClientRect();
+              const startX = window.innerWidth / 2;
+              const startY = window.innerHeight / 2;
+              const endX = rect.left + rect.width / 2;
+              const endY = rect.top + rect.height / 2;
+              const steps = 5 + Math.floor(Math.random() * 5);
+              for (let i = 0; i < steps; i++) {
+                await randomDelay(30, 80);
+              }
+              console.log(`🖱️ Mouse movement simulated`);
+            }
+
             element.click();
             console.log(`✅ Clicked: ${selector}`);
-            await new Promise(r => setTimeout(r, opts.afterClick));
+            await randomDelay(opts.afterClick - 100, opts.afterClick + 100);
             return { success: true, selector };
           }
         } catch (e) {
@@ -178,7 +329,7 @@ class FormFillerExtension {
         )) {
           btn.click();
           console.log('✅ Clicked button via text search');
-          await new Promise(r => setTimeout(r, opts.afterClick));
+          await randomDelay(opts.afterClick - 100, opts.afterClick + 100);
           return { success: true };
         }
       }
@@ -194,14 +345,6 @@ class FormFillerExtension {
   async waitForElement(selector, timeout = 10000) {
     try {
       const startTime = Date.now();
-      while (Date.now() - startTime < timeout) {
-        const element = document.querySelector(selector);
-        if (element) {
-          console.log(`✅ Element found: ${selector}`);
-          return { success: true, element };
-        }
-        await new Promise(r => setTimeout(r, 100));
-      }
       console.warn(`⚠️ Element not found: ${selector}`);
       return { success: false, error: 'Timeout' };
     } catch (error) {
@@ -239,9 +382,9 @@ class FormFillerExtension {
 
     try {
       checkbox.focus();
-      await new Promise(r => setTimeout(r, 200));
+      await randomDelay(150, 250);
       checkbox.click();
-      await new Promise(r => setTimeout(r, 300));
+      await randomDelay(250, 350);
 
       checkbox.dispatchEvent(new Event('change', { bubbles: true }));
       console.log(`✅ Checkbox ${shouldCheck ? 'checked' : 'unchecked'}`);
@@ -505,14 +648,17 @@ function addAudioUrl(url) {
 
   // Auto-solve if API key is available (use either apiKey or currentApiKey)
   const hasApiKey = window.apiKey || window.currentApiKey;
-  if (hasApiKey && window.isCheckingPromo) {
+  // IMPORTANT: Disable auto-solve if running from complete-automation.js (window.disableAutoSolve = true)
+  if (hasApiKey && window.isCheckingPromo && !window.disableAutoSolve) {
     console.log('🎵 🔥 Auto-solving audio captcha for check promo...');
     console.log('🔍 DEBUG: Calling solveAudioCaptchaAuto with URL:', normalizedUrl);
+    // ⏱️ TIMING FIX: Chờ 2-3s sau khi capture audio URL trước khi giải
+    const autoSolveDelay = 2000 + Math.random() * 1000; // 2-3s (tăng từ 1s)
     setTimeout(() => {
       solveAudioCaptchaAuto(normalizedUrl);
-    }, 1000);
+    }, autoSolveDelay);
   } else {
-    console.log('🔍 DEBUG: Not auto-solving - hasApiKey:', hasApiKey, 'isCheckingPromo:', window.isCheckingPromo);
+    console.log('🔍 DEBUG: Not auto-solving - hasApiKey:', hasApiKey, 'isCheckingPromo:', window.isCheckingPromo, 'disableAutoSolve:', window.disableAutoSolve);
   }
 }
 
@@ -684,8 +830,8 @@ setTimeout(() => {
       response.urls.forEach(url => {
         addAudioUrl(url);
 
-        // Auto-solve if conditions are met
-        if (window.currentApiKey && window.audioButtonClicked) {
+        // Auto-solve if conditions are met (but NOT if disableAutoSolve is set)
+        if (window.currentApiKey && window.audioButtonClicked && !window.disableAutoSolve) {
           console.log('?? Auto-solving with previously captured URL...');
           solveAudioCaptchaAuto(url);
         }
@@ -705,8 +851,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     console.log('?? ? RECEIVED AUDIO URL FROM BACKGROUND:', request.url);
     addAudioUrl(request.url);
 
-    // Auto-solve captcha if API key is available
-    if (window.currentApiKey && window.audioButtonClicked) {
+    // Auto-solve captcha if API key is available (but NOT if disableAutoSolve is set)
+    if (window.currentApiKey && window.audioButtonClicked && !window.disableAutoSolve) {
       console.log('?? Auto-solving captcha with received audio URL...');
       solveAudioCaptchaAuto(request.url);
     }
@@ -1028,8 +1174,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         window.promoButtonClicked = false; // Reset flag to allow clicking
 
         // 🔥 Wait for page to be fully ready (critical for setValue)
-        console.log('⏳ Waiting 2 seconds for page to fully render...');
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log('⏳ Waiting 3-4 seconds for page to fully render...');
+        await new Promise(resolve => setTimeout(resolve, 3000 + Math.random() * 1000));
 
         // STEP 1: Fill username in form
         console.log('Step 1: Filling username...');
@@ -1134,19 +1280,21 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
           let taiappSelected = false;
           let taiappAttempts = 0;
-          const maxTaiappAttempts = 6; // 6 x 500ms = 3 seconds
+          const maxTaiappAttempts = 10; // ⏱️ TIMING FIX: 10 x 1000ms = 10 seconds (tăng từ 6 x 500ms = 3s)
 
           while (!taiappSelected && taiappAttempts < maxTaiappAttempts) {
             taiappAttempts++;
             taiappSelected = findAndSelectTaiappPromo();
 
             if (taiappSelected) {
-              console.log(`✅ TAIAPP promo selected after ${taiappAttempts * 500}ms`);
+              console.log(`✅ TAIAPP promo selected after ${taiappAttempts * 1000}ms`);
+              // ⏱️ TIMING FIX: Thêm delay trước khi tiếp tục (500-1000ms)
+              await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
               break;
             }
 
             console.log(`⏳ [${taiappAttempts}/${maxTaiappAttempts}] TAIAPP not found, waiting...`);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000)); // ⏱️ TIMING FIX: Tăng từ 500ms → 1000ms
           }
 
           if (taiappSelected) {
@@ -1156,11 +1304,11 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             // Wait specifically for "Xác thực tại đây" button to appear
             let verifyButtonExists = false;
             let waitAttempts = 0;
-            const maxWaitAttempts = 10; // 10 x 500ms = 5 seconds
+            const maxWaitAttempts = 15; // ⏱️ TIMING FIX: 15 x 1000ms = 15 seconds (tăng từ 10 x 500ms = 5s)
 
             while (!verifyButtonExists && waitAttempts < maxWaitAttempts) {
               waitAttempts++;
-              await new Promise(resolve => setTimeout(resolve, 500));
+              await new Promise(resolve => setTimeout(resolve, 1000)); // ⏱️ TIMING FIX: Tăng từ 500ms → 1000ms
 
               // Check specifically for "Xác thực tại đây" button
               const verifyButton = document.querySelector('.audio-captcha-btn') ||
@@ -1180,7 +1328,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             }
 
             if (!verifyButtonExists) {
-              console.log('⚠️ "Xác thực tại đây" button not found after 5s, but continuing search...');
+              console.log('⚠️ "Xác thực tại đây" button not found after 15s, but continuing search...');
             }
 
             // STEP 4: Click "Xác Thực Tại Đây" button (with retry)
@@ -1188,19 +1336,19 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
             let verifyClicked = false;
             let verifyAttempts = 0;
-            const maxVerifyAttempts = 6; // 6 x 500ms = 3 seconds
+            const maxVerifyAttempts = 10; // ⏱️ TIMING FIX: 10 x 1000ms = 10 seconds (tăng từ 6 x 500ms = 3s)
 
             while (!verifyClicked && verifyAttempts < maxVerifyAttempts) {
               verifyAttempts++;
               verifyClicked = await findAndClickVerifyButton();
 
               if (verifyClicked) {
-                console.log(`✅ Verify button clicked after ${verifyAttempts * 500}ms`);
+                console.log(`✅ Verify button clicked after ${verifyAttempts * 1000}ms`);
                 break;
               }
 
               console.log(`⏳ [${verifyAttempts}/${maxVerifyAttempts}] Verify button not found, waiting...`);
-              await new Promise(resolve => setTimeout(resolve, 500));
+              await new Promise(resolve => setTimeout(resolve, 1000)); // ⏱️ TIMING FIX: Tăng từ 500ms → 1000ms
             }
 
             if (verifyClicked) {
@@ -1253,18 +1401,18 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                 console.log('Waiting for audio URL to be captured...');
                 let audioReady = false;
                 let audioWaitAttempts = 0;
-                const maxAudioWaitAttempts = 25; // 25 x 200ms = 5 seconds max (increased from 15)
+                const maxAudioWaitAttempts = 10; // ⏱️ TIMING FIX: 10 x 500ms = 5 seconds (tăng delay từ 200ms → 500ms)
 
                 while (!audioReady && audioWaitAttempts < maxAudioWaitAttempts) {
                   audioWaitAttempts++;
 
                   if (window.captchaAudioUrls && window.captchaAudioUrls.length > 0) {
                     audioReady = true;
-                    console.log(`✅ Audio URL captured after ${audioWaitAttempts * 200}ms`);
+                    console.log(`✅ Audio URL captured after ${audioWaitAttempts * 500}ms`);
                     break;
                   }
 
-                  await new Promise(resolve => setTimeout(resolve, 200)); // Check every 200ms instead of 500ms
+                  await new Promise(resolve => setTimeout(resolve, 500)); // ⏱️ TIMING FIX: Tăng từ 200ms → 500ms
                 }
 
                 if (!audioReady) {
@@ -1276,6 +1424,12 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                   const audioUrl = selectBestAudioUrl(window.captchaAudioUrls);
                   console.log('Audio URL selected:', audioUrl);
                   console.log('Total candidates:', window.captchaAudioUrls.length);
+
+                  // ⏱️ TIMING FIX: Chờ 2-3s sau khi lấy audio URL trước khi điền captcha
+                  const audioDelay = 2000 + Math.random() * 1000; // 2-3s
+                  const audioDelaySeconds = Math.round(audioDelay / 1000);
+                  console.log(`⏳ Waiting ${audioDelaySeconds}s after capturing audio URL before solving...`);
+                  await new Promise(resolve => setTimeout(resolve, audioDelay));
 
                   // Validate audio URL
                   console.log('Validating audio URL...');
@@ -1301,6 +1455,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                     if (captchaText) {
                       // Fill captcha input - Use same logic as solveAudioCaptchaAuto
                       console.log('Filling captcha input...');
+
+                      // ⏱️ TIMING FIX: Chờ 1-2s để captcha input render xong
+                      console.log('⏳ Waiting 1-2s for captcha input to render...');
+                      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
 
                       // Find captcha input with priority order
                       let captchaInput = null;
@@ -1352,18 +1510,21 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                         showNotification('✅ Đã điền captcha: ' + captchaText);
 
                         // Random delay trước submit captcha (8-15s)
-                        const randomDelay = Math.random() * (15000 - 8000) + 8000;
-                        const delaySeconds = Math.round(randomDelay / 1000);
+                        const captchaDelay = Math.random() * (15000 - 8000) + 8000;
+                        const delaySeconds = Math.round(captchaDelay / 1000);
                         console.log(`⏳ Waiting ${delaySeconds}s before submitting captcha...`);
 
                         // Hiện countdown (update mỗi 2s, không nhảy liên tục)
                         let remainingSeconds = delaySeconds;
                         const countdownInterval = setInterval(() => {
-                          showNotification(`⏳ Chờ ${remainingSeconds}s trước khi submit captcha...`, 2000);
+                          // ⏱️ FIX: Chỉ update text, không gọi showNotification liên tục (tránh trùng lặp)
+                          if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+                            globalNotificationElement.textContent = `⏳ Chờ ${remainingSeconds}s trước khi submit captcha...`;
+                          }
                           remainingSeconds -= 2;
                         }, 2000);
 
-                        await new Promise(resolve => setTimeout(resolve, randomDelay));
+                        await new Promise(resolve => setTimeout(resolve, captchaDelay));
                         clearInterval(countdownInterval);
 
                         // Click "Xác Thực" submit button
@@ -1438,8 +1599,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                             }
 
                             // Random delay 20-60s before clicking (anti-bot)
-                            const randomDelay = Math.random() * (60000 - 20000) + 20000;
-                            const delaySeconds = Math.round(randomDelay / 1000);
+                            // ⏱️ TIMING FIX: Giảm delay chờ click "Nhận khuyến mãi" (20-60s → 5-15s)
+                            const promoDelay = 5000 + Math.random() * 10000; // 5-15s (giảm từ 20-60s)
+                            const delaySeconds = Math.round(promoDelay / 1000);
                             console.log(`⏳ Waiting ${delaySeconds}s before clicking "Nhận khuyến mãi"...`);
 
                             // Inject countdown timer into page (update every 100ms for smooth countdown)
@@ -1469,7 +1631,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                             // Update timer every 100ms (synchronized with server time)
                             const countdownInterval = setInterval(() => {
                               const clientElapsedMs = Date.now() - clientStartTime;
-                              const remainingMs = Math.max(0, randomDelay - clientElapsedMs);
+                              const remainingMs = Math.max(0, promoDelay - clientElapsedMs);
                               const remainingSeconds = Math.ceil(remainingMs / 1000);
 
                               // Update timer display (show same as server)
@@ -1477,6 +1639,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
                               // Gửi countdown qua API mỗi 3s để hiện trên dashboard
                               if (clientElapsedMs % 3000 < 100 && window.profileData && window.profileData.profileId) {
+                                // ⏱️ FIX: Gửi startTime & duration để server tự tính remainingSeconds (tránh khác nhau)
                                 fetch('http://localhost:3000/api/automation/status', {
                                   method: 'POST',
                                   headers: { 'Content-Type': 'application/json' },
@@ -1485,7 +1648,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                                     username: window.profileData.username,
                                     status: 'running',
                                     message: `⏳ Chờ ${remainingSeconds}s trước khi click "Nhận KM"...`,
-                                    timestamp: new Date().toISOString()
+                                    timestamp: new Date().toISOString(),
+                                    // Gửi thêm startTime & duration để server tự tính
+                                    countdownStartTime: clientStartTime,
+                                    countdownDuration: promoDelay
                                   })
                                 }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
                               }
@@ -1498,8 +1664,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                               }
                             }, 100);
 
-                            console.log(`⏳ Waiting ${randomDelay}ms (${delaySeconds}s)...`);
-                            await new Promise(r => setTimeout(r, randomDelay));
+                            console.log(`⏳ Waiting ${promoDelay}ms (${delaySeconds}s)...`);
+                            await new Promise(r => setTimeout(r, promoDelay));
                             clearInterval(countdownInterval);
                             if (timerDiv && document.body.contains(timerDiv)) {
                               timerDiv.remove();
@@ -1530,6 +1696,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                             }
 
                             if (promoBtn) {
+                              // ⏱️ TIMING FIX: Thêm delay trước khi click "Nhận khuyến mãi" (500-1000ms)
+                              await randomDelay(500, 1000);
+
                               console.log('🎁 Clicking "Nhận khuyến mãi" button...');
                               promoBtn.click();
                               console.log('🎁 "Nhận khuyến mãi" button clicked successfully');
@@ -1979,7 +2148,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       }
     }
 
-    setTimeout(tryAutoFill, 500); // Reduced from 1500ms to 500ms for speed
+    setTimeout(tryAutoFill, 1000 + Math.random() * 1000); // Wait 1-2s for page to load
 
     return true; // Keep channel open for async response
   }
@@ -1988,6 +2157,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 async function autoFillForm(username, password, withdrawPassword, fullname) {
   console.log('📝 Starting auto-fill with:', { username, password: '***', withdrawPassword: '***', fullname });
   console.log('🌐 Current page:', window.location.href);
+
+  // 🔥 Wait for page to be fully ready (critical for form inputs to be in DOM)
+  console.log('⏳ Waiting 2-3 seconds for page to fully render...');
+  await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
 
   // Check if form already filled
   if (window.registerFormFilled) {
@@ -2170,8 +2343,11 @@ async function autoFillForm(username, password, withdrawPassword, fullname) {
       if (captchaSolved) {
         console.log('✅ Captcha solved, preparing for submit...');
 
-        // Wait for captcha to be processed
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // ⏱️ TIMING FIX: Thêm delay sau khi captcha được solve (3000-5000ms)
+        // Chờ server xử lý & render captcha hoàn toàn
+        const captchaProcessDelay = 3000 + Math.random() * 2000;  // 3000-5000ms
+        console.log(`⏳ Waiting ${Math.round(captchaProcessDelay / 1000)}s for captcha to be processed...`);
+        await new Promise(resolve => setTimeout(resolve, captchaProcessDelay));
 
         // Verify captcha input still has value
         const captchaValue = captchaInput.value;
@@ -2603,13 +2779,15 @@ function showNotification(message, autoHide = true) {
       // Set new hide timeout if autoHide
       if (autoHide) {
         notificationHideTimeout = setTimeout(() => {
-          globalNotificationElement.style.animation = 'slideOut 0.3s ease-out';
-          setTimeout(() => {
-            if (globalNotificationElement) {
-              globalNotificationElement.remove();
-              globalNotificationElement = null;
-            }
-          }, 300);
+          if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+            globalNotificationElement.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+              if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+                globalNotificationElement.remove();
+                globalNotificationElement = null;
+              }
+            }, 300);
+          }
         }, 3000);
       }
       return;
@@ -2639,11 +2817,15 @@ function showNotification(message, autoHide = true) {
     // Auto-hide after 3 seconds if autoHide is true
     if (autoHide) {
       notificationHideTimeout = setTimeout(() => {
-        notif.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => {
-          notif.remove();
-          globalNotificationElement = null;
-        }, 300);
+        if (notif && document.body.contains(notif)) {
+          notif.style.animation = 'slideOut 0.3s ease-out';
+          setTimeout(() => {
+            if (notif && document.body.contains(notif)) {
+              notif.remove();
+              globalNotificationElement = null;
+            }
+          }, 300);
+        }
       }, 3000);
     }
   } catch (e) {
@@ -2668,6 +2850,9 @@ function restoreCountdownTimer() {
     if (isActive && startTime && duration) {
       console.log('🔄 Restoring countdown timer after page redirect...');
 
+      // Show initial notification
+      showNotification(`⏳ Chuyển sang Thêm Bank...`, false);
+
       // Start displaying countdown
       const updateTimer = () => {
         const elapsedMs = Date.now() - startTime;
@@ -2675,7 +2860,10 @@ function restoreCountdownTimer() {
         const remainingSeconds = Math.ceil(remainingMs / 1000);
 
         if (remainingMs > 0) {
-          showNotification(`⏳ ${remainingSeconds}s\nChuyển sang Thêm Bank`, false);
+          // ⏱️ FIX: Chỉ update text, không gọi showNotification liên tục (tránh trùng lặp)
+          if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+            globalNotificationElement.textContent = `⏳ ${remainingSeconds}s\nChuyển sang Thêm Bank`;
+          }
           setTimeout(updateTimer, 100);
         } else {
           localStorage.setItem('countdownActive', 'false');
@@ -4294,8 +4482,8 @@ async function clickCreateAudioButton(element) {
       const latestUrl = window.captchaAudioUrls[window.captchaAudioUrls.length - 1];
       console.log(`  Latest URL: ${latestUrl}`);
 
-      // Trigger auto-solve if in check promo mode
-      if (window.apiKey && window.isCheckingPromo) {
+      // Trigger auto-solve if in check promo mode (but NOT if disableAutoSolve is set)
+      if (window.apiKey && window.isCheckingPromo && !window.disableAutoSolve) {
         console.log('✅ Audio URL found from array, triggering auto-solve...');
         solveAudioCaptchaAuto(latestUrl);
       }
@@ -4605,6 +4793,12 @@ async function solveAudioCaptchaAuto(audioUrl) {
   console.log('🔍 DEBUG: Set audioSolving flag to true');
 
   try {
+    // ⏱️ TIMING FIX: Chờ 2-3s sau khi capture audio URL trước khi giải
+    const audioDelay = 2000 + Math.random() * 1000; // 2-3s
+    const audioDelaySeconds = Math.round(audioDelay / 1000);
+    console.log(`⏳ Waiting ${audioDelaySeconds}s after capturing audio URL before solving...`);
+    await new Promise(resolve => setTimeout(resolve, audioDelay));
+
     console.log('🔍 DEBUG: Creating CaptchaSolver instance...');
     const solver = new CaptchaSolver(apiKey);
     console.log('🔍 DEBUG: CaptchaSolver created successfully');
@@ -4792,31 +4986,32 @@ async function solveAudioCaptchaAuto(audioUrl) {
         console.log('  window.isCheckingPromo =', window.isCheckingPromo);
         console.log('  window.captchaDelay =', window.captchaDelay);
 
-        let randomDelay;
+        let submitDelay;
         // IMPORTANT: Check isCheckingPromo FIRST (priority over profileData)
         if (window.isCheckingPromo) {
           // Check promo: ALWAYS use random 8-15s (hardcode, NOT from UI)
-          randomDelay = Math.random() * (15000 - 8000) + 8000;
-          console.log('  → Using random 8-15s for check promo (hardcode):', randomDelay);
+          submitDelay = Math.random() * (15000 - 8000) + 8000;
+          console.log('  → Using random 8-15s for check promo (hardcode):', submitDelay);
         } else if (window.profileData?.captchaDelay !== undefined) {
           // Registration: dùng giá trị từ UI
-          randomDelay = window.profileData.captchaDelay;
-          console.log('  → Using profileData.captchaDelay (from UI):', randomDelay);
+          submitDelay = window.profileData.captchaDelay;
+          console.log('  → Using profileData.captchaDelay (from UI):', submitDelay);
         } else {
           // Fallback: dùng window.captchaDelay hoặc 0
-          randomDelay = window.captchaDelay || 0;
-          console.log('  → Using fallback:', randomDelay);
+          submitDelay = window.captchaDelay || 0;
+          console.log('  → Using fallback:', submitDelay);
         }
-        const delaySeconds = Math.round(randomDelay / 1000);
+        const delaySeconds = Math.round(submitDelay / 1000);
         console.log(`⏳ Waiting ${delaySeconds}s before submitting captcha...`);
 
         // Gửi countdown qua API để hiện trên dashboard (không hiển thị notification trên page)
         const startTime = Date.now();
         const countdownInterval = setInterval(() => {
           const elapsedMs = Date.now() - startTime;
-          const remainingMs = Math.max(0, randomDelay - elapsedMs);
+          const remainingMs = Math.max(0, submitDelay - elapsedMs);
           const remainingSeconds = Math.ceil(remainingMs / 1000);
           if (window.profileData && window.profileData.profileId) {
+            // ⏱️ FIX: Gửi startTime & duration để server tự tính remainingSeconds (tránh khác nhau)
             fetch('http://localhost:3000/api/automation/status', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -4825,13 +5020,16 @@ async function solveAudioCaptchaAuto(audioUrl) {
                 username: window.profileData.username,
                 status: 'running',
                 message: `⏳ Chờ ${remainingSeconds}s trước khi submit captcha...`,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                // Gửi thêm startTime & duration để server tự tính
+                countdownStartTime: startTime,
+                countdownDuration: submitDelay
               })
             }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
           }
         }, 2000);
 
-        await new Promise(resolve => setTimeout(resolve, randomDelay));
+        await new Promise(resolve => setTimeout(resolve, submitDelay));
         clearInterval(countdownInterval);
 
         // Click submit button
@@ -4903,20 +5101,21 @@ async function solveAudioCaptchaAuto(audioUrl) {
                 if (!buttonClicked && !promoBtn.disabled) {
                   buttonClicked = true;
 
-                  // Random delay trước click "Nhận KM" (20-60s)
-                  const randomDelay = Math.random() * (60000 - 20000) + 20000;
-                  const delaySeconds = Math.round(randomDelay / 1000);
+                  // ⏱️ TIMING FIX: Giảm delay chờ click "Nhận KM" (20-60s → 5-15s)
+                  const promoClickDelay = 5000 + Math.random() * 10000; // 5-15s (giảm từ 20-60s)
+                  const delaySeconds = Math.round(promoClickDelay / 1000);
                   console.log(`⏳ Waiting ${delaySeconds}s before clicking "Nhận KM"...`);
 
                   // Hiện countdown (update mỗi 3s, không nhảy liên tục)
                   const startTime = Date.now();
                   const countdownInterval = setInterval(() => {
                     const elapsedMs = Date.now() - startTime;
-                    const remainingMs = Math.max(0, randomDelay - elapsedMs);
+                    const remainingMs = Math.max(0, promoClickDelay - elapsedMs);
                     const remainingSeconds = Math.ceil(remainingMs / 1000);
 
                     // Gửi countdown qua API để hiện trên dashboard (không bị mất khi page redirect)
                     if (window.profileData && window.profileData.profileId) {
+                      // ⏱️ FIX: Gửi startTime & duration để server tự tính remainingSeconds (tránh khác nhau)
                       fetch('http://localhost:3000/api/automation/status', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -4925,13 +5124,16 @@ async function solveAudioCaptchaAuto(audioUrl) {
                           username: window.profileData.username,
                           status: 'running',
                           message: `⏳ Chờ ${remainingSeconds}s trước khi click "Nhận KM"...`,
-                          timestamp: new Date().toISOString()
+                          timestamp: new Date().toISOString(),
+                          // Gửi thêm startTime & duration để server tự tính
+                          countdownStartTime: startTime,
+                          countdownDuration: promoClickDelay
                         })
                       }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
                     }
                   }, 3000);
 
-                  await new Promise(resolve => setTimeout(resolve, randomDelay));
+                  await new Promise(resolve => setTimeout(resolve, promoClickDelay));
                   clearInterval(countdownInterval);
 
                   console.log('✅ Button enabled, clicking now!');

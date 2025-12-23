@@ -1,0 +1,43 @@
+{
+  "username": "Drag32trike777",
+  "password": "f3xq3van6w",
+  "withdrawPassword": "454549",
+  "fullname": "TUNG DUONG VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10362048106634595",
+    "accountHolder": "TUNG DUONG VINH"
+  },
+  "registeredAt": "2025-12-22T07:55:40.007Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T07:55:40.007Z",
+  "bankVerified": false
+}

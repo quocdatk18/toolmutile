@@ -1,0 +1,22 @@
+{
+  "username": "b3olkv2",
+  "password": "nbkp2t5v2sq6",
+  "withdrawPassword": "199827",
+  "fullname": "TRAN QUANG HAI MINH",
+  "email": "jp8qol@gmail.com",
+  "phone": "0993177919",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10362048106527121",
+    "accountHolder": "TRAN QUANG HAI MINH"
+  },
+  "registeredAt": "2025-12-21T20:36:14.526Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

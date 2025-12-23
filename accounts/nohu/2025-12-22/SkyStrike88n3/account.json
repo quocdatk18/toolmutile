@@ -1,0 +1,43 @@
+{
+  "username": "SkyStrike88n3",
+  "password": "btc3oe1n6",
+  "withdrawPassword": "596454",
+  "fullname": "VO THI QUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10362048106579921",
+    "accountHolder": "VO THI QUAN"
+  },
+  "registeredAt": "2025-12-22T03:59:52.627Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T03:59:52.627Z",
+  "bankVerified": false
+}

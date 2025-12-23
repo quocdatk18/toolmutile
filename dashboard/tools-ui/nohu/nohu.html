@@ -1222,19 +1222,37 @@
 
     // Random toàn bộ form (username, fullname, password, bank)
     function randomAllForm() {
-        // Random username
-        const username = generateRandomUsername();
+        console.log('🎲 randomAllForm() called');
+
+        // Random username - Đảm bảo không bắt đầu bằng số
+        let username = generateRandomUsername();
+        // Nếu bắt đầu bằng số, thêm chữ cái vào đầu
+        if (/^\d/.test(username)) {
+            const letters = 'abcdefghijklmnopqrstuvwxyz';
+            username = letters[Math.floor(Math.random() * letters.length)] + username;
+        }
         document.getElementById('autoUsername').value = username;
 
-        // Random fullname (Vietnamese names)
-        const firstNames = ['NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI'];
-        const middleNames = ['VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH'];
-        const lastNames = ['AN', 'BINH', 'CUONG', 'DUNG', 'HAI', 'HUNG', 'KHANH', 'LINH', 'MINH', 'NAM', 'PHONG', 'QUAN', 'TAM', 'TUAN', 'VINH'];
+        // Random fullname - Tên các dân tộc thiểu số Việt Nam (không dấu)
+        const ethnicNames = [
+            'TAY', 'THAI', 'MUONG', 'KHMER', 'CHAM', 'SEDANG', 'NUNG', 'HMO', 'JARAI', 'RAD',
+            'KOHO', 'BAHNAR', 'XTIENG', 'KINH', 'TUNG', 'GIAY', 'LAO', 'KATU', 'BRAU', 'OC EO',
+            'MNONG', 'CHRAU', 'MANG', 'PHUONG', 'STIENG', 'ROMAM', 'NGAI', 'HANI', 'LISU', 'AKHA',
+            'PNONG', 'ROGLAI', 'TALIENG', 'KACO', 'XINH MUN', 'RAGLAI', 'CHUT', 'THAO', 'CONG',
+            'VIET', 'MUOI', 'CHRU', 'TRING', 'KHAM', 'PACO', 'TROM', 'KATU', 'BANA', 'GIARAI'
+        ];
 
+        const firstNames = ['NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI', 'DINH', 'DUONG', 'TONG', 'NHAN', 'LUONG'];
+        const middleNames = ['VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH', 'HUNG', 'KHANH', 'LINH', 'PHONG', 'TUAN', 'VINH', 'CUONG'];
+
+        // Chọn ngẫu nhiên một dân tộc thiểu số
+        const ethnicName = ethnicNames[Math.floor(Math.random() * ethnicNames.length)];
         const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
         const middleName = middleNames[Math.floor(Math.random() * middleNames.length)];
-        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-        const fullname = `${firstName} ${middleName} ${lastName}`;
+
+        // Format: Dân tộc + Họ + Tên đệm
+        const fullname = `${ethnicName} ${firstName} ${middleName}`;
+        console.log('✅ Generated fullname:', fullname);
         document.getElementById('autoFullname').value = fullname;
 
         // Random password (8-12 characters, guaranteed mix of letters and numbers)

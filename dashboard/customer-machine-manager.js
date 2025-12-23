@@ -381,6 +381,61 @@ class CustomerMachineManager {
     }
 
     /**
+     * Tự động xóa license hết hạn
+     * Chạy khi load danh sách khách hàng
+     */
+    cleanupExpiredLicenses() {
+        let cleanedCount = 0;
+        const now = new Date();
+
+        Object.keys(this.customers).forEach(customerName => {
+            const customer = this.customers[customerName];
+
+            if (!customer.licenseHistory || customer.licenseHistory.length === 0) {
+                return;
+            }
+
+            // Lọc ra các key hết hạn
+            const originalLength = customer.licenseHistory.length;
+            customer.licenseHistory = customer.licenseHistory.filter(license => {
+                // Giữ lại lifetime license
+                if (license.expiryDays === -1) {
+                    return true;
+                }
+
+                // Tính ngày hết hạn
+                const expiryDate = new Date(new Date(license.createdAt).getTime() + (license.expiryDays * 24 * 60 * 60 * 1000));
+
+                // Nếu hết hạn, xóa
+                if (expiryDate <= now) {
+                    cleanedCount++;
+                    console.log(`🗑️ Removed expired license for ${customerName}: ${license.licenseKey.substring(0, 20)}...`);
+                    return false;
+                }
+
+                return true;
+            });
+
+            // Nếu xóa key, cập nhật isActive
+            if (customer.licenseHistory.length < originalLength) {
+                // Đánh dấu key còn lại là inactive nếu không có key active
+                const hasActive = customer.licenseHistory.some(l => l.isActive);
+                if (!hasActive && customer.licenseHistory.length > 0) {
+                    customer.licenseHistory[customer.licenseHistory.length - 1].isActive = true;
+                }
+            }
+        });
+
+        // Lưu nếu có thay đổi
+        if (cleanedCount > 0) {
+            this.saveCustomers();
+            console.log(`✅ Cleanup completed: Removed ${cleanedCount} expired licenses`);
+        }
+
+        return cleanedCount;
+    }
+
+    /**
      * Export data để backup
      */
     exportData() {

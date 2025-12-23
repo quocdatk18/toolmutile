@@ -7,6 +7,9 @@
 // Import fetch for Node.js (v18+)
 const fetch = global.fetch || require('node-fetch');
 
+// Get dashboard port
+const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+
 // Import tab rotator
 const tabRotator = require('./tab-rotator');
 
@@ -560,17 +563,40 @@ class VIPAutomation {
             parallelCount = 3; // Default to 3
         }
 
-        // Tạo shared browser context cho checkPromo (nếu cần)
-        let sharedPromoContext = null;
-        if (mode === 'auto' || mode === 'promo') {
-            try {
-                console.log(`🪟 Creating shared browser context for checkPromo...`);
-                sharedPromoContext = await browser.createBrowserContext();
-                console.log(`✅ Shared browser context created`);
-            } catch (error) {
-                console.warn(`⚠️ Failed to create shared context:`, error.message);
-            }
+        // Send running status to dashboard
+        try {
+            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profileId: profileData.profileId,
+                    username: profileData.username,
+                    status: 'running',
+                    category: category, // 🔥 Add category to status
+                    message: `🚀 Bắt đầu chạy ${sites.length} site(s) (${category.toUpperCase()})...`,
+                    sites: sites.map(s => ({ name: s })),
+                    timestamp: new Date().toISOString()
+                })
+            });
+            console.log('📤 Sent running status to dashboard');
+        } catch (err) {
+            console.warn('⚠️ Failed to send running status:', err.message);
         }
+
+        // Tạo shared browser context cho checkPromo (nếu cần)
+        // NOTE: Disabled shared context to avoid conflicts with other tools (Nohu, etc.)
+        // Each site will use its own browser instance for checkPromo
+        let sharedPromoContext = null;
+        // if (mode === 'auto' || mode === 'promo') {
+        //     try {
+        //         console.log(`🪟 Creating shared browser context for checkPromo...`);
+        //         sharedPromoContext = await browser.createBrowserContext();
+        //         console.log(`✅ Shared browser context created`);
+        //     } catch (error) {
+        //         console.warn(`⚠️ Failed to create shared context:`, error.message);
+        //     }
+        // }
 
         // Process sites based on execution mode
         if (executionMode === 'parallel') {
@@ -684,6 +710,12 @@ class VIPAutomation {
                     error: error.message
                 });
             }
+
+            // Add delay between sites to reduce resource contention with other tools
+            if (siteName !== sites[sites.length - 1]) {
+                console.log(`⏳ Waiting 1 second before next site (to avoid Hidemium resource exhaustion)...`);
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
         }
     }
 
@@ -712,6 +744,12 @@ class VIPAutomation {
 
                 // Add results
                 results.push(...batchResults);
+
+                // Add delay between batches to avoid overwhelming Hidemium (prevent connection issues with other tools)
+                if (i + parallelCount < sites.length) {
+                    console.log(`⏳ Waiting 2 seconds before next batch (to avoid Hidemium resource exhaustion)...`);
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
             }
         } finally {
             // Stop tab rotation when done

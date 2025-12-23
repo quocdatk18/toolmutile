@@ -1906,10 +1906,10 @@ class CompleteAutomation {
             }
         });
 
-        // Navigate to promo URL
+        // Navigate to promo URL (increased timeout for slow servers)
         console.log(`    🎁 Navigating to promo URL: ${promoUrl}`);
         try {
-            await promoPage.goto(promoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await promoPage.goto(promoUrl, { waitUntil: 'domcontentloaded', timeout: 60000 }); // Increased from 30s to 60s
         } catch (navError) {
             checkPageValid(); // Check if tab was closed
 

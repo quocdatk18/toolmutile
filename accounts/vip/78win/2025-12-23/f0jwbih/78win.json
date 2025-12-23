@@ -1,0 +1,22 @@
+{
+  "username": "f0jwbih",
+  "password": "f4qf3oyfz",
+  "withdrawPassword": "714972",
+  "fullname": "GIAY LE ANH",
+  "email": "2hgkgfs@gmail.com",
+  "phone": "0993187462",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10362048106662812",
+    "accountHolder": "GIAY LE ANH"
+  },
+  "registeredAt": "2025-12-22T17:48:13.279Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

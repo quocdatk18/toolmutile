@@ -783,7 +783,28 @@
         const activeTab = document.querySelector('.modal-tab.active');
         const tabName = activeTab?.getAttribute('data-tab');
 
-        // Enable button immediately after starting (not waiting for completion)
+        // Get selected profile early to mark as running
+        const selectedProfile = getSelectedProfile();
+        if (!selectedProfile) {
+            showToast('warning', 'Chưa chọn', 'Vui lòng chọn profile');
+            if (btn) enableButton(btn);
+            return;
+        }
+
+        // Mark profile as running IMMEDIATELY
+        profileManager.runningProfiles.add(selectedProfile.uuid);
+        if (!profileManager.runningStartTimes) {
+            profileManager.runningStartTimes = new Map();
+        }
+        profileManager.runningStartTimes.set(selectedProfile.uuid, Date.now());
+        profileManager.saveRunningProfiles();
+
+        // Refresh carousel to show running status immediately
+        const activeTab2 = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
+        await loadProfilesCarousel();
+        renderProfileCarousel(activeTab2);
+
+        // Enable button immediately after marking as running
         if (btn) enableButton(btn);
 
         if (tabName === 'auto') {
@@ -793,7 +814,46 @@
         }
     }
 
+    // Helper: Send running status to server immediately
+    async function sendRunningStatusToServer(profileId, profileName, username, sites, mode = 'auto', category = 'okvip') {
+        try {
+            const dashboardPort = window.location.port || 3000;
+            const response = await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profileId: profileId,
+                    profileName: profileName,
+                    username: username,
+                    status: 'running',
+                    category: category, // 🔥 Add category to running status
+                    sites: sites.map(s => ({ name: s })),
+                    mode: mode,
+                    timestamp: Date.now()
+                })
+            });
+
+            if (response.ok) {
+                console.log('📤 Sent running status to server');
+            } else {
+                console.warn('⚠️ Failed to send running status:', response.status);
+            }
+        } catch (error) {
+            console.warn('⚠️ Error sending running status:', error.message);
+        }
+    }
+
     async function runAutoAutomation() {
+        // Get button reference
+        const btnRunAction = document.getElementById('btnRunAction');
+
+        // 🔥 DISABLE button immediately to prevent double-click
+        if (btnRunAction) {
+            btnRunAction.disabled = true;
+            btnRunAction.style.opacity = '0.5';
+            btnRunAction.style.cursor = 'not-allowed';
+        }
+
         // Get selected category
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
 
@@ -903,21 +963,23 @@
             parallelCount
         });
 
-        // Mark profile as running
+        // 🔥 Mark profile as running BEFORE sending to server
         profileManager.runningProfiles.add(selectedProfile.uuid);
-
-        // Track start time to prevent premature sync removal
-        if (!profileManager.runningStartTimes) {
-            profileManager.runningStartTimes = new Map();
-        }
+        profileManager.runningStartTimes = profileManager.runningStartTimes || new Map();
         profileManager.runningStartTimes.set(selectedProfile.uuid, Date.now());
-
         profileManager.saveRunningProfiles();
 
-        // Refresh carousel to show running status
-        const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'auto';
-        await loadProfilesCarousel();
-        renderProfileCarousel(activeTab);
+        // 🔥 Send running status to server IMMEDIATELY (before sending automation request)
+        await sendRunningStatusToServer(selectedProfile.uuid, selectedProfile.name, profileData.username, selectedSites, 'auto', category);
+
+        // 🔥 Reset form IMMEDIATELY after sending running status (not waiting for automation to complete)
+        resetFormInputs();
+
+        // 🔥 ENABLE button after marking as running (so user can run other profiles)
+        if (btnRunAction) enableButton(btnRunAction);
+
+        // Refresh results table immediately to show running status
+        loadResultsFromAPI();
 
         // Send to backend
         try {
@@ -965,10 +1027,7 @@
                     });
                 }
 
-                // Reset form only after successful automation start
-                resetFormInputs();
-
-                // Refresh results table immediately to show running status
+                // Refresh results table again after automation completes
                 loadResultsFromAPI();
             } else {
                 showToast('error', 'Lỗi', result.error);
@@ -984,15 +1043,20 @@
             profileManager.saveRunningProfiles();
             await loadProfilesCarousel();
         } finally {
-            // Re-enable button after waiting for server confirmation
-            const btnRunAction = document.getElementById('btnRunAction');
-            if (btnRunAction) enableButton(btnRunAction);
             // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
 
     async function runCheckPromo() {
         const btnRunAction = document.getElementById('btnRunAction');
+
+        // 🔥 DISABLE button immediately to prevent double-click
+        if (btnRunAction) {
+            btnRunAction.disabled = true;
+            btnRunAction.style.opacity = '0.5';
+            btnRunAction.style.cursor = 'not-allowed';
+        }
+
         const category = document.querySelector('input[name="vipCategory"]:checked').value;
         const selectedSites = Array.from(document.querySelectorAll('#vipSitesGrid .site-check:checked'))
             .map(cb => cb.getAttribute('data-name'));
@@ -1017,6 +1081,13 @@
             return;
         }
 
+        // Check if profile is already running
+        if (profileManager.isRunning(selectedProfile.uuid)) {
+            showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
         // Get API key
         const apiKey = typeof apiKeyManager !== 'undefined' ? apiKeyManager.get() :
             localStorage.getItem('hidemium_global_api_key') || '';
@@ -1030,21 +1101,23 @@
 
         console.log('🎁 Starting Check Promo:', { category, sites: selectedSites, username });
 
-        // Mark profile as running
+        // 🔥 Mark profile as running BEFORE sending to server
         profileManager.runningProfiles.add(selectedProfile.uuid);
-
-        // Track start time to prevent premature sync removal
-        if (!profileManager.runningStartTimes) {
-            profileManager.runningStartTimes = new Map();
-        }
+        profileManager.runningStartTimes = profileManager.runningStartTimes || new Map();
         profileManager.runningStartTimes.set(selectedProfile.uuid, Date.now());
-
         profileManager.saveRunningProfiles();
 
-        // Refresh carousel to show running status
-        const activeTab = document.querySelector('.modal-tab.active')?.getAttribute('data-tab') || 'promo';
-        await loadProfilesCarousel();
-        renderProfileCarousel(activeTab);
+        // 🔥 Send running status to server IMMEDIATELY (before sending automation request)
+        await sendRunningStatusToServer(selectedProfile.uuid, selectedProfile.name, username, selectedSites, 'promo', category);
+
+        // 🔥 Reset promo form IMMEDIATELY after sending running status (not waiting for automation to complete)
+        document.getElementById('promoUsername').value = '';
+
+        // 🔥 ENABLE button after marking as running (so user can run other profiles)
+        if (btnRunAction) enableButton(btnRunAction);
+
+        // Refresh results table immediately to show running status
+        loadResultsFromAPI();
 
         try {
             const response = await fetch('/api/vip-automation/run', {
@@ -1064,10 +1137,8 @@
 
             if (result.success) {
                 showToast('success', 'Hoàn thành', `Check promo completed for ${selectedSites.length} sites`);
-                // Reset promo form only after successful start
-                document.getElementById('promoUsername').value = '';
 
-                // Refresh results table immediately to show running status
+                // Refresh results table again after automation completes
                 loadResultsFromAPI();
             } else {
                 showToast('error', 'Lỗi', result.error);
@@ -1083,9 +1154,6 @@
             profileManager.saveRunningProfiles();
             await loadProfilesCarousel();
         } finally {
-            // Re-enable button after waiting for server confirmation
-            const btnRunAction = document.getElementById('btnRunAction');
-            if (btnRunAction) enableButton(btnRunAction);
             // Note: Profile will be unmarked by polling (loadVipAutomationStatuses) when automation completes on server
         }
     }
@@ -1958,6 +2026,7 @@
                         groupedBySession[sessionId] = {
                             profileName: result.profileName || 'Profile',
                             username: result.username || 'Unknown',
+                            category: result.category || 'okvip', // 🔥 Add category
                             timestamp: result.timestamp,
                             sites: []
                         };
@@ -1970,6 +2039,7 @@
                     id: index,
                     sessionId: sessionId,
                     profile: group.profileName,
+                    category: group.category, // 🔥 Add category to result
                     sites: group.sites,
                     username: group.username,
                     timestamp: new Date(group.timestamp).toLocaleString('vi-VN'),
@@ -2152,104 +2222,122 @@
         try {
             // Parse sites from string
             const resultSites = resultSitesStr ? resultSitesStr.split(',').filter(s => s.trim()) : [];
-            console.log('� Fetchning VIP account info:', { username, category, resultSites });
-            const response = await fetch(`/api/accounts/vip/${username}`);
-            console.log('📡 Response status:', response.status, response.statusText);
+            console.log('🔍 Fetching VIP account info:', { username, category, resultSites });
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            let response = null;
+            let data = null;
+
+            // 🔥 FIX: If category is undefined, try all categories
+            if (category && category !== 'undefined' && category !== 'N/A') {
+                // Try specific category first - use /api/accounts/vip/{category}/{username}
+                response = await fetch(`/api/accounts/vip/${category}/${username}`);
+                if (response.ok) {
+                    data = await response.json();
+                    console.log(`📡 Response for ${category}:`, response.status, data);
+                }
             }
 
-            const data = await response.json();
-            console.log('📋 Account data:', data);
+            // If not found or category is undefined, try all categories
+            if (!data || !data.success) {
+                console.log('🔍 Category not found or undefined, trying all categories...');
+                const categories = ['okvip', 'abcvip', 'jun88', 'kjc'];
 
-            if (data.success && data.account) {
-                const acc = data.account;
-                // Use sites from result if available, otherwise use from account data
-                const sitesToDisplay = resultSites && resultSites.length > 0 ? resultSites : (acc.sites || []);
+                for (const cat of categories) {
+                    response = await fetch(`/api/accounts/vip/${cat}/${username}`);
+                    if (response.ok) {
+                        data = await response.json();
+                        console.log(`📡 Trying ${cat}:`, response.status, data.success);
 
-                content.innerHTML = `
-                    <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
-                        <h4 style="margin: 0 0 15px 0; color: #2d3748; display: flex; align-items: center; gap: 8px;">
-                            <span style="font-size: 20px;">👤</span> Thông Tin Tài Khoản
-                            <span
-                                style="background: #e2e8f0; color: #4a5568; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
-                                ${(category || 'VIP').toUpperCase()}
-                            </span>
-                        </h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
-                            <div>
-                                <strong style="color: #4a5568;">👤 Tên đăng nhập:</strong><br>
-                                <span
-                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.username}</span>
-                            </div>
-                            <div>
-                                <strong style="color: #4a5568;">🔑 Mật khẩu:</strong><br>
-                                <span
-                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.password}</span>
-                            </div>
-                            <div>
-                                <strong style="color: #4a5568;">💰 MK rút tiền:</strong><br>
-                                <span
-                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.withdrawPassword
-                    || 'N/A'}</span>
-                            </div>
-                            <div>
-                                <strong style="color: #4a5568;">📝 Họ và tên:</strong><br>
-                                <span style="color: #2d3748;">${acc.fullname || 'N/A'}</span>
-                            </div>
-                            <div>
-                                <strong style="color: #4a5568;">🏦 Ngân hàng:</strong><br>
-                                <span style="color: #2d3748;">${acc.bankName || 'N/A'}</span>
-                            </div>
-                            <div>
-                                <strong style="color: #4a5568;">🏢 Chi nhánh:</strong><br>
-                                <span style="color: #2d3748;">${acc.bankBranch || 'N/A'}</span>
-                            </div>
-                            <div style="grid-column: 1 / -1;">
-                                <strong style="color: #4a5568;">💳 Số tài khoản:</strong><br>
-                                <span
-                                    style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.accountNumber
-                    || 'N/A'}</span>
-                            </div>
-                            <div style="grid-column: 1 / -1;">
-                                <strong style="color: #4a5568;">📅 Ngày đăng ký:</strong><br>
-                                <span style="color: #718096;">${new
-                        Date(acc.registeredAt).toLocaleString('vi-VN')}</span>
-                            </div>
-                            <div style="grid-column: 1 / -1;">
-                                <strong style="color: #4a5568;">📱 Các trang được đăng ký:</strong><br>
-                                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
-                                    ${sitesToDisplay && sitesToDisplay.length > 0
-                        ? sitesToDisplay.map(site => `
-                                    <span
-                                        style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                        ${site}
-                                    </span>
-                                    `).join('')
-                        : '<span style="color: #718096; font-style: italic;">Không có thông tin</span>'
+                        if (data.success) {
+                            category = cat; // Update category to the one found
+                            console.log(`✅ Found account in category: ${cat}`);
+                            break;
+                        }
                     }
-                                </div>
+                }
+            }
+
+            if (!data || !data.success) {
+                throw new Error(`Account not found for ${username}`);
+            }
+
+            const acc = data.account;
+            // Use sites from result if available, otherwise use from account data
+            const sitesToDisplay = resultSites && resultSites.length > 0 ? resultSites : (acc.sites || []);
+
+            content.innerHTML = `
+                <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0;">
+                    <h4 style="margin: 0 0 15px 0; color: #2d3748; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 20px;">👤</span> Thông Tin Tài Khoản
+                        <span
+                            style="background: #e2e8f0; color: #4a5568; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                            ${(category || 'VIP').toUpperCase()}
+                        </span>
+                    </h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 14px;">
+                        <div>
+                            <strong style="color: #4a5568;">👤 Tên đăng nhập:</strong><br>
+                            <span
+                                style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.username || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <strong style="color: #4a5568;">🔑 Mật khẩu:</strong><br>
+                            <span
+                                style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.password || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <strong style="color: #4a5568;">💰 MK rút tiền:</strong><br>
+                            <span
+                                style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${acc.withdrawPassword
+                || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <strong style="color: #4a5568;">📝 Họ và tên:</strong><br>
+                            <span style="color: #2d3748;">${acc.fullname || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <strong style="color: #4a5568;">🏦 Ngân hàng:</strong><br>
+                            <span style="color: #2d3748;">${(acc.bank?.name || acc.bankName) || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <strong style="color: #4a5568;">🏢 Chi nhánh:</strong><br>
+                            <span style="color: #2d3748;">${(acc.bank?.branch || acc.bankBranch) || 'N/A'}</span>
+                        </div>
+                        <div style="grid-column: 1 / -1;">
+                            <strong style="color: #4a5568;">💳 Số tài khoản:</strong><br>
+                            <span
+                                style="color: #2d3748; font-family: monospace; background: #f1f5f9; padding: 4px 8px; border-radius: 4px;">${(acc.bank?.accountNumber || acc.accountNumber)
+                || 'N/A'}</span>
+                        </div>
+                        <div style="grid-column: 1 / -1;">
+                            <strong style="color: #4a5568;">📅 Ngày đăng ký:</strong><br>
+                            <span style="color: #718096;">${acc.registeredAt ? new
+                    Date(acc.registeredAt).toLocaleString('vi-VN') : 'N/A'}</span>
+                        </div>
+                        <div style="grid-column: 1 / -1;">
+                            <strong style="color: #4a5568;">📱 Các trang được đăng ký:</strong><br>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                                ${sitesToDisplay && sitesToDisplay.length > 0
+                    ? sitesToDisplay.map(site => `
+                                <span
+                                    style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+                                    ${site}
+                                </span>
+                                `).join('')
+                    : '<span style="color: #718096; font-style: italic;">Không có thông tin</span>'
+                }
                             </div>
                         </div>
-                        <div
-                            style="margin-top: 15px; padding: 12px; background: #e6fffa; border-radius: 8px; border-left: 4px solid #38b2ac;">
-                            <p style="margin: 0; color: #234e52; font-size: 13px;">
-                                <strong>ℹ️ Lưu ý:</strong> Thông tin này được sử dụng chung cho tất cả trang web trong
-                                session này.
-                            </p>
-                        </div>
                     </div>
-                    `;
-            } else {
-                content.innerHTML = `
-                    <div style="background: #fff5f5; border-radius: 12px; padding: 20px; border: 1px solid #feb2b2;">
-                        <h4 style="margin: 0; color: #c53030;">⚠️ Không tìm thấy thông tin</h4>
-                        <p style="margin: 10px 0 0 0; color: #742a2a;">Không tìm thấy thông tin tài khoản cho session
-                            này</p>
+                    <div
+                        style="margin-top: 15px; padding: 12px; background: #e6fffa; border-radius: 8px; border-left: 4px solid #38b2ac;">
+                        <p style="margin: 0; color: #234e52; font-size: 13px;">
+                            <strong>ℹ️ Lưu ý:</strong> Thông tin này được sử dụng chung cho tất cả trang web trong
+                            session này.
+                        </p>
                     </div>
-                    `;
-            }
+                </div>
+                `;
 
             modal.style.display = 'flex';
         } catch (error) {
@@ -2261,14 +2349,14 @@
                         <p style="margin: 10px 0 0 0; color: #742a2a; font-size: 13px;">
                             <strong>Chi tiết:</strong> ${errorMsg}<br>
                             <strong>Username:</strong> ${username}<br>
-                            <strong>Category:</strong> ${category}
+                            <strong>Category:</strong> ${category || 'undefined'}
                         </p>
                         <div
                             style="margin-top: 15px; padding: 10px; background: #f7fafc; border-radius: 6px; font-size: 12px; color: #4a5568;">
                             💡 <strong>Có thể do:</strong><br>
-                            • API endpoint chưa được thiết lập<br>
                             • Tài khoản chưa được lưu trong database<br>
-                            • Lỗi kết nối mạng
+                            • Lỗi kết nối mạng<br>
+                            • Thư mục accounts chưa được tạo
                         </div>
                     </div>
                     `;

@@ -3463,156 +3463,145 @@ async function clickVerifyButton(element) {
     showNotification('✅ Đã xác thực (fallback)!');
   }
 
-  // After clicking verify button, wait and check for captcha modal
-  // Simple delay like working package (antisena)
-  await new Promise(resolve => setTimeout(resolve, 300));
+  // CRITICAL FIX: Wait for modal to fully render before clicking "Tạo Audio Captcha"
+  // Modal may take 1-2 seconds to appear and render
+  console.log('⏳ Waiting for captcha modal to render...');
+
+  let modalReady = false;
+  let waitAttempts = 0;
+  const maxWaitAttempts = 20; // 20 * 500ms = 10 seconds max
+
+  while (!modalReady && waitAttempts < maxWaitAttempts) {
+    waitAttempts++;
+
+    // Check if modal elements are visible
+    const modalCheck = await new Promise(resolve => {
+      setTimeout(() => {
+        const modal = document.querySelector('.modal, .dialog, [role="dialog"], .captcha-modal, .modal-content, .audio-captcha-controls');
+        const createAudioBtn = document.querySelector('button.audio-captcha-btn-primary');
+
+        resolve({
+          hasModal: !!modal,
+          hasCreateAudioBtn: !!createAudioBtn
+        });
+      }, 0);
+    });
+
+    if (modalCheck.hasModal && modalCheck.hasCreateAudioBtn) {
+      console.log(`✅ Modal ready after ${waitAttempts * 500}ms`);
+      modalReady = true;
+      break;
+    }
+
+    console.log(`⏳ [${waitAttempts}/${maxWaitAttempts}] Modal not ready yet, waiting...`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
+  if (!modalReady) {
+    console.warn('⚠️ Modal not ready after 10 seconds, proceeding anyway...');
+  }
 
   // Now click "TẠO AUDIO CAPTCHA" button in the modal
   console.log('🎵 Looking for "TẠO AUDIO CAPTCHA" button in modal...');
-  findAndClickCreateAudioButton();
+  console.log('🎵 About to call findAndClickCreateAudioButton()...');
+  try {
+    console.log('🎵 Calling findAndClickCreateAudioButton()...');
+    const result = await findAndClickCreateAudioButton();
+    console.log('🎵 findAndClickCreateAudioButton() returned:', result);
+  } catch (error) {
+    console.error('❌ Error in findAndClickCreateAudioButton:', error.message);
+    console.error('   Stack:', error.stack);
+  }
+  console.log('🎵 Finished calling findAndClickCreateAudioButton()');
 }
 
 /**
- * Find and click "T?o Audio Captcha" button
+ * Find and click "Tạo Audio Captcha" button
  */
-function findAndClickCreateAudioButton() {
-  console.log('?? Finding "T?o Audio Captcha" button...');
+async function findAndClickCreateAudioButton() {
+  console.log('🎵🎵🎵 FUNCTION CALLED: findAndClickCreateAudioButton() 🎵🎵🎵');
+  console.log('🎵 Finding "Tạo Audio Captcha" button...');
 
-  const allElements = [
-    ...document.querySelectorAll('button'),
-    ...document.querySelectorAll('a'),
-    ...document.querySelectorAll('div[role="button"]'),
-    ...document.querySelectorAll('[onclick]'),
-    ...document.querySelectorAll('div'),
-    ...document.querySelectorAll('span')
-  ];
+  // Method 1: Selector by class (MOST RELIABLE - no ID needed)
+  console.log('🎯 Method 1: Selector by class button.audio-captcha-btn-primary...');
+  const btnByClass = document.querySelector('button.audio-captcha-btn-primary');
+  if (btnByClass && btnByClass.offsetParent !== null) {
+    console.log('✅ Found button by class: audio-captcha-btn-primary');
+    console.log('   Text:', btnByClass.textContent.trim());
+    console.log('   ID:', btnByClass.id || 'no ID');
+    await clickCreateAudioButton(btnByClass);
+    return true;
+  }
 
-  console.log(`?? Found ${allElements.length} total elements`);
+  // Method 2: Direct ID selector (if it exists)
+  console.log('🎯 Method 2: Direct ID selector #generateAudioCaptcha...');
+  const generateBtn = document.getElementById('generateAudioCaptcha');
+  if (generateBtn && generateBtn.offsetParent !== null) {
+    console.log('✅ Found button by ID: generateAudioCaptcha');
+    console.log('   Text:', generateBtn.textContent.trim());
+    console.log('   Class:', generateBtn.className);
+    await clickCreateAudioButton(generateBtn);
+    return true;
+  }
 
-  const visibleElements = allElements.filter(el => {
-    return el.offsetParent !== null && el.clientHeight > 0 && el.clientWidth > 0;
-  });
-
-  console.log(`??? Visible elements: ${visibleElements.length}`);
-
-  console.log('?? Listing all button-like elements:');
-  const buttons = visibleElements.filter(el => {
-    return el.tagName === 'BUTTON' ||
-      el.tagName === 'A' ||
-      el.getAttribute('role') === 'button' ||
-      el.onclick ||
-      el.style.cursor === 'pointer';
-  });
-
-  buttons.slice(0, 20).forEach((btn, i) => {
+  // Method 3: Search by text content
+  console.log('🎯 Method 3: Search by text content...');
+  const allButtons = document.querySelectorAll('button');
+  for (let btn of allButtons) {
     const text = btn.textContent.trim();
-    console.log(`  ${i}: "${text}" (${btn.tagName}.${btn.className})`);
+    if (text.includes('Tạo Audio Captcha') || text.includes('Tao Audio Captcha')) {
+      if (btn.offsetParent !== null) {
+        console.log('✅ Found button by text:', text);
+        console.log('   ID:', btn.id || 'no ID');
+        console.log('   Class:', btn.className);
+        await clickCreateAudioButton(btn);
+        return true;
+      }
+    }
+  }
+
+  // Method 4: Search in audio-captcha-controls container
+  console.log('🎯 Method 4: Search in audio-captcha-controls container...');
+  const controlsContainer = document.querySelector('.audio-captcha-controls');
+  if (controlsContainer) {
+    const btn = controlsContainer.querySelector('button.audio-captcha-btn-primary');
+    if (btn && btn.offsetParent !== null) {
+      console.log('✅ Found button in audio-captcha-controls');
+      console.log('   Text:', btn.textContent.trim());
+      await clickCreateAudioButton(btn);
+      return true;
+    }
+  }
+
+  // Method 5: Search by any button with "audio" in class
+  console.log('🎯 Method 5: Search by any button with audio class...');
+  const audioButtons = document.querySelectorAll('button[class*="audio"]');
+  console.log('   Found', audioButtons.length, 'buttons with audio class');
+  for (let btn of audioButtons) {
+    const text = btn.textContent.trim().toLowerCase();
+    if (text.includes('audio') && text.includes('captcha') && btn.offsetParent !== null) {
+      console.log('✅ Found button with audio class');
+      console.log('   Text:', btn.textContent.trim());
+      console.log('   ID:', btn.id || 'no ID');
+      await clickCreateAudioButton(btn);
+      return true;
+    }
+  }
+
+  console.log('❌ No "Tạo Audio Captcha" button found');
+  console.log('🔍 DEBUG: All methods failed to find create audio button');
+
+  // Debug: List all buttons on page
+  console.log('🔍 DEBUG: Listing all buttons on page:');
+  const allBtns = document.querySelectorAll('button');
+  console.log(`   Total buttons: ${allBtns.length}`);
+  allBtns.forEach((btn, i) => {
+    const text = btn.textContent.trim().substring(0, 50);
+    const visible = btn.offsetParent !== null ? 'visible' : 'hidden';
+    console.log(`   ${i}: "${text}" (${btn.className}) [${visible}]`);
   });
 
-  // Keywords for create audio button
-  const createAudioKeywords = [
-    't?o audio captcha',
-    'tao audio captcha',
-    't?o audio',
-    'tao audio',
-    'create audio',
-    'generate audio',
-    'audio captcha'
-  ];
-
-  console.log('?? Method 1: Searching by exact text...');
-  for (let element of visibleElements) {
-    const text = element.textContent.trim().toLowerCase();
-
-    // Skip if too long
-    if (text.length > 100) continue;
-
-    for (let keyword of createAudioKeywords) {
-      if (text === keyword) {
-        console.log('? Found create audio button by exact text:', text);
-        clickCreateAudioButton(element);
-        return true;
-      }
-    }
-  }
-
-  console.log('?? Method 2: Searching by partial text...');
-  for (let element of visibleElements) {
-    const text = element.textContent.trim().toLowerCase();
-
-    // Skip if too long
-    if (text.length > 100) continue;
-
-    if (text.includes('t?o audio captcha') ||
-      text.includes('tao audio captcha') ||
-      text.includes('t?o audio')) {
-      console.log('? Found create audio button by partial text:', text);
-      clickCreateAudioButton(element);
-      return true;
-    }
-  }
-
-  console.log('?? Method 3: Searching by uppercase text...');
-  for (let element of visibleElements) {
-    const text = element.textContent.trim();
-
-    // Skip if too long
-    if (text.length > 100) continue;
-
-    if (text.includes('T?O AUDIO CAPTCHA') ||
-      text.includes('TAO AUDIO CAPTCHA') ||
-      text.includes('T?O AUDIO')) {
-      console.log('? Found create audio button by uppercase text:', text);
-      clickCreateAudioButton(element);
-      return true;
-    }
-  }
-
-  console.log('?? Method 4: Searching for red button with audio text...');
-  for (let element of visibleElements) {
-    const style = window.getComputedStyle(element);
-    const bgColor = style.backgroundColor;
-    const text = element.textContent.trim().toLowerCase();
-
-    if (bgColor.includes('rgb(') && text.length < 100) {
-      const rgb = bgColor.match(/\d+/g);
-      if (rgb && rgb.length >= 3) {
-        const r = parseInt(rgb[0]);
-        const g = parseInt(rgb[1]);
-        const b = parseInt(rgb[2]);
-
-        // Red button: R > 200, G < 100, B < 100
-        if (r > 200 && g < 100 && b < 100) {
-          if (text.includes('audio') || text.includes('t?o') || text.includes('tao')) {
-            console.log('? Found red audio button:', text);
-            clickCreateAudioButton(element);
-            return true;
-          }
-        }
-      }
-    }
-  }
-
-  console.log('?? Method 5: Searching by class name...');
-  const audioClassElements = document.querySelectorAll(
-    '[class*="audio"], [class*="Audio"], [class*="captcha"], [class*="Captcha"], ' +
-    '[class*="create"], [class*="Create"], [class*="generate"]'
-  );
-
-  for (let element of audioClassElements) {
-    if (element.offsetParent !== null) {
-      const text = element.textContent.trim().toLowerCase();
-      if (text.includes('audio') || text.includes('t?o') || text.includes('captcha')) {
-        console.log('? Found audio button by class:', element.className);
-        console.log('   Text:', text);
-        clickCreateAudioButton(element);
-        return true;
-      }
-    }
-  }
-
-  console.log('?? No "T?o Audio Captcha" button found');
-  console.log('?? User may need to click manually');
+  console.log('🔍 DEBUG: User may need to click manually');
   showNotification('⚠️ Không tìm thấy audio!');
 
   return false;

@@ -1,0 +1,43 @@
+{
+  "username": "SkyStrike7g",
+  "password": "vrp3bz8n8ds",
+  "withdrawPassword": "637481",
+  "fullname": "CHUT NHAN THANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "10362048106648189",
+    "accountHolder": "CHUT NHAN THANH"
+  },
+  "registeredAt": "2025-12-22T08:27:10.239Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T08:27:10.240Z",
+  "bankVerified": false
+}

@@ -1,0 +1,23 @@
+{
+  "username": "kf3dnqx0b",
+  "password": "d0ki41puf268",
+  "withdrawPassword": "570997",
+  "fullname": "nguyen quoc dat",
+  "email": "ku8cb1m@gmail.com",
+  "phone": "0993178323",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "140674068",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-22T04:19:06.739Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

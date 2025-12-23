@@ -1,0 +1,43 @@
+{
+  "username": "SkyStorm9",
+  "password": "lj54v8s2bw5x",
+  "withdrawPassword": "972524",
+  "fullname": "OC EO LE THI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10362048106620298",
+    "accountHolder": "OC EO LE THI"
+  },
+  "registeredAt": "2025-12-22T06:58:46.603Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T06:58:46.603Z",
+  "bankVerified": false
+}

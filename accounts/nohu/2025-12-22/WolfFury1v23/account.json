@@ -1,0 +1,43 @@
+{
+  "username": "WolfFury1v23",
+  "password": "dd36e0sewp",
+  "withdrawPassword": "428705",
+  "fullname": "MAC CAN TRONG NGHIA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA NOI",
+    "accountNumber": "9686963974137948",
+    "accountHolder": "MAC CAN TRONG NGHIA"
+  },
+  "registeredAt": "2025-12-21T21:46:34.137Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-21T21:46:34.137Z",
+  "bankVerified": false
+}

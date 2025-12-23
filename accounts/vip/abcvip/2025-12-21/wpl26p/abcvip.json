@@ -1,0 +1,23 @@
+{
+  "username": "wpl26p",
+  "password": "tri3un73y3",
+  "withdrawPassword": "851697",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "dw6xck@gmail.com",
+  "phone": "0993178948",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "640664067",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-21T00:55:35.119Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

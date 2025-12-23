@@ -1,0 +1,43 @@
+{
+  "username": "LionBolt99nn",
+  "password": "stu85xxi56",
+  "withdrawPassword": "889726",
+  "fullname": "HOANG DUC MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10362048106579985",
+    "accountHolder": "HOANG DUC MINH"
+  },
+  "registeredAt": "2025-12-22T04:02:41.895Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T04:02:41.895Z",
+  "bankVerified": false
+}

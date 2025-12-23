@@ -5,9 +5,22 @@
  * 1. Periodic tab activation to prevent browser throttling
  * 2. State persistence for resume capability
  * 3. Visibility API handling
+ * 
+ * GIAI ĐOẠN 1 CẢI TIẾN: Ngẫu Nhiên Hóa Độ Trễ
  */
 
 const CompleteAutomation = require('./complete-automation');
+
+// ============================================
+// HELPER FUNCTIONS - Ngẫu Nhiên Hóa Độ Trễ
+// ============================================
+
+/**
+ * Tạo độ trễ ngẫu nhiên giữa min và max
+ */
+function randomDelay(min, max) {
+    return new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
+}
 
 class AutoSequenceSafe {
     constructor(settings, scripts) {
@@ -20,6 +33,9 @@ class AutoSequenceSafe {
         // Separate rotation for shared promo context
         this.promoTabs = new Map(); // Track promo tabs for rotation
         this.promoActivationInterval = null;
+
+        // Bind randomDelay to this instance for use in async methods
+        this.randomDelay = randomDelay;
     }
 
     /**
@@ -49,7 +65,9 @@ class AutoSequenceSafe {
 
         let currentIndex = 0;
 
-        console.log(`🔄 Starting smart tab rotation (FreeLXB-style)`);
+        // CẢI TIẾN GIAI ĐOẠN 2: Giảm tần suất xoay tab (2s → 5-8s)
+        const rotationInterval = 5000 + Math.random() * 3000;  // 5-8s (thay vì 2s)
+        console.log(`🔄 Starting smart tab rotation (FreeLXB-style) - Interval: ${Math.round(rotationInterval / 1000)}s`);
 
         this.tabActivationInterval = setInterval(async () => {
             try {
@@ -79,7 +97,7 @@ class AutoSequenceSafe {
             } catch (e) {
                 // Ignore errors during rotation
             }
-        }, 2000); // Rotate every 2 seconds
+        }, rotationInterval);  // CẢI TIẾN GIAI ĐOẠN 2: Giảm tần suất (5-8s thay vì 2s)
     }
 
     /**
@@ -203,7 +221,7 @@ class AutoSequenceSafe {
                     console.log(`🔄 Attempting to reload page...`);
                     try {
                         await page.reload({ waitUntil: 'domcontentloaded', timeout: 15000 });
-                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        await this.randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
                     } catch (reloadError) {
                         console.log(`❌ Reload failed:`, reloadError.message);
                         if (i === maxRetries - 1) {
@@ -234,9 +252,14 @@ class AutoSequenceSafe {
             // Set user agent giống main browser
             const pages = await context.pages();
             if (pages.length > 0) {
-                await pages[0].setUserAgent(
-                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-                );
+                // CẢI TIẾN: Cập nhật User Agent lên Chrome 130+ (thay vì Chrome 120)
+                const userAgents = [
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+                    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36'
+                ];
+                const randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+                await pages[0].setUserAgent(randomUA);
             }
 
             console.log(`✅ Browser context created for ${siteName} checkPromo`);
@@ -420,7 +443,7 @@ class AutoSequenceSafe {
                     waitUntil: 'domcontentloaded',
                     timeout: 30000
                 });
-                await new Promise(resolve => setTimeout(resolve, 3000));
+                await this.randomDelay(2800, 3200);  // CẢI TIẾN: 2800-3200ms (thay vì 3000ms)
                 return { success: true, url: page.url() };
             }, `Navigate to ${siteName}`);
 
@@ -449,7 +472,7 @@ class AutoSequenceSafe {
 
                     console.log('💉 Injecting all required scripts...');
                     await this.automation.injectScripts(page);
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    await this.randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
 
                     // Verify scripts loaded
                     const scriptsLoaded = await page.evaluate(() => {
@@ -470,7 +493,7 @@ class AutoSequenceSafe {
 
                 if (!scriptResult.success && scriptRetries < maxScriptRetries) {
                     console.log(`⚠️ Script injection failed, waiting 2s before retry...`);
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    await this.randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
                 }
             }
 
@@ -519,7 +542,7 @@ class AutoSequenceSafe {
                     }
 
                     console.log(`⏳ [${attempts}/${maxAttempts}] Form not ready yet for ${siteName}, waiting...`);
-                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    await this.randomDelay(900, 1100);  // CẢI TIẾN: 900-1100ms (thay vì 1000ms)
                 }
 
                 return { success: false, error: 'Form not rendered after 10 seconds' };
@@ -609,7 +632,7 @@ class AutoSequenceSafe {
                         }
 
                         console.log(`⏳ [${attempts}/${maxAttempts}] No token yet, waiting...`);
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        await this.randomDelay(900, 1100);  // CẢI TIẾN: 900-1100ms (thay vì 1000ms)
                     }
 
                     return { success: false, error: 'No token found after 10 seconds' };
@@ -647,9 +670,9 @@ class AutoSequenceSafe {
                     // FreeLXB-style: Activate tab before bank operation
                     await this.activateTab(page);
 
-                    // Đăng ký xong → chờ delay 30-120s NGAY LẬP TỨC → rồi mới redirect sang Add Bank
+                    // ⏱️ TIMING FIX: Giảm delay redirect thêm bank (30-120s → 5-15s)
                     console.log(`⏳ Registration completed. Starting delay before Add Bank redirect...`);
-                    const randomDelay = Math.random() * (120000 - 30000) + 30000; // 30-120s
+                    const randomDelay = 5000 + Math.random() * 10000; // 5-15s (giảm từ 30-120s)
                     const delaySeconds = Math.round(randomDelay / 1000);
                     console.log(`⏳ Waiting ${delaySeconds}s before redirecting to Add Bank...`);
 
@@ -830,7 +853,7 @@ class AutoSequenceSafe {
                                 waitUntil: 'domcontentloaded',
                                 timeout: 150000  // Increased from 30s to 150s (delay is 30-120s)
                             });
-                            await new Promise(resolve => setTimeout(resolve, 2000));
+                            await this.randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
 
                             // Đảm bảo page context sau navigation
                             await this.ensurePageContext(page);
@@ -844,7 +867,7 @@ class AutoSequenceSafe {
                             // Đảm bảo page context trước khi inject
                             await this.ensurePageContext(page);
                             await this.automation.injectScripts(page);
-                            await new Promise(resolve => setTimeout(resolve, 2000));
+                            await this.randomDelay(1800, 2200);  // CẢI TIẾN: 1800-2200ms (thay vì 2000ms)
                         } catch (e) {
                             console.log(`⚠️ Script injection failed:`, e.message);
                             throw new Error(`Cannot inject scripts: ${e.message}`);
@@ -930,7 +953,7 @@ class AutoSequenceSafe {
                         }
 
                         // Đợi thêm để đảm bảo page đã xử lý xong
-                        await new Promise(resolve => setTimeout(resolve, 3000));
+                        await this.randomDelay(2800, 3200);  // CẢI TIẾN: 2800-3200ms (thay vì 3000ms)
 
                         const urlAfterSubmit = await page.url();
                         console.log(`📍 URL after submit: ${urlAfterSubmit}`);
@@ -1143,7 +1166,7 @@ class AutoSequenceSafe {
                                 // Nếu form vẫn còn, đợi thêm và thử lại
                                 if (verifyResult.formStillVisible && verifyAttempts < maxVerifyAttempts) {
                                     console.log(`⏳ Form still visible, waiting 3s before retry...`);
-                                    await new Promise(resolve => setTimeout(resolve, 3000));
+                                    await this.randomDelay(2800, 3200);  // CẢI TIẾN: 2800-3200ms (thay vì 3000ms)
                                 }
                             } catch (e) {
                                 console.warn(`⚠️ Error during verify attempt ${verifyAttempts}:`, e.message);
@@ -1617,8 +1640,13 @@ class AutoSequenceSafe {
                 results.push(result);
 
                 if (i < sites.length - 1) {
-                    console.log(`⏳ Waiting 3 seconds before next site...`);
-                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    // CẢI TIẾN: Ngẫu Nhiên Hóa độ trễ giữa các site (2-5s thay vì 3s cố định)
+                    const delayMs = Math.random() < 0.2
+                        ? 4000 + Math.random() * 2000  // 20% cơ hội 4-6s
+                        : 2000 + Math.random() * 1500;  // 80% cơ hội 2-3.5s
+                    const delaySec = Math.round(delayMs / 1000);
+                    console.log(`⏳ Waiting ${delaySec}s before next site...`);
+                    await this.randomDelay(delayMs - 200, delayMs + 200);
                 }
             }
         }
@@ -2106,8 +2134,13 @@ class AutoSequenceSafe {
                     results.push(result);
 
                     if (i < sites.length - 1) {
-                        console.log(`⏳ Waiting 3 seconds before next site...`);
-                        await new Promise(resolve => setTimeout(resolve, 3000));
+                        // CẢI TIẾN: Ngẫu Nhiên Hóa độ trễ giữa các site (2-5s thay vì 3s cố định)
+                        const delayMs = Math.random() < 0.2
+                            ? 4000 + Math.random() * 2000  // 20% cơ hội 4-6s
+                            : 2000 + Math.random() * 1500;  // 80% cơ hội 2-3.5s
+                        const delaySec = Math.round(delayMs / 1000);
+                        console.log(`⏳ Waiting ${delaySec}s before next site...`);
+                        await this.randomDelay(delayMs - 200, delayMs + 200);
                     }
                 }
             }
@@ -2133,3 +2166,4 @@ class AutoSequenceSafe {
 }
 
 module.exports = AutoSequenceSafe;
+

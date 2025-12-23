@@ -1,0 +1,43 @@
+{
+  "username": "EagleFire9n",
+  "password": "b7xo1ygyfw1",
+  "withdrawPassword": "271992",
+  "fullname": "LE QUANG VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10362048106579495",
+    "accountHolder": "LE QUANG VINH"
+  },
+  "registeredAt": "2025-12-22T04:01:26.805Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-22T04:01:26.805Z",
+  "bankVerified": false
+}
