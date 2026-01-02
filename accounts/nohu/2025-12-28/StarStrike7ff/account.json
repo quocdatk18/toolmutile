@@ -1,0 +1,43 @@
+{
+  "username": "StarStrike7ff",
+  "password": "i3n93v6e6yjk",
+  "withdrawPassword": "539905",
+  "fullname": "TRUONG VAN KIET MINH PHAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAI PHONG",
+    "accountNumber": "96959403100",
+    "accountHolder": "TRUONG VAN KIET MINH PHAT"
+  },
+  "registeredAt": "2025-12-28T11:36:11.817Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T11:36:11.817Z",
+  "bankVerified": false
+}

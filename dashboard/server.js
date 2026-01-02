@@ -66,6 +66,15 @@ try {
 }
 
 // ============================================
+// MAIN ROUTES
+// ============================================
+
+// Main dashboard page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ============================================
 // API ROUTES
 // ============================================
 
@@ -218,7 +227,8 @@ app.get('/api/profiles/all', async (req, res) => {
             params: {
                 is_local: false,
                 limit: limit,
-                offset: offset
+                offset: offset,
+                folder_id: [3759]
             }
         });
 
@@ -634,10 +644,10 @@ app.get('/api/captcha/balance', async (req, res) => {
 });
 
 // ============================================
-// SIM API PROXY (codesim.net) - Fix CORS
+// SIM API PROXY (Viotp) - Fix CORS
 // ============================================
 
-// Check SIM balance
+// Check Viotp SIM balance
 app.get('/api/sim/balance', async (req, res) => {
     try {
         const { key } = req.query;
@@ -647,16 +657,15 @@ app.get('/api/sim/balance', async (req, res) => {
         }
 
         const axios = require('axios');
-        const response = await axios.get(`https://apisim.codesim.net/yourself/information-by-api-key?api_key=${key}`);
+        const response = await axios.get(`https://api.viotp.com/users/balance?token=${key}`);
 
-        console.log('SIM Balance response:', response.data);
+        console.log('Viotp Balance response:', response.data);
 
-        if (response.data.status === 200 && response.data.data) {
+        if (response.data.status_code === 200 && response.data.success && response.data.data) {
             res.json({
                 success: true,
                 balance: response.data.data.balance,
-                balanceFormatted: response.data.data.balance.toLocaleString('vi-VN') + ' VNĐ',
-                username: response.data.data.username || 'Unknown'
+                balanceFormatted: response.data.data.balance.toLocaleString('vi-VN') + ' VNĐ'
             });
         } else {
             res.json({
@@ -665,32 +674,32 @@ app.get('/api/sim/balance', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('SIM Balance check error:', error.message);
+        console.error('Viotp Balance check error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Get phone number from codesim
+// Get phone number from Viotp
 app.get('/api/sim/get-phone', async (req, res) => {
     try {
-        const { key, serviceId = 49, phonePrefix = '08' } = req.query;
+        const { key, serviceId = 1, network = 'MOBIFONE|VINAPHONE|VIETTEL|VIETNAMOBILE' } = req.query;
 
         if (!key) {
             return res.status(400).json({ success: false, error: 'API key required' });
         }
 
         const axios = require('axios');
-        const url = `https://apisim.codesim.net/sim/get_sim?service_id=${serviceId}&phone=${phonePrefix}&api_key=${key}`;
+        const url = `https://api.viotp.com/request/getv2?token=${key}&serviceId=${serviceId}&network=${network}`;
         const response = await axios.get(url);
 
-        console.log('Get phone response:', response.data);
+        console.log('Viotp get phone response:', response.data);
 
-        if (response.data.status === 200 && response.data.data) {
+        if (response.data.status_code === 200 && response.data.success && response.data.data) {
             res.json({
                 success: true,
-                phone: response.data.data.phone,
-                simId: response.data.data.simId,
-                otpId: response.data.data.otpId
+                phone: response.data.data.phone_number,
+                requestId: response.data.data.request_id,
+                rePhoneNumber: response.data.data.re_phone_number
             });
         } else {
             res.json({
@@ -699,30 +708,31 @@ app.get('/api/sim/get-phone', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Get phone error:', error.message);
+        console.error('Viotp get phone error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Get OTP from codesim
+// Get OTP from Viotp
 app.get('/api/sim/get-otp', async (req, res) => {
     try {
-        const { key, otpId } = req.query;
+        const { key, requestId } = req.query;
 
-        if (!key || !otpId) {
-            return res.status(400).json({ success: false, error: 'API key and OTP ID required' });
+        if (!key || !requestId) {
+            return res.status(400).json({ success: false, error: 'API key and request ID required' });
         }
 
         const axios = require('axios');
-        const url = `https://apisim.codesim.net/otp/get_otp_by_phone_api_key?otp_id=${otpId}&api_key=${key}`;
+        const url = `https://api.viotp.com/session/getv2?requestId=${requestId}&token=${key}`;
         const response = await axios.get(url);
 
-        console.log('Get OTP response:', response.data);
+        console.log('Viotp get OTP response:', response.data);
 
-        if (response.data.status === 200 && response.data.data && response.data.data.code) {
+        if (response.data.status_code === 200 && response.data.success && response.data.data && response.data.data.Code) {
             res.json({
                 success: true,
-                code: response.data.data.code
+                code: response.data.data.Code,
+                status: response.data.data.Status
             });
         } else {
             res.json({
@@ -731,30 +741,30 @@ app.get('/api/sim/get-otp', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Get OTP error:', error.message);
+        console.error('Viotp get OTP error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Cancel SIM
+// Cancel/Reset SIM from Viotp
 app.get('/api/sim/cancel', async (req, res) => {
     try {
-        const { key, simId } = req.query;
+        const { key } = req.query;
 
-        if (!key || !simId) {
-            return res.status(400).json({ success: false, error: 'API key and SIM ID required' });
+        if (!key) {
+            return res.status(400).json({ success: false, error: 'API key required' });
         }
 
         const axios = require('axios');
-        const url = `https://apisim.codesim.net/sim/cancel_api_key/${simId}?api_key=${key}`;
+        const url = `https://api.viotp.com/session/reset-gsm?token=${key}`;
         const response = await axios.get(url);
 
-        console.log('Cancel SIM response:', response.data);
+        console.log('Viotp reset SIM response:', response.data);
 
-        if (response.data.status === 200) {
+        if (response.data.status_code === 200 && response.data.success) {
             res.json({
                 success: true,
-                message: 'Sim cancelled'
+                message: 'SIM reset successfully'
             });
         } else {
             res.json({
@@ -1053,7 +1063,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     // Check if account exists in any date folder (for VIP categories)
     const vipCategoriesDir = path.join(__dirname, '../accounts/vip');
     if (fs.existsSync(vipCategoriesDir)) {
-        const vipCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         for (const cat of vipCategories) {
             const catDir = path.join(vipCategoriesDir, cat);
             if (fs.existsSync(catDir)) {
@@ -1137,12 +1147,37 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
             if (files.length > 0) {
                 files.forEach(file => {
                     const stats = fs.statSync(path.join(sessionDir, file));
-                    const siteName = file.replace('.png', ''); // Filename is just sitename.png
+                    const siteName = file.replace('.png', ''); // Extract site name from filename
 
                     // Determine screenshot path based on structure
                     const screenshotPath = toolId
                         ? `/screenshots/${toolId}/${username}/${sessionId}/${file}` // New structure
                         : `/screenshots/${username}/${sessionId}/${file}`; // Old structure
+
+                    // Try to load results.json from session folder
+                    let resultData = {
+                        register: { success: true },
+                        addBank: { success: true },
+                        checkPromo: { success: true }
+                    };
+
+                    const resultsJsonPath = path.join(sessionDir, 'results.json');
+                    if (fs.existsSync(resultsJsonPath)) {
+                        try {
+                            const resultsJson = JSON.parse(fs.readFileSync(resultsJsonPath, 'utf8'));
+                            // Find result for this site
+                            const siteResult = resultsJson.find(r => r.site === siteName);
+                            if (siteResult) {
+                                resultData = {
+                                    register: siteResult.register || { success: true },
+                                    addBank: siteResult.addBank || { success: true },
+                                    checkPromo: siteResult.checkPromo || { success: true }
+                                };
+                            }
+                        } catch (err) {
+                            console.warn(`⚠️ Could not read results.json for ${siteName}:`, err.message);
+                        }
+                    }
 
                     results.push({
                         profileName: profileName, // Use profile name from metadata
@@ -1155,7 +1190,10 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
                         timestamp: stats.mtimeMs,
                         status: 'success',
                         screenshot: screenshotPath,
-                        hasAccountInfo: hasAccountInfo // Flag to show account info button
+                        hasAccountInfo: hasAccountInfo, // Flag to show account info button
+                        register: resultData.register,
+                        addBank: resultData.addBank,
+                        checkPromo: resultData.checkPromo
                     });
                 });
             }
@@ -1326,9 +1364,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, abcvip, jun88, 78win, jun88v2, kjc)
+        // Try to find any VIP category file (okvip, accokvip, abcvip, jun88, 78win, jun88v2, kjc)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1422,12 +1460,12 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.json({ success: false, error: 'Invalid category' });
         }
 
-        const categoryDir = path.join(vipDir, category);
+        const categoryDir = path.join(vipDir, category.toLowerCase());
         if (!fs.existsSync(categoryDir)) {
             return res.json({ success: false, error: `Category folder not found: ${category}` });
         }
@@ -1462,7 +1500,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
     }
 });
 
-// Save account info for VIP categories (okvip, abcvip, jun88, 78win, kjc)
+// Save account info for VIP categories (okvip, accOkvip, abcvip, jun88, 78win, jun88v2, kjc)
 app.post('/api/accounts/:category/:username', (req, res) => {
     try {
         const { category, username } = req.params;
@@ -1473,13 +1511,13 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }
 
         const accountsDir = path.join(__dirname, '../accounts');
-        const vipCategoryDir = path.join(accountsDir, 'vip', category);
+        const vipCategoryDir = path.join(accountsDir, 'vip', category.toLowerCase());
 
         // Get today's date in YYYY-MM-DD format (using local timezone, not UTC)
         const today = new Date();
@@ -1657,6 +1695,7 @@ app.delete('/api/results/clear-selected', (req, res) => {
 // Clear all results and delete screenshots
 app.delete('/api/results/clear', (req, res) => {
     try {
+        const { toolId } = req.body || {};
         const screenshotsDir = path.join(__dirname, '../screenshots');
 
         if (!fs.existsSync(screenshotsDir)) {
@@ -1666,7 +1705,7 @@ app.delete('/api/results/clear', (req, res) => {
         let deletedCount = 0;
 
         // Function to recursively delete files in a directory
-        function deleteFilesRecursive(dir) {
+        function deleteFilesRecursive(dir, filterToolId = null) {
             try {
                 const items = fs.readdirSync(dir);
 
@@ -1675,21 +1714,23 @@ app.delete('/api/results/clear', (req, res) => {
                     const stat = fs.statSync(itemPath);
 
                     if (stat.isDirectory()) {
-                        // Recursively delete entire directory with all contents
-                        try {
-                            fs.rmSync(itemPath, { recursive: true, force: true });
-                            console.log(`📁 Deleted folder: ${item}`);
-                        } catch (err) {
-                            console.error(`❌ Failed to delete folder ${item}:`, err.message);
-                        }
-                    } else if (stat.isFile() && /\.(png|jpg|jpeg|gif|webp)$/i.test(item)) {
-                        // Delete image file
-                        try {
-                            fs.unlinkSync(itemPath);
-                            deletedCount++;
-                            console.log(`🗑️  Deleted: ${item}`);
-                        } catch (err) {
-                            console.error(`❌ Failed to delete ${item}:`, err.message);
+                        // Check if this is a session folder (contains metadata.json)
+                        const metadataPath = path.join(itemPath, 'metadata.json');
+                        if (fs.existsSync(metadataPath)) {
+                            try {
+                                const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+                                // Only delete if toolId matches (or no filter specified)
+                                if (!filterToolId || metadata.toolId === filterToolId) {
+                                    fs.rmSync(itemPath, { recursive: true, force: true });
+                                    console.log(`📁 Deleted session folder: ${item} (toolId: ${metadata.toolId})`);
+                                    deletedCount++;
+                                }
+                            } catch (err) {
+                                console.error(`❌ Failed to process folder ${item}:`, err.message);
+                            }
+                        } else {
+                            // Recursively search subdirectories
+                            deleteFilesRecursive(itemPath, filterToolId);
                         }
                     }
                 });
@@ -1698,11 +1739,12 @@ app.delete('/api/results/clear', (req, res) => {
             }
         }
 
-        // Delete all files and subfolders
-        deleteFilesRecursive(screenshotsDir);
+        // Delete files based on toolId filter
+        deleteFilesRecursive(screenshotsDir, toolId);
 
-        console.log(`✅ Cleared ${deletedCount} screenshot(s)`);
-        res.json({ success: true, deletedFiles: deletedCount, message: `Deleted ${deletedCount} file(s)` });
+        const toolName = toolId === 'nohu-tool' ? 'NOHU' : toolId === 'vip-tool' ? 'VIP' : 'All';
+        console.log(`✅ Cleared ${deletedCount} session(s) for ${toolName} tool`);
+        res.json({ success: true, deletedFiles: deletedCount, message: `Deleted ${deletedCount} session(s) for ${toolName} tool` });
     } catch (error) {
         console.error('❌ Error clearing results:', error);
         res.status(500).json({ success: false, error: error.message });
@@ -2855,17 +2897,21 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
             captchaSolver
         };
 
-        // Get API key from profileData (like nohu-tool) or environment
+        // Get API keys from profileData or environment
         const apiKey = profileData?.apiKey || process.env.CAPTCHA_API_KEY;
+        const viotpToken = profileData?.viotpToken || process.env.VIOTP_TOKEN;
 
         const settings = {
-            captchaApiKey: apiKey
+            captchaApiKey: apiKey,
+            viotpToken: viotpToken
         };
 
         console.log('🔑 API Key available:', apiKey ? 'YES' : 'NO');
+        console.log('🔑 Viotp Token available:', viotpToken ? 'YES' : 'NO');
         console.log('📊 profileData received:', {
             username: profileData?.username,
-            apiKey: profileData?.apiKey ? `${profileData.apiKey.substring(0, 5)}...` : 'MISSING'
+            apiKey: profileData?.apiKey ? `${profileData.apiKey.substring(0, 5)}...` : 'MISSING',
+            viotpToken: profileData?.viotpToken ? `${profileData.viotpToken.substring(0, 5)}...` : 'MISSING'
         });
 
         const vipAutomation = new VIPAutomation(settings, scripts);
@@ -2877,39 +2923,16 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
         // Get Hidemium browser connection
         let browser = null;
         try {
-            // Connect to Hidemium Local API
-            const response = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
-                params: { is_local: false }
-            });
+            // Use profileId directly (like NOHU does) - don't try to look it up
+            // The profileId is already the correct UUID from the frontend
+            const hidemiumProfileUuid = profileId;
 
-            if (!response.data?.data?.content || response.data.data.content.length === 0) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'No Hidemium profiles available'
-                });
-            }
-
-            // Get specified profile or use first available
-            let hidemiumProfile = null;
-
-            if (profileId) {
-                // Use specified profile
-                hidemiumProfile = response.data.data.content.find(p => p.uuid === profileId);
-                if (!hidemiumProfile) {
-                    console.warn(`⚠️ Profile ${profileId} not found in Hidemium, using first available`);
-                    hidemiumProfile = response.data.data.content[0];
-                }
-            } else {
-                // Fallback to first available
-                hidemiumProfile = response.data.data.content[0];
-            }
-
-            console.log(`📱 Using Hidemium profile: ${hidemiumProfile.name} (UUID: ${hidemiumProfile.uuid})`);
+            console.log(`📱 Opening Hidemium profile: ${hidemiumProfileUuid}`);
 
             // Open profile in Hidemium
             const openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
                 params: {
-                    uuid: hidemiumProfile.uuid,
+                    uuid: hidemiumProfileUuid,
                     command: '--remote-debugging-port=0'
                 }
             });
@@ -3131,7 +3154,7 @@ app.get('/api/nohu-automation/sites', (req, res) => {
 
 // NOHU SMS sites config (centralized - used by both frontend and backend)
 const nohuSmsSiteConfigs = {
-    'Go99': { registerSmsUrl: 'https://m.go99.tw/Account/Register?f=4688147' },
+    'Go99': { registerSmsUrl: 'https://m.91111119.com/Account/Register?f=4860523' },
     'NOHU': { registerSmsUrl: null },
     'TT88': { registerSmsUrl: null },
     'MMOO': { registerSmsUrl: null },
@@ -4049,10 +4072,8 @@ All critical files have been protected against reverse engineering.
             }
 
             console.log('');
+            console.log('🌐 Browser: Hidemium');
             console.log('📋 Available tools:', toolsConfig.tools?.length || 0);
-            console.log('');
-            console.log('⚠️  Note: Hidemium Local API should run on http://127.0.0.1:2222');
-            console.log('    Make sure Hidemium is running with Local API enabled');
             console.log('');
             console.log('Press Ctrl+C to stop the server');
             console.log('========================================');

@@ -1906,10 +1906,10 @@ class CompleteAutomation {
             }
         });
 
-        // Navigate to promo URL
+        // Navigate to promo URL (increased timeout for slow servers)
         console.log(`    🎁 Navigating to promo URL: ${promoUrl}`);
         try {
-            await promoPage.goto(promoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await promoPage.goto(promoUrl, { waitUntil: 'domcontentloaded', timeout: 60000 }); // Increased from 30s to 60s
         } catch (navError) {
             checkPageValid(); // Check if tab was closed
 
@@ -1997,13 +1997,13 @@ class CompleteAutomation {
             const actions = new AutomationActions(promoPage);
             console.log('    ✅ AutomationActions created');
 
-            console.log('    📞 Calling completeCheckPromotion...');
+            console.log('    📞 Calling checkPromotion...');
             console.log('    📊 Username:', username);
             console.log('    📊 API Key:', apiKey ? `${apiKey.substring(0, 5)}...` : 'undefined');
 
             let result;
             try {
-                result = await actions.completeCheckPromotion(username, apiKey);
+                result = await actions.checkPromotion(username, apiKey);
             } catch (formError) {
                 console.log('    ❌ Check promo form error:', formError.message);
 
@@ -2062,7 +2062,7 @@ class CompleteAutomation {
 
             console.log('    📊 Check promo result:', result);
 
-            // After completeCheckPromotion, page will reload when "Nhận KM" is clicked
+            // After checkPromotion, page will reload when "Nhận KM" is clicked
             // Wait for navigation to complete, then check result and take screenshot
             console.log('    ⏳ Waiting for page navigation after "Nhận KM" click...');
 

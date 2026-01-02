@@ -1,0 +1,24 @@
+{
+  "username": "dxts9i",
+  "password": "d2m946yp7sz5a",
+  "withdrawPassword": "789327",
+  "fullname": "LE THANH DUNG Y",
+  "email": "pm5k12x@gmail.com",
+  "phone": "0993179751",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10365048107087767",
+    "accountHolder": "LE THANH DUNG Y"
+  },
+  "registeredAt": "2025-12-24T17:39:44.971Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,22 @@
+{
+  "username": "gg0gvqv",
+  "password": "6mqnr81w2",
+  "withdrawPassword": "161170",
+  "fullname": "PHAM HOANG TAM",
+  "email": "myazdqs@gmail.com",
+  "phone": "0991431261",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "1220855907773",
+    "accountHolder": "PHAM HOANG TAM"
+  },
+  "registeredAt": "2025-12-29T06:38:09.695Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

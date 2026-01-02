@@ -1,0 +1,22 @@
+{
+  "username": "wxwzd86",
+  "password": "tllmj65jly",
+  "withdrawPassword": "858915",
+  "fullname": "BUI VAN TAM",
+  "email": "fymfd@gmail.com",
+  "phone": "0993179757",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10365048107093769",
+    "accountHolder": "BUI VAN TAM"
+  },
+  "registeredAt": "2025-12-24T19:11:18.377Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

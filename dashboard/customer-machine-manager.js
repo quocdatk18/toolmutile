@@ -395,33 +395,56 @@ class CustomerMachineManager {
                 return;
             }
 
-            // Lọc ra các key hết hạn
-            const originalLength = customer.licenseHistory.length;
-            customer.licenseHistory = customer.licenseHistory.filter(license => {
-                // Giữ lại lifetime license
+            // Phân loại key: hết hạn vs còn hạn
+            const expiredLicenses = [];
+            const activeLicenses = [];
+
+            customer.licenseHistory.forEach(license => {
+                // Lifetime license luôn giữ lại
                 if (license.expiryDays === -1) {
-                    return true;
+                    activeLicenses.push(license);
+                    return;
                 }
 
                 // Tính ngày hết hạn
                 const expiryDate = new Date(new Date(license.createdAt).getTime() + (license.expiryDays * 24 * 60 * 60 * 1000));
 
-                // Nếu hết hạn, xóa
                 if (expiryDate <= now) {
-                    cleanedCount++;
-                    console.log(`🗑️ Removed expired license for ${customerName}: ${license.licenseKey.substring(0, 20)}...`);
-                    return false;
+                    expiredLicenses.push(license);
+                } else {
+                    activeLicenses.push(license);
                 }
-
-                return true;
             });
+
+            // Nếu có key hết hạn, giữ lại 1 key hết hạn mới nhất (gần nhất)
+            if (expiredLicenses.length > 0) {
+                // Sắp xếp theo thời gian tạo (mới nhất trước)
+                expiredLicenses.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+                // Giữ lại key hết hạn mới nhất
+                const newestExpired = expiredLicenses[0];
+                activeLicenses.push(newestExpired);
+
+                // Xóa những key hết hạn cũ hơn
+                const keysToDelete = expiredLicenses.slice(1);
+                keysToDelete.forEach(license => {
+                    cleanedCount++;
+                    console.log(`🗑️ Removed old expired license for ${customerName}: ${license.licenseKey.substring(0, 20)}... (expired: ${new Date(new Date(license.createdAt).getTime() + (license.expiryDays * 24 * 60 * 60 * 1000)).toLocaleDateString('vi-VN')})`);
+                });
+            }
+
+            // Cập nhật licenseHistory
+            const originalLength = customer.licenseHistory.length;
+            customer.licenseHistory = activeLicenses;
 
             // Nếu xóa key, cập nhật isActive
             if (customer.licenseHistory.length < originalLength) {
                 // Đánh dấu key còn lại là inactive nếu không có key active
                 const hasActive = customer.licenseHistory.some(l => l.isActive);
                 if (!hasActive && customer.licenseHistory.length > 0) {
-                    customer.licenseHistory[customer.licenseHistory.length - 1].isActive = true;
+                    // Đánh dấu key mới nhất là active
+                    customer.licenseHistory.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    customer.licenseHistory[0].isActive = true;
                 }
             }
         });
@@ -429,7 +452,7 @@ class CustomerMachineManager {
         // Lưu nếu có thay đổi
         if (cleanedCount > 0) {
             this.saveCustomers();
-            console.log(`✅ Cleanup completed: Removed ${cleanedCount} expired licenses`);
+            console.log(`✅ Cleanup completed: Removed ${cleanedCount} old expired licenses (kept 1 newest expired per customer)`);
         }
 
         return cleanedCount;

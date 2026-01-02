@@ -1,0 +1,43 @@
+{
+  "username": "DragonBlade3f",
+  "password": "d68pcjc9qf",
+  "withdrawPassword": "479125",
+  "fullname": "LE HUONG DUC HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10366048107257288",
+    "accountHolder": "LE HUONG DUC HUY"
+  },
+  "registeredAt": "2025-12-26T03:17:48.107Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T03:17:48.107Z",
+  "bankVerified": false
+}

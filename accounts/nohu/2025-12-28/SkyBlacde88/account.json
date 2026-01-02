@@ -1,0 +1,43 @@
+{
+  "username": "SkyBlacde88",
+  "password": "jrlapt0g25i6",
+  "withdrawPassword": "712066",
+  "fullname": "PHUN TUN ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10368048107540539",
+    "accountHolder": "PHUN TUN ANH"
+  },
+  "registeredAt": "2025-12-27T22:36:13.452Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T22:36:13.452Z",
+  "bankVerified": false
+}

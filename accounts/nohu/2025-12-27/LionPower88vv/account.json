@@ -1,0 +1,43 @@
+{
+  "username": "LionPower88vv",
+  "password": "l0mr2wct",
+  "withdrawPassword": "816991",
+  "fullname": "TANG DUY TAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA NOI",
+    "accountNumber": "9686963240923499",
+    "accountHolder": "TANG DUY TAN"
+  },
+  "registeredAt": "2025-12-27T12:40:54.873Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T12:40:54.873Z",
+  "bankVerified": false
+}

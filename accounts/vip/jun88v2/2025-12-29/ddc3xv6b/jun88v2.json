@@ -1,0 +1,22 @@
+{
+  "username": "ddc3xv6b",
+  "password": "f6gxx70rtg",
+  "withdrawPassword": "877705",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "l7aj68q@gmail.com",
+  "phone": "0777895065",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "940684069",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-29T09:17:59.082Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

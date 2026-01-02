@@ -1,0 +1,43 @@
+{
+  "username": "FireBlade777ff",
+  "password": "zpkic44z604f",
+  "withdrawPassword": "487790",
+  "fullname": "TIEN KHO KIEM LAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10367048107497035",
+    "accountHolder": "TIEN KHO KIEM LAM"
+  },
+  "registeredAt": "2025-12-27T10:25:56.627Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T10:25:56.627Z",
+  "bankVerified": false
+}

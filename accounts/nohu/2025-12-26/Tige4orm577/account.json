@@ -1,0 +1,43 @@
+{
+  "username": "Tige4orm577",
+  "password": "jbv90lwf56lt",
+  "withdrawPassword": "156987",
+  "fullname": "KHA THIEN BAO VY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CAN THO",
+    "accountNumber": "9686961116425602",
+    "accountHolder": "KHA THIEN BAO VY"
+  },
+  "registeredAt": "2025-12-26T07:15:34.940Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T07:15:34.940Z",
+  "bankVerified": false
+}

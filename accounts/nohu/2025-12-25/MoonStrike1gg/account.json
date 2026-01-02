@@ -1,0 +1,43 @@
+{
+  "username": "MoonStrike1gg",
+  "password": "csh0nq0z4",
+  "withdrawPassword": "102328",
+  "fullname": "LE THANH DUNG Y",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10365048107087767",
+    "accountHolder": "LE THANH DUNG Y"
+  },
+  "registeredAt": "2025-12-24T17:24:52.231Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T17:24:52.231Z",
+  "bankVerified": false
+}

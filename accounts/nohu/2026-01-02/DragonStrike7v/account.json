@@ -1,0 +1,43 @@
+{
+  "username": "DragonStrike7v",
+  "password": "c3i32bzft3o",
+  "withdrawPassword": "911113",
+  "fullname": "TIEU DUNG KHANH HIEU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10362048108181160",
+    "accountHolder": "TIEU DUNG KHANH HIEU"
+  },
+  "registeredAt": "2026-01-02T04:39:51.234Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T04:39:51.234Z",
+  "bankVerified": false
+}

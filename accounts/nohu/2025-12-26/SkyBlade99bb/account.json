@@ -1,0 +1,43 @@
+{
+  "username": "SkyBlade99bb",
+  "password": "ramh2550cm",
+  "withdrawPassword": "396867",
+  "fullname": "LAI GIA CAT TIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA NOI",
+    "accountNumber": "9686967469904063",
+    "accountHolder": "LAI GIA CAT TIEN"
+  },
+  "registeredAt": "2025-12-26T07:33:09.783Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T07:33:09.783Z",
+  "bankVerified": false
+}

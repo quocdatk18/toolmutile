@@ -1,0 +1,23 @@
+{
+  "username": "Xe1tjcoq",
+  "password": "cdc1k3g822o",
+  "withdrawPassword": "727163",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "c7076xt@gmail.com",
+  "phone": "0356935306",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "440684069",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-27T21:25:54.589Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

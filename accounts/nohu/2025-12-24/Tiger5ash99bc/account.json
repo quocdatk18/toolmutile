@@ -1,0 +1,43 @@
+{
+  "username": "Tiger5ash99bc",
+  "password": "gejz2a65f",
+  "withdrawPassword": "190337",
+  "fullname": "TIEU CUONG THO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10364048106932055",
+    "accountHolder": "TIEU CUONG THO"
+  },
+  "registeredAt": "2025-12-23T20:38:52.825Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T20:38:52.825Z",
+  "bankVerified": false
+}

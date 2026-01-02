@@ -1,0 +1,43 @@
+{
+  "username": "FireFury88sds",
+  "password": "dd3aoo5acr7",
+  "withdrawPassword": "441789",
+  "fullname": "LUONG THUY LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BIEN HOA",
+    "accountNumber": "9686963464099094",
+    "accountHolder": "LUONG THUY LINH"
+  },
+  "registeredAt": "2025-12-27T12:05:51.241Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T12:05:51.241Z",
+  "bankVerified": false
+}

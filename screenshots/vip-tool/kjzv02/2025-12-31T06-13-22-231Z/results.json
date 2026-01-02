@@ -1,0 +1,18 @@
+[
+  {
+    "site": "AccOKVIP",
+    "register": {
+      "success": true,
+      "message": "AccOKVIP registration completed"
+    },
+    "addBank": {
+      "success": false,
+      "error": "Unknown category"
+    },
+    "checkPromo": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - add bank failed"
+    }
+  }
+]

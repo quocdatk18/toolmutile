@@ -1,0 +1,26 @@
+{
+  "username": "dmik616k",
+  "password": "f7qhfcj3c2",
+  "withdrawPassword": "211734",
+  "fullname": "NGUYEN HOANG TAM",
+  "email": "f7qk9x@gmail.com",
+  "phone": "0777648431",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10365048107100680",
+    "accountHolder": "NGUYEN HOANG TAM"
+  },
+  "registeredAt": "2025-12-25T01:09:05.682Z",
+  "firstSite": "MB66",
+  "sites": [
+    "Hi88",
+    "F8BET",
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

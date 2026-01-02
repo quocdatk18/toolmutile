@@ -1,0 +1,43 @@
+{
+  "username": "DragonStrike1f",
+  "password": "z9mtyb136",
+  "withdrawPassword": "591819",
+  "fullname": "DUONG VAN VAN PHONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10367048107422375",
+    "accountHolder": "DUONG VAN VAN PHONG"
+  },
+  "registeredAt": "2025-12-26T21:10:18.332Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T21:10:18.332Z",
+  "bankVerified": false
+}

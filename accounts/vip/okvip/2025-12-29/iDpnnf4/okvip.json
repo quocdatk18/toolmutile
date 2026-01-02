@@ -1,0 +1,23 @@
+{
+  "username": "iDpnnf4",
+  "password": "d67wnb9ykxkw",
+  "withdrawPassword": "985290",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "g9vov5l@gmail.com",
+  "phone": "0955646634",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "740684069",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-29T08:10:11.169Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

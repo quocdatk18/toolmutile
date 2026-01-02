@@ -1,0 +1,43 @@
+{
+  "username": "TigerFury99h",
+  "password": "rj5jz5k9v",
+  "withdrawPassword": "871413",
+  "fullname": "GIANG A NUA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10364048107014474",
+    "accountHolder": "GIANG A NUA"
+  },
+  "registeredAt": "2025-12-24T09:02:19.276Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T09:02:19.276Z",
+  "bankVerified": false
+}

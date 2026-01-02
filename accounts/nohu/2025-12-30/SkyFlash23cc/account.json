@@ -1,0 +1,43 @@
+{
+  "username": "SkyFlash23cc",
+  "password": "c7vnkdy6",
+  "withdrawPassword": "847925",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "1140694070",
+    "accountNumber": "1140694070",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-30T02:17:13.089Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-30T02:17:13.089Z",
+  "bankVerified": false
+}

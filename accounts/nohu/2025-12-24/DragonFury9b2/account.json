@@ -1,0 +1,43 @@
+{
+  "username": "DragonFury9b2",
+  "password": "r8g0irh31sk0j",
+  "withdrawPassword": "664524",
+  "fullname": "TAY DUONG MINH HOANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10364048106922716",
+    "accountHolder": "TAY DUONG MINH HOANG"
+  },
+  "registeredAt": "2025-12-23T17:36:21.680Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T17:36:21.680Z",
+  "bankVerified": false
+}

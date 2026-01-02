@@ -1,0 +1,24 @@
+{
+  "username": "faangbuz2",
+  "password": "f69vb658l",
+  "withdrawPassword": "659292",
+  "fullname": "HOANG THANH TUAN",
+  "email": "z2iglb@gmail.com",
+  "phone": "0777648431",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10365048107098933",
+    "accountHolder": "HOANG THANH TUAN"
+  },
+  "registeredAt": "2025-12-25T00:14:27.733Z",
+  "firstSite": "ABC8",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

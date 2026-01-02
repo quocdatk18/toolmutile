@@ -1,0 +1,43 @@
+{
+  "username": "TigerBolt33f",
+  "password": "y269lyisgq7",
+  "withdrawPassword": "421461",
+  "fullname": "NHAN PHONG VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10364048106933232",
+    "accountHolder": "NHAN PHONG VINH"
+  },
+  "registeredAt": "2025-12-23T21:35:08.931Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T21:35:08.931Z",
+  "bankVerified": false
+}

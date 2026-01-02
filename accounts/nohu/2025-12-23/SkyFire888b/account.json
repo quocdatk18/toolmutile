@@ -1,0 +1,25 @@
+{
+  "username": "SkyFire888b",
+  "password": "i6f7qh2fh98o",
+  "withdrawPassword": "334793",
+  "fullname": "XTIENG TRAN VAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10363048106853533",
+    "accountHolder": "XTIENG TRAN VAN"
+  },
+  "registeredAt": "2025-12-23T12:13:18.776Z",
+  "firstSite": "Go99-SMS",
+  "sites": [
+    {
+      "name": "Go99-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T12:13:18.776Z",
+  "bankVerified": false
+}

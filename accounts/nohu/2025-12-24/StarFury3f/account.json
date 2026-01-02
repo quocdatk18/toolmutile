@@ -1,0 +1,43 @@
+{
+  "username": "StarFury3f",
+  "password": "6czc2yy875r",
+  "withdrawPassword": "569859",
+  "fullname": "PHAN VAN QUY DAI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10364048106941973",
+    "accountHolder": "PHAN VAN QUY DAI"
+  },
+  "registeredAt": "2025-12-24T00:40:51.936Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T00:40:51.936Z",
+  "bankVerified": false
+}

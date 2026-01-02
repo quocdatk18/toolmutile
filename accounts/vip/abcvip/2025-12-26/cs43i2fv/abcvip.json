@@ -1,0 +1,23 @@
+{
+  "username": "cs43i2fv",
+  "password": "k9q086y5uqv",
+  "withdrawPassword": "551811",
+  "fullname": "CHUNG THANH NHA UYEN",
+  "email": "8icva1@gmail.com",
+  "phone": "0993189701",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "9686968578784516",
+    "accountHolder": "CHUNG THANH NHA UYEN"
+  },
+  "registeredAt": "2025-12-26T08:42:43.584Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

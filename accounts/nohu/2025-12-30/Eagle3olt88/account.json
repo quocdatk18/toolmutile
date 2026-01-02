@@ -1,0 +1,43 @@
+{
+  "username": "Eagle3olt88",
+  "password": "x49gfx96ukc2",
+  "withdrawPassword": "949872",
+  "fullname": "TA TRAN KHOI NGUYEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAI PHONG",
+    "accountNumber": "9686964033704106",
+    "accountHolder": "TA TRAN KHOI NGUYEN"
+  },
+  "registeredAt": "2025-12-30T07:19:52.854Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-30T07:19:52.854Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "SkyBladef",
+  "password": "f9d6nul3y",
+  "withdrawPassword": "276359",
+  "fullname": "NGUYEN PHONG HIEU TIEU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10367048107455295",
+    "accountHolder": "NGUYEN PHONG HIEU TIEU"
+  },
+  "registeredAt": "2025-12-27T03:50:24.995Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T03:50:24.995Z",
+  "bankVerified": false
+}

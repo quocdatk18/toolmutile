@@ -1,0 +1,43 @@
+{
+  "username": "Firef2wer99",
+  "password": "d25h3qthanj",
+  "withdrawPassword": "501646",
+  "fullname": "ANH HUNG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10368048107607860",
+    "accountHolder": "ANH HUNG"
+  },
+  "registeredAt": "2025-12-28T14:58:52.222Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T14:58:52.222Z",
+  "bankVerified": false
+}

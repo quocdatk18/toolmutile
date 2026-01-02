@@ -1,0 +1,9 @@
+{
+  "customer": "LocTele",
+  "version": "3.0.0",
+  "createdAt": "2025-12-23T11:24:58.952Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_LocTele_10375_60471",
+  "machineId": null,
+  "obfuscated": true
+}

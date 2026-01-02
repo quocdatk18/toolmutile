@@ -1,0 +1,9 @@
+{
+  "customer": "LoCheoTele",
+  "version": "3.0.0",
+  "createdAt": "2025-12-24T04:42:52.503Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_LoCheoTele_41586_84330",
+  "machineId": null,
+  "obfuscated": true
+}

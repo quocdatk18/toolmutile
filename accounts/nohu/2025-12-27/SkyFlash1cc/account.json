@@ -1,0 +1,43 @@
+{
+  "username": "SkyFlash1cc",
+  "password": "f9qb0t60ljm",
+  "withdrawPassword": "667535",
+  "fullname": "TAY MA DANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "10367048107488839",
+    "accountHolder": "TAY MA DANG"
+  },
+  "registeredAt": "2025-12-27T08:15:31.518Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T08:15:31.518Z",
+  "bankVerified": false
+}

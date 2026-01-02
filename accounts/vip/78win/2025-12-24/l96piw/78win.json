@@ -1,0 +1,22 @@
+{
+  "username": "l96piw",
+  "password": "v2hp4xhwa8",
+  "withdrawPassword": "534567",
+  "fullname": "HOANG THANH PHONG",
+  "email": "c6trxjp@gmail.com",
+  "phone": "0993186475",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106925526",
+    "accountHolder": "HOANG THANH PHONG"
+  },
+  "registeredAt": "2025-12-23T18:13:42.919Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

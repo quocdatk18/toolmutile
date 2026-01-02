@@ -1,0 +1,22 @@
+{
+  "username": "dssz4961k",
+  "password": "je89u3mt",
+  "withdrawPassword": "195936",
+  "fullname": "PHAM DUC BINH",
+  "email": "zv0dq0k@gmail.com",
+  "phone": "0970121780",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "5204532154",
+    "accountHolder": "PHAM DUC BINH"
+  },
+  "registeredAt": "2025-12-29T05:59:58.262Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

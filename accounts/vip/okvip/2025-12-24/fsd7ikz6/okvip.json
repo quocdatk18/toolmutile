@@ -1,0 +1,24 @@
+{
+  "username": "fsd7ikz6",
+  "password": "snv3cn41md",
+  "withdrawPassword": "421995",
+  "fullname": "HOANG THANH PHONG",
+  "email": "qt8f0d@gmail.com",
+  "phone": "0993186475",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106925526",
+    "accountHolder": "HOANG THANH PHONG"
+  },
+  "registeredAt": "2025-12-23T18:12:04.475Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

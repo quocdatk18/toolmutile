@@ -1,0 +1,22 @@
+{
+  "username": "msqliff",
+  "password": "k6ubpg0r5h",
+  "withdrawPassword": "336778",
+  "fullname": "KHA THIEN BAO VY",
+  "email": "6pr7b40@gmail.com",
+  "phone": "0927352180",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "9686961116425602",
+    "accountHolder": "KHA THIEN BAO VY"
+  },
+  "registeredAt": "2025-12-26T19:28:30.402Z",
+  "firstSite": "Hi88",
+  "sites": [
+    "Hi88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

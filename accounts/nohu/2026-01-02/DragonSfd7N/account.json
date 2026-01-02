@@ -1,0 +1,43 @@
+{
+  "username": "DragonSfd7N",
+  "password": "cxm2x31ez",
+  "withdrawPassword": "347522",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "9140674068",
+    "accountNumber": "9140674068",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2026-01-02T00:58:55.746Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T00:58:55.746Z",
+  "bankVerified": false
+}

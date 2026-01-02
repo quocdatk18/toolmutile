@@ -1,6 +1,405 @@
 // Content script - runs on target page
 console.log('?? Auto Register Tool loaded on:', window.location.href);
 
+// Add CSS animations for notifications
+if (!document.getElementById('notification-styles')) {
+  const style = document.createElement('style');
+  style.id = 'notification-styles';
+  style.textContent = `
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+// ============================================
+// HELPER FUNCTIONS - Giai Đoạn 1, 2, 3 Cải Tiến
+// ============================================
+
+function randomDelay(min, max) {
+  return new Promise(r => setTimeout(r, min + Math.random() * (max - min)));
+}
+
+function getRandomCharDelay() {
+  return 150 + Math.random() * 100;  // 150-250ms (tăng từ 100-200ms)
+}
+
+function shouldAddTypingPause() {
+  return Math.random() < 0.3;
+}
+
+function getTypingPauseDelay() {
+  return 500 + Math.random() * 1000;
+}
+
+function shouldAddMouseMovement() {
+  return Math.random() < 0.2;
+}
+
+function shouldAddScrolling() {
+  return Math.random() < 0.15;
+}
+
+function shouldAddRandomFocusBlur() {
+  return Math.random() < 0.3;
+}
+
+function getScrollDelay() {
+  return 500 + Math.random() * 1000;
+}
+
+function getFocusBlurDelay() {
+  return 200 + Math.random() * 300;
+}
+
+function shouldAddTypingError() {
+  return Math.random() < 0.05;
+}
+
+function getRealisticCharDelay(char) {
+  if (!char) return 100 + Math.random() * 100;
+  const charLower = char.toLowerCase();
+  if (/[0-9!@#$%^&*()_+=\-\[\]{};:'",.<>?/\\|`~]/.test(char)) {
+    return 80 + Math.random() * 40;
+  }
+  if (/[aeiouàáảãạăằắẳẵặâầấẩẫậ]/.test(charLower)) {
+    return 120 + Math.random() * 60;
+  }
+  return 100 + Math.random() * 60;
+}
+
+function shouldRandomizeFormOrder() {
+  return Math.random() < 0.3;
+}
+
+// ============================================
+// FormFillerExtension - Common form filler for register, addBank, checkPromo
+// ============================================
+class FormFillerExtension {
+  constructor() {
+    this.defaultDelay = {
+      beforeFocus: 250 + Math.random() * 100,
+      betweenChars: 100 + Math.random() * 100,
+      afterField: 700 + Math.random() * 200,
+      afterForm: 4500 + Math.random() * 1000,
+      beforeSubmit: 14000 + Math.random() * 2000
+    };
+  }
+
+  async fillTextField(input, value, options = {}) {
+    const opts = {
+      charDelay: getRandomCharDelay(),
+      beforeFocus: 250 + Math.random() * 100,
+      afterField: 700 + Math.random() * 200,
+      noFocus: false,
+      label: input?.placeholder || input?.name || 'field',
+      ...options
+    };
+
+    try {
+      if (!value) {
+        console.log(`⏭️ Skipping ${opts.label} (empty value)`);
+        return { success: true, skipped: true };
+      }
+
+      if (!input) {
+        console.warn(`⚠️ Input not found for ${opts.label}`);
+        return { success: false, error: 'Input not found' };
+      }
+
+      console.log(`📝 Filling ${opts.label}...`);
+
+      if (input.value === value.toString()) {
+        console.log(`✅ ${opts.label} already has correct value`);
+        return { success: true, skipped: true };
+      }
+
+      if (!opts.noFocus && !input.disabled) {
+        input.focus();
+        input.click();
+        await randomDelay(opts.beforeFocus - 50, opts.beforeFocus + 50);
+      }
+
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLInputElement.prototype,
+        'value'
+      ).set;
+
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(input, '');
+      } else {
+        input.value = '';
+      }
+
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(r => setTimeout(r, 50));
+
+      for (let i = 0; i < value.length; i++) {
+        const char = value[i];
+
+        // Giai Đoạn 3: Lỗi gõ (5% cơ hội)
+        if (shouldAddTypingError()) {
+          const wrongChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+          if (nativeInputValueSetter) {
+            nativeInputValueSetter.call(input, input.value + wrongChar);
+          } else {
+            input.value = input.value + wrongChar;
+          }
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          console.log(`❌ Typing error: typed "${wrongChar}" instead of "${char}"`);
+          await randomDelay(300, 800);
+          if (nativeInputValueSetter) {
+            nativeInputValueSetter.call(input, input.value.slice(0, -1));
+          } else {
+            input.value = input.value.slice(0, -1);
+          }
+          input.dispatchEvent(new Event('input', { bubbles: true }));
+          console.log(`✏️ Corrected: removed wrong character`);
+          await randomDelay(200, 500);
+        }
+
+        if (nativeInputValueSetter) {
+          nativeInputValueSetter.call(input, input.value + char);
+        } else {
+          input.value = input.value + char;
+        }
+
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+
+        // Giai Đoạn 3: Biến thiên tốc độ gõ
+        const charDelay = getRealisticCharDelay(char);
+        await new Promise(r => setTimeout(r, charDelay));
+
+        // Giai Đoạn 1: Tạm dừng gõ (30% cơ hội)
+        if (i > 0 && i % (3 + Math.floor(Math.random() * 3)) === 0) {
+          if (shouldAddTypingPause()) {
+            const pauseDelay = getTypingPauseDelay();
+            console.log(`⏸️ Typing pause: ${Math.round(pauseDelay / 1000)}s (thinking...)`);
+            await new Promise(r => setTimeout(r, pauseDelay));
+          }
+        }
+      }
+
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+      input.dispatchEvent(new Event('blur', { bubbles: true }));
+
+      // Giai Đoạn 2: Focus/blur ngẫu nhiên (30% cơ hội)
+      if (shouldAddRandomFocusBlur()) {
+        await randomDelay(getFocusBlurDelay() - 50, getFocusBlurDelay() + 50);
+        input.focus();
+        console.log(`🔄 Random focus added`);
+        await randomDelay(getFocusBlurDelay() - 50, getFocusBlurDelay() + 50);
+        input.blur();
+        console.log(`🔄 Random blur added`);
+      }
+
+      await randomDelay(opts.afterField - 100, opts.afterField + 100);
+
+      console.log(`✅ ${opts.label} filled`);
+      return { success: true };
+    } catch (error) {
+      console.warn(`⚠️ Failed to fill ${opts.label}:`, error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  async fillMultipleFields(fields, options = {}) {
+    const opts = { ...this.defaultDelay, ...options };
+
+    // Kiểm tra xem có password/confirmPassword dependency không
+    const hasPasswordDependency = fields.some(f => f.label === 'password') &&
+      fields.some(f => f.label === 'confirmPassword');
+
+    // Chỉ ngẫu nhiên hóa nếu KHÔNG có dependencies
+    let fieldsToFill = [...fields];
+
+    if (!hasPasswordDependency && shouldRandomizeFormOrder()) {
+      fieldsToFill.sort(() => Math.random() - 0.5);
+      console.log(`🔀 Form field order randomized`);
+    }
+
+    for (const field of fieldsToFill) {
+      if (!field.input) {
+        console.warn(`⚠️ Input not found for ${field.label}`);
+        continue;
+      }
+
+      const result = await this.fillTextField(field.input, field.value, opts);
+      if (!result.success && !result.skipped) {
+        console.warn(`⚠️ Failed to fill ${field.label}`);
+      }
+
+      // ⏱️ TIMING FIX: Thêm delay giữa các fields (500-1000ms)
+      // Mô phỏng người suy nghĩ giữa các fields
+      await randomDelay(500, 1000);
+    }
+  }
+
+  async simulateHumanInteraction() {
+    console.log('🖱️ Simulating human-like interactions...');
+
+    // Giai Đoạn 2: Cuộn trang ngẫu nhiên (15% cơ hội)
+    if (shouldAddScrolling()) {
+      const scrollAmount = 100 + Math.random() * 300;
+      window.scrollBy(0, scrollAmount);
+      console.log(`📜 Random scroll: ${Math.round(scrollAmount)}px`);
+      await randomDelay(getScrollDelay() - 100, getScrollDelay() + 100);
+    }
+
+    window.scrollBy(0, 300);
+    await randomDelay(700, 900);
+
+    window.scrollBy(0, -300);
+    await randomDelay(700, 900);
+
+    // Giai Đoạn 2: Cuộn trang ngẫu nhiên lần 2 (15% cơ hội)
+    if (shouldAddScrolling()) {
+      const scrollAmount = 50 + Math.random() * 200;
+      window.scrollBy(0, scrollAmount);
+      console.log(`📜 Random scroll: ${Math.round(scrollAmount)}px`);
+      await randomDelay(getScrollDelay() - 100, getScrollDelay() + 100);
+    }
+  }
+
+  async clickButton(selectors, options = {}) {
+    const opts = {
+      delay: 400 + Math.random() * 200,
+      beforeClick: 400 + Math.random() * 200,
+      afterClick: 1800 + Math.random() * 400,
+      ...options
+    };
+
+    try {
+      for (const selector of selectors) {
+        try {
+          const element = document.querySelector(selector);
+          if (element && !element.disabled) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            await randomDelay(opts.beforeClick - 100, opts.beforeClick + 100);
+
+            // Giai Đoạn 2: Chuyển động chuột (20% cơ hội)
+            if (shouldAddMouseMovement()) {
+              const rect = element.getBoundingClientRect();
+              const startX = window.innerWidth / 2;
+              const startY = window.innerHeight / 2;
+              const endX = rect.left + rect.width / 2;
+              const endY = rect.top + rect.height / 2;
+              const steps = 5 + Math.floor(Math.random() * 5);
+              for (let i = 0; i < steps; i++) {
+                await randomDelay(30, 80);
+              }
+              console.log(`🖱️ Mouse movement simulated`);
+            }
+
+            element.click();
+            console.log(`✅ Clicked: ${selector}`);
+            await randomDelay(opts.afterClick - 100, opts.afterClick + 100);
+            return { success: true, selector };
+          }
+        } catch (e) {
+          // Try next selector
+        }
+      }
+
+      const buttons = document.querySelectorAll('button, [role="button"]');
+      for (const btn of buttons) {
+        if (btn.textContent && (
+          btn.textContent.includes('Đăng') ||
+          btn.textContent.includes('Submit') ||
+          btn.textContent.includes('OK') ||
+          btn.textContent.includes('Xác nhận')
+        )) {
+          btn.click();
+          console.log('✅ Clicked button via text search');
+          await randomDelay(opts.afterClick - 100, opts.afterClick + 100);
+          return { success: true };
+        }
+      }
+
+      console.warn('⚠️ Could not find button to click');
+      return { success: false, error: 'Button not found' };
+    } catch (error) {
+      console.warn('⚠️ Error clicking button:', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  async waitForElement(selector, timeout = 10000) {
+    try {
+      const startTime = Date.now();
+      console.warn(`⚠️ Element not found: ${selector}`);
+      return { success: false, error: 'Timeout' };
+    } catch (error) {
+      console.warn(`⚠️ Error waiting for element:`, error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
+  getRandomDelay(min = 5000, max = 15000) {
+    return Math.random() * (max - min) + min;
+  }
+
+  async waitRandomDelay(min = 5000, max = 15000) {
+    const delay = this.getRandomDelay(min, max);
+    console.log(`⏳ Waiting ${Math.round(delay / 1000)}s...`);
+    await new Promise(r => setTimeout(r, delay));
+  }
+
+  isCheckboxChecked(checkbox) {
+    return checkbox ? checkbox.checked : false;
+  }
+
+  async setCheckboxState(checkbox, shouldCheck = true) {
+    if (!checkbox) {
+      console.warn('⚠️ Checkbox not found');
+      return { success: false };
+    }
+
+    const isCurrentlyChecked = this.isCheckboxChecked(checkbox);
+
+    if (isCurrentlyChecked === shouldCheck) {
+      console.log(`✅ Checkbox already ${shouldCheck ? 'checked' : 'unchecked'}`);
+      return { success: true, skipped: true };
+    }
+
+    try {
+      checkbox.focus();
+      await randomDelay(150, 250);
+      checkbox.click();
+      await randomDelay(250, 350);
+
+      checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+      console.log(`✅ Checkbox ${shouldCheck ? 'checked' : 'unchecked'}`);
+      return { success: true };
+    } catch (error) {
+      console.warn(`⚠️ Error setting checkbox:`, error.message);
+      return { success: false, error: error.message };
+    }
+  }
+}
+
+// Create global instance
+window.formFiller = new FormFillerExtension();
+console.log('✅ FormFillerExtension initialized');
+
 // Helper function to check if current page is withdraw page
 function isWithdrawPage() {
   const url = window.location.href.toLowerCase();
@@ -48,6 +447,8 @@ if (window.autoRegisterToolLoaded) {
   window.replayButtonClicked = false;
   window.audioSolving = false;
   window.autoFillRunning = false;
+  window.captchaSubmitted = false;  // Ngăn submit lặp lại
+  window.readyToSearchAudio = false;  // Chỉ tìm audio URL sau khi click "Tạo Audio Captcha"
 
   // Intercept console.error to capture audio URL from Mixed Content warnings
   // This is needed for Puppeteer environment where there's no real background script
@@ -179,6 +580,12 @@ window.captchaAudioUrls = [];
 function addAudioUrl(url) {
   if (!url) return;
 
+  // CRITICAL FIX: Chỉ tìm audio URL sau khi click "Tạo Audio Captcha"
+  if (!window.readyToSearchAudio) {
+    console.log('⏳ Audio URL found but readyToSearchAudio=false, skipping:', url);
+    return;
+  }
+
   const invalidPatterns = [
     'google.com/recaptcha',
     'recaptcha.net',
@@ -237,14 +644,21 @@ function addAudioUrl(url) {
   console.log('🔍 DEBUG: window.apiKey =', window.apiKey ? 'SET' : 'NOT SET');
   console.log('🔍 DEBUG: window.isCheckingPromo =', window.isCheckingPromo);
   console.log('🔍 DEBUG: window.currentApiKey =', window.currentApiKey ? 'SET' : 'NOT SET');
+  console.log('🔍 DEBUG: Audio URL captured at', new Date().toISOString());
 
   // Auto-solve if API key is available (use either apiKey or currentApiKey)
   const hasApiKey = window.apiKey || window.currentApiKey;
-  if (hasApiKey && window.isCheckingPromo) {
+  // IMPORTANT: Disable auto-solve if running from complete-automation.js (window.disableAutoSolve = true)
+  if (hasApiKey && window.isCheckingPromo && !window.disableAutoSolve) {
     console.log('🎵 🔥 Auto-solving audio captcha for check promo...');
+    console.log('🔍 DEBUG: Calling solveAudioCaptchaAuto with URL:', normalizedUrl);
+    // ⏱️ TIMING FIX: Chờ 2-3s sau khi capture audio URL trước khi giải
+    const autoSolveDelay = 2000 + Math.random() * 1000; // 2-3s (tăng từ 1s)
     setTimeout(() => {
       solveAudioCaptchaAuto(normalizedUrl);
-    }, 1000);
+    }, autoSolveDelay);
+  } else {
+    console.log('🔍 DEBUG: Not auto-solving - hasApiKey:', hasApiKey, 'isCheckingPromo:', window.isCheckingPromo, 'disableAutoSolve:', window.disableAutoSolve);
   }
 }
 
@@ -416,8 +830,8 @@ setTimeout(() => {
       response.urls.forEach(url => {
         addAudioUrl(url);
 
-        // Auto-solve if conditions are met
-        if (window.currentApiKey && window.audioButtonClicked) {
+        // Auto-solve if conditions are met (but NOT if disableAutoSolve is set)
+        if (window.currentApiKey && window.audioButtonClicked && !window.disableAutoSolve) {
           console.log('?? Auto-solving with previously captured URL...');
           solveAudioCaptchaAuto(url);
         }
@@ -437,8 +851,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     console.log('?? ? RECEIVED AUDIO URL FROM BACKGROUND:', request.url);
     addAudioUrl(request.url);
 
-    // Auto-solve captcha if API key is available
-    if (window.currentApiKey && window.audioButtonClicked) {
+    // Auto-solve captcha if API key is available (but NOT if disableAutoSolve is set)
+    if (window.currentApiKey && window.audioButtonClicked && !window.disableAutoSolve) {
       console.log('?? Auto-solving captcha with received audio URL...');
       solveAudioCaptchaAuto(request.url);
     }
@@ -547,6 +961,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       window.audioSolving = false;
       window.autoFillRunning = false;
       window.registerFormFilled = false;
+      window.captchaSubmitted = false;
+      window.readyToSearchAudio = false;
       sessionStorage.removeItem('captchaAttempted');
       sessionStorage.removeItem('captchaFailed');
       sessionStorage.removeItem('captchaCompleted');
@@ -724,6 +1140,17 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.action === 'checkPromotion') {
     console.log('Starting promotion check flow...');
 
+    // IMPORTANT: Check if already running BEFORE async (prevent duplicate calls)
+    if (window.promoCheckRunning) {
+      console.log('⚠️ Promo check already running, skipping duplicate call...');
+      sendResponse({ success: false, error: 'Already running' });
+      return true; // Return immediately
+    }
+
+    // Set flag IMMEDIATELY to prevent duplicate calls
+    window.promoCheckRunning = true;
+    window.isCheckingPromo = true;
+
     (async () => {
       try {
         const { username, apiKey, captchaDelay } = request.data || {};
@@ -744,20 +1171,11 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
           console.log('⏱️ Stored captcha delay:', captchaDelay, 'ms');
         }
 
-        // Check if already running
-        if (window.promoCheckRunning) {
-          console.log('Promo check already running, skipping...');
-          sendResponse({ success: false, error: 'Already running' });
-          return;
-        }
-
-        window.promoCheckRunning = true;
-        window.isCheckingPromo = true; // Flag for auto-solving audio captcha
         window.promoButtonClicked = false; // Reset flag to allow clicking
 
         // 🔥 Wait for page to be fully ready (critical for setValue)
-        console.log('⏳ Waiting 2 seconds for page to fully render...');
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log('⏳ Waiting 3-4 seconds for page to fully render...');
+        await new Promise(resolve => setTimeout(resolve, 3000 + Math.random() * 1000));
 
         // STEP 1: Fill username in form
         console.log('Step 1: Filling username...');
@@ -862,19 +1280,21 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
           let taiappSelected = false;
           let taiappAttempts = 0;
-          const maxTaiappAttempts = 6; // 6 x 500ms = 3 seconds
+          const maxTaiappAttempts = 10; // ⏱️ TIMING FIX: 10 x 1000ms = 10 seconds (tăng từ 6 x 500ms = 3s)
 
           while (!taiappSelected && taiappAttempts < maxTaiappAttempts) {
             taiappAttempts++;
             taiappSelected = findAndSelectTaiappPromo();
 
             if (taiappSelected) {
-              console.log(`✅ TAIAPP promo selected after ${taiappAttempts * 500}ms`);
+              console.log(`✅ TAIAPP promo selected after ${taiappAttempts * 1000}ms`);
+              // ⏱️ TIMING FIX: Thêm delay trước khi tiếp tục (500-1000ms)
+              await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
               break;
             }
 
             console.log(`⏳ [${taiappAttempts}/${maxTaiappAttempts}] TAIAPP not found, waiting...`);
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000)); // ⏱️ TIMING FIX: Tăng từ 500ms → 1000ms
           }
 
           if (taiappSelected) {
@@ -884,11 +1304,11 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             // Wait specifically for "Xác thực tại đây" button to appear
             let verifyButtonExists = false;
             let waitAttempts = 0;
-            const maxWaitAttempts = 10; // 10 x 500ms = 5 seconds
+            const maxWaitAttempts = 15; // ⏱️ TIMING FIX: 15 x 1000ms = 15 seconds (tăng từ 10 x 500ms = 5s)
 
             while (!verifyButtonExists && waitAttempts < maxWaitAttempts) {
               waitAttempts++;
-              await new Promise(resolve => setTimeout(resolve, 500));
+              await new Promise(resolve => setTimeout(resolve, 1000)); // ⏱️ TIMING FIX: Tăng từ 500ms → 1000ms
 
               // Check specifically for "Xác thực tại đây" button
               const verifyButton = document.querySelector('.audio-captcha-btn') ||
@@ -908,7 +1328,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
             }
 
             if (!verifyButtonExists) {
-              console.log('⚠️ "Xác thực tại đây" button not found after 5s, but continuing search...');
+              console.log('⚠️ "Xác thực tại đây" button not found after 15s, but continuing search...');
             }
 
             // STEP 4: Click "Xác Thực Tại Đây" button (with retry)
@@ -916,19 +1336,19 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
             let verifyClicked = false;
             let verifyAttempts = 0;
-            const maxVerifyAttempts = 6; // 6 x 500ms = 3 seconds
+            const maxVerifyAttempts = 10; // ⏱️ TIMING FIX: 10 x 1000ms = 10 seconds (tăng từ 6 x 500ms = 3s)
 
             while (!verifyClicked && verifyAttempts < maxVerifyAttempts) {
               verifyAttempts++;
               verifyClicked = await findAndClickVerifyButton();
 
               if (verifyClicked) {
-                console.log(`✅ Verify button clicked after ${verifyAttempts * 500}ms`);
+                console.log(`✅ Verify button clicked after ${verifyAttempts * 1000}ms`);
                 break;
               }
 
               console.log(`⏳ [${verifyAttempts}/${maxVerifyAttempts}] Verify button not found, waiting...`);
-              await new Promise(resolve => setTimeout(resolve, 500));
+              await new Promise(resolve => setTimeout(resolve, 1000)); // ⏱️ TIMING FIX: Tăng từ 500ms → 1000ms
             }
 
             if (verifyClicked) {
@@ -960,26 +1380,43 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
               if (apiKey) {
                 console.log('Step 5: Solving captcha with API key...');
 
-                // Smart wait: Check if audio URL captured (max 3 seconds)
+                // CRITICAL FIX: Click "Tạo Audio Captcha" button BEFORE waiting for audio URL
+                console.log('🎵 Step 5a: Clicking "Tạo Audio Captcha" button...');
+                console.log('🎵 DEBUG: About to call findAndClickCreateAudioButton()');
+                console.log('🎵 DEBUG: typeof findAndClickCreateAudioButton =', typeof findAndClickCreateAudioButton);
+
+                let createAudioResult;
+                try {
+                  createAudioResult = await findAndClickCreateAudioButton();
+                  console.log('🎵 Create audio button result:', createAudioResult);
+                } catch (err) {
+                  console.error('🎵 ERROR calling findAndClickCreateAudioButton:', err.message);
+                  createAudioResult = false;
+                }
+
+                // Wait a bit for audio to load after clicking
+                await new Promise(resolve => setTimeout(resolve, 1000));
+
+                // Smart wait: Check if audio URL captured (max 5 seconds - increased from 3)
                 console.log('Waiting for audio URL to be captured...');
                 let audioReady = false;
                 let audioWaitAttempts = 0;
-                const maxAudioWaitAttempts = 15; // 15 x 200ms = 3 seconds max
+                const maxAudioWaitAttempts = 10; // ⏱️ TIMING FIX: 10 x 500ms = 5 seconds (tăng delay từ 200ms → 500ms)
 
                 while (!audioReady && audioWaitAttempts < maxAudioWaitAttempts) {
                   audioWaitAttempts++;
 
                   if (window.captchaAudioUrls && window.captchaAudioUrls.length > 0) {
                     audioReady = true;
-                    console.log(`✅ Audio URL captured after ${audioWaitAttempts * 200}ms`);
+                    console.log(`✅ Audio URL captured after ${audioWaitAttempts * 500}ms`);
                     break;
                   }
 
-                  await new Promise(resolve => setTimeout(resolve, 200)); // Check every 200ms instead of 500ms
+                  await new Promise(resolve => setTimeout(resolve, 500)); // ⏱️ TIMING FIX: Tăng từ 200ms → 500ms
                 }
 
                 if (!audioReady) {
-                  console.log('⚠️ No audio URL captured after 3 seconds');
+                  console.log('⚠️ No audio URL captured after 5 seconds');
                 }
 
                 if (window.captchaAudioUrls && window.captchaAudioUrls.length > 0) {
@@ -987,6 +1424,12 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                   const audioUrl = selectBestAudioUrl(window.captchaAudioUrls);
                   console.log('Audio URL selected:', audioUrl);
                   console.log('Total candidates:', window.captchaAudioUrls.length);
+
+                  // ⏱️ TIMING FIX: Chờ 2-3s sau khi lấy audio URL trước khi điền captcha
+                  const audioDelay = 2000 + Math.random() * 1000; // 2-3s
+                  const audioDelaySeconds = Math.round(audioDelay / 1000);
+                  console.log(`⏳ Waiting ${audioDelaySeconds}s after capturing audio URL before solving...`);
+                  await new Promise(resolve => setTimeout(resolve, audioDelay));
 
                   // Validate audio URL
                   console.log('Validating audio URL...');
@@ -1012,6 +1455,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                     if (captchaText) {
                       // Fill captcha input - Use same logic as solveAudioCaptchaAuto
                       console.log('Filling captcha input...');
+
+                      // ⏱️ TIMING FIX: Chờ 1-2s để captcha input render xong
+                      console.log('⏳ Waiting 1-2s for captcha input to render...');
+                      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
 
                       // Find captcha input with priority order
                       let captchaInput = null;
@@ -1056,38 +1503,214 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
                       if (captchaInput) {
                         console.log('📝 Filling captcha input:', captchaInput.placeholder || captchaInput.id);
-                        // Use fast mode and NO FOCUS for check promo captcha
+                        // Use fast mode and NO FOCUS for check promo captcha (avoid bot detection)
                         await fillInputAdvanced(captchaInput, captchaText, true, true);
-                        console.log('Captcha filled (fast mode, no focus)');
+                        console.log('✅ Captcha filled (fast mode, no focus)');
+
                         showNotification('✅ Đã điền captcha: ' + captchaText);
 
                         // Random delay trước submit captcha (8-15s)
-                        const randomDelay = Math.random() * (15000 - 8000) + 8000;
-                        const delaySeconds = Math.round(randomDelay / 1000);
+                        const captchaDelay = Math.random() * (15000 - 8000) + 8000;
+                        const delaySeconds = Math.round(captchaDelay / 1000);
                         console.log(`⏳ Waiting ${delaySeconds}s before submitting captcha...`);
 
                         // Hiện countdown (update mỗi 2s, không nhảy liên tục)
                         let remainingSeconds = delaySeconds;
                         const countdownInterval = setInterval(() => {
-                          showNotification(`⏳ Chờ ${remainingSeconds}s trước khi submit captcha...`, 2000);
+                          // ⏱️ FIX: Chỉ update text, không gọi showNotification liên tục (tránh trùng lặp)
+                          if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+                            globalNotificationElement.textContent = `⏳ Chờ ${remainingSeconds}s trước khi submit captcha...`;
+                          }
                           remainingSeconds -= 2;
                         }, 2000);
 
-                        await new Promise(resolve => setTimeout(resolve, randomDelay));
+                        await new Promise(resolve => setTimeout(resolve, captchaDelay));
                         clearInterval(countdownInterval);
 
                         // Click "Xác Thực" submit button
-                        const submitButton = document.querySelector('button.audio-captcha-submit') ||
+                        console.log('🔍 Looking for submit button...');
+                        let submitButton = document.querySelector('button.audio-captcha-submit') ||
                           document.querySelector('button[type="submit"]');
 
+                        // If not found, search by text content
+                        if (!submitButton) {
+                          console.log('🔍 Submit button not found by class/type, searching by text...');
+                          const allButtons = document.querySelectorAll('button');
+                          console.log(`Found ${allButtons.length} buttons on page`);
+
+                          for (const btn of allButtons) {
+                            const btnText = btn.textContent.trim().toLowerCase();
+                            console.log(`  - Button: "${btn.textContent.trim()}" (class: ${btn.className})`);
+
+                            if (btnText.includes('xác') || btnText.includes('thực') ||
+                              btnText.includes('submit') || btnText.includes('confirm') ||
+                              btnText.includes('verify')) {
+                              submitButton = btn;
+                              console.log(`✅ Found submit button by text: "${btn.textContent.trim()}"`);
+                              break;
+                            }
+                          }
+                        }
+
                         if (submitButton) {
-                          console.log('Clicking submit button...');
+                          console.log('✅ Clicking submit button...');
                           await clickElementNaturally(submitButton);
                           showNotification('✅ Đã submit captcha!');
 
-                          // Note: "Nhận khuyến mãi" button will be clicked automatically
-                          // by solveAudioCaptchaAuto() function after captcha is verified
-                          console.log('⏳ Waiting for auto-click "Nhận khuyến mãi" from solveAudioCaptchaAuto...');
+                          // Wait for captcha to be verified (check for success toast or button enable)
+                          console.log('⏳ Waiting for captcha verification...');
+                          let captchaVerified = false;
+                          let verifyAttempts = 0;
+                          const maxVerifyAttempts = 30; // 30 x 500ms = 15 seconds
+
+                          while (!captchaVerified && verifyAttempts < maxVerifyAttempts) {
+                            verifyAttempts++;
+
+                            // Check if success toast appeared
+                            const successToast = document.querySelector('[class*="success"], [class*="Success"], .toast-success');
+                            if (successToast && successToast.offsetParent !== null) {
+                              console.log('✅ Success toast detected - captcha verified');
+                              captchaVerified = true;
+                              break;
+                            }
+
+                            // Check if "Nhận khuyến mãi" button is now enabled
+                            const promoBtn = document.querySelector('#casinoSubmit') ||
+                              document.querySelector('button.submit-btn') ||
+                              Array.from(document.querySelectorAll('button')).find(btn =>
+                                btn.textContent.includes('Nhận') && !btn.disabled
+                              );
+
+                            if (promoBtn && !promoBtn.disabled) {
+                              console.log('✅ "Nhận khuyến mãi" button enabled - captcha verified');
+                              captchaVerified = true;
+                              break;
+                            }
+
+                            await new Promise(r => setTimeout(r, 500));
+                          }
+
+                          if (captchaVerified || verifyAttempts >= maxVerifyAttempts) {
+                            // Proceed if verified OR timeout (fallback for 33WIN/88VV)
+                            if (!captchaVerified) {
+                              console.log('⚠️  Captcha verification timeout, proceeding anyway (33WIN/88VV fallback)...');
+                            } else {
+                              console.log('✅ Captcha verified, now clicking "Nhận khuyến mãi"...');
+                            }
+
+                            // Random delay 20-60s before clicking (anti-bot)
+                            // ⏱️ TIMING FIX: Giảm delay chờ click "Nhận khuyến mãi" (20-60s → 5-15s)
+                            const promoDelay = 5000 + Math.random() * 10000; // 5-15s (giảm từ 20-60s)
+                            const delaySeconds = Math.round(promoDelay / 1000);
+                            console.log(`⏳ Waiting ${delaySeconds}s before clicking "Nhận khuyến mãi"...`);
+
+                            // Inject countdown timer into page (update every 100ms for smooth countdown)
+                            // Each site gets its own timer element (not shared)
+                            const clientStartTime = Date.now();
+
+                            // Create unique timer element for this site (not shared with other tabs)
+                            const timerDiv = document.createElement('div');
+                            timerDiv.className = 'checkpromo-countdown-timer'; // Use class, not ID (multiple timers possible)
+                            timerDiv.style.cssText = `
+                                position: fixed;
+                                top: 20px;
+                                right: 20px;
+                                background: linear-gradient(135deg, #667eea, #764ba2);
+                                color: white;
+                                padding: 20px 30px;
+                                border-radius: 12px;
+                                font-size: 24px;
+                                font-weight: bold;
+                                z-index: 10000;
+                                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                                text-align: center;
+                                min-width: 150px;
+                            `;
+                            document.body.appendChild(timerDiv);
+
+                            // Update timer every 100ms (synchronized with server time)
+                            const countdownInterval = setInterval(() => {
+                              const clientElapsedMs = Date.now() - clientStartTime;
+                              const remainingMs = Math.max(0, promoDelay - clientElapsedMs);
+                              const remainingSeconds = Math.ceil(remainingMs / 1000);
+
+                              // Update timer display (show same as server)
+                              timerDiv.textContent = `⏳ ${remainingSeconds}s\nClick "Nhận KM"`;
+
+                              // Gửi countdown qua API mỗi 3s để hiện trên dashboard
+                              if (clientElapsedMs % 3000 < 100 && window.profileData && window.profileData.profileId) {
+                                // ⏱️ FIX: Gửi startTime & duration để server tự tính remainingSeconds (tránh khác nhau)
+                                fetch('http://localhost:3000/api/automation/status', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    profileId: window.profileData.profileId,
+                                    username: window.profileData.username,
+                                    status: 'running',
+                                    message: `⏳ Chờ ${remainingSeconds}s trước khi click "Nhận KM"...`,
+                                    timestamp: new Date().toISOString(),
+                                    // Gửi thêm startTime & duration để server tự tính
+                                    countdownStartTime: clientStartTime,
+                                    countdownDuration: promoDelay
+                                  })
+                                }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
+                              }
+
+                              if (remainingMs <= 0) {
+                                clearInterval(countdownInterval);
+                                if (timerDiv && document.body.contains(timerDiv)) {
+                                  timerDiv.remove();
+                                }
+                              }
+                            }, 100);
+
+                            console.log(`⏳ Waiting ${promoDelay}ms (${delaySeconds}s)...`);
+                            await new Promise(r => setTimeout(r, promoDelay));
+                            clearInterval(countdownInterval);
+                            if (timerDiv && document.body.contains(timerDiv)) {
+                              timerDiv.remove();
+                            }
+                            console.log('✅ Countdown completed, now clicking "Nhận khuyến mãi"...');
+
+                            // Click "Nhận khuyến mãi" button
+                            console.log('🔍 Looking for "Nhận khuyến mãi" button...');
+                            let promoBtn = document.querySelector('#casinoSubmit') ||
+                              document.querySelector('button.submit-btn');
+
+                            // If not found, search by text
+                            if (!promoBtn) {
+                              console.log('🔍 Promo button not found by ID/class, searching by text...');
+                              const allButtons = document.querySelectorAll('button');
+                              console.log(`Found ${allButtons.length} buttons on page`);
+
+                              for (const btn of allButtons) {
+                                const btnText = btn.textContent.trim();
+                                console.log(`  - Button: "${btnText}" (disabled: ${btn.disabled})`);
+
+                                if (btnText.includes('Nhận') && !btn.disabled) {
+                                  promoBtn = btn;
+                                  console.log(`✅ Found promo button: "${btnText}"`);
+                                  break;
+                                }
+                              }
+                            }
+
+                            if (promoBtn) {
+                              // ⏱️ TIMING FIX: Thêm delay trước khi click "Nhận khuyến mãi" (500-1000ms)
+                              await randomDelay(500, 1000);
+
+                              console.log('🎁 Clicking "Nhận khuyến mãi" button...');
+                              promoBtn.click();
+                              console.log('🎁 "Nhận khuyến mãi" button clicked successfully');
+                              window.promoButtonClickedSuccess = true;
+                            } else {
+                              console.warn('⚠️ "Nhận khuyến mãi" button not found');
+                              showNotification('⚠️ Không tìm thấy nút "Nhận khuyến mãi"');
+                            }
+                          } else {
+                            console.warn('⚠️ Captcha verification timeout');
+                            showNotification('⚠️ Captcha xác minh timeout');
+                          }
                         } else {
                           console.log('Submit button not found');
                           showNotification('⚠️ Vui lòng click "Xác Thực" thủ công');
@@ -1525,7 +2148,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       }
     }
 
-    setTimeout(tryAutoFill, 500); // Reduced from 1500ms to 500ms for speed
+    setTimeout(tryAutoFill, 1000 + Math.random() * 1000); // Wait 1-2s for page to load
 
     return true; // Keep channel open for async response
   }
@@ -1534,6 +2157,10 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 async function autoFillForm(username, password, withdrawPassword, fullname) {
   console.log('📝 Starting auto-fill with:', { username, password: '***', withdrawPassword: '***', fullname });
   console.log('🌐 Current page:', window.location.href);
+
+  // 🔥 Wait for page to be fully ready (critical for form inputs to be in DOM)
+  console.log('⏳ Waiting 2-3 seconds for page to fully render...');
+  await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
 
   // Check if form already filled
   if (window.registerFormFilled) {
@@ -1563,39 +2190,43 @@ async function autoFillForm(username, password, withdrawPassword, fullname) {
   const nameInput = document.querySelector('input[formcontrolname="name"]');
 
   if (accountInput && passwordInput) {
-    console.log('? Found Angular form inputs by formcontrolname');
+    console.log('🤖 Found Angular form inputs by formcontrolname - using FormFillerExtension');
 
-    // Fill all inputs in parallel for speed
-    const fillPromises = [];
+    // Use FormFillerExtension for slow typing
+    const fields = [];
 
     if (accountInput) {
-      fillPromises.push(fillInputAdvanced(accountInput, username, true).then(() => { filled.username = true; }));
+      fields.push({ input: accountInput, value: username, label: 'account' });
     }
-
     if (passwordInput) {
-      fillPromises.push(fillInputAdvanced(passwordInput, password, true).then(() => { filled.password = true; }));
+      fields.push({ input: passwordInput, value: password, label: 'password' });
     }
-
     if (confirmPasswordInput) {
-      fillPromises.push(fillInputAdvanced(confirmPasswordInput, password, true));
+      fields.push({ input: confirmPasswordInput, value: password, label: 'confirmPassword' });
     }
-
     if (moneyPasswordInput) {
-      fillPromises.push(fillInputAdvanced(moneyPasswordInput, withdrawPassword, true).then(() => { filled.withdrawPassword = true; }));
+      fields.push({ input: moneyPasswordInput, value: withdrawPassword, label: 'moneyPassword' });
     }
-
     if (nameInput) {
-      fillPromises.push(fillInputAdvanced(nameInput, fullname, true).then(() => { filled.fullname = true; }));
+      fields.push({ input: nameInput, value: fullname, label: 'name' });
     }
 
-    // Wait for all fills to complete
-    await Promise.all(fillPromises);
+    await window.formFiller.fillMultipleFields(fields, {
+      charDelay: 150,
+      beforeFocus: 300,
+      afterField: 800
+    });
+
+    filled.username = !!accountInput;
+    filled.password = !!passwordInput;
+    filled.withdrawPassword = !!moneyPasswordInput;
+    filled.fullname = !!nameInput;
   } else {
     // Priority 2: Fallback to DOM order method
-    console.log('?? Angular attributes not found, using fallback method');
+    console.log('🤖 Angular attributes not found, using fallback method with FormFillerExtension');
 
     const allInputs = findAllInputs();
-    console.log('?? Found inputs:', allInputs.length);
+    console.log('🔍 Found inputs:', allInputs.length);
 
     const textInputs = [];
     const passwordInputs = [];
@@ -1617,69 +2248,59 @@ async function autoFillForm(username, password, withdrawPassword, fullname) {
       }
     });
 
-    console.log('?? Categorized:', {
+    console.log('🔍 Categorized:', {
       text: textInputs.length,
       password: passwordInputs.length,
       checkbox: checkboxInputs.length
     });
 
-    // Fill all inputs in parallel for speed
-    const fillPromises = [];
+    // Use FormFillerExtension for slow typing
+    const fields = [];
 
     if (textInputs.length >= 1) {
-      fillPromises.push(fillInputAdvanced(textInputs[0], username, true).then(() => { filled.username = true; }));
+      fields.push({ input: textInputs[0], value: username, label: 'username' });
     }
     if (passwordInputs.length >= 1) {
-      fillPromises.push(fillInputAdvanced(passwordInputs[0], password, true).then(() => { filled.password = true; }));
+      fields.push({ input: passwordInputs[0], value: password, label: 'password' });
     }
     if (passwordInputs.length >= 2) {
-      fillPromises.push(fillInputAdvanced(passwordInputs[1], password, true));
+      fields.push({ input: passwordInputs[1], value: password, label: 'confirmPassword' });
     }
     if (passwordInputs.length >= 3) {
-      fillPromises.push(fillInputAdvanced(passwordInputs[2], withdrawPassword, true).then(() => { filled.withdrawPassword = true; }));
+      fields.push({ input: passwordInputs[2], value: withdrawPassword, label: 'withdrawPassword' });
     }
     if (textInputs.length >= 2) {
-      fillPromises.push(fillInputAdvanced(textInputs[1], fullname, true).then(() => { filled.fullname = true; }));
+      fields.push({ input: textInputs[1], value: fullname, label: 'fullname' });
     }
 
-    // Wait for all fills to complete
-    await Promise.all(fillPromises);
+    await window.formFiller.fillMultipleFields(fields, {
+      charDelay: 150,
+      beforeFocus: 300,
+      afterField: 800
+    });
+
+    filled.username = textInputs.length >= 1;
+    filled.password = passwordInputs.length >= 1;
+    filled.withdrawPassword = passwordInputs.length >= 3;
+    filled.fullname = textInputs.length >= 2;
   }
 
-  // Priority 1: Find checkbox by formcontrolname="agree"
+  // Handle agree checkbox
   let agreeCheckbox = document.querySelector('input[formcontrolname="agree"]');
 
-  // Priority 2: Find checkbox by type (fallback)
   if (!agreeCheckbox) {
     const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-    console.log(`?? Found ${allCheckboxes.length} checkboxes in document`);
+    console.log(`🔍 Found ${allCheckboxes.length} checkboxes in document`);
     if (allCheckboxes.length > 0) {
       agreeCheckbox = allCheckboxes[0];
     }
   }
 
   if (agreeCheckbox) {
-    if (!agreeCheckbox.checked) {
-      console.log('? Clicking agree checkbox');
-      agreeCheckbox.click();
-
-      // Wait and verify
-      await new Promise(resolve => setTimeout(resolve, 200));
-
-      if (!agreeCheckbox.checked) {
-        agreeCheckbox.checked = true;
-        agreeCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
-        agreeCheckbox.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-
-      filled.checkbox = true;
-      console.log('? Checkbox checked:', agreeCheckbox.checked);
-    } else {
-      console.log('? Checkbox already checked');
-      filled.checkbox = true;
-    }
+    const result = await window.formFiller.setCheckboxState(agreeCheckbox, true);
+    filled.checkbox = result.success || result.skipped;
   } else {
-    console.log('?? No checkbox found');
+    console.log('⚠️ No checkbox found');
   }
 
   // Highlight filled fields with animation
@@ -1722,8 +2343,11 @@ async function autoFillForm(username, password, withdrawPassword, fullname) {
       if (captchaSolved) {
         console.log('✅ Captcha solved, preparing for submit...');
 
-        // Wait for captcha to be processed
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // ⏱️ TIMING FIX: Thêm delay sau khi captcha được solve (3000-5000ms)
+        // Chờ server xử lý & render captcha hoàn toàn
+        const captchaProcessDelay = 3000 + Math.random() * 2000;  // 3000-5000ms
+        console.log(`⏳ Waiting ${Math.round(captchaProcessDelay / 1000)}s for captcha to be processed...`);
+        await new Promise(resolve => setTimeout(resolve, captchaProcessDelay));
 
         // Verify captcha input still has value
         const captchaValue = captchaInput.value;
@@ -2136,16 +2760,122 @@ async function clickElementNaturally(element) {
   }
 }
 
-// Disabled: showNotification removed to avoid multiple notifications from parallel tabs
+// Global notification element (reuse same element for countdown)
+let globalNotificationElement = null;
+let notificationHideTimeout = null;
+
+// Show notification on page (reuse same element for countdown updates)
 function showNotification(message, autoHide = true) {
-  // No-op: notifications disabled
-  console.log(`[NOTIFICATION DISABLED] ${message}`);
+  try {
+    // If notification already exists, just update text (for countdown)
+    if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+      globalNotificationElement.textContent = message;
+
+      // Clear previous hide timeout
+      if (notificationHideTimeout) {
+        clearTimeout(notificationHideTimeout);
+      }
+
+      // Set new hide timeout if autoHide
+      if (autoHide) {
+        notificationHideTimeout = setTimeout(() => {
+          if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+            globalNotificationElement.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+              if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+                globalNotificationElement.remove();
+                globalNotificationElement = null;
+              }
+            }, 300);
+          }
+        }, 3000);
+      }
+      return;
+    }
+
+    // Create new notification element
+    const notif = document.createElement('div');
+    notif.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-size: 14px;
+      z-index: 10000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      max-width: 300px;
+      word-wrap: break-word;
+      animation: slideIn 0.3s ease-out;
+    `;
+    notif.textContent = message;
+    document.body.appendChild(notif);
+    globalNotificationElement = notif;
+
+    // Auto-hide after 3 seconds if autoHide is true
+    if (autoHide) {
+      notificationHideTimeout = setTimeout(() => {
+        if (notif && document.body.contains(notif)) {
+          notif.style.animation = 'slideOut 0.3s ease-out';
+          setTimeout(() => {
+            if (notif && document.body.contains(notif)) {
+              notif.remove();
+              globalNotificationElement = null;
+            }
+          }, 300);
+        }
+      }, 3000);
+    }
+  } catch (e) {
+    // Fallback to console if DOM not ready
+    console.log(`[NOTIFICATION] ${message}`);
+  }
 }
 
 // Disabled: showPersistentNotification removed to avoid multiple notifications from parallel tabs
 function showPersistentNotification(message) {
   // No-op: notifications disabled
   console.log(`[PERSISTENT NOTIFICATION DISABLED] ${message}`);
+}
+
+// Restore and display countdown timer after page redirect
+function restoreCountdownTimer() {
+  try {
+    const isActive = localStorage.getItem('countdownActive') === 'true';
+    const startTime = parseInt(localStorage.getItem('countdownStartTime'));
+    const duration = parseInt(localStorage.getItem('countdownDuration'));
+
+    if (isActive && startTime && duration) {
+      console.log('🔄 Restoring countdown timer after page redirect...');
+
+      // Show initial notification
+      showNotification(`⏳ Chuyển sang Thêm Bank...`, false);
+
+      // Start displaying countdown
+      const updateTimer = () => {
+        const elapsedMs = Date.now() - startTime;
+        const remainingMs = Math.max(0, duration - elapsedMs);
+        const remainingSeconds = Math.ceil(remainingMs / 1000);
+
+        if (remainingMs > 0) {
+          // ⏱️ FIX: Chỉ update text, không gọi showNotification liên tục (tránh trùng lặp)
+          if (globalNotificationElement && document.body.contains(globalNotificationElement)) {
+            globalNotificationElement.textContent = `⏳ ${remainingSeconds}s\nChuyển sang Thêm Bank`;
+          }
+          setTimeout(updateTimer, 100);
+        } else {
+          localStorage.setItem('countdownActive', 'false');
+          console.log('✅ Countdown completed');
+        }
+      };
+
+      updateTimer();
+    }
+  } catch (e) {
+    console.warn('⚠️ Error restoring countdown timer:', e.message);
+  }
 }
 
 // Enhanced function to find ALL inputs including Shadow DOM and iframes
@@ -3263,13 +3993,13 @@ async function clickTaiappPromo(element) {
 
   // Find verify button immediately after click (minimal delay)
   await new Promise(resolve => setTimeout(resolve, 300));
-  findAndClickVerifyButton();
+  await findAndClickVerifyButton();
 }
 
 /**
- * Find and click "X�c Th?c T?i ��y" button
+ * Find and click "Xác Thực Tại Đây" button
  */
-function findAndClickVerifyButton() {
+async function findAndClickVerifyButton() {
   console.log('🔍 Finding verify button (ENHANCED for 88vv/33win)...');
 
   const allElements = [
@@ -3324,12 +4054,20 @@ function findAndClickVerifyButton() {
     if (element) {
       console.log(`   - Visible: ${element.offsetParent !== null}`);
       console.log(`   - Text: "${element.textContent.trim()}"`);
-      if (element.offsetParent !== null) {
-        const text = element.textContent.trim();
-        console.log(`✅ Found verify button by direct selector "${selector}": "${text}"`);
-        clickVerifyButton(element);
-        return true;
-      }
+      console.log(`   - Display: ${window.getComputedStyle(element).display}`);
+
+      // Click ngay lập tức nếu tìm thấy (không cần check offsetParent)
+      const text = element.textContent.trim();
+      console.log(`✅ Found verify button by direct selector "${selector}": "${text}"`);
+      console.log('🔍 DEBUG: Clicking verify button immediately...');
+
+      // Click ngay lập tức
+      element.click();
+      console.log('✅ Verify button clicked after 500ms');
+
+      // Đợi modal xuất hiện
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return true;
     }
   }
 
@@ -3345,7 +4083,7 @@ function findAndClickVerifyButton() {
     for (let keyword of verifyKeywords) {
       if (text === keyword) {
         console.log(`✅ Found verify button by EXACT keyword: "${text}"`);
-        clickVerifyButton(element);
+        await clickVerifyButton(element);
         return true;
       }
     }
@@ -3369,7 +4107,7 @@ function findAndClickVerifyButton() {
       for (let word of actionWords) {
         if (text.includes(word) && text.length < 50 && text.length > 0) {
           console.log(`✅ Found action button: "${text}" (contains: ${word})`);
-          clickVerifyButton(element);
+          await clickVerifyButton(element);
           return true;
         }
       }
@@ -3392,7 +4130,7 @@ function findAndClickVerifyButton() {
         // Any prominent colored button
         if ((r > 150 && g < 150) || (r > 150 && g > 150 && b < 100) || (g > 150 && r < 100)) {
           console.log(`🎨 Found colored button: "${text}" (color: ${bgColor})`);
-          clickVerifyButton(element);
+          await clickVerifyButton(element);
           return true;
         }
       }
@@ -3414,7 +4152,7 @@ function findAndClickVerifyButton() {
         const text = element.textContent.trim();
         if (text && text.length < 100 && text.length > 0) {
           console.log(`✅ Found by class "${selector}": "${text}"`);
-          clickVerifyButton(element);
+          await clickVerifyButton(element);
           return true;
         }
       }
@@ -3463,156 +4201,199 @@ async function clickVerifyButton(element) {
     showNotification('✅ Đã xác thực (fallback)!');
   }
 
-  // After clicking verify button, wait and check for captcha modal
-  // Simple delay like working package (antisena)
-  await new Promise(resolve => setTimeout(resolve, 300));
+  // CRITICAL FIX: Wait for modal to fully render before clicking "Tạo Audio Captcha"
+  // Modal may take 1-2 seconds to appear and render
+  console.log('⏳ Waiting for captcha modal to render...');
+
+  let modalReady = false;
+  let waitAttempts = 0;
+  const maxWaitAttempts = 20; // 20 * 500ms = 10 seconds max
+
+  while (!modalReady && waitAttempts < maxWaitAttempts) {
+    waitAttempts++;
+
+    // Check if modal elements are visible
+    const modalCheck = await new Promise(resolve => {
+      setTimeout(() => {
+        const modal = document.querySelector('.modal, .dialog, [role="dialog"], .captcha-modal, .modal-content');
+        const createAudioBtn = document.querySelector('button, a, div[role="button"], span, div');
+
+        let hasCreateAudioBtn = false;
+        if (createAudioBtn) {
+          const allElements = [
+            ...document.querySelectorAll('button'),
+            ...document.querySelectorAll('a'),
+            ...document.querySelectorAll('div[role="button"]'),
+            ...document.querySelectorAll('[onclick]'),
+            ...document.querySelectorAll('div'),
+            ...document.querySelectorAll('span')
+          ];
+
+          for (let el of allElements) {
+            const text = el.textContent.trim().toLowerCase();
+            if (text.includes('tạo audio') || text.includes('tao audio') || text.includes('create audio')) {
+              hasCreateAudioBtn = true;
+              break;
+            }
+          }
+        }
+
+        resolve({
+          hasModal: !!modal,
+          hasCreateAudioBtn: hasCreateAudioBtn
+        });
+      }, 0);
+    });
+
+    if (modalCheck.hasModal && modalCheck.hasCreateAudioBtn) {
+      console.log(`✅ Modal ready after ${waitAttempts * 500}ms`);
+      modalReady = true;
+      break;
+    }
+
+    console.log(`⏳ [${waitAttempts}/${maxWaitAttempts}] Modal not ready yet, waiting...`);
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }
+
+  if (!modalReady) {
+    console.warn('⚠️ Modal not ready after 10 seconds, proceeding anyway...');
+  }
 
   // Now click "TẠO AUDIO CAPTCHA" button in the modal
   console.log('🎵 Looking for "TẠO AUDIO CAPTCHA" button in modal...');
-  findAndClickCreateAudioButton();
+  console.log('🎵 About to call findAndClickCreateAudioButton()...');
+  try {
+    console.log('🎵 Calling findAndClickCreateAudioButton()...');
+    const result = await findAndClickCreateAudioButton();
+    console.log('🎵 findAndClickCreateAudioButton() returned:', result);
+  } catch (error) {
+    console.error('❌ Error in findAndClickCreateAudioButton:', error.message);
+    console.error('   Stack:', error.stack);
+  }
+  console.log('🎵 Finished calling findAndClickCreateAudioButton()');
 }
 
 /**
- * Find and click "T?o Audio Captcha" button
+ * Find and click "Tạo Audio Captcha" button
  */
-function findAndClickCreateAudioButton() {
-  console.log('?? Finding "T?o Audio Captcha" button...');
+async function findAndClickCreateAudioButton() {
+  console.log('🎵🎵🎵 FUNCTION CALLED: findAndClickCreateAudioButton() 🎵🎵🎵');
+  console.log('🎵 Finding "Tạo Audio Captcha" button...');
 
-  const allElements = [
-    ...document.querySelectorAll('button'),
-    ...document.querySelectorAll('a'),
-    ...document.querySelectorAll('div[role="button"]'),
-    ...document.querySelectorAll('[onclick]'),
-    ...document.querySelectorAll('div'),
-    ...document.querySelectorAll('span')
-  ];
+  // CRITICAL: Wait for button to be visible before searching
+  console.log('⏳ Waiting for "Tạo Audio Captcha" button to appear...');
+  let buttonFound = false;
+  let waitAttempts = 0;
+  const maxWaitAttempts = 20; // 20 * 500ms = 10 seconds max
 
-  console.log(`?? Found ${allElements.length} total elements`);
+  while (!buttonFound && waitAttempts < maxWaitAttempts) {
+    waitAttempts++;
 
-  const visibleElements = allElements.filter(el => {
-    return el.offsetParent !== null && el.clientHeight > 0 && el.clientWidth > 0;
-  });
+    // Check if button exists and is visible - try multiple selectors
+    let btn = document.querySelector('button.audio-captcha-btn-primary');
+    if (!btn) {
+      btn = document.querySelector('button[class*="audio-captcha-btn-primary"]');
+    }
+    if (!btn) {
+      btn = document.querySelector('button.audio-captcha-btn.audio-captcha-btn-primary');
+    }
 
-  console.log(`??? Visible elements: ${visibleElements.length}`);
+    if (btn && btn.offsetParent !== null && btn.clientHeight > 0 && btn.clientWidth > 0) {
+      buttonFound = true;
+      console.log(`✅ Button found after ${waitAttempts * 500}ms`);
+      break;
+    }
 
-  console.log('?? Listing all button-like elements:');
-  const buttons = visibleElements.filter(el => {
-    return el.tagName === 'BUTTON' ||
-      el.tagName === 'A' ||
-      el.getAttribute('role') === 'button' ||
-      el.onclick ||
-      el.style.cursor === 'pointer';
-  });
+    if (!buttonFound) {
+      console.log(`⏳ [${waitAttempts}/${maxWaitAttempts}] Button not visible yet, waiting...`);
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
 
-  buttons.slice(0, 20).forEach((btn, i) => {
+  if (!buttonFound) {
+    console.warn('⚠️ Button not found after 10 seconds, proceeding with search anyway...');
+  }
+
+  // Method 1: Selector by class (MOST RELIABLE - no ID needed)
+  console.log('🎯 Method 1: Selector by class button.audio-captcha-btn-primary...');
+  const btnByClass = document.querySelector('button.audio-captcha-btn-primary');
+  if (btnByClass && btnByClass.offsetParent !== null) {
+    console.log('✅ Found button by class: audio-captcha-btn-primary');
+    console.log('   Text:', btnByClass.textContent.trim());
+    console.log('   ID:', btnByClass.id || 'no ID');
+    await clickCreateAudioButton(btnByClass);
+    return true;
+  }
+
+  // Method 2: Direct ID selector (if it exists)
+  console.log('🎯 Method 2: Direct ID selector #generateAudioCaptcha...');
+  const generateBtn = document.getElementById('generateAudioCaptcha');
+  if (generateBtn && generateBtn.offsetParent !== null) {
+    console.log('✅ Found button by ID: generateAudioCaptcha');
+    console.log('   Text:', generateBtn.textContent.trim());
+    console.log('   Class:', generateBtn.className);
+    await clickCreateAudioButton(generateBtn);
+    return true;
+  }
+
+  // Method 3: Search by text content
+  console.log('🎯 Method 3: Search by text content...');
+  const allButtons = document.querySelectorAll('button');
+  for (let btn of allButtons) {
     const text = btn.textContent.trim();
-    console.log(`  ${i}: "${text}" (${btn.tagName}.${btn.className})`);
+    if (text.includes('Tạo Audio Captcha') || text.includes('Tao Audio Captcha')) {
+      if (btn.offsetParent !== null) {
+        console.log('✅ Found button by text:', text);
+        console.log('   ID:', btn.id || 'no ID');
+        console.log('   Class:', btn.className);
+        await clickCreateAudioButton(btn);
+        return true;
+      }
+    }
+  }
+
+  // Method 4: Search in audio-captcha-controls container
+  console.log('🎯 Method 4: Search in audio-captcha-controls container...');
+  const controlsContainer = document.querySelector('.audio-captcha-controls');
+  if (controlsContainer) {
+    const btn = controlsContainer.querySelector('button.audio-captcha-btn-primary');
+    if (btn && btn.offsetParent !== null) {
+      console.log('✅ Found button in audio-captcha-controls');
+      console.log('   Text:', btn.textContent.trim());
+      await clickCreateAudioButton(btn);
+      return true;
+    }
+  }
+
+  // Method 5: Search by any button with "audio" in class
+  console.log('🎯 Method 5: Search by any button with audio class...');
+  const audioButtons = document.querySelectorAll('button[class*="audio"]');
+  console.log('   Found', audioButtons.length, 'buttons with audio class');
+  for (let btn of audioButtons) {
+    const text = btn.textContent.trim().toLowerCase();
+    if (text.includes('audio') && text.includes('captcha') && btn.offsetParent !== null) {
+      console.log('✅ Found button with audio class');
+      console.log('   Text:', btn.textContent.trim());
+      console.log('   ID:', btn.id || 'no ID');
+      await clickCreateAudioButton(btn);
+      return true;
+    }
+  }
+
+  console.log('❌ No "Tạo Audio Captcha" button found');
+  console.log('🔍 DEBUG: All methods failed to find create audio button');
+
+  // Debug: List all buttons on page
+  console.log('🔍 DEBUG: Listing all buttons on page:');
+  const allBtns = document.querySelectorAll('button');
+  console.log(`   Total buttons: ${allBtns.length}`);
+  allBtns.forEach((btn, i) => {
+    const text = btn.textContent.trim().substring(0, 50);
+    const visible = btn.offsetParent !== null ? 'visible' : 'hidden';
+    console.log(`   ${i}: "${text}" (${btn.className}) [${visible}]`);
   });
 
-  // Keywords for create audio button
-  const createAudioKeywords = [
-    't?o audio captcha',
-    'tao audio captcha',
-    't?o audio',
-    'tao audio',
-    'create audio',
-    'generate audio',
-    'audio captcha'
-  ];
-
-  console.log('?? Method 1: Searching by exact text...');
-  for (let element of visibleElements) {
-    const text = element.textContent.trim().toLowerCase();
-
-    // Skip if too long
-    if (text.length > 100) continue;
-
-    for (let keyword of createAudioKeywords) {
-      if (text === keyword) {
-        console.log('? Found create audio button by exact text:', text);
-        clickCreateAudioButton(element);
-        return true;
-      }
-    }
-  }
-
-  console.log('?? Method 2: Searching by partial text...');
-  for (let element of visibleElements) {
-    const text = element.textContent.trim().toLowerCase();
-
-    // Skip if too long
-    if (text.length > 100) continue;
-
-    if (text.includes('t?o audio captcha') ||
-      text.includes('tao audio captcha') ||
-      text.includes('t?o audio')) {
-      console.log('? Found create audio button by partial text:', text);
-      clickCreateAudioButton(element);
-      return true;
-    }
-  }
-
-  console.log('?? Method 3: Searching by uppercase text...');
-  for (let element of visibleElements) {
-    const text = element.textContent.trim();
-
-    // Skip if too long
-    if (text.length > 100) continue;
-
-    if (text.includes('T?O AUDIO CAPTCHA') ||
-      text.includes('TAO AUDIO CAPTCHA') ||
-      text.includes('T?O AUDIO')) {
-      console.log('? Found create audio button by uppercase text:', text);
-      clickCreateAudioButton(element);
-      return true;
-    }
-  }
-
-  console.log('?? Method 4: Searching for red button with audio text...');
-  for (let element of visibleElements) {
-    const style = window.getComputedStyle(element);
-    const bgColor = style.backgroundColor;
-    const text = element.textContent.trim().toLowerCase();
-
-    if (bgColor.includes('rgb(') && text.length < 100) {
-      const rgb = bgColor.match(/\d+/g);
-      if (rgb && rgb.length >= 3) {
-        const r = parseInt(rgb[0]);
-        const g = parseInt(rgb[1]);
-        const b = parseInt(rgb[2]);
-
-        // Red button: R > 200, G < 100, B < 100
-        if (r > 200 && g < 100 && b < 100) {
-          if (text.includes('audio') || text.includes('t?o') || text.includes('tao')) {
-            console.log('? Found red audio button:', text);
-            clickCreateAudioButton(element);
-            return true;
-          }
-        }
-      }
-    }
-  }
-
-  console.log('?? Method 5: Searching by class name...');
-  const audioClassElements = document.querySelectorAll(
-    '[class*="audio"], [class*="Audio"], [class*="captcha"], [class*="Captcha"], ' +
-    '[class*="create"], [class*="Create"], [class*="generate"]'
-  );
-
-  for (let element of audioClassElements) {
-    if (element.offsetParent !== null) {
-      const text = element.textContent.trim().toLowerCase();
-      if (text.includes('audio') || text.includes('t?o') || text.includes('captcha')) {
-        console.log('? Found audio button by class:', element.className);
-        console.log('   Text:', text);
-        clickCreateAudioButton(element);
-        return true;
-      }
-    }
-  }
-
-  console.log('?? No "T?o Audio Captcha" button found');
-  console.log('?? User may need to click manually');
+  console.log('🔍 DEBUG: User may need to click manually');
   showNotification('⚠️ Không tìm thấy audio!');
 
   return false;
@@ -3649,6 +4430,10 @@ async function clickCreateAudioButton(element) {
   // Click immediately with minimal delay (just for scroll to complete)
   await new Promise(resolve => setTimeout(resolve, 200));
 
+  // CRITICAL FIX: Set readyToSearchAudio BEFORE clicking to allow audio URL capture
+  window.readyToSearchAudio = true;
+  console.log('✅ Set readyToSearchAudio = true - now ready to capture audio URL');
+
   console.log('??? Clicking create audio button with natural simulation (ONE TIME ONLY)...');
 
   const clickSuccess = await clickElementNaturally(element);
@@ -3668,6 +4453,7 @@ async function clickCreateAudioButton(element) {
 
   let checkAttempts = 0;
   const maxAttempts = 20; // Increased to 20 attempts over 10 seconds (check until timeout)
+  let audioButtonClickedForRetry = false; // Track if we clicked audio button for retry
 
   const checkForAudio = () => {
     checkAttempts++;
@@ -3696,12 +4482,63 @@ async function clickCreateAudioButton(element) {
       const latestUrl = window.captchaAudioUrls[window.captchaAudioUrls.length - 1];
       console.log(`  Latest URL: ${latestUrl}`);
 
-      // Trigger auto-solve if in check promo mode
-      if (window.apiKey && window.isCheckingPromo) {
+      // Trigger auto-solve if in check promo mode (but NOT if disableAutoSolve is set)
+      if (window.apiKey && window.isCheckingPromo && !window.disableAutoSolve) {
         console.log('✅ Audio URL found from array, triggering auto-solve...');
         solveAudioCaptchaAuto(latestUrl);
       }
       return; // Stop checking
+    }
+
+    // Method 3: For 33WIN/88VV - if no audio after 5 attempts, try clicking "tạo audio captcha" button
+    if (checkAttempts === 5 && !audioButtonClickedForRetry) {
+      console.log('⚠️  No audio found after 5 attempts, trying to click "tạo audio captcha" button (33WIN/88VV fix)...');
+      audioButtonClickedForRetry = true;
+
+      // Find button with "tạo audio captcha" text
+      let audioButton = null;
+      const allButtons = document.querySelectorAll('button');
+      for (const btn of allButtons) {
+        const btnText = btn.textContent.toLowerCase();
+        if (btnText.includes('tạo') && btnText.includes('audio')) {
+          audioButton = btn;
+          break;
+        }
+      }
+
+      if (audioButton && !audioButton.disabled) {
+        console.log('🔴 Found audio button, clicking it...');
+        audioButton.click();
+        console.log('✅ Audio button clicked');
+      } else {
+        console.log('⚠️  Audio button not found or disabled');
+      }
+    }
+
+    // Method 4: If still no audio after 8 attempts, try clicking "Phát lại" button (only if no audio URL captured yet)
+    if (checkAttempts === 8 && !audioButtonClickedForRetry) {
+      // Check if we already have audio URL
+      const hasAudioUrl = window.captchaAudioUrls && window.captchaAudioUrls.length > 0;
+
+      if (!hasAudioUrl) {
+        console.log('⚠️  No audio found after 8 attempts, trying to click "Phát lại" button...');
+
+        // Find "Phát lại" button by ID or text
+        let playButton = document.querySelector('#playAudioCaptcha') ||
+          Array.from(document.querySelectorAll('button')).find(btn =>
+            btn.textContent.toLowerCase().includes('phát')
+          );
+
+        if (playButton && !playButton.disabled) {
+          console.log('▶️ Found play button, clicking it...');
+          playButton.click();
+          console.log('✅ Play button clicked');
+        } else {
+          console.log('⚠️  Play button not found or disabled');
+        }
+      } else {
+        console.log('✅ Audio URL already captured, skipping play button click');
+      }
     }
 
     // Continue checking if not found and haven't reached max attempts
@@ -3936,10 +4773,13 @@ async function isUrlAudioByHead(url) {
 async function solveAudioCaptchaAuto(audioUrl) {
   console.log('🎵 Starting auto-solve for audio captcha...');
   console.log('🔗 Audio URL:', audioUrl);
+  console.log('🔍 DEBUG: Timestamp:', new Date().toISOString());
 
   const apiKey = window.currentApiKey;
+  console.log('🔍 DEBUG: API Key available:', !!apiKey);
   if (!apiKey) {
     console.log('❌ No API key available');
+    console.log('🔍 DEBUG: window.currentApiKey =', window.currentApiKey);
     return;
   }
 
@@ -3950,22 +4790,36 @@ async function solveAudioCaptchaAuto(audioUrl) {
   }
 
   window.audioSolving = true;
+  console.log('🔍 DEBUG: Set audioSolving flag to true');
 
   try {
+    // ⏱️ TIMING FIX: Chờ 2-3s sau khi capture audio URL trước khi giải
+    const audioDelay = 2000 + Math.random() * 1000; // 2-3s
+    const audioDelaySeconds = Math.round(audioDelay / 1000);
+    console.log(`⏳ Waiting ${audioDelaySeconds}s after capturing audio URL before solving...`);
+    await new Promise(resolve => setTimeout(resolve, audioDelay));
+
+    console.log('🔍 DEBUG: Creating CaptchaSolver instance...');
     const solver = new CaptchaSolver(apiKey);
+    console.log('🔍 DEBUG: CaptchaSolver created successfully');
+
     showNotification('🎵 Đang giải audio captcha...\n\nVui lòng đợi...');
 
+    console.log('🔍 DEBUG: Calling solver.solveAudioCaptcha with URL:', audioUrl);
     const captchaText = await solver.solveAudioCaptcha(audioUrl);
     console.log('✅ Audio captcha solved:', captchaText);
+    console.log('🔍 DEBUG: Captcha text received at', new Date().toISOString());
 
     if (captchaText) {
       // Find and fill captcha input - PRIORITY ORDER MATTERS!
       console.log('🔍 Searching for captcha input...');
+      console.log('🔍 DEBUG: Captcha text to fill:', captchaText);
 
       // First, try to find captcha input by specific attributes
       let captchaInput = null;
 
       // Method 1: By ID or class (most specific) - HIGHEST PRIORITY
+      console.log('🔍 DEBUG: Method 1 - Searching by ID/class...');
       captchaInput = document.querySelector('input#audioCaptchaInput') ||
         document.querySelector('input.audio-captcha-input') ||
         document.querySelector('input.captcha-input');
@@ -3974,14 +4828,21 @@ async function solveAudioCaptchaAuto(audioUrl) {
         console.log('✅ Found captcha input by ID/class:', captchaInput.id || captchaInput.className);
         console.log('   Pattern:', captchaInput.pattern);
         console.log('   InputMode:', captchaInput.inputMode);
+      } else {
+        console.log('🔍 DEBUG: Method 1 - Not found');
       }
 
       // Method 2: By pattern (numeric only) - VERY SPECIFIC
       if (!captchaInput) {
+        console.log('🔍 DEBUG: Method 2 - Searching by numeric pattern...');
         const numericInputs = document.querySelectorAll('input[pattern*="0-9"], input[inputmode="numeric"]');
+        console.log('🔍 DEBUG: Found', numericInputs.length, 'numeric inputs');
         for (const input of numericInputs) {
           // Skip if hidden
-          if (input.offsetParent === null) continue;
+          if (input.offsetParent === null) {
+            console.log('🔍 DEBUG: Skipping hidden input');
+            continue;
+          }
 
           const pattern = input.pattern || '';
           const placeholder = (input.placeholder || '').toLowerCase();
@@ -3994,11 +4855,16 @@ async function solveAudioCaptchaAuto(audioUrl) {
             break;
           }
         }
+        if (!captchaInput) {
+          console.log('🔍 DEBUG: Method 2 - Not found');
+        }
       }
 
       // Method 3: By placeholder text (very specific)
       if (!captchaInput) {
+        console.log('🔍 DEBUG: Method 3 - Searching by placeholder text...');
         const inputs = document.querySelectorAll('input[type="text"], input:not([type])');
+        console.log('🔍 DEBUG: Found', inputs.length, 'text inputs');
         for (const input of inputs) {
           const placeholder = (input.placeholder || '').toLowerCase();
           if (placeholder.includes('nhập 6 số') ||
@@ -4010,24 +4876,33 @@ async function solveAudioCaptchaAuto(audioUrl) {
             break;
           }
         }
+        if (!captchaInput) {
+          console.log('🔍 DEBUG: Method 3 - Not found');
+        }
       }
 
       // Method 4: By name attribute
       if (!captchaInput) {
+        console.log('🔍 DEBUG: Method 4 - Searching by name attribute...');
         captchaInput = document.querySelector('input[name*="captcha"]') ||
           document.querySelector('input[name*="verify"]') ||
           document.querySelector('input[name*="code"]');
         if (captchaInput) {
           console.log('✅ Found captcha input by name:', captchaInput.name);
+        } else {
+          console.log('🔍 DEBUG: Method 4 - Not found');
         }
       }
 
       // Method 5: Find input near audio element or captcha modal
       if (!captchaInput) {
+        console.log('🔍 DEBUG: Method 5 - Searching in captcha modal...');
         const modal = document.querySelector('.audio-captcha-modal') ||
           document.querySelector('[class*="captcha"]');
+        console.log('🔍 DEBUG: Modal found:', !!modal);
         if (modal) {
           const modalInputs = modal.querySelectorAll('input[type="text"], input:not([type])');
+          console.log('🔍 DEBUG: Found', modalInputs.length, 'inputs in modal');
           // Find empty input or input with short value (likely captcha)
           for (const input of modalInputs) {
             if (input.value.length < 10 && input.offsetParent !== null) {
@@ -4037,14 +4912,22 @@ async function solveAudioCaptchaAuto(audioUrl) {
             }
           }
         }
+        if (!captchaInput) {
+          console.log('🔍 DEBUG: Method 5 - Not found');
+        }
       }
 
       // Method 6: Exclude common inputs (username, password, etc.) - LAST RESORT
       if (!captchaInput) {
+        console.log('🔍 DEBUG: Method 6 - Searching by exclusion (last resort)...');
         const allInputs = document.querySelectorAll('input[type="text"], input:not([type])');
+        console.log('🔍 DEBUG: Found', allInputs.length, 'total text inputs');
         for (const input of allInputs) {
           // Skip if hidden
-          if (input.offsetParent === null) continue;
+          if (input.offsetParent === null) {
+            console.log('🔍 DEBUG: Skipping hidden input');
+            continue;
+          }
 
           // Skip if it's username/password/email field
           const name = (input.name || '').toLowerCase();
@@ -4088,9 +4971,11 @@ async function solveAudioCaptchaAuto(audioUrl) {
           className: captchaInput.className
         });
 
-        // Use fast mode and NO FOCUS for audio captcha too
+        // Use fast mode and NO FOCUS for audio captcha (avoid bot detection)
+        console.log('📝 Filling captcha input with fast mode...');
         await fillInputAdvanced(captchaInput, captchaText, true, true);
-        console.log('✅ Captcha filled');
+        console.log('✅ Captcha filled (fast mode, no focus)');
+
         showNotification('✅ Đã điền: ' + captchaText);
 
         // Delay trước submit captcha
@@ -4101,31 +4986,32 @@ async function solveAudioCaptchaAuto(audioUrl) {
         console.log('  window.isCheckingPromo =', window.isCheckingPromo);
         console.log('  window.captchaDelay =', window.captchaDelay);
 
-        let randomDelay;
+        let submitDelay;
         // IMPORTANT: Check isCheckingPromo FIRST (priority over profileData)
         if (window.isCheckingPromo) {
           // Check promo: ALWAYS use random 8-15s (hardcode, NOT from UI)
-          randomDelay = Math.random() * (15000 - 8000) + 8000;
-          console.log('  → Using random 8-15s for check promo (hardcode):', randomDelay);
+          submitDelay = Math.random() * (15000 - 8000) + 8000;
+          console.log('  → Using random 8-15s for check promo (hardcode):', submitDelay);
         } else if (window.profileData?.captchaDelay !== undefined) {
           // Registration: dùng giá trị từ UI
-          randomDelay = window.profileData.captchaDelay;
-          console.log('  → Using profileData.captchaDelay (from UI):', randomDelay);
+          submitDelay = window.profileData.captchaDelay;
+          console.log('  → Using profileData.captchaDelay (from UI):', submitDelay);
         } else {
           // Fallback: dùng window.captchaDelay hoặc 0
-          randomDelay = window.captchaDelay || 0;
-          console.log('  → Using fallback:', randomDelay);
+          submitDelay = window.captchaDelay || 0;
+          console.log('  → Using fallback:', submitDelay);
         }
-        const delaySeconds = Math.round(randomDelay / 1000);
+        const delaySeconds = Math.round(submitDelay / 1000);
         console.log(`⏳ Waiting ${delaySeconds}s before submitting captcha...`);
 
         // Gửi countdown qua API để hiện trên dashboard (không hiển thị notification trên page)
         const startTime = Date.now();
         const countdownInterval = setInterval(() => {
           const elapsedMs = Date.now() - startTime;
-          const remainingMs = Math.max(0, randomDelay - elapsedMs);
+          const remainingMs = Math.max(0, submitDelay - elapsedMs);
           const remainingSeconds = Math.ceil(remainingMs / 1000);
           if (window.profileData && window.profileData.profileId) {
+            // ⏱️ FIX: Gửi startTime & duration để server tự tính remainingSeconds (tránh khác nhau)
             fetch('http://localhost:3000/api/automation/status', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -4134,22 +5020,43 @@ async function solveAudioCaptchaAuto(audioUrl) {
                 username: window.profileData.username,
                 status: 'running',
                 message: `⏳ Chờ ${remainingSeconds}s trước khi submit captcha...`,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
+                // Gửi thêm startTime & duration để server tự tính
+                countdownStartTime: startTime,
+                countdownDuration: submitDelay
               })
             }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
           }
         }, 2000);
 
-        await new Promise(resolve => setTimeout(resolve, randomDelay));
+        await new Promise(resolve => setTimeout(resolve, submitDelay));
         clearInterval(countdownInterval);
 
         // Click submit button
+        console.log('🔍 DEBUG: Looking for submit button...');
+
+        // Ngăn submit lặp lại
+        if (window.captchaSubmitted) {
+          console.log('⚠️ Captcha đã được submit rồi, bỏ qua lần này');
+          return;
+        }
+
         const submitBtn = document.querySelector('button.audio-captcha-submit') ||
           document.querySelector('button[type="submit"]') ||
           document.querySelector('button:contains("Xác Thực")');
 
+        console.log('🔍 DEBUG: Submit button found:', !!submitBtn);
         if (submitBtn) {
           console.log('✅ Clicking submit...');
+          console.log('🔍 DEBUG: Submit button details:', {
+            className: submitBtn.className,
+            textContent: submitBtn.textContent.substring(0, 50),
+            disabled: submitBtn.disabled
+          });
+
+          // Đánh dấu đã submit để ngăn lặp
+          window.captchaSubmitted = true;
+          console.log('🔍 DEBUG: Set captchaSubmitted flag to true');
 
           await clickElementNaturally(submitBtn);
           console.log('✅ Captcha submitted successfully');
@@ -4194,20 +5101,21 @@ async function solveAudioCaptchaAuto(audioUrl) {
                 if (!buttonClicked && !promoBtn.disabled) {
                   buttonClicked = true;
 
-                  // Random delay trước click "Nhận KM" (20-60s)
-                  const randomDelay = Math.random() * (60000 - 20000) + 20000;
-                  const delaySeconds = Math.round(randomDelay / 1000);
+                  // ⏱️ TIMING FIX: Giảm delay chờ click "Nhận KM" (20-60s → 5-15s)
+                  const promoClickDelay = 5000 + Math.random() * 10000; // 5-15s (giảm từ 20-60s)
+                  const delaySeconds = Math.round(promoClickDelay / 1000);
                   console.log(`⏳ Waiting ${delaySeconds}s before clicking "Nhận KM"...`);
 
                   // Hiện countdown (update mỗi 3s, không nhảy liên tục)
                   const startTime = Date.now();
                   const countdownInterval = setInterval(() => {
                     const elapsedMs = Date.now() - startTime;
-                    const remainingMs = Math.max(0, randomDelay - elapsedMs);
+                    const remainingMs = Math.max(0, promoClickDelay - elapsedMs);
                     const remainingSeconds = Math.ceil(remainingMs / 1000);
 
                     // Gửi countdown qua API để hiện trên dashboard (không bị mất khi page redirect)
                     if (window.profileData && window.profileData.profileId) {
+                      // ⏱️ FIX: Gửi startTime & duration để server tự tính remainingSeconds (tránh khác nhau)
                       fetch('http://localhost:3000/api/automation/status', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -4216,13 +5124,16 @@ async function solveAudioCaptchaAuto(audioUrl) {
                           username: window.profileData.username,
                           status: 'running',
                           message: `⏳ Chờ ${remainingSeconds}s trước khi click "Nhận KM"...`,
-                          timestamp: new Date().toISOString()
+                          timestamp: new Date().toISOString(),
+                          // Gửi thêm startTime & duration để server tự tính
+                          countdownStartTime: startTime,
+                          countdownDuration: promoClickDelay
                         })
                       }).catch(e => console.warn('⚠️ Could not send countdown status:', e.message));
                     }
                   }, 3000);
 
-                  await new Promise(resolve => setTimeout(resolve, randomDelay));
+                  await new Promise(resolve => setTimeout(resolve, promoClickDelay));
                   clearInterval(countdownInterval);
 
                   console.log('✅ Button enabled, clicking now!');
@@ -4318,17 +5229,39 @@ async function solveAudioCaptchaAuto(audioUrl) {
         }
       } else {
         console.log('❌ Captcha input not found');
+        console.log('🔍 DEBUG: All methods failed to find captcha input');
+        console.log('🔍 DEBUG: Captcha text was:', captchaText);
+        console.log('🔍 DEBUG: Page URL:', window.location.href);
+        console.log('🔍 DEBUG: Total inputs on page:', document.querySelectorAll('input').length);
+
+        // Debug: List all visible inputs
+        const allInputs = document.querySelectorAll('input[type="text"], input:not([type])');
+        console.log('🔍 DEBUG: Visible text inputs:');
+        allInputs.forEach((input, idx) => {
+          if (input.offsetParent !== null) {
+            console.log(`  [${idx}] name="${input.name}" id="${input.id}" placeholder="${input.placeholder}" value="${input.value.substring(0, 20)}"`);
+          }
+        });
+
         showNotification('❌ Không tìm thấy ô nhập captcha');
       }
     } else {
       console.log('❌ Failed to solve captcha');
+      console.log('🔍 DEBUG: captchaText is empty or falsy:', captchaText);
+      console.log('🔍 DEBUG: Timestamp:', new Date().toISOString());
       showNotification('❌ Giải captcha thất bại!');
     }
   } catch (error) {
     console.error('❌ Error solving audio captcha:', error);
+    console.log('🔍 DEBUG: Error details:', {
+      message: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
     showNotification('❌ Lỗi: ' + error.message);
   } finally {
     window.audioSolving = false;
+    console.log('🔍 DEBUG: Set audioSolving flag to false');
   }
 }
 
@@ -4431,8 +5364,11 @@ async function solveCaptchaAuto(apiKey) {
           if (result) {
             console.log('? Captcha solved:', result);
 
-            // Use fast mode and NO FOCUS to prevent captcha change
+            // Use fast mode and NO FOCUS for image captcha (avoid bot detection)
+            console.log('📝 Filling captcha input with fast mode...');
             await fillInputAdvanced(captchaInputField, result, true, true);
+            console.log('✅ Captcha filled (fast mode, no focus)');
+
             showNotification(`✅ Đã giải: ${result}\n\n⏳ Đã nhập captcha...`);
 
             // Wait a bit for the input to be processed
@@ -5063,18 +5999,24 @@ function fillWithdrawForm() {
           }
         }
 
-        // Fill branch
+        // Fill branch and account using FormFillerExtension (slow typing for anti-bot)
+        const fields = [];
+
         if (branchInput) {
-          console.log('Filling bank branch:', bankBranch);
-          await fillInputAdvanced(branchInput, bankBranch, true); // Fast mode
-          await new Promise(resolve => setTimeout(resolve, 100)); // Reduced from 300ms to 100ms
+          fields.push({ input: branchInput, value: bankBranch, label: 'branch' });
         }
 
-        // Fill account number
         if (accountInput) {
-          console.log('Filling account number:', accountNumber);
-          await fillInputAdvanced(accountInput, accountNumber, true); // Fast mode
-          await new Promise(resolve => setTimeout(resolve, 300));
+          fields.push({ input: accountInput, value: accountNumber, label: 'account' });
+        }
+
+        if (fields.length > 0) {
+          console.log('Filling bank form fields with FormFillerExtension (slow typing)...');
+          await window.formFiller.fillMultipleFields(fields, {
+            charDelay: 150,
+            beforeFocus: 300,
+            afterField: 800
+          });
         }
 
         console.log('Waiting 2 seconds for form to be fully ready...');
@@ -5172,3 +6114,22 @@ function fillWithdrawForm() {
 
 
 
+
+// Restore countdown timer after page redirect
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('🔄 DOMContentLoaded - checking for countdown timer to restore...');
+  setTimeout(() => restoreCountdownTimer(), 500);
+});
+
+window.addEventListener('load', () => {
+  console.log('🔄 Page load - checking for countdown timer to restore...');
+  setTimeout(() => restoreCountdownTimer(), 500);
+});
+
+// Also check periodically in case page loads before listeners are attached
+setTimeout(() => {
+  if (localStorage.getItem('countdownActive') === 'true') {
+    console.log('🔄 Periodic check - restoring countdown timer...');
+    restoreCountdownTimer();
+  }
+}, 1000);

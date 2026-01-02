@@ -1,0 +1,23 @@
+{
+  "username": "F10dah",
+  "password": "D487w7vo9b",
+  "withdrawPassword": "654373",
+  "fullname": "TA TRAN KHOI NGUYEN",
+  "email": "fw2kpq@gmail.com",
+  "phone": "0912177253",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "9686964033704106",
+    "accountHolder": "TA TRAN KHOI NGUYEN"
+  },
+  "registeredAt": "2025-12-30T11:19:29.001Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,22 @@
+{
+  "username": "fff1yci8",
+  "password": "g94ojzt8x9qq",
+  "withdrawPassword": "578730",
+  "fullname": "VO ANH HUNG",
+  "email": "myjvr@gmail.com",
+  "phone": "0987190571",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "6240816843",
+    "accountHolder": "VO ANH HUNG"
+  },
+  "registeredAt": "2025-12-29T06:12:28.450Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

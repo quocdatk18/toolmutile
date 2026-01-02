@@ -96,7 +96,7 @@ class LicenseManager {
             u: username,
             m: machineId,
             e: expiry,
-            t: allowedTools.length > 0 ? allowedTools[0] : 'nohu-tool' // Only first tool for compactness
+            t: allowedTools && allowedTools.length > 0 ? allowedTools : ['nohu-tool'] // Store all allowed tools as array
         };
 
         const dataString = JSON.stringify(licenseData);
@@ -224,7 +224,7 @@ class LicenseManager {
                     remainingDays,
                     remainingTime,
                     isLifetime: expiryMs === -1,
-                    allowedTools: data.t ? [data.t] : ['nohu-tool']
+                    allowedTools: Array.isArray(data.t) ? data.t : (data.t ? [data.t] : ['nohu-tool'])
                 }
             };
 

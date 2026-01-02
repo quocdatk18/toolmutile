@@ -1,0 +1,43 @@
+{
+  "username": "StarStorm9c",
+  "password": "coqth6ix6h2wx",
+  "withdrawPassword": "429713",
+  "fullname": "SUNG KHANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10369048107630306",
+    "accountHolder": "SUNG KHANG"
+  },
+  "registeredAt": "2025-12-29T00:31:13.507Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-29T00:31:13.507Z",
+  "bankVerified": false
+}

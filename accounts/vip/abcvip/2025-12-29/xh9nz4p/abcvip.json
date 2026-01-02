@@ -1,0 +1,23 @@
+{
+  "username": "xh9nz4p",
+  "password": "q7g9ayuqx2",
+  "withdrawPassword": "873747",
+  "fullname": "VO HUU DUC MINH BAO",
+  "email": "ifxcwo@gmail.com",
+  "phone": "0792566015",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "96959403171",
+    "accountHolder": "VO HUU DUC MINH BAO"
+  },
+  "registeredAt": "2025-12-29T09:32:02.837Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

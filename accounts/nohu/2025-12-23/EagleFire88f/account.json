@@ -1,0 +1,43 @@
+{
+  "username": "EagleFire88f",
+  "password": "9awtcm122v3",
+  "withdrawPassword": "202028",
+  "fullname": "CHUT TONG TUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10363048106856923",
+    "accountHolder": "CHUT TONG TUAN"
+  },
+  "registeredAt": "2025-12-23T13:06:12.504Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T13:06:12.504Z",
+  "bankVerified": false
+}

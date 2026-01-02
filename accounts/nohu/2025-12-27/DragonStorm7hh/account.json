@@ -1,0 +1,43 @@
+{
+  "username": "DragonStorm7hh",
+  "password": "acg4zno300",
+  "withdrawPassword": "457108",
+  "fullname": "KHUYEN MAI NAP DAU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10367048107497133",
+    "accountHolder": "KHUYEN MAI NAP DAU"
+  },
+  "registeredAt": "2025-12-27T10:26:41.613Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T10:26:41.613Z",
+  "bankVerified": false
+}

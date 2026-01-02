@@ -1,0 +1,43 @@
+{
+  "username": "MoonPower1v",
+  "password": "mp51walb",
+  "withdrawPassword": "645147",
+  "fullname": "NGUYEN THANH PHONG QUANG BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "NHA TRANG",
+    "accountNumber": "96959403101",
+    "accountHolder": "NGUYEN THANH PHONG QUANG BAO"
+  },
+  "registeredAt": "2025-12-28T13:28:40.672Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T13:28:40.672Z",
+  "bankVerified": false
+}

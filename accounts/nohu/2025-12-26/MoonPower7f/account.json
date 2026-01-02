@@ -1,0 +1,43 @@
+{
+  "username": "MoonPower7f",
+  "password": "ye0iacgdvtt0",
+  "withdrawPassword": "761972",
+  "fullname": "BANH BAO MINH CHAU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "NHA TRANG",
+    "accountNumber": "9686964945984286",
+    "accountHolder": "BANH BAO MINH CHAU"
+  },
+  "registeredAt": "2025-12-26T09:08:28.752Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T09:08:28.752Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "StarFury777ff",
+  "password": "v0a3o7hgldgsv",
+  "withdrawPassword": "374814",
+  "fullname": "TRINH MY DUYEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HO CHI MINH",
+    "accountNumber": "9686965958633833",
+    "accountHolder": "TRINH MY DUYEN"
+  },
+  "registeredAt": "2025-12-27T12:05:01.541Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T12:05:01.541Z",
+  "bankVerified": false
+}

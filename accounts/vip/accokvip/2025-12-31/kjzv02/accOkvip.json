@@ -1,0 +1,22 @@
+{
+  "username": "kjzv02",
+  "password": "cv5fnvxh06",
+  "withdrawPassword": "234658",
+  "fullname": "PHAN QUANG QUAN",
+  "email": "ks2xpf@gmail.com",
+  "phone": "0974338268",
+  "bank": {
+    "name": "PVcomBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "2947309396990",
+    "accountHolder": "PHAN QUANG QUAN"
+  },
+  "registeredAt": "2025-12-31T06:13:22.221Z",
+  "firstSite": "AccOKVIP",
+  "sites": [
+    "AccOKVIP"
+  ],
+  "status": "active",
+  "category": "accOkvip",
+  "tool": "vip-tool"
+}

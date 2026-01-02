@@ -1,0 +1,22 @@
+{
+  "username": "ffff4ifjjy",
+  "password": "edg6864dbju",
+  "withdrawPassword": "362410",
+  "fullname": "NGUYEN HOANG DUNG",
+  "email": "4d4z1d@gmail.com",
+  "phone": "0975228811",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "2768385203803",
+    "accountHolder": "NGUYEN HOANG DUNG"
+  },
+  "registeredAt": "2025-12-29T06:03:15.756Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,23 @@
+{
+  "username": "mxxi93dd",
+  "password": "hrhem2ed567",
+  "withdrawPassword": "282439",
+  "fullname": "PHAN ANH TUAN CANG",
+  "email": "mrovnx@gmail.com",
+  "phone": "0914357279",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10369048107641394",
+    "accountHolder": "PHAN ANH TUAN CANG"
+  },
+  "registeredAt": "2025-12-29T01:08:04.031Z",
+  "firstSite": "Hi88",
+  "sites": [
+    "Hi88",
+    "789BET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

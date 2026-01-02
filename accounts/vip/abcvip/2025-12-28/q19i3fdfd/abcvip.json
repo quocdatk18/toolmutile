@@ -1,0 +1,22 @@
+{
+  "username": "q19i3fdfd",
+  "password": "phg8vuw4hokd",
+  "withdrawPassword": "365862",
+  "fullname": "HO THI DIEU",
+  "email": "jrkh1@gmail.com",
+  "phone": "0342278307",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10368048107559608",
+    "accountHolder": "HO THI DIEU"
+  },
+  "registeredAt": "2025-12-28T04:23:52.826Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,24 @@
+{
+  "username": "o7dozc1",
+  "password": "b8pwp777",
+  "withdrawPassword": "769871",
+  "fullname": "VO ANH DUNG",
+  "email": "02iqfru@gmail.com",
+  "phone": "0993189354",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10366048107210453",
+    "accountHolder": "VO ANH DUNG"
+  },
+  "registeredAt": "2025-12-25T20:19:55.277Z",
+  "firstSite": "ABC8",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

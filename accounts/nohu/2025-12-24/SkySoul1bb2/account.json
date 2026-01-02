@@ -1,0 +1,43 @@
+{
+  "username": "SkySoul1bb2",
+  "password": "xdaw1b07",
+  "withdrawPassword": "725658",
+  "fullname": "CHRU VU PHONG HAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10364048106923412",
+    "accountHolder": "CHRU VU PHONG HAN"
+  },
+  "registeredAt": "2025-12-23T17:36:54.820Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T17:36:54.820Z",
+  "bankVerified": false
+}

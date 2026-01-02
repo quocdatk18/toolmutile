@@ -1,0 +1,22 @@
+{
+  "username": "njem5dda12",
+  "password": "bs6sic0f",
+  "withdrawPassword": "436222",
+  "fullname": "VO ANH DUNG",
+  "email": "48l4jj@gmail.com",
+  "phone": "0993189354",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10366048107210453",
+    "accountHolder": "VO ANH DUNG"
+  },
+  "registeredAt": "2025-12-25T21:30:14.320Z",
+  "firstSite": "8KBET",
+  "sites": [
+    "8KBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

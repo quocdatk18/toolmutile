@@ -1,0 +1,43 @@
+{
+  "username": "PhoegbSoul1",
+  "password": "2b52ekp4",
+  "withdrawPassword": "628202",
+  "fullname": "TONG VAN TUAN HIEU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10361048108098798",
+    "accountHolder": "TONG VAN TUAN HIEU"
+  },
+  "registeredAt": "2026-01-01T01:48:56.595Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-01T01:48:56.596Z",
+  "bankVerified": false
+}

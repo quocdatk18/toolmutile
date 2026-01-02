@@ -1,0 +1,24 @@
+{
+  "username": "jqrdlbmf",
+  "password": "nld81m20dq",
+  "withdrawPassword": "927010",
+  "fullname": "NHAN PHONG VINH",
+  "email": "k0onbsq@gmail.com",
+  "phone": "0339622957",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106933232",
+    "accountHolder": "NHAN PHONG VINH"
+  },
+  "registeredAt": "2025-12-23T21:44:17.128Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

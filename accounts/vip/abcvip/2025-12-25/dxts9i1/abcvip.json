@@ -1,0 +1,23 @@
+{
+  "username": "dxts9i1",
+  "password": "yg1ig2vtr",
+  "withdrawPassword": "463948",
+  "fullname": "LE THANH DUNG Y",
+  "email": "f51ekvc@gmail.com",
+  "phone": "0993179751",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10365048107087767",
+    "accountHolder": "LE THANH DUNG Y"
+  },
+  "registeredAt": "2025-12-24T17:48:16.801Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,43 @@
+{
+  "username": "TigerSoul88ff",
+  "password": "cl5sh8j3",
+  "withdrawPassword": "848730",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "CAN THO",
+    "accountNumber": "440684069",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-28T01:20:31.865Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T01:20:31.865Z",
+  "bankVerified": false
+}

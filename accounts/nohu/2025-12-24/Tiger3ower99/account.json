@@ -1,0 +1,43 @@
+{
+  "username": "Tiger3ower99",
+  "password": "g5e2ket4lddv",
+  "withdrawPassword": "616353",
+  "fullname": "VO MINH VAN QUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10364048106966054",
+    "accountHolder": "VO MINH VAN QUY"
+  },
+  "registeredAt": "2025-12-24T02:46:06.104Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T02:46:06.104Z",
+  "bankVerified": false
+}

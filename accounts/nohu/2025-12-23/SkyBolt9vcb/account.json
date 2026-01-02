@@ -1,0 +1,43 @@
+{
+  "username": "SkyBolt9vcb",
+  "password": "yra978e1k5z0",
+  "withdrawPassword": "698959",
+  "fullname": "NGUYEN THIO TUYIT LAU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "NHA TRANG",
+    "accountNumber": "962321223680231",
+    "accountHolder": "NGUYEN THIO TUYIT LAU"
+  },
+  "registeredAt": "2025-12-23T05:43:52.539Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T05:43:52.539Z",
+  "bankVerified": false
+}

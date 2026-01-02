@@ -1,0 +1,43 @@
+{
+  "username": "LionBolt83v8",
+  "password": "f1rty0e784",
+  "withdrawPassword": "752454",
+  "fullname": "VI TIEU BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10360048107865515",
+    "accountHolder": "VI TIEU BAO"
+  },
+  "registeredAt": "2025-12-30T03:54:37.890Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-30T03:54:37.890Z",
+  "bankVerified": false
+}

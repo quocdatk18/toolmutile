@@ -1,0 +1,43 @@
+{
+  "username": "Dra2nSoul88",
+  "password": "d2y78xp56cj",
+  "withdrawPassword": "613341",
+  "fullname": "TRAN TRANG DUC TRANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10365048107102143",
+    "accountHolder": "TRAN TRANG DUC TRANG"
+  },
+  "registeredAt": "2025-12-25T01:35:46.556Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-25T01:35:46.556Z",
+  "bankVerified": false
+}

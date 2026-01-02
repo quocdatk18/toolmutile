@@ -196,26 +196,10 @@ class AutomationActions {
      */
     async checkPromotion(username, apiKey) {
         console.log('    🎁 Checking promotion...');
-        const result = await this.executeAction('checkPromotion', { username, apiKey });
-
-        if (result && result.success) {
-            console.log('    ✅ Promotion check completed');
-            return result.promotions || [];
-        } else {
-            console.log('    ❌ Promotion check failed:', result?.error);
-            return [];
-        }
-    }
-
-    /**
-     * Complete check promotion workflow
-     */
-    async completeCheckPromotion(username, apiKey) {
-        console.log('    🎁 Starting complete check promotion workflow...');
         console.log('    📊 Username received:', username);
         console.log('    📊 API Key received:', apiKey ? 'YES' : 'NO');
 
-        // IMPORTANT: Bring tab to front to prevent throttling (như phiên bản cũ)
+        // IMPORTANT: Bring tab to front to prevent throttling
         console.log('    👁️  Bringing tab to front...');
         await this.page.bringToFront();
         await wait(1000); // Wait for tab to fully activate (critical for setValue)
@@ -230,19 +214,27 @@ class AutomationActions {
             return { success: false, message: error.message, promotions: [] };
         }
 
-        // 🔥 Focus again right before checkPromotion
+        // 🔥 Focus again right before executing checkPromotion
         console.log('    🎯 Re-focusing tab before checkPromotion...');
         await this.page.bringToFront();
         await wait(500);
 
-        const promotions = await this.checkPromotion(username, apiKey);
+        // Execute the actual check promotion action on browser side
+        const result = await this.executeAction('checkPromotion', { username, apiKey });
 
-        return {
-            success: true,
-            promotions,
-            message: `Found ${promotions.length} promotions`
-        };
+        if (result && result.success) {
+            console.log('    ✅ Promotion check completed');
+            return {
+                success: true,
+                promotions: result.promotions || [],
+                message: `Found ${(result.promotions || []).length} promotions`
+            };
+        } else {
+            console.log('    ❌ Promotion check failed:', result?.error);
+            return { success: false, message: result?.error, promotions: [] };
+        }
     }
+
 }
 
 module.exports = AutomationActions;

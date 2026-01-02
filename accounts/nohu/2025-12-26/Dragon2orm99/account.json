@@ -1,0 +1,43 @@
+{
+  "username": "Dragon2orm99",
+  "password": "ufg2l060",
+  "withdrawPassword": "639970",
+  "fullname": "DAM CAO TRI NHAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAI PHONG",
+    "accountNumber": "9686964154696244",
+    "accountHolder": "DAM CAO TRI NHAN"
+  },
+  "registeredAt": "2025-12-26T11:50:17.697Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T11:50:17.697Z",
+  "bankVerified": false
+}

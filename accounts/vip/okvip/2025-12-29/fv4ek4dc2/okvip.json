@@ -1,0 +1,22 @@
+{
+  "username": "fv4ek4dc2",
+  "password": "n6psgv161f9",
+  "withdrawPassword": "393448",
+  "fullname": "nguyen quoc dat",
+  "email": "x8735zd@gmail.com",
+  "phone": "0364897213",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "840684069",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-28T19:56:52.471Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

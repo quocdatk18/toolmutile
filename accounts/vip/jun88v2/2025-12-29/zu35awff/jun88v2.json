@@ -1,0 +1,22 @@
+{
+  "username": "zu35awff",
+  "password": "on86g19b3b",
+  "withdrawPassword": "423845",
+  "fullname": "LE THANH PHONG",
+  "email": "gshpomr@gmail.com",
+  "phone": "0997149906",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "3319487447249",
+    "accountHolder": "LE THANH PHONG"
+  },
+  "registeredAt": "2025-12-29T07:03:52.175Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

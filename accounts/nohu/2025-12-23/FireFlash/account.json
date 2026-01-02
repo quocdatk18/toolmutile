@@ -1,0 +1,43 @@
+{
+  "username": "FireFlash",
+  "password": "iqus3p785w",
+  "withdrawPassword": "760333",
+  "fullname": "NGUYEN VAN BOT OK",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "10363048106843732",
+    "accountHolder": "NGUYEN VAN BOT OK"
+  },
+  "registeredAt": "2025-12-23T10:25:24.357Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T10:25:24.357Z",
+  "bankVerified": false
+}

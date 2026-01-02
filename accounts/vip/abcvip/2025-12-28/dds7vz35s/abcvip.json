@@ -1,0 +1,23 @@
+{
+  "username": "dds7vz35s",
+  "password": "f6tf5p5q0u",
+  "withdrawPassword": "160296",
+  "fullname": "TRAN VAN NAM",
+  "email": "f5bbnrmp@gmail.com",
+  "phone": "0335271923",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10368048107561089",
+    "accountHolder": "TRAN VAN NAM"
+  },
+  "registeredAt": "2025-12-28T04:50:03.803Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

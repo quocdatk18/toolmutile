@@ -1,0 +1,43 @@
+{
+  "username": "WolfSoul7g",
+  "password": "g3jda6g9rj",
+  "withdrawPassword": "998676",
+  "fullname": "DINH TUAN THANH PHONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "da pha",
+    "accountNumber": "10365048107096490",
+    "accountHolder": "DINH TUAN THANH PHONG"
+  },
+  "registeredAt": "2025-12-24T21:55:20.086Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T21:55:20.086Z",
+  "bankVerified": false
+}

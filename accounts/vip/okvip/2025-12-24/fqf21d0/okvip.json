@@ -1,0 +1,22 @@
+{
+  "username": "fqf21d0",
+  "password": "f7plvfap6ayq",
+  "withdrawPassword": "519002",
+  "fullname": "VO MINH VAN QUY",
+  "email": "tf43x@gmail.com",
+  "phone": "0955393647",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106966054",
+    "accountHolder": "VO MINH VAN QUY"
+  },
+  "registeredAt": "2025-12-24T02:49:04.783Z",
+  "firstSite": "789BET",
+  "sites": [
+    "789BET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

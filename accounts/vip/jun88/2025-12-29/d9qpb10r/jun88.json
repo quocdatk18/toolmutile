@@ -1,0 +1,22 @@
+{
+  "username": "d9qpb10r",
+  "password": "cfv996kvt",
+  "withdrawPassword": "692361",
+  "fullname": "PHAM CONG SON MINH BAO",
+  "email": "49my2u5@gmail.com",
+  "phone": "0777632924",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "96959403031",
+    "accountHolder": "PHAM CONG SON MINH BAO"
+  },
+  "registeredAt": "2025-12-29T09:47:20.269Z",
+  "firstSite": "Jun881",
+  "sites": [
+    "Jun881"
+  ],
+  "status": "active",
+  "category": "jun88",
+  "tool": "vip-tool"
+}

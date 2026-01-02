@@ -1,0 +1,43 @@
+{
+  "username": "Phoenixvh88",
+  "password": "f81sexjaq",
+  "withdrawPassword": "710071",
+  "fullname": "CHUNG THANH NHA UYEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DA NANG",
+    "accountNumber": "9686968578784516",
+    "accountHolder": "CHUNG THANH NHA UYEN"
+  },
+  "registeredAt": "2025-12-26T07:39:48.598Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T07:39:48.598Z",
+  "bankVerified": false
+}

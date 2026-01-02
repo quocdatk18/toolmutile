@@ -1,0 +1,25 @@
+{
+  "username": "TigerBlade9b",
+  "password": "Quocdat123",
+  "withdrawPassword": "1",
+  "fullname": "nguyen quoc dat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "1040674068",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-23T04:00:37.815Z",
+  "firstSite": "Go99-SMS",
+  "sites": [
+    {
+      "name": "Go99-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T04:00:37.815Z",
+  "bankVerified": false
+}

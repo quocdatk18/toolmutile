@@ -1,0 +1,22 @@
+{
+  "username": "f5m6v1h",
+  "password": "7142y6hf2bct",
+  "withdrawPassword": "407055",
+  "fullname": "LE HOANG LINH",
+  "email": "w5d2u@gmail.com",
+  "phone": "0927034546",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "0771297423600",
+    "accountHolder": "LE HOANG LINH"
+  },
+  "registeredAt": "2025-12-29T06:08:37.190Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

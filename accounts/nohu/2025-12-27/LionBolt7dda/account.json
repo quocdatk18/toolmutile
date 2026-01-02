@@ -1,0 +1,43 @@
+{
+  "username": "LionBolt7dda",
+  "password": "dz8v499tbez",
+  "withdrawPassword": "216412",
+  "fullname": "VUONG NGOC HA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA NOI",
+    "accountNumber": "9686969019282765",
+    "accountHolder": "VUONG NGOC HA"
+  },
+  "registeredAt": "2025-12-27T12:07:36.330Z",
+  "firstSite": "NOHU",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T12:07:36.330Z",
+  "bankVerified": false
+}

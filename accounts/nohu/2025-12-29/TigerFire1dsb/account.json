@@ -1,0 +1,43 @@
+{
+  "username": "TigerFire1dsb",
+  "password": "h2a5sqe281",
+  "withdrawPassword": "796358",
+  "fullname": "NGUYENQUOCDAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "CAN THO",
+    "accountNumber": "740684069",
+    "accountHolder": "NGUYENQUOCDAT"
+  },
+  "registeredAt": "2025-12-28T21:33:26.509Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T21:33:26.509Z",
+  "bankVerified": false
+}

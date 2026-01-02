@@ -1,0 +1,43 @@
+{
+  "username": "SkyBlade99",
+  "password": "oy3lo3fqo",
+  "withdrawPassword": "982347",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "9040674068",
+    "accountNumber": "9040674068",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2026-01-02T00:57:16.026Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T00:57:16.026Z",
+  "bankVerified": false
+}

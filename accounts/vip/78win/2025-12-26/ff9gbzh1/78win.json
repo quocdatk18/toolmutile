@@ -1,0 +1,22 @@
+{
+  "username": "ff9gbzh1",
+  "password": "f9dmswo11wds",
+  "withdrawPassword": "353561",
+  "fullname": "VU DUC KHANH",
+  "email": "7bw8at@gmail.com",
+  "phone": "0993189434",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10366048107208901",
+    "accountHolder": "VU DUC KHANH"
+  },
+  "registeredAt": "2025-12-25T19:50:10.939Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

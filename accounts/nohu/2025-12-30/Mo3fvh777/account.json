@@ -1,0 +1,43 @@
+{
+  "username": "Mo3fvh777",
+  "password": "0k3abte9ih",
+  "withdrawPassword": "300437",
+  "fullname": "TRAN QUANG HAI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10360048107865436",
+    "accountHolder": "TRAN QUANG HAI"
+  },
+  "registeredAt": "2025-12-30T03:53:27.280Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-30T03:53:27.280Z",
+  "bankVerified": false
+}

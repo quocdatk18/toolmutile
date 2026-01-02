@@ -1,0 +1,22 @@
+{
+  "username": "2y4mqw8",
+  "password": "etmwf81e168",
+  "withdrawPassword": "840749",
+  "fullname": "DANG MINH MINH",
+  "email": "fcgx01@gmail.com",
+  "phone": "0325556154",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106932563",
+    "accountHolder": "DANG MINH MINH"
+  },
+  "registeredAt": "2025-12-23T21:14:47.630Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

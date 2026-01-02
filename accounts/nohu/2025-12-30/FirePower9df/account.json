@@ -1,0 +1,43 @@
+{
+  "username": "FirePower9df",
+  "password": "e75d1c3du",
+  "withdrawPassword": "780712",
+  "fullname": "TOAN MA LAI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HO CHI MINH",
+    "accountNumber": "963336419815496",
+    "accountHolder": "TOAN MA LAI"
+  },
+  "registeredAt": "2025-12-30T09:59:25.451Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-30T09:59:25.451Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "hsgbl5td1",
+  "password": "dit0te4m7",
+  "withdrawPassword": "720004",
+  "fullname": "TRAN NHU KIEN",
+  "email": "nkquc0r@gmail.com",
+  "phone": "0376984790",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10368048107541235",
+    "accountHolder": "TRAN NHU KIEN"
+  },
+  "registeredAt": "2025-12-28T03:32:27.464Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "789BET",
+    "8KBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

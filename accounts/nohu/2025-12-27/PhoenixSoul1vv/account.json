@@ -1,0 +1,43 @@
+{
+  "username": "PhoenixSoul1vv",
+  "password": "q5dlnbytvk4",
+  "withdrawPassword": "915904",
+  "fullname": "TAY MA SIEU NHAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10367048107488893",
+    "accountHolder": "TAY MA SIEU NHAN"
+  },
+  "registeredAt": "2025-12-27T08:16:12.400Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T08:16:12.400Z",
+  "bankVerified": false
+}

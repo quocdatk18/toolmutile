@@ -1,0 +1,22 @@
+{
+  "username": "Xe1tjcoq",
+  "password": "o6b7j2pul1nl",
+  "withdrawPassword": "152043",
+  "fullname": "nguyen quoc dat",
+  "email": "myofl@gmail.com",
+  "phone": "0356935306",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "440684069",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-27T21:28:21.111Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

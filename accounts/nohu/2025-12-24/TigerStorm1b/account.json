@@ -1,0 +1,43 @@
+{
+  "username": "TigerStorm1b",
+  "password": "vpnq9ty31r4",
+  "withdrawPassword": "199434",
+  "fullname": "DANG HUNG AN TUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10364048106921762",
+    "accountHolder": "DANG HUNG AN TUAN"
+  },
+  "registeredAt": "2025-12-23T17:35:46.526Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T17:35:46.526Z",
+  "bankVerified": false
+}

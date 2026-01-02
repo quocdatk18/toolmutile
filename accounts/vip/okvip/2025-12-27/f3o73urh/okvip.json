@@ -1,0 +1,23 @@
+{
+  "username": "f3o73urh",
+  "password": "f8i2ii6ndrf",
+  "withdrawPassword": "474782",
+  "fullname": "SUNG QUANG A HAIO",
+  "email": "agh0xq1@gmail.com",
+  "phone": "0868275650",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10367048107491086",
+    "accountHolder": "SUNG QUANG A HAIO"
+  },
+  "registeredAt": "2025-12-27T09:00:21.656Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

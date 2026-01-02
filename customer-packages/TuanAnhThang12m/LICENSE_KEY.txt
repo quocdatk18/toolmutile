@@ -1,0 +1,37 @@
+
+License Key Instructions
+========================
+Package: TuanAnhThang12m
+Created: 07:54:42 31/12/2025
+License Type: 30 days
+Machine Binding: YES
+
+HƯỚNG DẪN KÍCH HOẠT:
+====================
+
+BƯỚC 1: Cài đặt và chạy tool
+   - Chạy INSTALL.bat để cài đặt
+   - Chạy START.bat để khởi động dashboard
+   - Mở trình duyệt: http://localhost:3000
+
+BƯỚC 2: Lấy Machine ID
+   - Trong dashboard, vào tab "License Info"
+   - Copy Machine ID (16 ký tự)
+   - Gửi Machine ID cho admin
+
+BƯỚC 3: Nhận license key
+   - Admin sẽ tạo license key dựa trên Machine ID của bạn
+   - Nhận license key qua email/chat
+
+BƯỚC 4: Kích hoạt
+   - Trong dashboard, click "Kích Hoạt Bản Quyền"
+   - Dán license key vào
+   - Click "Kích Hoạt"
+
+⚠️  LƯU Ý:
+   - License key chỉ hoạt động trên máy có Machine ID tương ứng
+   - Không thể sử dụng trên máy khác
+   - Không chia sẻ license key cho người khác
+
+========================================
+License key sẽ được cập nhật vào file này sau khi admin tạo.

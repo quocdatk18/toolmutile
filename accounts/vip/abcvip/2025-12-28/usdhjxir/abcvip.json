@@ -1,0 +1,22 @@
+{
+  "username": "usdhjxir",
+  "password": "pxivt9l7",
+  "withdrawPassword": "669434",
+  "fullname": "HA HUY TAP",
+  "email": "rba2u@gmail.com",
+  "phone": "0766996923",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10368048107610017",
+    "accountHolder": "HA HUY TAP"
+  },
+  "registeredAt": "2025-12-28T14:52:03.372Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

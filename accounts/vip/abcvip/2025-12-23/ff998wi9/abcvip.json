@@ -1,0 +1,23 @@
+{
+  "username": "ff998wi9",
+  "password": "biyc9hkh9e47",
+  "withdrawPassword": "431144",
+  "fullname": "nguyen quoc dat",
+  "email": "b8u4c41@gmail.com",
+  "phone": "0993187252",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "1040674068",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-23T04:20:46.433Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

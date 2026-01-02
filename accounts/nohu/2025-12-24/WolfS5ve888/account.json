@@ -1,0 +1,43 @@
+{
+  "username": "WolfS5ve888",
+  "password": "po7g272j6k",
+  "withdrawPassword": "683085",
+  "fullname": "NHAN DUNG HA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10364048106942017",
+    "accountHolder": "NHAN DUNG HA"
+  },
+  "registeredAt": "2025-12-24T00:40:18.268Z",
+  "firstSite": "NOHU",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T00:40:18.268Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "TigerS45l888",
+  "password": "mjnj7gf22",
+  "withdrawPassword": "832655",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "040694070",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-30T01:31:19.433Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-30T01:31:19.433Z",
+  "bankVerified": false
+}

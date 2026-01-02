@@ -1,0 +1,43 @@
+{
+  "username": "PhoenixBlade1b",
+  "password": "b3qa0mtbw0",
+  "withdrawPassword": "712819",
+  "fullname": "PHAM QUANG TUAN LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "10366048107272127",
+    "accountHolder": "PHAM QUANG TUAN LINH"
+  },
+  "registeredAt": "2025-12-26T03:57:06.757Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T03:57:06.757Z",
+  "bankVerified": false
+}

@@ -1408,6 +1408,8 @@
                                     Tạo</th>
                                 <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">⏰ Thời
                                     Hạn</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">⏳ Còn Lại
+                                </th>
                                 <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">📊 Trạng
                                     Thái</th>
                                 <th style="padding: 12px; text-align: left; border-bottom: 2px solid #e2e8f0;">📝 Ghi
@@ -1698,11 +1700,40 @@
                             };
                         });
 
-                        // Sort by package creation time (newest first)
+                        // Sort by license expiry time (least remaining first)
                         allCustomers.sort((a, b) => {
-                            const timeA = a.pkg.createdTime || 0;
-                            const timeB = b.pkg.createdTime || 0;
-                            return timeB - timeA; // Newest first
+                            const now = new Date();
+
+                            // Get active license for each customer
+                            const licenseA = a.customer.licenseHistory?.find(l => l.isActive);
+                            const licenseB = b.customer.licenseHistory?.find(l => l.isActive);
+
+                            // Calculate remaining time for each license
+                            let remainingA = Infinity; // No license = last
+                            let remainingB = Infinity;
+
+                            if (licenseA) {
+                                if (licenseA.expiryDays === -1) {
+                                    remainingA = Infinity; // Lifetime = last
+                                } else {
+                                    const createdA = new Date(licenseA.createdAt);
+                                    const expiryA = new Date(createdA.getTime() + (licenseA.expiryDays * 24 * 60 * 60 * 1000));
+                                    remainingA = expiryA - now;
+                                }
+                            }
+
+                            if (licenseB) {
+                                if (licenseB.expiryDays === -1) {
+                                    remainingB = Infinity; // Lifetime = last
+                                } else {
+                                    const createdB = new Date(licenseB.createdAt);
+                                    const expiryB = new Date(createdB.getTime() + (licenseB.expiryDays * 24 * 60 * 60 * 1000));
+                                    remainingB = expiryB - now;
+                                }
+                            }
+
+                            // Sort: least remaining first, then no license/lifetime last
+                            return remainingA - remainingB;
                         });
 
                         totalCustomers = allCustomers.length;
@@ -2824,18 +2855,36 @@
                     // Display history table
                     const tbody = document.getElementById('licenseHistoryTableBody');
                     if (data.history.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #6c757d;">Chưa có lịch sử license</td></tr>';
+                        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #6c757d;">Chưa có lịch sử license</td></tr>';
                     } else {
                         tbody.innerHTML = data.history.map(license => {
                             const createdDate = new Date(license.createdAt);
                             const now = new Date();
 
                             let statusText, statusClass;
+                            let remainingText = '';
+
                             if (license.expiryDays === -1) {
                                 statusText = '♾️ Vĩnh viễn';
                                 statusClass = 'background: #e0e7ff; color: #3730a3;';
+                                remainingText = '♾️ Vĩnh viễn';
                             } else {
                                 const expiryDate = new Date(createdDate.getTime() + (license.expiryDays * 24 * 60 * 60 * 1000));
+                                const msRemaining = expiryDate - now;
+
+                                if (msRemaining > 0) {
+                                    const daysRemaining = Math.ceil(msRemaining / (24 * 60 * 60 * 1000));
+                                    const hoursRemaining = Math.floor((msRemaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+
+                                    if (daysRemaining > 0) {
+                                        remainingText = `${daysRemaining} ngày`;
+                                    } else {
+                                        remainingText = `${hoursRemaining} giờ`;
+                                    }
+                                } else {
+                                    remainingText = '❌ Hết hạn';
+                                }
+
                                 if (license.isActive) {
                                     statusText = '🟢 Đang dùng';
                                     statusClass = 'background: #dcfce7; color: #166534;';
@@ -2855,6 +2904,9 @@
                                     </td>
                                     <td style="padding: 12px; font-size: 13px;">
                                         ${license.expiryDays === -1 ? '♾️ Vĩnh viễn' : license.expiryDays + ' ngày'}
+                                    </td>
+                                    <td style="padding: 12px; font-size: 13px; font-weight: 600;">
+                                        ${remainingText}
                                     </td>
                                     <td style="padding: 12px;">
                                         <span style="padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; ${statusClass}">
@@ -2878,13 +2930,13 @@
                 } else {
                     // Show error in modal instead of toast
                     document.getElementById('licenseStats').innerHTML = '<div style="color: #dc2626; text-align: center;">❌ Lỗi: ' + data.error + '</div>';
-                    document.getElementById('licenseHistoryTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc2626;">❌ ' + data.error + '</td></tr>';
+                    document.getElementById('licenseHistoryTableBody').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #dc2626;">❌ ' + data.error + '</td></tr>';
                     showToast('error', 'Lỗi tải lịch sử: ' + data.error);
                 }
             } catch (error) {
                 // Show error in modal instead of toast
                 document.getElementById('licenseStats').innerHTML = '<div style="color: #dc2626; text-align: center;">❌ Lỗi kết nối: ' + error.message + '</div>';
-                document.getElementById('licenseHistoryTableBody').innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 40px; color: #dc2626;">❌ Lỗi kết nối: ' + error.message + '</td></tr>';
+                document.getElementById('licenseHistoryTableBody').innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #dc2626;">❌ Lỗi kết nối: ' + error.message + '</td></tr>';
                 showToast('error', 'Lỗi kết nối: ' + error.message);
             }
         }

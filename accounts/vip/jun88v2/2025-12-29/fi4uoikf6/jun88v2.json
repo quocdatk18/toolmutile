@@ -1,0 +1,22 @@
+{
+  "username": "fi4uoikf6",
+  "password": "ctzpe8x7b83y",
+  "withdrawPassword": "757158",
+  "fullname": "NGUYEN HOANG QUAN",
+  "email": "7bhms@gmail.com",
+  "phone": "0985988319",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "4633671082",
+    "accountHolder": "NGUYEN HOANG QUAN"
+  },
+  "registeredAt": "2025-12-29T06:50:37.278Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

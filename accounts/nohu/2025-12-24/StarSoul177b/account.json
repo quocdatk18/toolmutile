@@ -1,0 +1,43 @@
+{
+  "username": "StarSoul177b",
+  "password": "10j4k8tkmz",
+  "withdrawPassword": "388240",
+  "fullname": "DUONG PHONG QUANG VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10364048106948672",
+    "accountHolder": "DUONG PHONG QUANG VINH"
+  },
+  "registeredAt": "2025-12-24T01:25:44.745Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T01:25:44.745Z",
+  "bankVerified": false
+}

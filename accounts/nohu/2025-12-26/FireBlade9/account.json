@@ -1,0 +1,43 @@
+{
+  "username": "FireBlade9",
+  "password": "cdm5j32mx2x1",
+  "withdrawPassword": "960872",
+  "fullname": "LUONG THI ANH MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "10366048107208260",
+    "accountHolder": "LUONG THI ANH MINH"
+  },
+  "registeredAt": "2025-12-25T18:55:52.554Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-25T18:55:52.554Z",
+  "bankVerified": false
+}

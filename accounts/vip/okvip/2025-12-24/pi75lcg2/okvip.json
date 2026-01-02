@@ -1,0 +1,23 @@
+{
+  "username": "pi75lcg2",
+  "password": "ony3e67f",
+  "withdrawPassword": "878132",
+  "fullname": "HOANG THI AN",
+  "email": "ekv9hll@gmail.com",
+  "phone": "0993186491",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106930011",
+    "accountHolder": "HOANG THI AN"
+  },
+  "registeredAt": "2025-12-23T19:23:11.450Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

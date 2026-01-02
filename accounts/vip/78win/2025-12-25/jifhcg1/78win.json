@@ -1,0 +1,22 @@
+{
+  "username": "jifhcg1",
+  "password": "F9qxk64zrp",
+  "withdrawPassword": "363354",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "f6v1pre1@gmail.com",
+  "phone": "0993179710",
+  "bank": {
+    "name": "Techcombank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "2338762000",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-24T20:03:09.585Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

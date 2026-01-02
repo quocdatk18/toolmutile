@@ -1,0 +1,12 @@
+{
+  "profileName": "admin12",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "accOkvip",
+  "sites": [
+    "AccOKVIP"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2025-12-31T06:13:22.232Z"
+}

@@ -1,0 +1,43 @@
+{
+  "username": "FireBolt888b",
+  "password": "mpqs7c31",
+  "withdrawPassword": "671260",
+  "fullname": "sung a lam",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10363048106849709",
+    "accountHolder": "sung a lam"
+  },
+  "registeredAt": "2025-12-23T11:22:57.939Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T11:22:57.939Z",
+  "bankVerified": false
+}

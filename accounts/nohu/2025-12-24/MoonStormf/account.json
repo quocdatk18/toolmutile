@@ -1,0 +1,43 @@
+{
+  "username": "MoonStormf",
+  "password": "0pybz3jms2",
+  "withdrawPassword": "694346",
+  "fullname": "TRAN LINH KHANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10364048106941465",
+    "accountHolder": "TRAN LINH KHANH"
+  },
+  "registeredAt": "2025-12-24T00:42:11.462Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T00:42:11.462Z",
+  "bankVerified": false
+}

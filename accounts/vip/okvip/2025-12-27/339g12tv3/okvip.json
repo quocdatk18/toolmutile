@@ -1,0 +1,22 @@
+{
+  "username": "339g12tv3",
+  "password": "f5zqolb3na",
+  "withdrawPassword": "971545",
+  "fullname": "CHUNG THANH NHA UYEN",
+  "email": "blszr@gmail.com",
+  "phone": "0974498992",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "9686968578784516",
+    "accountHolder": "CHUNG THANH NHA UYEN"
+  },
+  "registeredAt": "2025-12-26T19:31:10.816Z",
+  "firstSite": "Hi88",
+  "sites": [
+    "Hi88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

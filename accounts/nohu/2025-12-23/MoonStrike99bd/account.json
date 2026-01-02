@@ -1,0 +1,43 @@
+{
+  "username": "MoonStrike99bd",
+  "password": "d0owvfitju1k",
+  "withdrawPassword": "681862",
+  "fullname": "TUNG HOANG QUANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10363048106844474",
+    "accountHolder": "TUNG HOANG QUANG"
+  },
+  "registeredAt": "2025-12-23T10:28:14.883Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T10:28:14.883Z",
+  "bankVerified": false
+}

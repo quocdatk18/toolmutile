@@ -1,0 +1,23 @@
+{
+  "username": "fpf4rdd1s",
+  "password": "eib22epan",
+  "withdrawPassword": "496193",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "p4fkd9@gmail.com",
+  "phone": "0327736472",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "640684069",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2025-12-28T12:20:55.229Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,43 @@
+{
+  "username": "FireFire888g",
+  "password": "g7ewp896r5zv2",
+  "withdrawPassword": "270592",
+  "fullname": "DANG HUONG TUAN LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10366048107208518",
+    "accountHolder": "DANG HUONG TUAN LINH"
+  },
+  "registeredAt": "2025-12-25T18:51:10.188Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-25T18:51:10.188Z",
+  "bankVerified": false
+}

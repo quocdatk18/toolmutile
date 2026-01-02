@@ -16,54 +16,87 @@ const tabRotator = require('./tab-rotator');
 // Import common form filler
 const CommonFormFiller = require('../common/form-filler');
 
-// Bank name mapping (VietQR API name → Dropdown option text)
-const BANK_NAME_MAPPING = {
-    'Vietcombank': 'VIETCOMBANK',
-    'Techcombank': 'TECHCOMBANK',
-    'BIDV': 'BIDV BANK',
-    'VietinBank': 'VIETINBANK',
-    'Agribank': 'AGRIBANK',
-    'ACB': 'ACB BANK',
-    'MB': 'MBBANK',
-    'TPBank': 'TPBANK',
-    'VPBank': 'VPBANK',
-    'Sacombank': 'SACOMBANK',
-    'HDBank': 'HD BANK',
-    'VIB': 'VIB BANK',
-    'SHB': 'SHB BANK',
-    'Eximbank': 'EXIMBANK',
-    'MSB': 'MSB BANK',
-    'OCB': 'OCB BANK',
-    'SeABank': 'SEABANK',
-    'Nam A Bank': 'NAMA BANK',
-    'PVcomBank': 'PVCOMBANK',
-    'BacA Bank': 'BAC A BANK',
-    'VietCapital Bank': 'VIET CAPITAL BANK (BVBANK)',
-    'LienVietPostBank': 'LIENVIET BANK',
-    'KienLongBank': 'KIENLONGBANK',
-    'GPBank': 'GP BANK',
-    'PGBank': 'PGBANK',
-    'NCB': 'NCB',
-    'SCB': 'SCB',
-    'VietABank': 'VIETA BANK',
-    'VietBank': 'VIETBANK',
-    'ABBANK': 'ABBANK',
-    'CBBANK': 'CB BANK',
-    'COOPBANK': 'CO OPBANK',
-    'OceanBank': 'OCB BANK',
-    'Shinhan': 'SHINHAN BANK VN',
-    'HSBC': 'HSBC',
-    'StandardChartered': 'SCB',
-    'Citibank': 'CITI',
+// JUN88V2 specific bank mapping (matches exact dropdown text)
+const JUN88V2_BANK_NAME_MAPPING = {
+    'Vietcombank': 'Vietcombank / Ngân hàng Ngoại Thương',
+    'Techcombank': 'Techcom Bank',
+    'BIDV': 'BIDV / Ngân hàng TMCP Đầu tư và Phát triển Việt Nam',
+    'VietinBank': 'VietinBank / Ngân hàng Công Thương',
+    'Agribank': 'Agribank / Ngân hàng Nông nghiệp',
+    'ACB': 'ACB / Ngân hàng Á Châu',
+    'MB': 'MBBank / Ngân hàng Quân Đội',
+    'MBBank': 'MBBank / Ngân hàng Quân Đội',
+    'TPBank': 'TPBank / Ngân hàng Tiên Phong',
+    'VPBank': 'VPBank / Ngân hàng Việt Nam Thịnh Vượng',
+    'Sacombank': 'Sacombank / Ngân hàng Sài Gòn Thương Tín',
+    'HDBank': 'HDBank',
+    'VIB': 'VIB / Ngân hàng Quốc Tế',
+    'SHB': 'SHB / Ngân hàng Sài Gòn-Hà Nội',
+    'Eximbank': 'Eximbank / Ngân hàng Xuất Nhập Khẩu',
+    'MSB': 'MSB / Ngân Hàng Hàng Hải',
+    'OCB': 'OCB / Ngân hàng Phương Đông',
+    'SeABank': 'SeABank / Ngân hàng Đông Nam Á',
+    'NamABank': 'NamABank / Ngân hàng Nam Á',
+    'Nam A Bank': 'NamABank / Ngân hàng Nam Á',
+    'PVcomBank': 'PVcomBank / Ngân hàng Đại Chúng',
+    'BacABank': 'BacABank / Ngân hàng Bắc Á',
+    'BacA Bank': 'BacABank / Ngân hàng Bắc Á',
+    'Viet Capital Bank': 'Viet Capital Bank / Ngân hàng Bản Việt',
+    'VietCapital': 'Viet Capital Bank / Ngân hàng Bản Việt',
+    'LPBank': 'LPBank / Ngân hàng Bưu điện Liên Việt',
+    'LienVietPostBank': 'LPBank / Ngân hàng Bưu điện Liên Việt',
+    'Kien Long Bank': 'Kien Long Bank /  Kiên Long Bank',
+    'KienLongBank': 'Kien Long Bank /  Kiên Long Bank',
+    'GPBank': 'GPBank',
+    'PG Bank': 'PG Bank / Petrolimex',
+    'PGBank': 'PG Bank / Petrolimex',
+    'NCB': 'NCB / Ngân hàng Quốc Dân',
+    'SCB': 'SCB / Ngân hàng Sài Gòn',
+    'VietABank': 'VietABank / Ngân hàng Việt Á',
+    'VietBank': 'VietBank / Việt Nam Thương Tín',
+    'ABBank': 'ABBank / Ngân hàng An Bình',
+    'ABBANK': 'ABBank / Ngân hàng An Bình',
+    'CBBank': 'CBBank / Ngân hàng Xây Dựng',
+    'CBBANK': 'CBBank / Ngân hàng Xây Dựng',
+    'COOPBANK': 'COOPBANK - Ngân hàng Hợp tác xã Việt Nam',
+    'OceanBank': 'OceanBank',
+    'Shinhan Bank': 'Shinhan Bank',
+    'Shinhan': 'Shinhan Bank',
+    'HSBC Bank': 'HSBC Bank',
+    'HSBC': 'HSBC Bank',
+    'Standard Chartered': 'Standard Chartered Bank Limited',
+    'StandardChartered': 'Standard Chartered Bank Limited',
+    'Citibank': 'Citibank',
     'ANZ': 'ANZ BANK',
     'UOB': 'UOB',
-    'HongLeong': 'HONGLEONG BANK',
-    'PublicBank': 'PUBLICBANK',
-    'CIMB': 'CIMB BANK',
-    'KBank': 'KBANK',
-    'Woori': 'WOORI BANK',
+    'Hong Leong Bank': 'Hong Leong Bank',
+    'HongLeong': 'Hong Leong Bank',
+    'CIMB Bank': 'CIMB Bank',
+    'CIMB': 'CIMB Bank',
+    'KASIKORNBANK': 'KASIKORNBANK',
+    'KBank': 'KASIKORNBANK',
+    'Woori Bank': 'Woori Bank',
+    'Woori': 'Woori Bank',
     'DBS': 'DBS',
-    'BAO VIET BANK': 'BAO VIET BANK'
+    'BAOVIET Bank': 'BAOVIET Bank',
+    'BAO VIET BANK': 'BAOVIET Bank',
+    'IBK': 'IBK / Ngân Hàng Công Nghiệp Hàn Quốc',
+    'NongHyup Bank': 'NongHyup Bank',
+    'NongHyup': 'NongHyup Bank',
+    'VRB': 'VRB / Ngân hàng Việt - Nga',
+    'IVB': 'IVB / Indovina Bank',
+    'Indovina': 'IVB / Indovina Bank',
+    'SaigonBank': 'SaigonBank / Sài Gòn Công Thương',
+    'Cake by VPBank': 'Cake by VPBank',
+    'Cake': 'Cake by VPBank',
+    'Liobank by OCB': 'Liobank by OCB',
+    'Liobank': 'Liobank by OCB',
+    'Timo by BVBank': 'Timo by BVBank',
+    'Timo': 'Timo by BVBank',
+    'VBSP': 'VBSP / Ngân hàng Chính sách xã hội',
+    'Vikki by HDBank': 'Vikki by HDBank',
+    'Vikki': 'Vikki by HDBank',
+    'MBV': 'MBV / Ngân hàng Việt Nam Hiện Đại'
 };
 
 class VIPAutomation {
@@ -82,19 +115,19 @@ class VIPAutomation {
                 bank: '/Financial?type=withdraw'
             },
             'jun88': {
-                withdrawPassword: '/Account/ChangeMoneyPassword', // jun88 k cần
+                withdrawPassword: '/Account/ChangeMoneyPassword', //  k cần
                 bank: '/account/withdrawaccounts/bankcards'
             },
             '78win': {
-                withdrawPassword: '/Account/ChangeMoneyPassword',
+                withdrawPassword: '/Account/ChangeMoneyPassword',//  k cần
                 bank: '/account/withdrawaccounts/bankcards'
             },
             'jun88v2': {
-                withdrawPassword: '/Account/ChangeMoneyPassword',
-                bank: '/Financial?type=withdraw'
+                withdrawPassword: '/Account/ChangeMoneyPassword',//  k cần
+                bank: '/myaccount/bankdetails'
             },
             'kjc': {
-                withdrawPassword: '/Account/ChangeMoneyPassword',
+                withdrawPassword: '/Account/ChangeMoneyPassword',//  k cần
                 bank: '/Financial?type=withdraw'
             }
         };
@@ -103,31 +136,108 @@ class VIPAutomation {
     /**
      * Helper: Map bank name từ VietQR API sang dropdown option
      */
-    mapBankName(bankName) {
+    mapBankName(bankName, category = null) {
         if (!bankName) return '';
 
-        // Thử mapping trực tiếp
-        if (BANK_NAME_MAPPING[bankName]) {
-            return BANK_NAME_MAPPING[bankName];
-        }
-
-        // Thử tìm kiếm không phân biệt hoa thường
-        const lowerInput = bankName.toLowerCase();
-        for (const [key, value] of Object.entries(BANK_NAME_MAPPING)) {
-            if (key.toLowerCase() === lowerInput) {
-                return value;
+        // Only use mapping for JUN88V2
+        if (category === 'jun88v2') {
+            // Thử mapping trực tiếp
+            if (JUN88V2_BANK_NAME_MAPPING[bankName]) {
+                return JUN88V2_BANK_NAME_MAPPING[bankName];
             }
-        }
 
-        // Thử tìm kiếm partial match
-        for (const [key, value] of Object.entries(BANK_NAME_MAPPING)) {
-            if (key.toLowerCase().includes(lowerInput) || lowerInput.includes(key.toLowerCase())) {
-                return value;
+            // Thử tìm kiếm không phân biệt hoa thường
+            const lowerInput = bankName.toLowerCase();
+            for (const [key, value] of Object.entries(JUN88V2_BANK_NAME_MAPPING)) {
+                if (key.toLowerCase() === lowerInput) {
+                    return value;
+                }
             }
+
+            // Thử tìm kiếm partial match
+            for (const [key, value] of Object.entries(JUN88V2_BANK_NAME_MAPPING)) {
+                if (key.toLowerCase().includes(lowerInput) || lowerInput.includes(key.toLowerCase())) {
+                    return value;
+                }
+            }
+
+            console.warn(`⚠️ No mapping found for bank: ${bankName}`);
         }
 
-        console.warn(`⚠️ No mapping found for bank: ${bankName}`);
+        // For other categories, return bankName as-is (no mapping)
         return bankName;
+    }
+
+    /**
+     * Helper: Find bank item in dropdown and click it
+     * Logs all available banks for debugging
+     */
+    async selectBankFromDropdown(page, bankName, selector = '.mc-bank-item') {
+        console.log(`🏦 Selecting bank: ${bankName}`);
+
+        const result = await page.evaluate((bankNameToFind, itemSelector) => {
+            const bankItems = document.querySelectorAll(itemSelector);
+            console.log(`📋 Found ${bankItems.length} bank items in dropdown`);
+
+            // Log all available banks for debugging
+            const availableBanks = [];
+            bankItems.forEach((item, index) => {
+                const itemText = item.querySelector('[class*="bank-name"]')?.textContent?.trim() ||
+                    item.textContent?.trim();
+                availableBanks.push(itemText);
+                console.log(`  [${index}] ${itemText}`);
+            });
+
+            let found = false;
+            let selectedBank = null;
+
+            // Try exact match first
+            for (const item of bankItems) {
+                const itemText = item.querySelector('[class*="bank-name"]')?.textContent?.trim().toUpperCase() ||
+                    item.textContent?.trim().toUpperCase();
+                console.log(`  Comparing: "${itemText}" === "${bankNameToFind.toUpperCase()}"`);
+                if (itemText === bankNameToFind.toUpperCase()) {
+                    console.log(`✅ Exact match found: ${itemText}`);
+                    item.click();
+                    found = true;
+                    selectedBank = itemText;
+                    break;
+                }
+            }
+
+            // Try partial match if exact not found
+            if (!found) {
+                for (const item of bankItems) {
+                    const itemText = item.querySelector('[class*="bank-name"]')?.textContent?.trim().toUpperCase() ||
+                        item.textContent?.trim().toUpperCase();
+                    console.log(`  Partial check: "${itemText}".includes("${bankNameToFind.toUpperCase()}")`);
+                    if (itemText && itemText.includes(bankNameToFind.toUpperCase())) {
+                        console.log(`✅ Partial match found: ${itemText}`);
+                        item.click();
+                        found = true;
+                        selectedBank = itemText;
+                        break;
+                    }
+                }
+            }
+
+            // Fallback: select first option
+            if (!found && bankItems.length > 0) {
+                const firstBank = bankItems[0].querySelector('[class*="bank-name"]')?.textContent?.trim() ||
+                    bankItems[0].textContent?.trim();
+                console.warn(`⚠️ Bank not found, selecting first option: ${firstBank}`);
+                bankItems[0].click();
+                selectedBank = firstBank;
+            }
+
+            return {
+                found: found,
+                selectedBank: selectedBank,
+                availableBanks: availableBanks
+            };
+        }, bankName, selector);
+
+        return result;
     }
 
     /**
@@ -148,6 +258,28 @@ class VIPAutomation {
      */
     getRandomDelay(minMs = 2000, maxMs = 10000) {
         return Math.random() * (maxMs - minMs) + minMs;
+    }
+
+    /**
+     * Helper: Send status update to dashboard
+     */
+    async sendStatusUpdate(profileData, status, message) {
+        try {
+            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profileId: profileData.profileId,
+                    username: profileData.username,
+                    status: status,
+                    message: message,
+                    timestamp: new Date().toISOString()
+                })
+            });
+        } catch (err) {
+            console.warn('⚠️ Failed to send status update:', err.message);
+        }
     }
 
     /**
@@ -612,6 +744,30 @@ class VIPAutomation {
             console.log(`📌 Keeping shared browser context open for inspection`);
         }
 
+        // Send completed status to dashboard
+        try {
+            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+            const successCount = results.filter(r => r.register?.success || r.addBank?.success || r.checkPromo?.success).length;
+            const totalCount = results.length;
+
+            await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    profileId: profileData.profileId,
+                    username: profileData.username,
+                    status: 'completed',
+                    category: category,
+                    message: `✅ Hoàn thành: ${successCount}/${totalCount} site(s) thành công`,
+                    results: results,
+                    timestamp: new Date().toISOString()
+                })
+            });
+            console.log('📤 Sent completed status to dashboard');
+        } catch (err) {
+            console.warn('⚠️ Failed to send completed status:', err.message);
+        }
+
         return results;
     }
 
@@ -913,32 +1069,8 @@ class VIPAutomation {
                 console.log('⏳ Waiting for Cloudflare to process token...');
                 await new Promise(r => setTimeout(r, 3000));
 
-                // Now click the "Đăng Ký" button
-                console.log('🔐 Clicking "Đăng Ký" button to enter registration form...');
-                try {
-                    const clicked = await page.evaluate(() => {
-                        // Search for button with text "Đăng Ký"
-                        const buttons = document.querySelectorAll('div, button');
-                        for (const btn of buttons) {
-                            if (btn.textContent.trim() === 'Đăng Ký' || btn.textContent.includes('Đăng Ký')) {
-                                btn.click();
-                                console.log('✅ Clicked "Đăng Ký" button');
-                                return true;
-                            }
-                        }
-                        return false;
-                    });
-
-                    if (clicked) {
-                        // Wait for form to load
-                        await new Promise(r => setTimeout(r, 3000));
-                        console.log('✅ Registration form loaded');
-                    } else {
-                        console.warn('⚠️ Could not find "Đăng Ký" button');
-                    }
-                } catch (error) {
-                    console.warn('⚠️ Error clicking "Đăng Ký" button:', error.message);
-                }
+                // JUN88V2: Form is now ready, no need to click button anymore
+                console.log('✅ Registration form ready, proceeding to fill form...');
             }
 
             // Gọi form filler riêng cho category
@@ -955,8 +1087,10 @@ class VIPAutomation {
             }
 
             // Solve captcha nếu có API key
+            // Skip captcha for JUN88V2 (no captcha after form fill)
+            const shouldSolveCaptcha = category !== 'jun88v2';
             const apiKey = this.settings?.captchaApiKey || process.env.CAPTCHA_API_KEY;
-            if (apiKey) {
+            if (apiKey && shouldSolveCaptcha) {
                 console.log('🎵 Attempting to solve captcha...');
                 const captchaSolved = await this.solveCaptchaOnPage(page, apiKey);
                 if (!captchaSolved) {
@@ -966,6 +1100,8 @@ class VIPAutomation {
                 const captchaDelay = category === 'abcvip' ? 10000 : 3000;
                 console.log(`⏳ Waiting ${captchaDelay}ms after captcha solve...`);
                 await new Promise(r => setTimeout(r, captchaDelay));
+            } else if (!shouldSolveCaptcha) {
+                console.log('⏭️ Skipping captcha for JUN88V2 (no captcha after form fill)');
             } else {
                 console.warn('⚠️ No captcha API key provided');
             }
@@ -987,8 +1123,8 @@ class VIPAutomation {
                 });
                 await new Promise(r => setTimeout(r, 1500));
 
-                // Random delay 15-35s before submit (JUN88V2 needs more time for Cloudflare)
-                const delayBeforeSubmit = this.getRandomDelay(15000, 35000);
+                // Random delay 5-15s before submit (JUN88V2 needs more time for Cloudflare)
+                const delayBeforeSubmit = this.getRandomDelay(5000, 15000);
                 console.log(`⏳ JUN88 anti-bot: Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
                 await new Promise(r => setTimeout(r, delayBeforeSubmit));
             } else {
@@ -1206,9 +1342,46 @@ class VIPAutomation {
                 await new Promise(r => setTimeout(r, 3000));
             }
 
+            // Send status update to dashboard
+            try {
+                const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profileId: profileData.profileId,
+                        username: profileData.username,
+                        status: 'running',
+                        message: `✅ Đăng ký thành công - Chuyển sang thêm bank...`,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to send register status:', err.message);
+            }
+
             return { success: true, message: 'Register completed successfully', page };
         } catch (error) {
             console.error(`❌ Register Error:`, error.message);
+
+            // Send error status to dashboard
+            try {
+                const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profileId: profileData.profileId,
+                        username: profileData.username,
+                        status: 'error',
+                        message: `❌ Đăng ký thất bại: ${error.message}`,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to send error status:', err.message);
+            }
+
             return { success: false, error: error.message };
         }
         // Note: Keep page open for inspection/debugging
@@ -1468,6 +1641,25 @@ class VIPAutomation {
 
             console.log(`✅ Bank result:`, result);
 
+            // Send status update to dashboard
+            try {
+                const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                const statusMsg = result.success ? '✅ Thêm bank thành công' : `❌ Thêm bank thất bại: ${result.message}`;
+                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profileId: profileData.profileId,
+                        username: profileData.username,
+                        status: result.success ? 'running' : 'error',
+                        message: statusMsg,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to send addbank status:', err.message);
+            }
+
             // Mark tab as completed in rotator
             if (result.success) {
                 tabRotator.complete(page);
@@ -1477,8 +1669,23 @@ class VIPAutomation {
         } catch (error) {
             console.error(`❌ OKVIP Add Bank Error:`, error.message);
 
-            // Mark tab as completed even on error
-            tabRotator.complete(page);
+            // Send error status to dashboard
+            try {
+                const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+                await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        profileId: profileData.profileId,
+                        username: profileData.username,
+                        status: 'error',
+                        message: `❌ Thêm bank thất bại: ${error.message}`,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (err) {
+                console.warn('⚠️ Failed to send error status:', err.message);
+            }
 
             return { success: false, error: error.message };
         }
@@ -1736,7 +1943,7 @@ class VIPAutomation {
     }
 
     /**
-     * 78WIN Register Form (Form 2 - playerid, password, firstname, mobile - NO EMAIL)
+     * 78WIN Register Form (Form 2 - playerid, password, firstname, email, mobile)
      * Anti-bot measures: slow typing, delays between fields, human-like interactions
      */
     async fill78WINRegisterForm(page, profileData) {
@@ -1759,8 +1966,12 @@ class VIPAutomation {
                 { selector: 'input[id="playerid"]', value: profileData.username, label: 'username' },
                 { selector: 'input[id="password"]', value: profileData.password, label: 'password' },
                 { selector: 'input[id="firstname"]', value: profileData.fullname || '', label: 'fullname' },
+                { selector: 'input[id="email"]', value: profileData.email || '', label: 'email' },
                 { selector: 'input[type="tel"]', value: phone, label: 'mobile' }
             ];
+
+            console.log(`🔍 DEBUG: profileData.email = "${profileData.email}"`);
+            console.log(`🔍 DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
 
             await filler.fillMultipleFields(page, fields, {
                 charDelay: 150,
@@ -1858,9 +2069,8 @@ class VIPAutomation {
             // Simulate human-like interactions
             await filler.simulateHumanInteraction(page);
 
-            // Click on first field to show interest
-            await page.click('input[id="fullname"]').catch(() => null);
-            await new Promise(r => setTimeout(r, 600));
+            // Skip clicking, go directly to filling form
+            console.log('📝 Preparing to fill form fields...');
 
             // Prepare phone (remove leading 0)
             let phone = profileData.phone || '';
@@ -1869,18 +2079,28 @@ class VIPAutomation {
             }
 
             // Fill fields using common filler
+            // JUN88V2 uses id selectors
             const fields = [
                 { selector: 'input[id="fullname"]', value: profileData.fullname || '', label: 'fullname' },
                 { selector: 'input[id="username"]', value: profileData.username, label: 'username' },
                 { selector: 'input[id="password"]', value: profileData.password, label: 'password' },
-                { selector: 'input[placeholder*="Số điện thoại"]', value: phone, label: 'mobile' }
+                { selector: 'input[pattern="[0-9]*"]', value: phone, label: 'mobile' }
             ];
 
-            await filler.fillMultipleFields(page, fields, {
-                charDelay: 150,
-                beforeFocus: 500,
-                afterField: 1200
-            });
+            console.log(`🔍 DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
+
+            try {
+                console.log('📝 Starting to fill form fields...');
+                await filler.fillMultipleFields(page, fields, {
+                    charDelay: 150,
+                    beforeFocus: 500,
+                    afterField: 1200
+                });
+                console.log('✅ Form fields filled');
+            } catch (e) {
+                console.error('❌ Error filling form fields:', e.message);
+                throw e;
+            }
 
             // Trigger change events for all fields (React compatibility)
             await page.evaluate(() => {
@@ -1888,7 +2108,6 @@ class VIPAutomation {
                     'input[id="fullname"]',
                     'input[id="username"]',
                     'input[id="password"]',
-                    'input[type="text"][inputmode="numeric"]',
                     'input[pattern="[0-9]*"]'
                 ];
 
@@ -1982,41 +2201,9 @@ class VIPAutomation {
 
             await new Promise(r => setTimeout(r, 1500));
 
-            // Select bank from dropdown
+            // Select bank from dropdown using helper function
             const mappedBankName = this.mapBankName(profileData.bankName);
-            console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
-
-            await page.evaluate((bankName) => {
-                const bankItems = document.querySelectorAll('.mc-bank-item');
-                let found = false;
-
-                // Try exact match first
-                for (const item of bankItems) {
-                    const itemText = item.querySelector('.mc-bank-name')?.textContent?.trim().toUpperCase();
-                    if (itemText === bankName.toUpperCase()) {
-                        item.click();
-                        found = true;
-                        break;
-                    }
-                }
-
-                // Try partial match if exact not found
-                if (!found) {
-                    for (const item of bankItems) {
-                        const itemText = item.querySelector('.mc-bank-name')?.textContent?.trim().toUpperCase();
-                        if (itemText.includes(bankName.toUpperCase())) {
-                            item.click();
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!found && bankItems.length > 0) {
-                    console.warn(`⚠️ Bank not found, selecting first option`);
-                    bankItems[0].click();
-                }
-            }, mappedBankName);
+            await this.selectBankFromDropdown(page, mappedBankName, '.mc-bank-item');
 
             await new Promise(r => setTimeout(r, 1500));
 
@@ -2223,41 +2410,9 @@ class VIPAutomation {
 
             await new Promise(r => setTimeout(r, 1500));
 
-            // Step 4: Select bank from dropdown
+            // Step 4: Select bank from dropdown using helper function
             const mappedBankName = this.mapBankName(profileData.bankName);
-            console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
-
-            await page.evaluate((bankName) => {
-                const bankItems = document.querySelectorAll('.mc-bank-item, [class*="bank-item"]');
-                let found = false;
-
-                // Try exact match first
-                for (const item of bankItems) {
-                    const itemText = item.querySelector('.mc-bank-name, [class*="bank-name"]')?.textContent?.trim().toUpperCase();
-                    if (itemText === bankName.toUpperCase()) {
-                        item.click();
-                        found = true;
-                        break;
-                    }
-                }
-
-                // Try partial match if exact not found
-                if (!found) {
-                    for (const item of bankItems) {
-                        const itemText = item.querySelector('.mc-bank-name, [class*="bank-name"]')?.textContent?.trim().toUpperCase();
-                        if (itemText && itemText.includes(bankName.toUpperCase())) {
-                            item.click();
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!found && bankItems.length > 0) {
-                    console.warn(`⚠️ Bank not found, selecting first option`);
-                    bankItems[0].click();
-                }
-            }, mappedBankName);
+            await this.selectBankFromDropdown(page, mappedBankName, '.mc-bank-item');
 
             await new Promise(r => setTimeout(r, 1500));
 
@@ -2414,17 +2569,20 @@ class VIPAutomation {
             console.log(`⏳ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
             await new Promise(r => setTimeout(r, delayBeforeAddBank));
 
-            // Step 1: Click "Thêm ngân hàng +" button to show form
-            console.log(`🔍 Looking for "Thêm ngân hàng +" button...`);
+            // Step 1: Click "Thêm tài khoản ngân hàng" button to show form
+            console.log(`🔍 Looking for "Thêm tài khoản ngân hàng" button...`);
             const addBankButtonClicked = await page.evaluate(() => {
-                const buttons = document.querySelectorAll('button');
-                let addBankBtn = null;
+                // Try specific selector first
+                let addBankBtn = document.querySelector('button.standard-add-form-button');
 
-                // Find button with text "Thêm ngân hàng"
-                for (const btn of buttons) {
-                    if (btn.textContent.includes('Thêm ngân hàng')) {
-                        addBankBtn = btn;
-                        break;
+                // Fallback: search by text
+                if (!addBankBtn) {
+                    const buttons = document.querySelectorAll('button');
+                    for (const btn of buttons) {
+                        if (btn.textContent.includes('Thêm') && btn.textContent.includes('ngân hàng')) {
+                            addBankBtn = btn;
+                            break;
+                        }
                     }
                 }
 
@@ -2436,57 +2594,126 @@ class VIPAutomation {
             });
 
             if (!addBankButtonClicked) {
-                console.warn('⚠️ "Thêm ngân hàng +" button not found');
+                console.warn('⚠️ "Thêm tài khoản ngân hàng" button not found');
             } else {
-                console.log('✅ Clicked "Thêm ngân hàng +" button');
+                console.log('✅ Clicked "Thêm tài khoản ngân hàng" button');
             }
 
             // Wait for form to appear
-            await new Promise(r => setTimeout(r, 2000));
-
-            // Step 2: Wait for bank form to load
-            try {
-                await page.waitForSelector('input[id="bankid"]', { timeout: 5000 });
-                console.log('✅ Bank form loaded');
-            } catch (e) {
-                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
-            }
             await new Promise(r => setTimeout(r, 1500));
+
+            // Step 2: Wait for dropdown to be ready
+            try {
+                await page.waitForSelector('div.standard-select', { timeout: 5000 });
+                console.log('✅ Bank dropdown field ready');
+            } catch (e) {
+                console.warn('⚠️ Bank dropdown field not found');
+            }
 
             // Step 3: Click bank field to open dropdown
             console.log(`🏦 Opening bank dropdown...`);
-            await page.evaluate(() => {
-                const bankField = document.querySelector('input[id="bankid"]');
-                if (bankField) {
-                    bankField.click();
+            const dropdownOpened = await page.evaluate(() => {
+                // JUN88V2: Find the modal first, then click the div.standard-select inside it
+                const modal = document.querySelector('div.standard-popup-modal-body');
+                console.log(`🔍 Modal found:`, modal ? 'YES' : 'NO');
+
+                if (!modal) {
+                    console.warn('⚠️ Modal not found');
+                    return false;
                 }
+
+                const bankSelect = modal.querySelector('div.standard-select');
+
+                console.log(`🔍 Bank select found:`, bankSelect ? 'YES' : 'NO');
+
+                if (bankSelect) {
+                    console.log(`�  Bank select text:`, bankSelect.textContent.substring(0, 50));
+                    console.log(`📍 Bank select position:`, {
+                        top: bankSelect.offsetTop,
+                        left: bankSelect.offsetLeft,
+                        width: bankSelect.offsetWidth,
+                        height: bankSelect.offsetHeight
+                    });
+                    console.log(`📍 Bank select visible:`, bankSelect.offsetParent !== null);
+                    console.log(`📍 Bank select display:`, window.getComputedStyle(bankSelect).display);
+
+                    bankSelect.click();
+                    console.log(`✅ Clicked bank select`);
+
+                    // Check if dropdown appeared
+                    setTimeout(() => {
+                        const dropdown = document.querySelector('ul.dropdown-list-ul');
+                        console.log(`🔍 Dropdown appeared after click:`, dropdown ? 'YES' : 'NO');
+                    }, 500);
+
+                    return true;
+                }
+                return false;
             });
 
-            await new Promise(r => setTimeout(r, 1500));
+            if (!dropdownOpened) {
+                console.warn('⚠️ Could not click bank dropdown');
+            }
+
+            await new Promise(r => setTimeout(r, 2000));
 
             // Step 4: Select bank from dropdown
-            const mappedBankName = this.mapBankName(profileData.bankName);
+            const mappedBankName = this.mapBankName(profileData.bankName, 'jun88v2');
             console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
 
-            await page.evaluate((bankName) => {
-                const bankItems = document.querySelectorAll('.mc-bank-item, [class*="bank-item"]');
+            const bankSelected = await page.evaluate((bankName) => {
+                // JUN88V2 uses li items in dropdown-list-ul
+                const bankItems = document.querySelectorAll('ul.dropdown-list-ul li');
+                console.log(`📋 Found ${bankItems.length} bank items in dropdown`);
+
+                // Debug: log all available banks
+                if (bankItems.length === 0) {
+                    console.warn(`⚠️ No bank items found with selector 'ul.dropdown-list-ul li'`);
+                    return false;
+                }
+
+                // Log all available banks for debugging
+                console.log(`📋 Available banks:`);
+                bankItems.forEach((item, idx) => {
+                    console.log(`  [${idx}] ${item.textContent.trim()}`);
+                });
+
                 let found = false;
 
-                // Try exact match first
+                // Try exact match first (full text match)
                 for (const item of bankItems) {
-                    const itemText = item.querySelector('.mc-bank-name, [class*="bank-name"]')?.textContent?.trim().toUpperCase();
-                    if (itemText === bankName.toUpperCase()) {
+                    const itemText = item.textContent.trim();
+                    if (itemText === bankName) {
+                        console.log(`✅ Exact match found: ${itemText}`);
                         item.click();
                         found = true;
                         break;
                     }
                 }
 
-                // Try partial match if exact not found
+                // Try matching the bank code/short name (before the /)
                 if (!found) {
                     for (const item of bankItems) {
-                        const itemText = item.querySelector('.mc-bank-name, [class*="bank-name"]')?.textContent?.trim().toUpperCase();
-                        if (itemText && itemText.includes(bankName.toUpperCase())) {
+                        const itemText = item.textContent.trim();
+                        const bankCode = itemText.split('/')[0].trim().toUpperCase();
+                        const searchName = bankName.toUpperCase();
+
+                        console.log(`  Checking code: "${bankCode}" vs "${searchName}"`);
+                        if (bankCode === searchName) {
+                            console.log(`✅ Code match found: ${itemText}`);
+                            item.click();
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+
+                // Try partial match as last resort
+                if (!found) {
+                    for (const item of bankItems) {
+                        const itemText = item.textContent.trim();
+                        if (itemText.toUpperCase().includes(bankName.toUpperCase())) {
+                            console.log(`✅ Partial match found: ${itemText}`);
                             item.click();
                             found = true;
                             break;
@@ -2497,27 +2724,34 @@ class VIPAutomation {
                 if (!found && bankItems.length > 0) {
                     console.warn(`⚠️ Bank not found, selecting first option`);
                     bankItems[0].click();
+                    return true;
                 }
+
+                return found;
             }, mappedBankName);
 
-            await new Promise(r => setTimeout(r, 1500));
+            if (!bankSelected) {
+                console.warn('⚠️ Bank selection may have failed');
+            }
 
-            // Step 5: Fill account number and password - use slow typing
-            console.log(`📝 Filling account and password...`);
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Step 5: Fill account number - use slow typing
+            console.log(`📝 Filling account number...`);
 
             // Field 1: Account number
             try {
                 console.log(`💳 Filling account number: ${profileData.accountNumber}`);
-                await page.focus('input[id="bankaccount"]');
+                await page.focus('input[id="accountNumber"]');
                 await new Promise(r => setTimeout(r, 300));
-                await page.type('input[id="bankaccount"]', profileData.accountNumber, { delay: 100 });
+                await page.type('input[id="accountNumber"]', profileData.accountNumber, { delay: 100 });
                 await new Promise(r => setTimeout(r, 800));
                 console.log(`✅ Account number filled`);
             } catch (error) {
                 console.warn(`⚠️ Error filling account number:`, error.message);
                 // Fallback: use evaluate
                 await page.evaluate((accountNumber) => {
-                    const accountField = document.querySelector('input[id="bankaccount"]');
+                    const accountField = document.querySelector('input[id="accountNumber"]');
                     if (accountField) {
                         accountField.value = accountNumber;
                         accountField.dispatchEvent(new Event('input', { bubbles: true }));
@@ -2527,31 +2761,9 @@ class VIPAutomation {
                 }, profileData.accountNumber);
             }
 
-            // Field 2: Password
-            try {
-                console.log(`🔐 Filling password...`);
-                await page.focus('input[id="password"]');
-                await new Promise(r => setTimeout(r, 300));
-                await page.type('input[id="password"]', profileData.password, { delay: 100 });
-                await new Promise(r => setTimeout(r, 800));
-                console.log(`✅ Password filled`);
-            } catch (error) {
-                console.warn(`⚠️ Error filling password:`, error.message);
-                // Fallback: use evaluate
-                await page.evaluate((password) => {
-                    const passwordField = document.querySelector('input[id="password"]');
-                    if (passwordField) {
-                        passwordField.value = password;
-                        passwordField.dispatchEvent(new Event('input', { bubbles: true }));
-                        passwordField.dispatchEvent(new Event('change', { bubbles: true }));
-                        passwordField.dispatchEvent(new Event('blur', { bubbles: true }));
-                    }
-                }, profileData.password);
-            }
-
             await new Promise(r => setTimeout(r, 1500));
 
-            // Step 6: Submit form - find OK button
+            // Step 6: Submit form - find submit button
             console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
 
             // Add delay before submit
@@ -2560,40 +2772,36 @@ class VIPAutomation {
             await new Promise(r => setTimeout(r, delayBeforeSubmit));
 
             const submitSuccess = await page.evaluate(() => {
-                // Find OK button
-                const buttons = document.querySelectorAll('button');
-                let submitBtn = null;
+                // JUN88V2: Click button#add-bank-btn (id="add-bank-btn", class="standard-submit-form-button")
+                let submitBtn = document.querySelector('button#add-bank-btn');
 
-                // Try to find button with text "OK"
-                for (const btn of buttons) {
-                    if (btn.textContent.trim().toUpperCase() === 'OK') {
-                        submitBtn = btn;
-                        break;
-                    }
-                }
-
-                // Fallback: find button[type="button"]
                 if (!submitBtn) {
-                    submitBtn = document.querySelector('button[type="button"]');
+                    console.warn('⚠️ button#add-bank-btn not found, trying alternative selectors...');
+                    // Fallback: find by class
+                    submitBtn = document.querySelector('button.standard-submit-form-button');
                 }
 
-                if (submitBtn) {
-                    // Scroll button into view
-                    submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (!submitBtn) {
+                    console.warn('⚠️ button.standard-submit-form-button not found');
+                    return false;
+                }
 
-                    // Click with delay
-                    submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                console.log(`✅ Found submit button: ${submitBtn.id || submitBtn.className}`);
+
+                // Scroll button into view
+                submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Click with delay
+                submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
+                setTimeout(() => {
+                    submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
                     setTimeout(() => {
-                        submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-                        setTimeout(() => {
-                            submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-                            submitBtn.click();
-                            submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-                        }, 100);
-                    }, 200);
-                    return true;
-                }
-                return false;
+                        submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                        submitBtn.click();
+                        submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+                    }, 100);
+                }, 200);
+                return true;
             });
 
             if (!submitSuccess) {
@@ -2930,6 +3138,7 @@ class VIPAutomation {
             // Register form fields (formcontrolname)
             const accountField = document.querySelector('input[formcontrolname="account"]');
             const passwordField = document.querySelector('input[formcontrolname="password"]');
+            const confirmPasswordField = document.querySelector('input[formcontrolname="confirmPassword"]');
             const nameField = document.querySelector('input[formcontrolname="name"]');
             const mobileField = document.querySelector('input[formcontrolname="mobile"]');
             const emailField = document.querySelector('input[formcontrolname="email"]');
@@ -2938,6 +3147,7 @@ class VIPAutomation {
 
             if (accountField) accountField.value = data.username;
             if (passwordField) passwordField.value = data.password;
+            if (confirmPasswordField) confirmPasswordField.value = data.password; // Same as password
             if (nameField) nameField.value = data.fullname || '';
             if (mobileField) mobileField.value = data.phone || '';
             if (emailField) emailField.value = data.email || '';
@@ -2945,7 +3155,7 @@ class VIPAutomation {
             if (agreeCheckbox) agreeCheckbox.checked = true;
 
             // Trigger change events
-            [accountField, passwordField, nameField, mobileField, emailField, checkCodeField, agreeCheckbox].forEach(field => {
+            [accountField, passwordField, confirmPasswordField, nameField, mobileField, emailField, checkCodeField, agreeCheckbox].forEach(field => {
                 if (field) {
                     field.dispatchEvent(new Event('input', { bubbles: true }));
                     field.dispatchEvent(new Event('change', { bubbles: true }));
@@ -2990,13 +3200,18 @@ class VIPAutomation {
                     },
                     {
                         name: 'MB66',
-                        registerUrl: 'https://m.wtyurfuijkxcvklrhyli3imxjuuflegmgkiow3i.com/Account/Register',
+                        registerUrl: 'https://www.mb665.zone/Account/Register',
                         checkPromoUrl: 'https://ttkm-mb66okvip02.pages.dev/?promo_id=FREE66'
                     },
                     {
                         name: '789BET',
-                        registerUrl: 'https://m.hsdh99hjsbcnjiufkxuuwvg.com/Account/Register',
+                        registerUrl: 'https://m.hsdh99hjsbcnjiufkxuuwvg.com/Account/Register?app=1',
                         checkPromoUrl: 'https://ttkm789bet04.pages.dev/khuyenmai/?promo_id=FR58K'
+                    },
+                    {
+                        name: '8KBET',
+                        registerUrl: 'https://m.8k0119a.top/Account/Register',
+                        checkPromoUrl: 'https://google3zc888k.buzz/'
                     }
                 ]
             },
@@ -3079,7 +3294,7 @@ class VIPAutomation {
                 sites: [
                     {
                         name: 'JUN88V2',
-                        registerUrl: 'https://www.ufhtoiklhkfkjguhd7eoij8icxhkjk9.com/signup',
+                        registerUrl: 'https://www.ufhtoiklhkfkjguhd7eoij8icxhkjk9.com/vi-vn/register',
                         checkPromoUrl: 'https://jun88ok99.com/?promo_id=FR58'
                     }
                 ]
@@ -3175,8 +3390,11 @@ class VIPAutomation {
                 { selector: 'input[id="password"]', value: profileData.password, label: 'password' },
                 { selector: 'input[id="firstname"]', value: profileData.fullname || '', label: 'fullname' },
                 { selector: 'input[id="email"]', value: profileData.email || '', label: 'email' },
-                { selector: 'input[id="mobile"]', value: phone, label: 'mobile' }
+                { selector: 'input[type="tel"]', value: phone, label: 'mobile' }
             ];
+
+            console.log(`🔍 DEBUG: profileData.email = "${profileData.email}"`);
+            console.log(`🔍 DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
 
             await filler.fillMultipleFields(page, fields, {
                 charDelay: 150,
@@ -3273,7 +3491,8 @@ class VIPAutomation {
                 domain.includes('hi88') || domain.includes('f8bet') ||
                 domain.includes('shbet') || domain.includes('tigerstorm') ||
                 domain.includes('new88') || domain.includes('mb66') ||
-                domain.includes('789bet')) {
+                domain.includes('789bet') || domain.includes('8k0119a') ||
+                domain.includes('8kbet')) {
                 return 'okvip';
             }
 

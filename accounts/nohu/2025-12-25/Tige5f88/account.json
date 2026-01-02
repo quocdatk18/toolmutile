@@ -1,0 +1,43 @@
+{
+  "username": "Tige5f88",
+  "password": "mxf885dg",
+  "withdrawPassword": "193434",
+  "fullname": "LA THANH HUYEN TRAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DA NANG",
+    "accountNumber": "9686966075384631",
+    "accountHolder": "LA THANH HUYEN TRAN"
+  },
+  "registeredAt": "2025-12-25T10:48:04.828Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-25T10:48:04.828Z",
+  "bankVerified": false
+}

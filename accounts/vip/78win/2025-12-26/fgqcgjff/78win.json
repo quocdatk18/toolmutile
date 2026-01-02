@@ -1,0 +1,22 @@
+{
+  "username": "fgqcgjff",
+  "password": "xy5o1co2",
+  "withdrawPassword": "747587",
+  "fullname": "CHUNG THANH NHA UYEN",
+  "email": "ah2nu5@gmail.com",
+  "phone": "0993189701",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "9686968578784516",
+    "accountHolder": "CHUNG THANH NHA UYEN"
+  },
+  "registeredAt": "2025-12-26T08:45:56.779Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool"
+}

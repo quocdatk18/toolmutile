@@ -1,0 +1,43 @@
+{
+  "username": "WolfBlade9ff",
+  "password": "gf5047b7i",
+  "withdrawPassword": "509979",
+  "fullname": "TRUONG TUAN MINH TIEU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "VUNG TAU",
+    "accountNumber": "10368048107572996",
+    "accountHolder": "TRUONG TUAN MINH TIEU"
+  },
+  "registeredAt": "2025-12-28T07:11:37.914Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T07:11:37.914Z",
+  "bankVerified": false
+}

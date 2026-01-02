@@ -1,0 +1,43 @@
+{
+  "username": "LionBlade1vs",
+  "password": "uar284w6",
+  "withdrawPassword": "147926",
+  "fullname": "PHAM XUAN TY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10362048108221135",
+    "accountHolder": "PHAM XUAN TY"
+  },
+  "registeredAt": "2026-01-02T10:28:54.653Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T10:28:54.653Z",
+  "bankVerified": false
+}

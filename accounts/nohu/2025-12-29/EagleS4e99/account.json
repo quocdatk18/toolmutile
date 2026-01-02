@@ -1,0 +1,43 @@
+{
+  "username": "EagleS4e99",
+  "password": "d53ahu7khp2j",
+  "withdrawPassword": "653725",
+  "fullname": "nguyen quoc dat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "DA NANG",
+    "accountNumber": "640684069",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-28T20:22:09.545Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T20:22:09.545Z",
+  "bankVerified": false
+}

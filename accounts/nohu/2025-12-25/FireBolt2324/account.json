@@ -1,0 +1,43 @@
+{
+  "username": "FireBolt2324",
+  "password": "ddez36reh6i",
+  "withdrawPassword": "633071",
+  "fullname": "MUC DA THAO MY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BIEN HOA",
+    "accountNumber": "9686965917943330",
+    "accountHolder": "MUC DA THAO MY"
+  },
+  "registeredAt": "2025-12-25T10:50:53.453Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-25T10:50:53.453Z",
+  "bankVerified": false
+}

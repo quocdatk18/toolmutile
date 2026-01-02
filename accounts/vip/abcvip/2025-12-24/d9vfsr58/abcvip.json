@@ -1,0 +1,23 @@
+{
+  "username": "d9vfsr58",
+  "password": "h4a657s89o9",
+  "withdrawPassword": "271422",
+  "fullname": "HOANG THANH PHONG",
+  "email": "8g59q7@gmail.com",
+  "phone": "0993186475",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106925526",
+    "accountHolder": "HOANG THANH PHONG"
+  },
+  "registeredAt": "2025-12-23T18:29:00.330Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,22 @@
+{
+  "username": "ggb5hn9",
+  "password": "5ikjhlx1y",
+  "withdrawPassword": "737431",
+  "fullname": "VU VAN HUNG",
+  "email": "gmfw5@gmail.com",
+  "phone": "0908473222",
+  "bank": {
+    "name": "PublicBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "29449252502089",
+    "accountHolder": "VU VAN HUNG"
+  },
+  "registeredAt": "2025-12-29T06:56:27.189Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

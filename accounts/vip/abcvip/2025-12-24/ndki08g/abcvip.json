@@ -1,0 +1,23 @@
+{
+  "username": "ndki08g",
+  "password": "g2dlblihx4",
+  "withdrawPassword": "722930",
+  "fullname": "DANG MINH MINH",
+  "email": "ebjyirt@gmail.com",
+  "phone": "0903189170",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106932563",
+    "accountHolder": "DANG MINH MINH"
+  },
+  "registeredAt": "2025-12-23T21:15:33.332Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

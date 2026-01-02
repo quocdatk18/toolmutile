@@ -1,0 +1,43 @@
+{
+  "username": "Tign2wer7",
+  "password": "34usj3zr",
+  "withdrawPassword": "734579",
+  "fullname": "DUONG HUONG CUONG DAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10361048108098556",
+    "accountHolder": "DUONG HUONG CUONG DAM"
+  },
+  "registeredAt": "2026-01-01T01:42:30.003Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-01T01:42:30.003Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "Eagle4ry888",
+  "password": "86n1mi1tmm3",
+  "withdrawPassword": "845378",
+  "fullname": "PHAN QUANG ANH QUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10365048107093000",
+    "accountHolder": "PHAN QUANG ANH QUY"
+  },
+  "registeredAt": "2025-12-24T18:56:56.408Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T18:56:56.408Z",
+  "bankVerified": false
+}

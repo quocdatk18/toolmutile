@@ -1,0 +1,22 @@
+{
+  "username": "h7n1nbcf",
+  "password": "asav5z63",
+  "withdrawPassword": "904677",
+  "fullname": "VO QUANG TAM",
+  "email": "u3z37kj@gmail.com",
+  "phone": "0996753299",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "702597263010",
+    "accountHolder": "VO QUANG TAM"
+  },
+  "registeredAt": "2025-12-29T06:46:43.828Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

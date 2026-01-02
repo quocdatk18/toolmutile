@@ -1,0 +1,43 @@
+{
+  "username": "WolfBolt9v12",
+  "password": "w3c7v3c1y",
+  "withdrawPassword": "233345",
+  "fullname": "nguyenquoc dat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "CAN THO",
+    "accountNumber": "140694070",
+    "accountHolder": "nguyenquoc dat"
+  },
+  "registeredAt": "2025-12-30T12:21:17.679Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-30T12:21:17.679Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "DragonS3m1",
+  "password": "f1d3zhc0qy4r",
+  "withdrawPassword": "851788",
+  "fullname": "TRAN NHU KIEN AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10368048107540904",
+    "accountHolder": "TRAN NHU KIEN AN"
+  },
+  "registeredAt": "2025-12-27T23:13:27.045Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T23:13:27.045Z",
+  "bankVerified": false
+}

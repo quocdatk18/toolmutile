@@ -1,0 +1,22 @@
+{
+  "username": "ntkxqegg",
+  "password": "mms6s6pnuq1",
+  "withdrawPassword": "211563",
+  "fullname": "LE ANH PHONG",
+  "email": "vln5xyl@gmail.com",
+  "phone": "0952848678",
+  "bank": {
+    "name": "SHB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "73306964335",
+    "accountHolder": "LE ANH PHONG"
+  },
+  "registeredAt": "2025-12-29T06:32:38.519Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

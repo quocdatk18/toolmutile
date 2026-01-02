@@ -1,0 +1,43 @@
+{
+  "username": "WolfPower888b",
+  "password": "b6fmit6di21",
+  "withdrawPassword": "294629",
+  "fullname": "BUI VOIN LUOYEN HOI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DA NANG",
+    "accountNumber": "962321223680246",
+    "accountHolder": "BUI VOIN LUOYEN HOI"
+  },
+  "registeredAt": "2025-12-23T05:47:09.765Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T05:47:09.765Z",
+  "bankVerified": false
+}

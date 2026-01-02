@@ -1,0 +1,22 @@
+{
+  "username": "cjf5qtff",
+  "password": "lk5b0k82i",
+  "withdrawPassword": "790629",
+  "fullname": "LE ANH HAI",
+  "email": "nnx49a@gmail.com",
+  "phone": "0972970154",
+  "bank": {
+    "name": "VIB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "85673879900",
+    "accountHolder": "LE ANH HAI"
+  },
+  "registeredAt": "2025-12-29T06:53:35.155Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

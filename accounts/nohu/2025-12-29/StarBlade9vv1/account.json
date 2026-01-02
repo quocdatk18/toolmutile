@@ -1,0 +1,43 @@
+{
+  "username": "StarBlade9vv1",
+  "password": "k6hc67mq4z",
+  "withdrawPassword": "846796",
+  "fullname": "NGUYEN THANH PHONG QUANG PHUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HO CHI MINH",
+    "accountNumber": "96959403103",
+    "accountHolder": "NGUYEN THANH PHONG QUANG PHUC"
+  },
+  "registeredAt": "2025-12-28T22:27:01.578Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T22:27:01.578Z",
+  "bankVerified": false
+}

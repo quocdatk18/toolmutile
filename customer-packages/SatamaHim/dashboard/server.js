@@ -66,6 +66,15 @@ try {
 }
 
 // ============================================
+// MAIN ROUTES
+// ============================================
+
+// Main dashboard page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ============================================
 // API ROUTES
 // ============================================
 
@@ -218,7 +227,8 @@ app.get('/api/profiles/all', async (req, res) => {
             params: {
                 is_local: false,
                 limit: limit,
-                offset: offset
+                offset: offset,
+                folder_id: [3759]
             }
         });
 
@@ -850,7 +860,20 @@ app.get('/api/automation/statuses', (req, res) => {
         }
 
         // Return ALL statuses (running, completed, error) so frontend can detect completion
-        const statuses = Array.from(global.automationStatuses.values());
+        const statuses = Array.from(global.automationStatuses.values()).map(status => {
+            // ⏱️ FIX: Tính remainingSeconds từ countdownStartTime & countdownDuration (server time)
+            if (status.countdownStartTime && status.countdownDuration) {
+                const serverElapsedMs = Date.now() - status.countdownStartTime;
+                const serverRemainingMs = Math.max(0, status.countdownDuration - serverElapsedMs);
+                const serverRemainingSeconds = Math.ceil(serverRemainingMs / 1000);
+
+                // Update message với remainingSeconds từ server
+                if (status.message && status.message.includes('Chờ')) {
+                    status.message = status.message.replace(/Chờ \d+s/, `Chờ ${serverRemainingSeconds}s`);
+                }
+            }
+            return status;
+        });
         res.json({ success: true, statuses });
     } catch (error) {
         console.error('❌ Error getting statuses:', error);
@@ -866,7 +889,20 @@ app.get('/api/vip-automation/statuses', (req, res) => {
         }
 
         // Return ALL statuses (running, completed, error) so frontend can detect completion
-        const statuses = Array.from(global.automationStatuses.values());
+        const statuses = Array.from(global.automationStatuses.values()).map(status => {
+            // ⏱️ FIX: Tính remainingSeconds từ countdownStartTime & countdownDuration (server time)
+            if (status.countdownStartTime && status.countdownDuration) {
+                const serverElapsedMs = Date.now() - status.countdownStartTime;
+                const serverRemainingMs = Math.max(0, status.countdownDuration - serverElapsedMs);
+                const serverRemainingSeconds = Math.ceil(serverRemainingMs / 1000);
+
+                // Update message với remainingSeconds từ server
+                if (status.message && status.message.includes('Chờ')) {
+                    status.message = status.message.replace(/Chờ \d+s/, `Chờ ${serverRemainingSeconds}s`);
+                }
+            }
+            return status;
+        });
         res.json({ success: true, statuses });
     } catch (error) {
         console.error('❌ Error getting VIP statuses:', error);
@@ -1022,20 +1058,51 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     // New path: ../accounts/nohu/{YYYY-MM-DD}/{username}/account.json
     const accountsDir = path.join(__dirname, '../accounts/nohu');
     let hasAccountInfo = false;
+    let category = 'okvip'; // Default category
 
-    // Check if account exists in any date folder
-    if (fs.existsSync(accountsDir)) {
-        const dateFolders = fs.readdirSync(accountsDir, { withFileTypes: true })
-            .filter(item => item.isDirectory())
-            .map(item => item.name);
+    // Check if account exists in any date folder (for VIP categories)
+    const vipCategoriesDir = path.join(__dirname, '../accounts/vip');
+    if (fs.existsSync(vipCategoriesDir)) {
+        const vipCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        for (const cat of vipCategories) {
+            const catDir = path.join(vipCategoriesDir, cat);
+            if (fs.existsSync(catDir)) {
+                const dateFolders = fs.readdirSync(catDir, { withFileTypes: true })
+                    .filter(item => item.isDirectory())
+                    .map(item => item.name);
 
-        for (const dateFolder of dateFolders) {
-            const userAccountDir = path.join(accountsDir, dateFolder, username);
-            if (fs.existsSync(userAccountDir)) {
-                const files = fs.readdirSync(userAccountDir);
-                if (files.some(f => f === 'account.json' || f === 'account.txt')) {
-                    hasAccountInfo = true;
-                    break;
+                for (const dateFolder of dateFolders) {
+                    const userAccountDir = path.join(catDir, dateFolder, username);
+                    if (fs.existsSync(userAccountDir)) {
+                        const files = fs.readdirSync(userAccountDir);
+                        if (files.some(f => f === `${cat}.json` || f === `${cat}.txt`)) {
+                            category = cat; // Found category
+                            hasAccountInfo = true;
+                            break;
+                        }
+                    }
+                }
+                if (hasAccountInfo) break;
+            }
+        }
+    }
+
+    // Check if account exists in Nohu folder (for backward compatibility)
+    if (!hasAccountInfo) {
+        const accountsDir = path.join(__dirname, '../accounts/nohu');
+        if (fs.existsSync(accountsDir)) {
+            const dateFolders = fs.readdirSync(accountsDir, { withFileTypes: true })
+                .filter(item => item.isDirectory())
+                .map(item => item.name);
+
+            for (const dateFolder of dateFolders) {
+                const userAccountDir = path.join(accountsDir, dateFolder, username);
+                if (fs.existsSync(userAccountDir)) {
+                    const files = fs.readdirSync(userAccountDir);
+                    if (files.some(f => f === 'account.json' || f === 'account.txt')) {
+                        hasAccountInfo = true;
+                        break;
+                    }
                 }
             }
         }
@@ -1093,6 +1160,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
                         sessionId: sessionId, // Include session ID
                         runNumber: runNumber, // Include run number from metadata
                         toolId: sessionToolId, // Include tool ID
+                        category: category, // 🔥 Add category
                         siteName: siteName,
                         timestamp: stats.mtimeMs,
                         status: 'success',
@@ -1129,6 +1197,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
                 username: username,
                 sessionId: null, // No session for old structure
                 toolId: guessedToolId, // Guessed tool ID for old structure
+                category: category, // 🔥 Add category
                 siteName: siteName,
                 timestamp: stats.mtimeMs,
                 status: 'success',
@@ -1267,9 +1336,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, abcvip, jun88, 78win, kjc)
+        // Try to find any VIP category file (okvip, abcvip, jun88, 78win, jun88v2, kjc)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1363,7 +1432,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.json({ success: false, error: 'Invalid category' });
         }
@@ -1414,7 +1483,7 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }
@@ -1598,6 +1667,7 @@ app.delete('/api/results/clear-selected', (req, res) => {
 // Clear all results and delete screenshots
 app.delete('/api/results/clear', (req, res) => {
     try {
+        const { toolId } = req.body || {};
         const screenshotsDir = path.join(__dirname, '../screenshots');
 
         if (!fs.existsSync(screenshotsDir)) {
@@ -1607,7 +1677,7 @@ app.delete('/api/results/clear', (req, res) => {
         let deletedCount = 0;
 
         // Function to recursively delete files in a directory
-        function deleteFilesRecursive(dir) {
+        function deleteFilesRecursive(dir, filterToolId = null) {
             try {
                 const items = fs.readdirSync(dir);
 
@@ -1616,21 +1686,23 @@ app.delete('/api/results/clear', (req, res) => {
                     const stat = fs.statSync(itemPath);
 
                     if (stat.isDirectory()) {
-                        // Recursively delete entire directory with all contents
-                        try {
-                            fs.rmSync(itemPath, { recursive: true, force: true });
-                            console.log(`📁 Deleted folder: ${item}`);
-                        } catch (err) {
-                            console.error(`❌ Failed to delete folder ${item}:`, err.message);
-                        }
-                    } else if (stat.isFile() && /\.(png|jpg|jpeg|gif|webp)$/i.test(item)) {
-                        // Delete image file
-                        try {
-                            fs.unlinkSync(itemPath);
-                            deletedCount++;
-                            console.log(`🗑️  Deleted: ${item}`);
-                        } catch (err) {
-                            console.error(`❌ Failed to delete ${item}:`, err.message);
+                        // Check if this is a session folder (contains metadata.json)
+                        const metadataPath = path.join(itemPath, 'metadata.json');
+                        if (fs.existsSync(metadataPath)) {
+                            try {
+                                const metadata = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+                                // Only delete if toolId matches (or no filter specified)
+                                if (!filterToolId || metadata.toolId === filterToolId) {
+                                    fs.rmSync(itemPath, { recursive: true, force: true });
+                                    console.log(`📁 Deleted session folder: ${item} (toolId: ${metadata.toolId})`);
+                                    deletedCount++;
+                                }
+                            } catch (err) {
+                                console.error(`❌ Failed to process folder ${item}:`, err.message);
+                            }
+                        } else {
+                            // Recursively search subdirectories
+                            deleteFilesRecursive(itemPath, filterToolId);
                         }
                     }
                 });
@@ -1639,11 +1711,12 @@ app.delete('/api/results/clear', (req, res) => {
             }
         }
 
-        // Delete all files and subfolders
-        deleteFilesRecursive(screenshotsDir);
+        // Delete files based on toolId filter
+        deleteFilesRecursive(screenshotsDir, toolId);
 
-        console.log(`✅ Cleared ${deletedCount} screenshot(s)`);
-        res.json({ success: true, deletedFiles: deletedCount, message: `Deleted ${deletedCount} file(s)` });
+        const toolName = toolId === 'nohu-tool' ? 'NOHU' : toolId === 'vip-tool' ? 'VIP' : 'All';
+        console.log(`✅ Cleared ${deletedCount} session(s) for ${toolName} tool`);
+        res.json({ success: true, deletedFiles: deletedCount, message: `Deleted ${deletedCount} session(s) for ${toolName} tool` });
     } catch (error) {
         console.error('❌ Error clearing results:', error);
         res.status(500).json({ success: false, error: error.message });
@@ -2818,39 +2891,16 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
         // Get Hidemium browser connection
         let browser = null;
         try {
-            // Connect to Hidemium Local API
-            const response = await axios.get('http://127.0.0.1:2222/v1/browser/list', {
-                params: { is_local: false }
-            });
+            // Use profileId directly (like NOHU does) - don't try to look it up
+            // The profileId is already the correct UUID from the frontend
+            const hidemiumProfileUuid = profileId;
 
-            if (!response.data?.data?.content || response.data.data.content.length === 0) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'No Hidemium profiles available'
-                });
-            }
-
-            // Get specified profile or use first available
-            let hidemiumProfile = null;
-
-            if (profileId) {
-                // Use specified profile
-                hidemiumProfile = response.data.data.content.find(p => p.uuid === profileId);
-                if (!hidemiumProfile) {
-                    console.warn(`⚠️ Profile ${profileId} not found in Hidemium, using first available`);
-                    hidemiumProfile = response.data.data.content[0];
-                }
-            } else {
-                // Fallback to first available
-                hidemiumProfile = response.data.data.content[0];
-            }
-
-            console.log(`📱 Using Hidemium profile: ${hidemiumProfile.name} (UUID: ${hidemiumProfile.uuid})`);
+            console.log(`📱 Opening Hidemium profile: ${hidemiumProfileUuid}`);
 
             // Open profile in Hidemium
             const openResponse = await axios.get('http://127.0.0.1:2222/openProfile', {
                 params: {
-                    uuid: hidemiumProfile.uuid,
+                    uuid: hidemiumProfileUuid,
                     command: '--remote-debugging-port=0'
                 }
             });
@@ -3049,13 +3099,13 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 
 // NOHU app sites config (centralized - used by both frontend and backend)
 const nohuSitesConfig = {
-    'Go99': { name: 'Go99', registerUrl: ' https://m.1go99.vip/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
-    'NOHU': { name: 'NOHU', registerUrl: 'https://m.2nohu.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
-    'TT88': { name: 'TT88', registerUrl: 'https://m.1tt88.vip/Account/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
-    'MMOO': { name: 'MMOO', registerUrl: 'https://m.mmoo.team/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
-    '789P': { name: '789P', registerUrl: 'https://m.789p1.vip/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
-    '33WIN': { name: '33WIN', registerUrl: 'https://m.3333win.cc/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
-    '88VV': { name: '88VV', registerUrl: 'https://m.888vvv.bet/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
+    'Go99': { name: 'Go99', registerUrl: 'https://m.goshhh99uuu-66ooo.xyz/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
+    'NOHU': { name: 'NOHU', registerUrl: 'https://m.88807888.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
+    'TT88': { name: 'TT88', registerUrl: 'https://m.ttfffashhsh-88anjsje.vip/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
+    'MMOO': { name: 'MMOO', registerUrl: 'https://m.3mmoo.com/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
+    '789P': { name: '789P', registerUrl: 'https://m.nn789p.com/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
+    '33WIN': { name: '33WIN', registerUrl: 'https://m.330756.com/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
+    '88VV': { name: '88VV', registerUrl: 'https://m.88vv.gd/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
 };
 
 // Get NOHU sites config
@@ -3072,7 +3122,7 @@ app.get('/api/nohu-automation/sites', (req, res) => {
 
 // NOHU SMS sites config (centralized - used by both frontend and backend)
 const nohuSmsSiteConfigs = {
-    'Go99': { registerSmsUrl: 'https://m.go99.tw/Account/Register?f=4688147' },
+    'Go99': { registerSmsUrl: 'https://m.91111119.com/Account/Register?f=4860523' },
     'NOHU': { registerSmsUrl: null },
     'TT88': { registerSmsUrl: null },
     'MMOO': { registerSmsUrl: null },
@@ -3358,6 +3408,13 @@ if (adminAPI) {
         try {
             // Create new instance each time to reload data from file
             const customerManager = new CustomerMachineManager();
+
+            // Auto-cleanup expired licenses
+            const cleanedCount = customerManager.cleanupExpiredLicenses();
+            if (cleanedCount > 0) {
+                console.log(`🧹 Auto-cleanup: Removed ${cleanedCount} expired licenses`);
+            }
+
             const customers = customerManager.getAllCustomers();
             const stats = customerManager.getStats();
             res.json({ success: true, customers, stats });
@@ -3983,10 +4040,8 @@ All critical files have been protected against reverse engineering.
             }
 
             console.log('');
+            console.log('🌐 Browser: Hidemium');
             console.log('📋 Available tools:', toolsConfig.tools?.length || 0);
-            console.log('');
-            console.log('⚠️  Note: Hidemium Local API should run on http://127.0.0.1:2222');
-            console.log('    Make sure Hidemium is running with Local API enabled');
             console.log('');
             console.log('Press Ctrl+C to stop the server');
             console.log('========================================');

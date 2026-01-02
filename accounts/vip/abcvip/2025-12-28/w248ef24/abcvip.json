@@ -1,0 +1,22 @@
+{
+  "username": "w248ef24",
+  "password": "o3gu93b8c2o",
+  "withdrawPassword": "767289",
+  "fullname": "TRAN NHU KIEN",
+  "email": "oqr7n@gmail.com",
+  "phone": "0376984790",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10368048107541235",
+    "accountHolder": "TRAN NHU KIEN"
+  },
+  "registeredAt": "2025-12-28T03:37:53.529Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

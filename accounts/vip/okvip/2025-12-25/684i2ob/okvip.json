@@ -1,0 +1,22 @@
+{
+  "username": "684i2ob",
+  "password": "8dx84oni0",
+  "withdrawPassword": "462903",
+  "fullname": "VO VAN MINH",
+  "email": "0lqm3zr@gmail.com",
+  "phone": "0941846640",
+  "bank": {
+    "name": "NCB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "0438620900631",
+    "accountHolder": "VO VAN MINH"
+  },
+  "registeredAt": "2025-12-25T08:00:40.558Z",
+  "firstSite": "8KBET",
+  "sites": [
+    "8KBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,43 @@
+{
+  "username": "FireFiref2",
+  "password": "342tm43gm",
+  "withdrawPassword": "948795",
+  "fullname": "PHAM PHONG DUNG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10364048106942204",
+    "accountHolder": "PHAM PHONG DUNG"
+  },
+  "registeredAt": "2025-12-24T00:41:01.425Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-24T00:41:01.425Z",
+  "bankVerified": false
+}

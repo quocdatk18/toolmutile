@@ -1,0 +1,43 @@
+{
+  "username": "WolfFury1hhh",
+  "password": "rs6r238ons",
+  "withdrawPassword": "352377",
+  "fullname": "PHAM TRANG TRANG AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10361048108098431",
+    "accountHolder": "PHAM TRANG TRANG AN"
+  },
+  "registeredAt": "2026-01-01T01:37:50.983Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-01T01:37:50.983Z",
+  "bankVerified": false
+}

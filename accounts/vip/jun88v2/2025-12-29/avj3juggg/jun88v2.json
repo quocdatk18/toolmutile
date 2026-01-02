@@ -1,0 +1,22 @@
+{
+  "username": "avj3juggg",
+  "password": "g9zkr79sjyai",
+  "withdrawPassword": "801624",
+  "fullname": "PHAM VAN LINH",
+  "email": "jk945q@gmail.com",
+  "phone": "0962739635",
+  "bank": {
+    "name": "VIB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "4415345792992",
+    "accountHolder": "PHAM VAN LINH"
+  },
+  "registeredAt": "2025-12-29T07:08:45.992Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}

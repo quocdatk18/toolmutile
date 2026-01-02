@@ -1,0 +1,43 @@
+{
+  "username": "EagleBolt1fd",
+  "password": "x0le1llz91j",
+  "withdrawPassword": "174550",
+  "fullname": "TRAN ANH LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10368048107557361",
+    "accountHolder": "TRAN ANH LINH"
+  },
+  "registeredAt": "2025-12-28T04:01:04.298Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-28T04:01:04.298Z",
+  "bankVerified": false
+}

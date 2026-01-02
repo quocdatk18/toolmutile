@@ -1,0 +1,43 @@
+{
+  "username": "EagleStrike1g",
+  "password": "g9c1q5431",
+  "withdrawPassword": "815997",
+  "fullname": "CHE LAN PHUONG VY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CAN THO",
+    "accountNumber": "9686964500086261",
+    "accountHolder": "CHE LAN PHUONG VY"
+  },
+  "registeredAt": "2025-12-26T10:19:44.354Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T10:19:44.354Z",
+  "bankVerified": false
+}

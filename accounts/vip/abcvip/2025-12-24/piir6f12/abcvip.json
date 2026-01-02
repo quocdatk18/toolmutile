@@ -1,0 +1,23 @@
+{
+  "username": "piir6f12",
+  "password": "r664c3mzghlp",
+  "withdrawPassword": "149566",
+  "fullname": "HOANG THI AN",
+  "email": "o4yvz@gmail.com",
+  "phone": "0993186491",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10364048106930011",
+    "accountHolder": "HOANG THI AN"
+  },
+  "registeredAt": "2025-12-23T19:24:21.700Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

@@ -1,0 +1,43 @@
+{
+  "username": "FireStormb88",
+  "password": "d1u8qktrz",
+  "withdrawPassword": "608004",
+  "fullname": "TONG THI NHU QUYNH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "NHA TRANG",
+    "accountNumber": "10364048106929764",
+    "accountHolder": "TONG THI NHU QUYNH"
+  },
+  "registeredAt": "2025-12-23T19:03:10.799Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T19:03:10.799Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "FirePon777",
+  "password": "yaglatjj0m0",
+  "withdrawPassword": "280400",
+  "fullname": "TRINH ZO RAM ANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "CAN THO",
+    "accountNumber": "10368048107540085",
+    "accountHolder": "TRINH ZO RAM ANG"
+  },
+  "registeredAt": "2025-12-27T21:58:56.730Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-27T21:58:56.730Z",
+  "bankVerified": false
+}

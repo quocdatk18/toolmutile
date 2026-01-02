@@ -1222,19 +1222,52 @@
 
     // Random toàn bộ form (username, fullname, password, bank)
     function randomAllForm() {
-        // Random username
-        const username = generateRandomUsername();
+        console.log('🎲 randomAllForm() called');
+
+        // Random username - Đảm bảo không bắt đầu bằng số
+        let username = generateRandomUsername();
+        // Nếu bắt đầu bằng số, thêm chữ cái vào đầu
+        if (/^\d/.test(username)) {
+            const letters = 'abcdefghijklmnopqrstuvwxyz';
+            username = letters[Math.floor(Math.random() * letters.length)] + username;
+        }
         document.getElementById('autoUsername').value = username;
 
-        // Random fullname (Vietnamese names)
-        const firstNames = ['NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI'];
-        const middleNames = ['VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH'];
-        const lastNames = ['AN', 'BINH', 'CUONG', 'DUNG', 'HAI', 'HUNG', 'KHANH', 'LINH', 'MINH', 'NAM', 'PHONG', 'QUAN', 'TAM', 'TUAN', 'VINH'];
+        // Random fullname - Tên phổ thông Việt Nam 4 chữ (họ + tên đệm 1 + tên đệm 2 + tên)
+        // Họ phổ thông
+        const lastNames = [
+            'NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI',
+            'DINH', 'DUONG', 'TONG', 'NHAN', 'LUONG', 'TRINH', 'TRUONG', 'TIEU', 'TRAN', 'TRAN'
+        ];
 
-        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-        const middleName = middleNames[Math.floor(Math.random() * middleNames.length)];
+        // Tên đệm phổ thông (tên đệm 1)
+        const middleNames1 = [
+            'VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH', 'HUNG', 'KHANH',
+            'LINH', 'PHONG', 'TUAN', 'VINH', 'CUONG', 'TIEN', 'TRANG', 'HUONG', 'DUNG', 'HIEU'
+        ];
+
+        // Tên đệm phổ thông (tên đệm 2)
+        const middleNames2 = [
+            'VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH', 'HUNG', 'KHANH',
+            'LINH', 'PHONG', 'TUAN', 'VINH', 'CUONG', 'TIEN', 'TRANG', 'HUONG', 'DUNG', 'HIEU'
+        ];
+
+        // Tên gọi phổ thông (1 chữ)
+        const firstNames = [
+            'MINH', 'TUAN', 'HUNG', 'KHANH', 'LINH', 'PHONG', 'VINH', 'CUONG', 'TIEN', 'TRANG',
+            'HUONG', 'DUNG', 'HIEU', 'LONG', 'HUY', 'DAM', 'QUY', 'NHUNG', 'VAN', 'AN',
+            'Y', 'THU', 'HA', 'LOC', 'PHUC', 'THO', 'TIEU', 'HUONG', 'MINH', 'NGUYET'
+        ];
+
+        // Chọn ngẫu nhiên
         const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-        const fullname = `${firstName} ${middleName} ${lastName}`;
+        const middleName1 = middleNames1[Math.floor(Math.random() * middleNames1.length)];
+        const middleName2 = middleNames2[Math.floor(Math.random() * middleNames2.length)];
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+
+        // Format: Họ + Tên đệm 1 + Tên đệm 2 + Tên (4 chữ)
+        const fullname = `${lastName} ${middleName1} ${middleName2} ${firstName}`;
+        console.log('✅ Generated fullname:', fullname);
         document.getElementById('autoFullname').value = fullname;
 
         // Random password (8-12 characters, guaranteed mix of letters and numbers)
@@ -3262,11 +3295,12 @@
         showToast('info', 'Đang xóa...', 'Đang xóa tất cả kết quả...');
 
         try {
-            // Call API to delete all screenshots
+            // Call API to delete all screenshots for NOHU tool only
             // Use relative URL to automatically use current port
             const response = await fetch('/api/results/clear', {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ toolId: 'nohu-tool' })
             });
 
             const data = await response.json();

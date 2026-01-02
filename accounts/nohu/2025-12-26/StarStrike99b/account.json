@@ -1,0 +1,43 @@
+{
+  "username": "StarStrike99b",
+  "password": "f83o63ra7ld",
+  "withdrawPassword": "290535",
+  "fullname": "PHAN HOANG TUAN DAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10366048107233875",
+    "accountHolder": "PHAN HOANG TUAN DAM"
+  },
+  "registeredAt": "2025-12-26T01:45:06.271Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T01:45:06.271Z",
+  "bankVerified": false
+}

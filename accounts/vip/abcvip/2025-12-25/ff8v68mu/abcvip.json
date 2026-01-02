@@ -1,0 +1,23 @@
+{
+  "username": "ff8v68mu",
+  "password": "oqvq388om",
+  "withdrawPassword": "827566",
+  "fullname": "nguyen quoc dat",
+  "email": "vs1s5@gmail.com",
+  "phone": "0993179710",
+  "bank": {
+    "name": "Techcombank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "2338762000",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-24T19:58:56.510Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool"
+}

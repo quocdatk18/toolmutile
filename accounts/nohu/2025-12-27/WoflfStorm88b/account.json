@@ -1,0 +1,43 @@
+{
+  "username": "WoflfStorm88b",
+  "password": "ob7qew16eu",
+  "withdrawPassword": "885931",
+  "fullname": "BUI PHONG DUC HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "DA NANG",
+    "accountNumber": "10367048107422393",
+    "accountHolder": "BUI PHONG DUC HUY"
+  },
+  "registeredAt": "2025-12-26T21:10:49.099Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T21:10:49.099Z",
+  "bankVerified": false
+}

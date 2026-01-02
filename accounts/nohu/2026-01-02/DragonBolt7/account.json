@@ -1,0 +1,43 @@
+{
+  "username": "DragonBolt7",
+  "password": "l3116gettvbg",
+  "withdrawPassword": "644350",
+  "fullname": "NGUYEN TRUC THUY LAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10362048108221153",
+    "accountHolder": "NGUYEN TRUC THUY LAM"
+  },
+  "registeredAt": "2026-01-02T10:27:33.889Z",
+  "firstSite": "NOHU",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T10:27:33.889Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "FireBolt93f",
+  "password": "wg5q2izwm2aj",
+  "withdrawPassword": "994333",
+  "fullname": "nguyen quoc dat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "8040674068",
+    "accountHolder": "nguyen quoc dat"
+  },
+  "registeredAt": "2025-12-23T03:12:56.305Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-23T03:12:56.305Z",
+  "bankVerified": false
+}

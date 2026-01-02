@@ -1,0 +1,43 @@
+{
+  "username": "SkyFuryf24",
+  "password": "x7jd5j681vwq",
+  "withdrawPassword": "206035",
+  "fullname": "TRAN HOANG TIEN PHONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HO CHI MINH",
+    "accountNumber": "10366048107244079",
+    "accountHolder": "TRAN HOANG TIEN PHONG"
+  },
+  "registeredAt": "2025-12-26T02:22:47.849Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2025-12-26T02:22:47.849Z",
+  "bankVerified": false
+}

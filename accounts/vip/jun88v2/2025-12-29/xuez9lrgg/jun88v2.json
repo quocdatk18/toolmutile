@@ -1,0 +1,22 @@
+{
+  "username": "xuez9lrgg",
+  "password": "36wrl6u9058w",
+  "withdrawPassword": "302940",
+  "fullname": "BUI QUANG AN",
+  "email": "o7at7v@gmail.com",
+  "phone": "0971598324",
+  "bank": {
+    "name": "VIB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "32440250780970",
+    "accountHolder": "BUI QUANG AN"
+  },
+  "registeredAt": "2025-12-29T07:00:16.852Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool"
+}
