@@ -1942,11 +1942,17 @@ class VIPAutomation {
                 if (submitBtn) submitBtn.click();
             });
 
-            await page.waitForNavigation({ timeout: 15000 }).catch(() => {
-                console.log('⚠️ No navigation after withdraw password');
-            });
+            // Wait for page to load (instead of waitForNavigation which can be interrupted in parallel)
+            try {
+                await page.waitForSelector('._addAccountInputBtn_1bihm_45, [class*="addAccount"], button:contains("Thêm")', { timeout: 10000 }).catch(() => {
+                    console.log('⚠️ Bank page selector not found, continuing anyway...');
+                });
+            } catch (e) {
+                console.log('⚠️ Timeout waiting for bank page');
+            }
+            await new Promise(r => setTimeout(r, 1000));
 
-            // Bước 2: Vào trang submit bank (OKVIP)
+            // Bước 2: Vào trang submit bank
             const bankUrl = domain + paths.bank;
             console.log(`  → Bank: ${bankUrl}`);
 
@@ -2630,30 +2636,6 @@ class VIPAutomation {
                 }
             } else {
                 console.log('✅ 22VIP/888P form already visible');
-            }
-
-            // Check if form is in iframe
-            const iframes = await page.$$('iframe');
-            let formFound = false;
-
-            for (const iframe of iframes) {
-                try {
-                    const frameHandle = await iframe.contentFrame();
-                    if (frameHandle) {
-                        const selector = await frameHandle.$('input[data-input-name="account"]');
-                        if (selector) {
-                            console.log('✅ Form found in iframe');
-                            formFound = true;
-                            break;
-                        }
-                    }
-                } catch (err) {
-                    // Continue to next iframe
-                }
-            }
-
-            if (!formFound) {
-                throw new Error('Form not found in main page or iframes');
             }
 
             // Fill account (username/phone)
@@ -3544,76 +3526,81 @@ class VIPAutomation {
 
                     await new Promise(r => setTimeout(r, 200)); // Wait for UI update
 
-                    await page.evaluate((num) => {
-                        // Find keyboard buttons - be specific
-                        const buttons = document.querySelectorAll('button, div[role="button"]');
-                        let found = false;
-                        let candidates = [];
+                    try {
+                        await Promise.race([
+                            page.evaluate((num) => {
+                                // Find keyboard buttons - be specific
+                                const buttons = document.querySelectorAll('button, div[role="button"]');
+                                let candidates = [];
 
-                        for (let btn of buttons) {
-                            const text = btn.textContent.trim();
+                                for (let btn of buttons) {
+                                    const text = btn.textContent.trim();
 
-                            // Match EXACT digit and ensure visible
-                            if (text === num && text.length === 1 && btn.offsetParent !== null) {
-                                const rect = btn.getBoundingClientRect();
-                                if (rect.width > 20 && rect.height > 20) {
-                                    candidates.push({ btn, rect });
+                                    // Match EXACT digit and ensure visible
+                                    if (text === num && text.length === 1 && btn.offsetParent !== null) {
+                                        const rect = btn.getBoundingClientRect();
+                                        if (rect.width > 20 && rect.height > 20) {
+                                            candidates.push({ btn, rect });
+                                        }
+                                    }
                                 }
-                            }
-                        }
 
-                        if (candidates.length > 0) {
-                            // Sort by size (prefer ~50x50 buttons)
-                            candidates.sort((a, b) => {
-                                const areaA = a.rect.width * a.rect.height;
-                                const areaB = b.rect.width * b.rect.height;
-                                return Math.abs(areaB - 2500) - Math.abs(areaA - 2500);
-                            });
+                                if (candidates.length > 0) {
+                                    // Sort by size (prefer ~50x50 buttons)
+                                    candidates.sort((a, b) => {
+                                        const areaA = a.rect.width * a.rect.height;
+                                        const areaB = b.rect.width * b.rect.height;
+                                        return Math.abs(areaB - 2500) - Math.abs(areaA - 2500);
+                                    });
 
-                            const btn = candidates[0].btn;
+                                    const btn = candidates[0].btn;
 
-                            // TouchEvent method (primary for mobile sites)
-                            try {
-                                const rect = btn.getBoundingClientRect();
-                                const touchObj = new Touch({
-                                    identifier: Date.now(),
-                                    target: btn,
-                                    clientX: rect.left + rect.width / 2,
-                                    clientY: rect.top + rect.height / 2,
-                                    radiusX: 2.5,
-                                    radiusY: 2.5,
-                                    rotationAngle: 0,
-                                    force: 1
-                                });
+                                    // TouchEvent method (primary for mobile sites)
+                                    try {
+                                        const rect = btn.getBoundingClientRect();
+                                        const touchObj = new Touch({
+                                            identifier: Date.now(),
+                                            target: btn,
+                                            clientX: rect.left + rect.width / 2,
+                                            clientY: rect.top + rect.height / 2,
+                                            radiusX: 2.5,
+                                            radiusY: 2.5,
+                                            rotationAngle: 0,
+                                            force: 1
+                                        });
 
-                                btn.dispatchEvent(new TouchEvent('touchstart', {
-                                    bubbles: true,
-                                    cancelable: true,
-                                    touches: [touchObj],
-                                    targetTouches: [touchObj],
-                                    changedTouches: [touchObj]
-                                }));
+                                        btn.dispatchEvent(new TouchEvent('touchstart', {
+                                            bubbles: true,
+                                            cancelable: true,
+                                            touches: [touchObj],
+                                            targetTouches: [touchObj],
+                                            changedTouches: [touchObj]
+                                        }));
 
-                                setTimeout(() => {
-                                    btn.dispatchEvent(new TouchEvent('touchend', {
-                                        bubbles: true,
-                                        cancelable: true,
-                                        changedTouches: [touchObj]
-                                    }));
-                                }, 100);
-                            } catch (e) {
-                                console.log('Touch failed:', e.message);
-                            }
+                                        btn.dispatchEvent(new TouchEvent('touchend', {
+                                            bubbles: true,
+                                            cancelable: true,
+                                            changedTouches: [touchObj]
+                                        }));
+                                    } catch (e) {
+                                        console.log('Touch failed:', e.message);
+                                    }
 
-                            // MouseEvent fallback
-                            btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-                            btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-                            btn.click();
-                        }
-                    }, digit);
+                                    // MouseEvent fallback
+                                    btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                                    btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                                    btn.click();
+                                }
+                            }, digit),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('Digit click timeout')), 5000))
+                        ]);
+                    } catch (e) {
+                        console.warn(`⚠️ Failed to click digit ${digit}:`, e.message);
+                        throw e;
+                    }
 
-                    // 800-1200ms delay between digits
-                    await new Promise(r => setTimeout(r, 800 + Math.random() * 400));
+                    // 200-400ms delay between digits (faster)
+                    await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
                 }
             };
 
@@ -3621,16 +3608,16 @@ class VIPAutomation {
             console.log('🔐 Entering first password...');
             await clickDigitsOnKeyboard(password);
 
-            // Wait for keyboard to reset
+            // Wait for keyboard to reset (minimal delay - just let UI update)
             console.log('⏳ Waiting for keyboard to reset...');
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 500));
 
             // Page automatically focuses on confirm password field
             // Click confirm password
             console.log('🔐 Entering confirm password...');
             await clickDigitsOnKeyboard(password);
 
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 1000));
 
             // Submit form
             await page.evaluate(() => {
@@ -3638,9 +3625,13 @@ class VIPAutomation {
                 if (submitBtn) submitBtn.click();
             });
 
-            await page.waitForNavigation({ timeout: 15000 }).catch(() => {
-                console.log('⚠️ No navigation after withdraw password');
-            });
+            // Wait for form to process (simple approach - just wait for page to settle)
+            console.log('⏳ Waiting for withdraw password to be processed...');
+            await new Promise(r => setTimeout(r, 3000)); // Wait for form processing
+
+            console.log('✅ Withdraw password submitted');
+
+            await new Promise(r => setTimeout(r, 1000));
 
             // Bước 2: Vào trang submit bank
             const bankUrl = domain + paths.bank;
@@ -3688,60 +3679,95 @@ class VIPAutomation {
                 }
             });
 
-            await new Promise(r => setTimeout(r, 2000));
+            await new Promise(r => setTimeout(r, 3000)); // Increased delay to wait for popup
+
 
             // Step 3: Re-enter withdraw password (password popup appears after clicking bank option)
             console.log('🔐 Re-entering withdraw password for bank confirmation...');
 
-            // Check if password input appears
-            try {
-                await page.waitForSelector('ul.ui-password-input__security', { timeout: 5000 });
-                console.log('✅ Password input appeared');
+            // Check if password input appears (with retry)
+            let passwordEntered = false;
+            for (let attempt = 0; attempt < 3; attempt++) {
+                try {
+                    console.log(`  Attempt ${attempt + 1}/3 to find password input...`);
+                    await page.waitForSelector('ul.ui-password-input__security', { timeout: 10000 });
+                    console.log('✅ Password input appeared');
 
-                // Click on password input to show keyboard
-                await page.evaluate(() => {
-                    const firstBox = document.querySelector('ul.ui-password-input__security li.ui-password-input__item');
-                    if (firstBox) {
-                        firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        firstBox.focus();
-                        firstBox.click();
+                    // Click on password input to show keyboard
+                    await page.evaluate(() => {
+                        const firstBox = document.querySelector('ul.ui-password-input__security li.ui-password-input__item');
+                        if (firstBox) {
+                            firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            firstBox.focus();
+                            firstBox.click();
+                        }
+                    });
+
+                    await new Promise(r => setTimeout(r, 1000));
+
+                    // Re-enter password using same keyboard click method
+                    try {
+                        await clickDigitsOnKeyboard(password);
+                        console.log('✅ Password digits entered');
+                    } catch (digitError) {
+                        console.warn('⚠️ Error entering password digits:', digitError.message);
+                        throw digitError;
                     }
-                });
 
-                await new Promise(r => setTimeout(r, 1000));
+                    await new Promise(r => setTimeout(r, 1500));
 
-                // Re-enter password using same keyboard click method
-                await clickDigitsOnKeyboard(password);
+                    // Submit password confirmation
+                    const submitResult = await page.evaluate(() => {
+                        const submitBtn = document.querySelector('button[type="button"]') || document.querySelector('button[type="submit"]');
+                        if (submitBtn) {
+                            submitBtn.click();
+                            return true;
+                        }
+                        return false;
+                    });
 
-                await new Promise(r => setTimeout(r, 1500));
+                    if (!submitResult) {
+                        console.warn('⚠️ Submit button not found');
+                        throw new Error('Submit button not found');
+                    }
 
-                // Submit password confirmation
-                await page.evaluate(() => {
-                    const submitBtn = document.querySelector('button[type="button"]') || document.querySelector('button[type="submit"]');
-                    if (submitBtn) submitBtn.click();
-                });
+                    passwordEntered = true;
+                    console.log('✅ Password re-entry completed');
+                    break;
+                } catch (e) {
+                    console.warn(`  ⚠️ Attempt ${attempt + 1} failed:`, e.message);
+                    if (attempt < 2) {
+                        console.log(`  Retrying in 2s...`);
+                        await new Promise(r => setTimeout(r, 2000));
+                    }
+                }
+            }
 
-                await new Promise(r => setTimeout(r, 2000));
+            if (!passwordEntered) {
+                console.warn('⚠️ Password re-entry failed after 3 attempts, continuing anyway...');
+            }
 
-                // Click "Tiếp Theo" button to proceed to bank form
+            // Click "Tiếp Theo" button to proceed to bank form (if password was entered)
+            if (passwordEntered) {
                 console.log('🔘 Clicking "Tiếp Theo" button...');
-                await page.evaluate(() => {
-                    const nextBtn = Array.from(document.querySelectorAll('button')).find(btn =>
-                        btn.textContent.includes('Tiếp Theo')
-                    );
-                    if (nextBtn) {
-                        nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        try {
-                            nextBtn.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
-                            nextBtn.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
-                        } catch (e) { }
-                        nextBtn.click();
-                    }
-                });
-
-                await new Promise(r => setTimeout(r, 2000));
-            } catch (e) {
-                console.warn('⚠️ Password re-entry not required or failed:', e.message);
+                try {
+                    await page.evaluate(() => {
+                        const nextBtn = Array.from(document.querySelectorAll('button')).find(btn =>
+                            btn.textContent.includes('Tiếp Theo')
+                        );
+                        if (nextBtn) {
+                            nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            try {
+                                nextBtn.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
+                                nextBtn.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+                            } catch (e) { }
+                            nextBtn.click();
+                        }
+                    });
+                    await new Promise(r => setTimeout(r, 2000));
+                } catch (e) {
+                    console.warn('⚠️ Failed to click Tiếp Theo button:', e.message);
+                }
             }
 
             // Wait for bank form fields to appear
@@ -3899,15 +3925,20 @@ class VIPAutomation {
                 }
             });
 
-            // Wait for navigation after bank submission
-            console.log(`⏳ Waiting for navigation after bank submission...`);
+            // Wait for page to load after bank submission (instead of waitForNavigation which can be interrupted)
+            console.log(`⏳ Waiting for page to load after bank submission...`);
             let pageReloaded = false;
             try {
-                await page.waitForNavigation({ timeout: 15000 });
-                console.log('✅ Page reloaded after bank submission');
+                // Wait for page to show success or reload
+                await page.waitForSelector('._addAccountInputBtn_1bihm_45, [class*="addAccount"], button:contains("Thêm"), ._navItem_1odty_45', { timeout: 10000 }).catch(() => {
+                    console.log('⚠️ Page selector not found after bank submission');
+                });
+                pageReloaded = true;
+                console.log('✅ Page loaded after bank submission');
             } catch (e) {
-                console.log('⚠️ No navigation after add bank');
+                console.log('⚠️ Timeout waiting for page after bank submission');
             }
+            await new Promise(r => setTimeout(r, 1500));
 
             // Check if bank was added successfully
             await new Promise(r => setTimeout(r, 3000));

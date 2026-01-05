@@ -1,0 +1,24 @@
+{
+  "username": "dp455f3vfv",
+  "password": "g2wv7h19p",
+  "withdrawPassword": "749460",
+  "fullname": "LE MINH PHONG",
+  "email": "dy0b8kd@gmail.com",
+  "phone": "0948695566",
+  "registeredAt": "2026-01-05T10:44:59.121Z",
+  "firstSite": "888Now",
+  "sites": [
+    "TV88",
+    "28Bet",
+    "888Now"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "233334333533",
+    "accountHolder": "LE MINH PHONG"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "username": "k49sp4dfdsgf",
+  "password": "eh83z49m",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN THI HOANG VI",
+  "email": "x32hjj@gmail.com",
+  "phone": "0951966136",
+  "registeredAt": "2026-01-05T10:20:00.735Z",
+  "firstSite": "28Bet",
+  "sites": [
+    "TV88",
+    "28Bet",
+    "888Now"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10363048108339926",
+    "accountHolder": "TRAN THI HOANG VI"
+  }
+}

@@ -1063,7 +1063,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     // Check if account exists in any date folder (for VIP categories)
     const vipCategoriesDir = path.join(__dirname, '../accounts/vip');
     if (fs.existsSync(vipCategoriesDir)) {
-        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2'];
+        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         for (const cat of vipCategories) {
             const catDir = path.join(vipCategoriesDir, cat);
             if (fs.existsSync(catDir)) {

@@ -1,0 +1,14 @@
+{
+  "profileName": "admin1",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "22vip",
+  "sites": [
+    "TV88",
+    "28Bet",
+    "888Now"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2026-01-05T10:41:25.659Z"
+}

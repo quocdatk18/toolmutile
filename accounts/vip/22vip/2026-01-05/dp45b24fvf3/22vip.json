@@ -1,0 +1,24 @@
+{
+  "username": "dp45b24fvf3",
+  "password": "g2wv7h19p",
+  "withdrawPassword": "749460",
+  "fullname": "LE MINH PHONG",
+  "email": "dy0b8kd@gmail.com",
+  "phone": "0948695566",
+  "registeredAt": "2026-01-05T10:36:22.376Z",
+  "firstSite": "28Bet",
+  "sites": [
+    "TV88",
+    "28Bet",
+    "888Now"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "1366927394798",
+    "accountHolder": "LE MINH PHONG"
+  }
+}
