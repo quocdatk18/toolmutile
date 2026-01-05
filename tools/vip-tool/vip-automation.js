@@ -874,6 +874,18 @@ class VIPAutomation {
         // Send running status to dashboard
         try {
             const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+
+            // Track running profile in server memory (like nohu tool)
+            if (global.runningProfiles) {
+                global.runningProfiles.set(profileData.profileId, {
+                    profileId: profileData.profileId,
+                    username: profileData.username,
+                    profileName: profileData.profileName,
+                    startTime: Date.now()
+                });
+                console.log(`✅ Tracking VIP running profile: ${profileData.profileId} (${profileData.username})`);
+            }
+
             await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1050,7 +1062,13 @@ class VIPAutomation {
             // Process sites in batches
             for (let i = 0; i < sites.length; i += parallelCount) {
                 const batch = sites.slice(i, i + parallelCount);
-                console.log(`\n📦 Processing batch ${Math.floor(i / parallelCount) + 1}: ${batch.join(', ')}`);
+
+                // Only show batch number if parallel (parallelCount > 1)
+                if (parallelCount > 1) {
+                    console.log(`\n📦 Processing batch ${Math.floor(i / parallelCount) + 1}: ${batch.join(', ')}`);
+                } else {
+                    console.log(`\n🚀 Processing: ${batch.join(', ')}`);
+                }
 
                 // Run batch in parallel
                 const batchPromises = batch.map(async (siteName) => {
@@ -3524,7 +3542,7 @@ class VIPAutomation {
                 for (let i = 0; i < pwd.length; i++) {
                     const digit = pwd[i];
 
-                    await new Promise(r => setTimeout(r, 200)); // Wait for UI update
+                    await new Promise(r => setTimeout(r, 100)); // Reduced wait for UI update
 
                     try {
                         await Promise.race([
@@ -3599,8 +3617,8 @@ class VIPAutomation {
                         throw e;
                     }
 
-                    // 200-400ms delay between digits (faster)
-                    await new Promise(r => setTimeout(r, 200 + Math.random() * 200));
+                    // 100-200ms delay between digits (faster)
+                    await new Promise(r => setTimeout(r, 100 + Math.random() * 100));
                 }
             };
 
@@ -3703,7 +3721,7 @@ class VIPAutomation {
                         }
                     });
 
-                    await new Promise(r => setTimeout(r, 1000));
+                    await new Promise(r => setTimeout(r, 500)); // Reduced from 1000ms
 
                     // Re-enter password using same keyboard click method
                     try {
@@ -3714,7 +3732,7 @@ class VIPAutomation {
                         throw digitError;
                     }
 
-                    await new Promise(r => setTimeout(r, 1500));
+                    await new Promise(r => setTimeout(r, 1000)); // Reduced from 1500ms
 
                     // Submit password confirmation
                     const submitResult = await page.evaluate(() => {

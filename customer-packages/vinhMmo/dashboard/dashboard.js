@@ -1942,10 +1942,30 @@ async function confirmModalAction() {
     closeConfirmModal();
 }
 
+// Error Modal Functions
+function showErrorModal(title, message) {
+    const modal = document.getElementById('errorModal');
+    const titleEl = document.getElementById('errorModalTitle');
+    const messageEl = document.getElementById('errorModalMessage');
+
+    titleEl.textContent = title || '❌ Lỗi';
+    messageEl.textContent = message || 'Có lỗi xảy ra';
+
+    modal.classList.add('active');
+}
+
+function closeErrorModal() {
+    const modal = document.getElementById('errorModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+}
+
 // Close modal on ESC key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         closeConfirmModal();
+        closeErrorModal();
     }
 });
 
@@ -1968,17 +1988,24 @@ function startAutomationStatusPolling() {
                     const key = status.username;
                     const lastStatus = lastKnownStatuses.get(key);
 
-                    // Check if status changed from "running" to "completed" or "error"
-                    if (lastStatus === 'running' && (status.status === 'completed' || status.status === 'error')) {
+                    // Check if status is completed or error (regardless of previous status)
+                    // Or if status changed from "running" to "completed" or "error"
+                    const isNewCompletion = (status.status === 'completed' || status.status === 'error') &&
+                        (lastStatus === 'running' || lastStatus === undefined);
+
+                    if (isNewCompletion) {
                         console.log(`🔄 Automation completed for ${status.username}, reloading profiles...`);
 
                         // Reload profiles to update UI (without notification)
                         await loadProfiles(false);
 
-                        // Show toast notification for automation completion only
-                        if (status.status === 'completed') {
+                        // Show error modal for critical errors (like Viotp no phone available)
+                        if (status.status === 'error' && status.message && status.message.includes('Viotp')) {
+                            console.log(`📢 Showing error modal for Viotp error`);
+                            showErrorModal('❌ Lỗi Viotp SIM API', status.message);
+                        } else if (status.status === 'completed') {
                             showToast('success', 'Hoàn thành', `Automation cho ${status.username} đã hoàn thành`);
-                        } else {
+                        } else if (status.status === 'error') {
                             showToast('error', 'Lỗi', `Automation cho ${status.username} gặp lỗi`);
                         }
 

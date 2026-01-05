@@ -108,10 +108,10 @@
   "vinhMmo": {
     "customerName": "vinhMmo",
     "machineId": "7daed3d92f6d2320",
-    "notes": "Updated from package management. Package exists.",
+    "notes": "Upgraded package. Machine ID, Secret Key, and License preserved.",
     "displayName": "",
     "createdAt": "2025-12-18T17:11:36.700Z",
-    "updatedAt": "2025-12-18T17:11:36.700Z",
+    "updatedAt": "2026-01-05T12:19:05.151Z",
     "updateCount": 0,
     "licenseHistory": [
       {

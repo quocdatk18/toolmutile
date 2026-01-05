@@ -1,8 +1,4 @@
 {
-  "hidemium": {
-    "apiUrl": "http://127.0.0.1:2222",
-    "connected": false
-  },
   "apiKey": {
     "service": "autocaptcha.pro",
     "key": "",

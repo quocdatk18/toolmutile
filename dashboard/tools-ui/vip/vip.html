@@ -754,6 +754,34 @@
         toggleCategorySites(); // Initialize sites
         loadProfilesCarousel(); // Auto load profiles when opening modal
         loadBanksForTool(); // Load banks from vietQR API
+
+        // Initialize execution mode toggle (like Nohu does)
+        initExecutionModeToggle();
+    }
+
+    function initExecutionModeToggle() {
+        const radios = document.querySelectorAll('input[name="executionMode"]');
+        const parallelOptions = document.getElementById('parallelOptions');
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (parallelOptions) {
+                    parallelOptions.style.display = this.value === 'parallel' ? 'block' : 'none';
+                }
+            });
+        });
+
+        // Initial display based on current selection
+        updateExecutionModeDisplay();
+        console.log('✅ Execution mode toggle initialized');
+    }
+
+    function updateExecutionModeDisplay() {
+        const executionMode = document.querySelector('input[name="executionMode"]:checked').value;
+        const parallelOptions = document.getElementById('parallelOptions');
+        if (parallelOptions) {
+            parallelOptions.style.display = executionMode === 'parallel' ? 'block' : 'none';
+        }
     }
 
     function closeFormModal() {
@@ -2165,6 +2193,19 @@
 
         // Then do other initialization
         toggleCategorySites();
+
+        // Add execution mode change handler
+        const executionModeRadios = document.querySelectorAll('input[name="executionMode"]');
+        executionModeRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                const parallelOptions = document.getElementById('parallelOptions');
+                if (this.value === 'sequential') {
+                    parallelOptions.style.display = 'none';
+                } else {
+                    parallelOptions.style.display = 'block';
+                }
+            });
+        });
 
         console.log('✅ VIP Tool initialized');
     });

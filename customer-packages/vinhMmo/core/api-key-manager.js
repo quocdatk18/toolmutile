@@ -6,10 +6,12 @@ class ApiKeyManager {
     constructor() {
         this.storageKey = 'hidemium_global_api_key';
         this.storageTime = 'hidemium_global_api_key_time';
+        this.simStorageKey = 'hidemium_sim_api_key';
+        this.simStorageTime = 'hidemium_sim_api_key_time';
     }
 
     /**
-     * Lưu API Key
+     * Lưu API Key (Captcha)
      */
     save(apiKey) {
         try {
@@ -22,14 +24,14 @@ class ApiKeyManager {
     }
 
     /**
-     * Lấy API Key
+     * Lấy API Key (Captcha)
      */
     get() {
         return localStorage.getItem(this.storageKey) || '';
     }
 
     /**
-     * Xóa API Key
+     * Xóa API Key (Captcha)
      */
     clear() {
         localStorage.removeItem(this.storageKey);
@@ -37,7 +39,35 @@ class ApiKeyManager {
     }
 
     /**
-     * Kiểm tra số dư
+     * Lưu SIM API Key (Viotp)
+     */
+    saveSimApiKey(apiKey) {
+        try {
+            localStorage.setItem(this.simStorageKey, apiKey);
+            localStorage.setItem(this.simStorageTime, Date.now().toString());
+            return { success: true };
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
+     * Lấy SIM API Key (Viotp)
+     */
+    getSimApiKey() {
+        return localStorage.getItem(this.simStorageKey) || '';
+    }
+
+    /**
+     * Xóa SIM API Key (Viotp)
+     */
+    clearSimApiKey() {
+        localStorage.removeItem(this.simStorageKey);
+        localStorage.removeItem(this.simStorageTime);
+    }
+
+    /**
+     * Kiểm tra số dư Captcha API
      */
     async checkBalance() {
         const apiKey = this.get();
@@ -57,11 +87,53 @@ class ApiKeyManager {
     }
 
     /**
-     * Lấy thông tin API Key
+     * Kiểm tra số dư Viotp SIM API
+     */
+    async checkSimBalance() {
+        const apiKey = this.getSimApiKey();
+
+        if (!apiKey) {
+            return { success: false, error: 'No SIM API key found' };
+        }
+
+        try {
+            const response = await fetch(`https://api.viotp.com/users/balance?token=${apiKey}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
+     * Lấy thông tin API Key (Captcha)
      */
     getInfo() {
         const apiKey = this.get();
         const savedTime = localStorage.getItem(this.storageTime);
+
+        if (!apiKey) {
+            return {
+                hasKey: false,
+                key: '',
+                savedAt: null
+            };
+        }
+
+        return {
+            hasKey: true,
+            key: apiKey,
+            keyPreview: apiKey.substring(0, 20) + '...',
+            savedAt: savedTime ? new Date(parseInt(savedTime)) : null
+        };
+    }
+
+    /**
+     * Lấy thông tin SIM API Key (Viotp)
+     */
+    getSimInfo() {
+        const apiKey = this.getSimApiKey();
+        const savedTime = localStorage.getItem(this.simStorageTime);
 
         if (!apiKey) {
             return {

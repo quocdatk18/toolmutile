@@ -162,6 +162,15 @@
             { "name": "Jun882", "icon": "J882", "color": "#00aa00" },
             { "name": "Jun883", "icon": "J883", "color": "#00aa00" }
           ]
+        },
+        {
+          "id": "22vip",
+          "name": "22VIP",
+          "icon": "22V",
+          "color": "#ff6b35",
+          "sites": [
+            { "name": "TV88", "icon": "TV88", "color": "#ff6b35" }
+          ]
         }
       ],
       "features": [

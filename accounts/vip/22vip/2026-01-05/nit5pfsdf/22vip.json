@@ -1,0 +1,28 @@
+{
+  "username": "nit5pfsdf",
+  "password": "ff6wi47e3p3",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "mszoa@gmail.com",
+  "phone": "0983917364",
+  "registeredAt": "2026-01-05T12:07:00.914Z",
+  "firstSite": "888New",
+  "sites": [
+    "TV88",
+    "28Bet",
+    "888Now",
+    "888New",
+    "Win678",
+    "888Vi",
+    "888P"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "040694070",
+    "accountHolder": "NGUYEN QUOC DAT"
+  }
+}

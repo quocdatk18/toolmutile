@@ -533,6 +533,22 @@
                         </div>
                     </div>
 
+                    <!-- CheckPromo Option (only for Auto tab) -->
+                    <div id="checkPromoOptionContainer"
+                        style="padding: 10px; background: #f0fdf4; border-radius: 8px; border: 1px solid #bbf7d0; margin-bottom: 12px;">
+                        <label
+                            style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #15803d; cursor: pointer;">
+                            <input type="checkbox" id="enableCheckPromo" checked
+                                style="width: 16px; height: 16px; cursor: pointer;">
+                            <span style="font-weight: 600;">🎁 Chạy Check Khuyến Mãi sau khi Thêm Bank</span>
+                        </label>
+                        <div
+                            style="font-size: 11px; color: #15803d; margin-top: 6px; margin-left: 24px; font-style: italic;">
+                            ✓ Bật: Tự động check khuyến mãi sau khi thêm bank thành công
+                            <br>✗ Tắt: Chỉ đăng ký + thêm bank, không check khuyến mãi
+                        </div>
+                    </div>
+
                     <!-- Group 2: Khuyến Mãi Tin Nhắn SMS -->
                     <div id="smsPromoGroup" style="margin-bottom: 12px; display: none;">
                         <h4 style="margin: 0 0 8px 0; color: #4a5568; font-size: 13px; font-weight: 600;">
@@ -1206,19 +1222,52 @@
 
     // Random toàn bộ form (username, fullname, password, bank)
     function randomAllForm() {
-        // Random username
-        const username = generateRandomUsername();
+        console.log('🎲 randomAllForm() called');
+
+        // Random username - Đảm bảo không bắt đầu bằng số
+        let username = generateRandomUsername();
+        // Nếu bắt đầu bằng số, thêm chữ cái vào đầu
+        if (/^\d/.test(username)) {
+            const letters = 'abcdefghijklmnopqrstuvwxyz';
+            username = letters[Math.floor(Math.random() * letters.length)] + username;
+        }
         document.getElementById('autoUsername').value = username;
 
-        // Random fullname (Vietnamese names)
-        const firstNames = ['NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI'];
-        const middleNames = ['VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH'];
-        const lastNames = ['AN', 'BINH', 'CUONG', 'DUNG', 'HAI', 'HUNG', 'KHANH', 'LINH', 'MINH', 'NAM', 'PHONG', 'QUAN', 'TAM', 'TUAN', 'VINH'];
+        // Random fullname - Tên phổ thông Việt Nam 4 chữ (họ + tên đệm 1 + tên đệm 2 + tên)
+        // Họ phổ thông
+        const lastNames = [
+            'NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI',
+            'DINH', 'DUONG', 'TONG', 'NHAN', 'LUONG', 'TRINH', 'TRUONG', 'TIEU', 'TRAN', 'TRAN'
+        ];
 
-        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-        const middleName = middleNames[Math.floor(Math.random() * middleNames.length)];
+        // Tên đệm phổ thông (tên đệm 1)
+        const middleNames1 = [
+            'VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH', 'HUNG', 'KHANH',
+            'LINH', 'PHONG', 'TUAN', 'VINH', 'CUONG', 'TIEN', 'TRANG', 'HUONG', 'DUNG', 'HIEU'
+        ];
+
+        // Tên đệm phổ thông (tên đệm 2)
+        const middleNames2 = [
+            'VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH', 'HUNG', 'KHANH',
+            'LINH', 'PHONG', 'TUAN', 'VINH', 'CUONG', 'TIEN', 'TRANG', 'HUONG', 'DUNG', 'HIEU'
+        ];
+
+        // Tên gọi phổ thông (1 chữ)
+        const firstNames = [
+            'MINH', 'TUAN', 'HUNG', 'KHANH', 'LINH', 'PHONG', 'VINH', 'CUONG', 'TIEN', 'TRANG',
+            'HUONG', 'DUNG', 'HIEU', 'LONG', 'HUY', 'DAM', 'QUY', 'NHUNG', 'VAN', 'AN',
+            'Y', 'THU', 'HA', 'LOC', 'PHUC', 'THO', 'TIEU', 'HUONG', 'MINH', 'NGUYET'
+        ];
+
+        // Chọn ngẫu nhiên
         const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-        const fullname = `${firstName} ${middleName} ${lastName}`;
+        const middleName1 = middleNames1[Math.floor(Math.random() * middleNames1.length)];
+        const middleName2 = middleNames2[Math.floor(Math.random() * middleNames2.length)];
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+
+        // Format: Họ + Tên đệm 1 + Tên đệm 2 + Tên (4 chữ)
+        const fullname = `${lastName} ${middleName1} ${middleName2} ${firstName}`;
+        console.log('✅ Generated fullname:', fullname);
         document.getElementById('autoFullname').value = fullname;
 
         // Random password (8-12 characters, guaranteed mix of letters and numbers)
@@ -1475,7 +1524,10 @@
             if (actionType === 'sms') {
                 config.action = 'sms';
             } else {
-                config.checkPromo = true; // Enable promo check for app type
+                // Check if user enabled checkPromo
+                const enableCheckPromo = document.getElementById('enableCheckPromo')?.checked ?? true;
+                config.checkPromo = enableCheckPromo; // Enable/disable promo check based on checkbox
+                console.log('🎁 CheckPromo enabled:', enableCheckPromo);
             }
 
             const currentProfileId = profileManager.selectedProfileId;
@@ -2403,10 +2455,18 @@
             return;
         }
 
-        processedResults.add(resultId);
+        // Skip if this result is from a running automation (avoid duplicates)
+        // Running automations are tracked in resultsData with status='running'
         const username = result.username || 'N/A';
         const sessionId = result.sessionId || 'default';
-        const key = `${username}_${sessionId}`; // Group by username + sessionId (each run is separate)
+        const key = `${username}_${sessionId}`;
+
+        if (resultsData[key] && resultsData[key].status === 'running') {
+            console.log(`⏭️ Skipping file result for running automation: ${key}`);
+            return;
+        }
+
+        processedResults.add(resultId);
 
         // Initialize group if not exists
         if (!resultsData[key]) {
@@ -2622,8 +2682,9 @@
             // Status summary
             let statusHtml = '';
             if (isRunning) {
-                // Show running status for the whole automation
-                statusHtml = `<div><span class="status-badge running">🔄 Đang chạy...</span></div>`;
+                // Show running status with message from server if available
+                const message = group.message || '🔄 Đang chạy...';
+                statusHtml = `<div><span class="status-badge running">${message}</span></div>`;
             } else {
                 // Show detailed status after completion
                 if (successCount > 0) statusHtml += `<span class="status-badge success">✅ ${successCount}</span> `;
@@ -2635,7 +2696,9 @@
             const screenshotCount = group.screenshots.length;
             let screenshotHtml = '<span style="color: #a0aec0;">Chưa có</span>';
             if (isRunning) {
-                screenshotHtml = '<span style="color: #f59e0b;">⏳ Đang chạy...</span>';
+                // Show message from server if available (countdown, status, etc.)
+                const message = group.message || '⏳ Đang chạy...';
+                screenshotHtml = `<span style="color: #f59e0b; font-size: 12px;">${message}</span>`;
             } else if (screenshotCount > 0) {
                 // Hiển thị nút xem ảnh, và chỉ hiển thị nút xem thông tin tài khoản nếu có
                 const accountInfoBtn = group.hasAccountInfo ? `
@@ -2936,7 +2999,7 @@
                                         ${acc.sites && acc.sites.length > 0
                             ? acc.sites.map(site => `
                                                 <span style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">
-                                                    ${site}
+                                                    ${typeof site === 'object' ? site.name : site}
                                                 </span>
                                             `).join('')
                             : '<span style="color: #718096; font-style: italic;">Không có thông tin</span>'
@@ -3232,11 +3295,12 @@
         showToast('info', 'Đang xóa...', 'Đang xóa tất cả kết quả...');
 
         try {
-            // Call API to delete all screenshots
+            // Call API to delete all screenshots for NOHU tool only
             // Use relative URL to automatically use current port
             const response = await fetch('/api/results/clear', {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ toolId: 'nohu-tool' })
             });
 
             const data = await response.json();
@@ -3294,12 +3358,33 @@
                 const currentlyRunning = new Set();
 
                 // Add running statuses to table
+                let needsCarouselRefresh = false;
                 data.statuses.forEach(status => {
                     if (status.message) {
                         console.log(`📡 Received status with message: "${status.message}" for ${status.username}`);
                     }
                     if (status.status === 'running') {
                         currentlyRunning.add(status.username);
+
+                        // Mark profile as running if not already marked
+                        if (typeof profileManager !== 'undefined') {
+                            let profile = null;
+                            if (status.profileId) {
+                                profile = allProfilesData.find(p => p.uuid === status.profileId);
+                            }
+                            if (!profile) {
+                                profile = allProfilesData.find(p => p.name === status.username);
+                            }
+
+                            if (profile && !profileManager.runningProfiles.has(profile.uuid)) {
+                                profileManager.runningProfiles.add(profile.uuid);
+                                profileManager.runningStartTimes = profileManager.runningStartTimes || new Map();
+                                profileManager.runningStartTimes.set(profile.uuid, Date.now());
+                                profileManager.saveRunningProfiles();
+                                needsCarouselRefresh = true;
+                                console.log(`✅ Marked profile as running: ${profile.name}`);
+                            }
+                        }
 
                         // Re-enable button when server confirms start
                         const btnRunAction = document.getElementById('btnRunAction');
@@ -3418,7 +3503,12 @@
                         console.log(`✅ Synced: Removed running flag for profile ${profileId} (not running on server for >30s)`);
                     });
                     profileManager.saveRunningProfiles();
-                    await loadProfilesCarousel(); // Refresh UI
+                    needsCarouselRefresh = true;
+                }
+
+                // Refresh carousel if any changes detected
+                if (needsCarouselRefresh && typeof loadProfilesCarousel === 'function') {
+                    await loadProfilesCarousel();
                 }
             }
         } catch (error) {
@@ -3627,26 +3717,30 @@
     // This prevents pagination jumping issues
     // Manual refresh available via "Tải Lại" button
 
-    // Check for running automation status updates (more frequent for better UX)
+    // Check for running automation status updates (only when there are running profiles)
     setInterval(() => {
-        loadAutomationStatuses(); // Check running status
-        checkForAutomationCompletion(); // Check if automation completed
-    }, 5000); // Check every 5 seconds for faster updates
+        if (typeof profileManager !== 'undefined' &&
+            profileManager.runningProfiles &&
+            profileManager.runningProfiles.size > 0) {
+            loadAutomationStatuses(); // Check running status
+            checkForAutomationCompletion(); // Check if automation completed
+        }
+    }, 2000); // Check every 2 seconds when running
 
     // Auto-refresh results table when automation is running
     let lastResultsRefresh = 0;
     setInterval(() => {
         const now = Date.now();
-        // Only refresh if there are running profiles and it's been at least 5 seconds since last refresh
+        // Only refresh if there are running profiles and it's been at least 10 seconds since last refresh
         if (typeof profileManager !== 'undefined' &&
             profileManager.runningProfiles &&
             profileManager.runningProfiles.size > 0 &&
-            now - lastResultsRefresh > 5000) {
+            now - lastResultsRefresh > 10000) {
             lastResultsRefresh = now;
             console.log('🔄 Auto-refreshing results table (automation running)...');
             loadResultsFromServer();
         }
-    }, 5000); // Check every 5 seconds
+    }, 10000); // Check every 10 seconds
 
     // Recalculate page size when window is resized
     let resizeTimeout;
@@ -3743,6 +3837,33 @@
         }
     };
 
+    // Clear all running statuses
+    window.clearAllRunningStatuses = function () {
+        const count = profileManager.runningProfiles.size;
+
+        if (count === 0) {
+            showToast('info', 'Không có gì', 'Không có profile nào đang marked running');
+            return;
+        }
+
+        if (!confirm(`Bạn có chắc muốn clear ${count} profile(s) đang running?`)) {
+            return;
+        }
+
+        // Clear all running profiles
+        profileManager.runningProfiles.clear();
+        if (profileManager.runningStartTimes) {
+            profileManager.runningStartTimes.clear();
+        }
+        profileManager.saveRunningProfiles();
+
+        // Refresh carousel to update UI
+        loadProfilesCarousel();
+
+        showToast('success', 'Đã clear', `Đã clear ${count} profiles`);
+        console.log(`✅ Cleared ${count} running profiles`);
+    };
+
     // Confirm and run check promo from modal
     async function confirmCheckPromo() {
         // Get selected sites from modal
@@ -3818,17 +3939,20 @@
         const promoTypeSelector = document.getElementById('promoTypeSelector');
         const appGroup = document.getElementById('appPromoGroup');
         const smsGroup = document.getElementById('smsPromoGroup');
+        const checkPromoOptionContainer = document.getElementById('checkPromoOptionContainer');
 
         if (tabName === 'auto') {
-            // Auto tab: Show selector, allow toggle between app/sms
+            // Auto tab: Show selector, allow toggle between app/sms, show checkbox
             if (promoTypeSelector) promoTypeSelector.style.display = 'block';
+            if (checkPromoOptionContainer) checkPromoOptionContainer.style.display = 'block';
             // Keep current selection
             togglePromoSites();
         } else {
-            // Other tabs: Hide selector, always show app sites only
+            // Other tabs: Hide selector, always show app sites only, hide checkbox
             if (promoTypeSelector) promoTypeSelector.style.display = 'none';
             if (appGroup) appGroup.style.display = 'block';
             if (smsGroup) smsGroup.style.display = 'none';
+            if (checkPromoOptionContainer) checkPromoOptionContainer.style.display = 'none';
         }
     };
 
