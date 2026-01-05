@@ -1267,9 +1267,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, abcvip, jun88, kjc)
+        // Try to find any VIP category file (okvip, abcvip, jun88)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1363,7 +1363,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.json({ success: false, error: 'Invalid category' });
         }
@@ -1414,7 +1414,7 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', 'kjc'];
+        const validCategories = ['okvip', 'abcvip', 'jun88'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }

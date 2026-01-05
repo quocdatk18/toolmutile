@@ -121,7 +121,7 @@
       "id": "vip-tool",
       "name": "VIP Auto Tool",
       "icon": "🎲",
-      "description": "Tự động đăng ký, đăng nhập, thêm bank và check khuyến mãi cho 4 category VIP (OKVIP, ABCVIP, JUN88, KJC)",
+      "description": "Tự động đăng ký, đăng nhập, thêm bank và check khuyến mãi cho 3 category VIP (OKVIP, ABCVIP, JUN88)",
       "version": "1.0.0",
       "status": "active",
       "requiresApiKey": true,

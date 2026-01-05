@@ -1,0 +1,43 @@
+{
+  "username": "WolfBlade1d",
+  "password": "f3j6mevhk3mw4",
+  "withdrawPassword": "694575",
+  "fullname": "MAI VU DUY TOAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "CAN THO",
+    "accountNumber": "962321230787818",
+    "accountHolder": "MAI VU DUY TOAN"
+  },
+  "registeredAt": "2026-01-02T17:08:31.405Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T17:08:31.405Z",
+  "bankVerified": false
+}

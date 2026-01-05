@@ -1,9 +1,0 @@
-{
-  "customer": "KAT1",
-  "version": "3.0.0",
-  "createdAt": "2025-12-20T17:12:36.219Z",
-  "buildType": "customer-package",
-  "secretKey": "SECRET_KAT1_97562_26517",
-  "machineId": null,
-  "obfuscated": true
-}

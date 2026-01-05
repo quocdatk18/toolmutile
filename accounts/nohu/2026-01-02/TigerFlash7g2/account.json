@@ -1,0 +1,43 @@
+{
+  "username": "TigerFlash7g2",
+  "password": "4u7ro3nhl",
+  "withdrawPassword": "343298",
+  "fullname": "TRUONG VAN PHONG VAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HAI PHONG",
+    "accountNumber": "10362048108270803",
+    "accountHolder": "TRUONG VAN PHONG VAN"
+  },
+  "registeredAt": "2026-01-02T16:48:58.410Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T16:48:58.410Z",
+  "bankVerified": false
+}

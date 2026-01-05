@@ -1,0 +1,23 @@
+{
+  "username": "bmxp7fv",
+  "password": "s8mi1o2ibiv",
+  "withdrawPassword": "343823",
+  "fullname": "PHAN MINH AN",
+  "email": "r5fcdxj@gmail.com",
+  "phone": "0905603967",
+  "registeredAt": "2026-01-05T09:50:09.498Z",
+  "firstSite": "888P",
+  "sites": [
+    "888Vi",
+    "888P"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "CAKE",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "2226755083710",
+    "accountHolder": "PHAN MINH AN"
+  }
+}

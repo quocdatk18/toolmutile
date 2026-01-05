@@ -1,0 +1,43 @@
+{
+  "username": "PhoenixFlash7",
+  "password": "hxkqi37t9h",
+  "withdrawPassword": "880390",
+  "fullname": "NGUYEN QUOCDAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "1330313032",
+    "accountNumber": "1330313032",
+    "accountHolder": "NGUYEN QUOCDAT"
+  },
+  "registeredAt": "2026-01-02T15:52:58.143Z",
+  "firstSite": "NOHU",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T15:52:58.143Z",
+  "bankVerified": false
+}

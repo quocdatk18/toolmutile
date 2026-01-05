@@ -1,0 +1,43 @@
+{
+  "username": "EagleStorm7d2",
+  "password": "btvb6x86fz",
+  "withdrawPassword": "305293",
+  "fullname": "nguyenquoc dat",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "1230313032",
+    "accountNumber": "1230313032",
+    "accountHolder": "nguyenquoc dat"
+  },
+  "registeredAt": "2026-01-02T15:51:26.658Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T15:51:26.658Z",
+  "bankVerified": false
+}

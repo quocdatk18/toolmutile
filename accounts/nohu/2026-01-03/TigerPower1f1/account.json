@@ -1,0 +1,43 @@
+{
+  "username": "TigerPower1f1",
+  "password": "df1ma9lcgf7",
+  "withdrawPassword": "789618",
+  "fullname": "TRAN ANH THU THAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HO CHI MINH",
+    "accountNumber": "962321230787823",
+    "accountHolder": "TRAN ANH THU THAO"
+  },
+  "registeredAt": "2026-01-02T17:08:29.436Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T17:08:29.436Z",
+  "bankVerified": false
+}

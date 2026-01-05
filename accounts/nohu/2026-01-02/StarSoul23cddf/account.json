@@ -1,0 +1,43 @@
+{
+  "username": "StarSoul23cddf",
+  "password": "d744vfsmn",
+  "withdrawPassword": "277176",
+  "fullname": "NGUYENQUOCDAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "8130313032",
+    "accountNumber": "8130313032",
+    "accountHolder": "NGUYENQUOCDAT"
+  },
+  "registeredAt": "2026-01-02T14:17:34.328Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T14:17:34.328Z",
+  "bankVerified": false
+}

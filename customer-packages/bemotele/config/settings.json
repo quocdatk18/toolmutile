@@ -1,0 +1,22 @@
+{
+  "apiKey": {
+    "service": "autocaptcha.pro",
+    "key": "",
+    "balance": 0
+  },
+  "dashboard": {
+    "port": 3000,
+    "theme": "light",
+    "language": "vi",
+    "title": "Hidemium Multi-Tool Dashboard"
+  },
+  "tools": {
+    "enabled": [
+      "nohu-tool"
+    ],
+    "disabled": []
+  },
+  "extensions": {
+    "nohu-tool": ""
+  }
+}

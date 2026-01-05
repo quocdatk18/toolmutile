@@ -1,0 +1,43 @@
+{
+  "username": "FireSoul88fvc",
+  "password": "hduyn1f8t28",
+  "withdrawPassword": "115692",
+  "fullname": "MAI VAN KHOI DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VUNG TAU",
+    "accountNumber": "962321230787814",
+    "accountHolder": "MAI VAN KHOI DAT"
+  },
+  "registeredAt": "2026-01-02T17:06:45.840Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T17:06:45.840Z",
+  "bankVerified": false
+}

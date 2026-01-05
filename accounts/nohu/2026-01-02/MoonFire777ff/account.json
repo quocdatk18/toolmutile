@@ -1,0 +1,43 @@
+{
+  "username": "MoonFire777ff",
+  "password": "g913byfca",
+  "withdrawPassword": "355035",
+  "fullname": "NGUYEN HIEU HUNG TIEU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10362048108256160",
+    "accountHolder": "NGUYEN HIEU HUNG TIEU"
+  },
+  "registeredAt": "2026-01-02T15:32:44.986Z",
+  "firstSite": "NOHU",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-02T15:32:44.986Z",
+  "bankVerified": false
+}

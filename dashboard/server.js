@@ -1063,7 +1063,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     // Check if account exists in any date folder (for VIP categories)
     const vipCategoriesDir = path.join(__dirname, '../accounts/vip');
     if (fs.existsSync(vipCategoriesDir)) {
-        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2'];
         for (const cat of vipCategories) {
             const catDir = path.join(vipCategoriesDir, cat);
             if (fs.existsSync(catDir)) {
@@ -1364,9 +1364,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, accokvip, abcvip, jun88, 78win, jun88v2, kjc)
+        // Try to find any VIP category file (okvip, accokvip, abcvip, jun88, 78win, jun88v2, 22vip)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1460,7 +1460,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.json({ success: false, error: 'Invalid category' });
         }
@@ -1500,7 +1500,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
     }
 });
 
-// Save account info for VIP categories (okvip, accOkvip, abcvip, jun88, 78win, jun88v2, kjc)
+// Save account info for VIP categories (okvip, accOkvip, abcvip, jun88, 78win, jun88v2)
 app.post('/api/accounts/:category/:username', (req, res) => {
     try {
         const { category, username } = req.params;
@@ -1511,7 +1511,7 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }
@@ -3131,13 +3131,13 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 
 // NOHU app sites config (centralized - used by both frontend and backend)
 const nohuSitesConfig = {
-    'Go99': { name: 'Go99', registerUrl: 'https://m.goshhh99uuu-66ooo.xyz/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
-    'NOHU': { name: 'NOHU', registerUrl: 'https://m.88807888.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
-    'TT88': { name: 'TT88', registerUrl: 'https://m.ttfffashhsh-88anjsje.vip/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
-    'MMOO': { name: 'MMOO', registerUrl: 'https://m.3mmoo.com/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
-    '789P': { name: '789P', registerUrl: 'https://m.nn789p.com/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
-    '33WIN': { name: '33WIN', registerUrl: 'https://m.330756.com/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
-    '88VV': { name: '88VV', registerUrl: 'https://m.88vv.gd/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
+    'Go99': { name: 'Go99', registerUrl: 'https://1go99.vip/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
+    'NOHU': { name: 'NOHU', registerUrl: 'https://8nohu.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
+    'TT88': { name: 'TT88', registerUrl: 'https://1tt88.vip/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
+    'MMOO': { name: 'MMOO', registerUrl: 'http://www.mmoo.team/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
+    '789P': { name: '789P', registerUrl: 'https://www.789p1.vip/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
+    '33WIN': { name: '33WIN', registerUrl: 'https://m.3333win.cc/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
+    '88VV': { name: '88VV', registerUrl: 'https://888vvv.bet/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
 };
 
 // Get NOHU sites config

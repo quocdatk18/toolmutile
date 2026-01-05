@@ -1,5 +1,5 @@
 /**
- * VIP Tool Automation - 4 Categories (OKVIP, ABCVIP, JUN88, KJC)
+ * VIP Tool Automation - 3 Categories (OKVIP, ABCVIP, JUN88)
  * Luồng chung: register → addbank → checkpromo
  * Form filling riêng cho từng category
  */
@@ -90,10 +90,6 @@ class VIPAutomation {
                 bank: '/account/withdrawaccounts/bankcards'
             },
             'jun88v2': {
-                withdrawPassword: '/Account/ChangeMoneyPassword',
-                bank: '/Financial?type=withdraw'
-            },
-            'kjc': {
                 withdrawPassword: '/Account/ChangeMoneyPassword',
                 bank: '/Financial?type=withdraw'
             }
@@ -1228,8 +1224,6 @@ class VIPAutomation {
             return await this.addBank78WIN(browser, siteConfig, profileData, existingPage);
         } else if (category === 'jun88v2') {
             return await this.addBankJUN88V2(browser, siteConfig, profileData, existingPage);
-        } else if (category === 'kjc') {
-            return await this.addBankKJC(browser, siteConfig, profileData, existingPage);
         }
         return { success: false, error: 'Unknown category' };
     }
@@ -2643,61 +2637,6 @@ class VIPAutomation {
     }
 
     /**
-     * KJC Add Bank: vào luôn trang submit bank (gộp mật khẩu rút)
-     */
-    async addBankKJC(browser, siteConfig, profileData) {
-        const page = await browser.newPage();
-        try {
-            console.log(`🏦 Add Bank step for ${siteConfig.name} (KJC)...`);
-
-            const domain = this.getDomain(siteConfig.registerUrl);
-            if (!domain) throw new Error('Invalid domain');
-
-            const paths = this.categoryPaths.kjc;
-            const bankUrl = domain + paths.bank;
-
-            console.log(`  → Bank: ${bankUrl}`);
-
-            // Add random delay 2-10s before redirect to bank
-            const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
-            console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
-            await new Promise(r => setTimeout(r, delayBeforeBank));
-
-            await page.goto(bankUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            await new Promise(r => setTimeout(r, 1500));
-
-            // Điền cả mật khẩu rút + bank info
-            await page.evaluate((data) => {
-                const withdrawField = document.querySelector('input[name="withdrawPassword"]');
-                const bankNameField = document.querySelector('input[name="bankName"]');
-                const accountField = document.querySelector('input[name="accountNumber"]');
-
-                if (withdrawField) withdrawField.value = data.withdrawPassword;
-                if (bankNameField) bankNameField.value = data.bankName;
-                if (accountField) accountField.value = data.accountNumber;
-            }, profileData);
-
-            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
-            await page.evaluate(() => {
-                const submitBtn = document.querySelector('button[type="submit"]');
-                if (submitBtn) submitBtn.click();
-            });
-
-            // Wait for navigation after bank submission
-            console.log(`⏳ Waiting for navigation after bank submission...`);
-            await page.waitForNavigation({ timeout: 15000 }).catch(() => {
-                console.log('⚠️ No navigation after add bank');
-            });
-
-            return { success: true, message: 'Add bank completed' };
-        } catch (error) {
-            console.error(`❌ KJC Add Bank Error:`, error.message);
-            return { success: false, error: error.message };
-        }
-        // Note: Keep page open for inspection/debugging
-    }
-
-    /**
      * Bước 3: Check Promo (riêng cho từng category)
      */
     async checkPromoStep(browser, category, siteConfig, profileData = {}) {
@@ -2707,8 +2646,6 @@ class VIPAutomation {
             return await this.checkPromoABCVIP(browser, siteConfig, profileData);
         } else if (category === 'jun88') {
             return await this.checkPromoJUN88(browser, siteConfig, profileData);
-        } else if (category === 'kjc') {
-            return await this.checkPromoKJC(browser, siteConfig, profileData);
         }
         return { success: false, error: 'Unknown category' };
     }
@@ -2855,45 +2792,6 @@ class VIPAutomation {
     }
 
     /**
-     * KJC Check Promo
-     * Logic: Fill username only
-     */
-    async checkPromoKJC(browser, siteConfig, profileData = {}) {
-        const page = await browser.newPage();
-        try {
-            console.log(`🎁 Check Promo step for ${siteConfig.name} (KJC)...`);
-
-            await page.goto(siteConfig.checkPromoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            await new Promise(r => setTimeout(r, 3000));
-
-            // Fill username only
-            const username = profileData?.username || '';
-            console.log(`📝 Filling username: ${username}...`);
-            await page.evaluate((usernameValue) => {
-                // Try common username field selectors
-                let input = document.querySelector('input[name="username"]');
-                if (!input) input = document.querySelector('input[placeholder*="username" i]');
-                if (!input) input = document.querySelector('input[id*="username" i]');
-                if (!input) input = document.querySelector('input[type="text"]:first-of-type');
-
-                if (input) {
-                    input.value = usernameValue;
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                    input.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            }, username);
-
-            console.log(`✅ Username filled successfully`);
-            console.log('📌 Keeping checkpromo page open for manual completion');
-
-            return { success: true, message: 'Username filled - manual completion required' };
-        } catch (error) {
-            console.error(`❌ KJC Check Promo Error:`, error.message);
-            return { success: false, error: error.message };
-        }
-    }
-
-    /**
      * Fill Register Form - riêng cho từng category
      */
     async fillRegisterForm(page, category, profileData, siteConfig) {
@@ -2907,8 +2805,6 @@ class VIPAutomation {
             await this.fill78WINRegisterForm(page, profileData);
         } else if (category === 'jun88v2') {
             await this.fillJUN88V2RegisterForm(page, profileData);
-        } else if (category === 'kjc') {
-            await this.fillKJCRegisterForm(page, profileData);
         }
     }
 
@@ -3035,28 +2931,6 @@ class VIPAutomation {
                         name: 'Jun881',
                         registerUrl: 'https://sasa2.xn--8866-um1g.com/signup',
                         checkPromoUrl: 'https://trungtam.khuyenmaijun881.win/?promo_id=FR58'
-                    }
-                ]
-            },
-            'kjc': {
-                name: 'KJC',
-                icon: 'KJC',
-                color: '#cc0000',
-                sites: [
-                    {
-                        name: 'KJC1',
-                        registerUrl: 'https://kjc1.com/register',
-                        checkPromoUrl: 'https://kjc1.com/promo'
-                    },
-                    {
-                        name: 'KJC2',
-                        registerUrl: 'https://kjc2.com/register',
-                        checkPromoUrl: 'https://kjc2.com/promo'
-                    },
-                    {
-                        name: 'KJC3',
-                        registerUrl: 'https://kjc3.com/register',
-                        checkPromoUrl: 'https://kjc3.com/promo'
                     }
                 ]
             },
@@ -3236,30 +3110,6 @@ class VIPAutomation {
     }
 
     /**
-     * KJC Register Form
-     */
-    async fillKJCRegisterForm(page, profileData) {
-        await page.evaluate((data) => {
-            const usernameInput = document.querySelector('input[data-field="username"]');
-            const passwordInput = document.querySelector('input[data-field="password"]');
-            const emailInput = document.querySelector('input[data-field="email"]');
-            const phoneInput = document.querySelector('input[data-field="phone"]');
-
-            if (usernameInput) usernameInput.value = data.username;
-            if (passwordInput) passwordInput.value = data.password;
-            if (emailInput) emailInput.value = data.email || '';
-            if (phoneInput) phoneInput.value = data.phone || '';
-
-            [usernameInput, passwordInput, emailInput, phoneInput].forEach(field => {
-                if (field) {
-                    field.dispatchEvent(new Event('input', { bubbles: true }));
-                    field.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            });
-        }, profileData);
-    }
-
-    /**
      * Auto-detect category from site URL
      * Phát hiện category dựa trên domain của site
      */
@@ -3299,78 +3149,75 @@ class VIPAutomation {
                 domain.includes('jojodios')) {
                 return 'jun88v2';
             }
-
-            // KJC sites
-            if (domain.includes('kjc') || domain.includes('k-jc')) {
-                return 'kjc';
-            }
+            return 'kjc';
+        }
 
             console.warn(`⚠️ Could not auto-detect category for: ${domain}`);
-            return 'okvip'; // Default to OKVIP
-        } catch (error) {
-            console.error('❌ Error auto-detecting category:', error.message);
-            return 'okvip'; // Default to OKVIP
-        }
+        return 'okvip'; // Default to OKVIP
+    } catch(error) {
+        console.error('❌ Error auto-detecting category:', error.message);
+        return 'okvip'; // Default to OKVIP
     }
+}
 
     /**
      * Save account info after successful registration
      * Lưu thông tin tài khoản vào dashboard API
      */
     async saveAccountInfo(profileData, category, siteName, allSites = []) {
-        try {
-            console.log(`    💾 Saving ${category.toUpperCase()} account info via API...`);
+    try {
+        console.log(`    💾 Saving ${category.toUpperCase()} account info via API...`);
 
-            // Prepare account info
-            const accountInfo = {
-                username: profileData.username,
-                password: profileData.password,
-                withdrawPassword: profileData.withdrawPassword,
-                fullname: profileData.fullname,
-                email: profileData.email || '',
-                phone: profileData.phone || '',
-                bank: {
-                    name: profileData.bankName,
-                    branch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
-                    accountNumber: profileData.accountNumber,
-                    accountHolder: profileData.fullname
-                },
-                registeredAt: new Date().toISOString(),
-                firstSite: siteName,
-                sites: Array.isArray(allSites)
-                    ? allSites.map(s => typeof s === 'string' ? s : s.name || s)
-                    : [],
-                status: 'active',
-                category: category,
-                tool: 'vip-tool'
-            };
+        // Prepare account info
+        const accountInfo = {
+            username: profileData.username,
+            password: profileData.password,
+            withdrawPassword: profileData.withdrawPassword,
+            fullname: profileData.fullname,
+            email: profileData.email || '',
+            phone: profileData.phone || '',
+            bank: {
+                name: profileData.bankName,
+                branch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
+                accountNumber: profileData.accountNumber,
+                accountHolder: profileData.fullname
+            },
+            registeredAt: new Date().toISOString(),
+            firstSite: siteName,
+            sites: Array.isArray(allSites)
+                ? allSites.map(s => typeof s === 'string' ? s : s.name || s)
+                : [],
+            status: 'active',
+            category: category,
+            tool: 'vip-tool'
+        };
 
-            // Get dashboard port (dynamic)
-            const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
-            const apiUrl = `http://localhost:${dashboardPort}/api/accounts/${category}/${profileData.username}`;
-            console.log(`    📍 API URL: ${apiUrl}`);
+        // Get dashboard port (dynamic)
+        const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
+        const apiUrl = `http://localhost:${dashboardPort}/api/accounts/${category}/${profileData.username}`;
+        console.log(`    📍 API URL: ${apiUrl}`);
 
-            // Call API to save account info
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(accountInfo)
-            });
+        // Call API to save account info
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(accountInfo)
+        });
 
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            console.log(`    ✅ Account info saved via API:`, result.message);
-
-        } catch (error) {
-            console.error(`    ❌ Error saving account info:`, error.message);
-            throw error;
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+
+        const result = await response.json();
+        console.log(`    ✅ Account info saved via API:`, result.message);
+
+    } catch (error) {
+        console.error(`    ❌ Error saving account info:`, error.message);
+        throw error;
     }
+}
 }
 
 module.exports = VIPAutomation;

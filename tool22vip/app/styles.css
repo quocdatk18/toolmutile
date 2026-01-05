@@ -1,0 +1,578 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #1a1a1a;
+  color: #fff;
+  width: 450px;
+  min-height: 600px;
+  max-height: 700px;
+  overflow-y: auto;
+}
+
+.container {
+  background: #2a2a2a;
+  border-radius: 8px;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #333;
+}
+
+.tab {
+  flex: 1;
+  padding: 15px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  color: #999;
+  transition: all 0.3s;
+}
+
+.tab.active {
+  color: #ff3333;
+  border-bottom: 3px solid #ff3333;
+}
+
+.content {
+  padding: 20px;
+}
+
+.title {
+  font-size: 14px;
+  margin-bottom: 15px;
+  color: #ccc;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 15px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+}
+
+.input-group .icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: #666;
+}
+
+.input-group input,
+.input-group select {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-size: 14px;
+}
+
+.input-group select {
+  cursor: pointer;
+  max-width: 100%;
+}
+
+.input-group select option {
+  background: #2a2a2a;
+  color: #fff;
+  padding: 8px;
+}
+
+.input-group input::placeholder {
+  color: #666;
+}
+
+.toggle-password {
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
+}
+
+.password-section {
+  margin: 20px 0;
+}
+
+.password-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.icon-star {
+  color: #ff3333;
+  margin-right: 5px;
+}
+
+.password-label {
+  color: #ff3333;
+  font-weight: bold;
+  margin-right: auto;
+}
+
+.verify-code {
+  background: #444;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-right: 5px;
+  font-size: 12px;
+}
+
+.verify-label {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.password-strength {
+  display: flex;
+  align-items: center;
+  margin: 10px 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.strength-bars {
+  display: flex;
+  gap: 5px;
+  margin-left: 10px;
+}
+
+.bar {
+  width: 40px;
+  height: 6px;
+  background: #444;
+  border-radius: 3px;
+}
+
+.bar.active {
+  background: #ff3333;
+}
+
+.warning {
+  background: rgba(255, 165, 0, 0.1);
+  color: #ffaa00;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  margin: 15px 0;
+  line-height: 1.5;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: flex-start;
+  margin: 20px 0;
+  font-size: 13px;
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 10px;
+  margin-top: 3px;
+  width: 18px;
+  height: 18px;
+  accent-color: #00ff00;
+  cursor: pointer;
+}
+
+.checkbox-group label {
+  color: #999;
+  line-height: 1.5;
+}
+
+.terms-link {
+  color: #ff3333;
+  cursor: pointer;
+}
+
+.register-btn {
+  width: 100%;
+  padding: 15px;
+  background: #ff3333;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.register-btn:hover {
+  background: #ff4444;
+}
+
+.register-btn:active {
+  background: #cc0000;
+}
+
+.url-section {
+  background: rgba(255, 51, 51, 0.1);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  border: 1px solid #ff3333;
+}
+
+.section-title {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #ff3333;
+  font-weight: bold;
+}
+
+.status-section {
+  margin: 15px 0;
+  padding: 12px;
+  border-radius: 6px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.status-message {
+  font-size: 13px;
+  text-align: center;
+}
+
+.status-message.info {
+  background: rgba(0, 123, 255, 0.2);
+  color: #4da6ff;
+  border: 1px solid #007bff;
+}
+
+.status-message.success {
+  background: rgba(0, 255, 0, 0.2);
+  color: #00ff00;
+  border: 1px solid #00ff00;
+}
+
+.status-message.error {
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff6666;
+  border: 1px solid #ff3333;
+}
+
+.saved-accounts {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #444;
+}
+
+.account-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 1px solid #333;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+
+.account-info strong {
+  color: #ff3333;
+  font-size: 14px;
+}
+
+.account-info span {
+  color: #ccc;
+  font-size: 12px;
+}
+
+.account-info small {
+  color: #666;
+  font-size: 11px;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: #ff3333;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px 10px;
+  transition: transform 0.2s;
+}
+
+.delete-btn:hover {
+  transform: scale(1.2);
+}
+
+.no-accounts {
+  text-align: center;
+  color: #666;
+  padding: 20px;
+  font-size: 13px;
+}
+
+.multi-url-toggle {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+}
+
+.multi-url-toggle input[type="checkbox"] {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+#multiUrlSection {
+  margin-top: 15px;
+}
+
+#multiUrls {
+  width: 100%;
+  min-height: 120px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 12px;
+  color: #fff;
+  font-size: 13px;
+  font-family: monospace;
+  resize: vertical;
+  outline: none;
+}
+
+#multiUrls:focus {
+  border-color: #ff3333;
+}
+
+.execution-mode {
+  margin: 15px 0;
+  padding: 12px;
+  background: rgba(0, 255, 0, 0.05);
+  border-radius: 6px;
+  border: 1px solid #00ff00;
+}
+
+.execution-mode > label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  color: #00ff00;
+  margin-bottom: 10px;
+}
+
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: #ccc;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.radio-group label:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.radio-group input[type="radio"] {
+  margin-right: 8px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #00ff00;
+}
+
+.multi-url-info {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #ffaa00;
+  line-height: 1.5;
+}
+
+.progress-section {
+  margin: 15px 0;
+  padding: 15px;
+  background: rgba(0, 123, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid #007bff;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 20px;
+  background: #1a1a1a;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff00, #00cc00);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: #00ff00;
+}
+
+
+.site-checkboxes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.site-checkbox {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  background: #f5f5f5;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.site-checkbox:hover {
+  border-color: #ff3333;
+  background: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.site-checkbox input[type="checkbox"] {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  accent-color: #00ff00;
+}
+
+.site-checkbox input[type="checkbox"]:checked {
+  accent-color: #00ff00;
+}
+
+.site-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  margin-right: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.site-info {
+  flex: 1;
+}
+
+.site-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.site-subtitle {
+  font-size: 13px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.site-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.select-all-btn,
+.deselect-all-btn {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.select-all-btn {
+  background: #00aa00;
+  color: white;
+}
+
+.select-all-btn:hover {
+  background: #00cc00;
+  transform: scale(1.05);
+}
+
+.deselect-all-btn {
+  background: #666;
+  color: white;
+}
+
+.deselect-all-btn:hover {
+  background: #888;
+  transform: scale(1.05);
+}
+
+
+/* Promotion tab styles */
+.info-box {
+  background: #f0f8ff !important;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 15px 0;
+}
+
+.info-box p {
+  margin: 8px 0;
+  color: #333 !important;
+  font-size: 14px;
+  font-weight: 500;
+}

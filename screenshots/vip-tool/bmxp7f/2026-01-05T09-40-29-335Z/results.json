@@ -1,0 +1,19 @@
+[
+  {
+    "site": "888P",
+    "register": {
+      "success": false,
+      "error": "No element found for selector: input[data-input-name=\"account\"]"
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  }
+]

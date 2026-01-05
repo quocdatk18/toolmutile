@@ -1,0 +1,22 @@
+{
+  "username": "brkydvnfd1",
+  "password": "rvwu81b0u1",
+  "withdrawPassword": "111222",
+  "fullname": "PHAN THANH CUONG",
+  "email": "i4bpffs@gmail.com",
+  "phone": "0969153929",
+  "registeredAt": "2026-01-05T09:08:16.594Z",
+  "firstSite": "TV88",
+  "sites": [
+    "TV88"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "9633872965755",
+    "accountHolder": "PHAN THANH CUONG"
+  }
+}

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Register</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="tabs">
+      <div class="tab active" id="autoTab">🚀 Tự Động</div>
+      <div class="tab" id="registerTab">Đăng Ký</div>
+      <div class="tab" id="loginTab">Đăng Nhập</div>
+      <div class="tab" id="withdrawTab">Rút Tiền</div>
+      <div class="tab" id="phoneVerifyTab">Xác Thực SĐT</div>
+      <div class="tab" id="promotionTab">Khuyến Mãi</div>
+    </div>
+
+    <!-- Unified content for all tabs -->
+    <div class="content" id="unifiedContent">
+      <div class="url-section">
+        <h3 class="section-title" id="sectionTitle">🔗 Chọn Trang</h3>
+
+        <div class="site-checkboxes">
+          <label class="site-checkbox">
+            <input type="checkbox" class="site-check-auto" data-register-url="https://2899bb.com/home/register"
+              data-login-url="https://2899bb.com/home/login"
+              data-promo-url="https://2899bb.com/home/event/detail?current=1&template=1&eventId=118">
+            <div class="site-icon" style="background: linear-gradient(135deg, #ff6b35, #ff8c42);">28</div>
+            <div class="site-info">
+              <div class="site-title">28bet</div>
+              <div class="site-subtitle">TẤT CẢ</div>
+            </div>
+          </label>
+
+          <label class="site-checkbox">
+            <input type="checkbox" class="site-check-auto"
+              data-register-url="https://888vi8.com/home/register?id=486645938"
+              data-login-url="https://888vi8.com/home/login"
+              data-promo-url="https://888vi8.com/home/event/detail?current=1&template=1&eventId=4">
+            <div class="site-icon" style="background: linear-gradient(135deg, #cc0000, #ff0000);">888</div>
+            <div class="site-info">
+              <div class="site-title">888vi</div>
+              <div class="site-subtitle">TRUY CẬP</div>
+            </div>
+          </label>
+
+          <label class="site-checkbox">
+            <input type="checkbox" class="site-check-auto" data-register-url="https://tv88vip.com/home/register"
+              data-login-url="https://tv88vip.com/home/login"
+              data-promo-url="https://tv88vip.com/home/event/detail?current=1&template=1&eventId=443">
+            <div class="site-icon" style="background: linear-gradient(135deg, #0066cc, #0088ff);">TV</div>
+            <div class="site-info">
+              <div class="site-title">TV88</div>
+              <div class="site-subtitle">TRUY CẬP</div>
+            </div>
+          </label>
+
+          <label class="site-checkbox">
+            <input type="checkbox" class="site-check-auto"
+              data-register-url="https://888now333.com/home/register?id=122472500"
+              data-login-url="https://888now333.com/home/login"
+              data-promo-url="https://888now333.com/home/event/detail?current=1&template=1&eventId=1">
+            <div class="site-icon" style="background: linear-gradient(135deg, #ff6600, #ff9933);">now</div>
+            <div class="site-info">
+              <div class="site-title">888now</div>
+              <div class="site-subtitle">TRUY CẬP</div>
+            </div>
+          </label>
+
+          <label class="site-checkbox">
+            <input type="checkbox" class="site-check-auto" data-register-url="https://888new10.com/home/register"
+              data-login-url="https://888new10.com/home/login"
+              data-promo-url="https://888new10.com/home/event/detail?current=1&template=1&eventId=248">
+            <div class="site-icon" style="background: linear-gradient(135deg, #00aa00, #00ff00); color: #000;">888</div>
+            <div class="site-info">
+              <div class="site-title">888new</div>
+              <div class="site-subtitle">TRUY CẬP</div>
+            </div>
+          </label>
+
+          <label class="site-checkbox">
+            <input type="checkbox" class="site-check-auto" data-register-url="https://m.win678oo.com/home/register"
+              data-login-url="https://m.win678oo.com/home/login"
+              data-promo-url="https://m.win678oo.com/home/event/detail?current=1&template=1&eventId=589">
+            <div class="site-icon" style="background: linear-gradient(135deg, #008866, #00aa88); color: #ffff00;">678
+            </div>
+            <div class="site-info">
+              <div class="site-title">Win678</div>
+              <div class="site-subtitle">TRUY CẬP</div>
+            </div>
+          </label>
+
+          <label class="site-checkbox">
+            <input type="checkbox" class="site-check-auto" data-register-url="https://m.888p28.com/?fixed.iswebclip=2"
+              data-login-url="https://m.888p28.com/home/login"
+              data-promo-url="https://m.888p28.com/home/event/detail?current=1&template=1&eventId=990">
+            <div class="site-icon" style="background: linear-gradient(135deg, #0055cc, #0077ff);">888</div>
+            <div class="site-info">
+              <div class="site-title">888p</div>
+              <div class="site-subtitle">TẤT CẢ</div>
+            </div>
+          </label>
+
+          <label class="site-checkbox">
+            <input type="checkbox" class="site-check-auto"
+              data-register-url="https://m.sc881.cc/home/register?id=934720431"
+              data-login-url="https://m.sc881.cc/home/login"
+              data-promo-url="https://m.sc881.cc/home/event/detail?current=1&template=1&eventId=1">
+            <div class="site-icon" style="background: linear-gradient(135deg, #cc0000, #ff3333);">SC</div>
+            <div class="site-info">
+              <div class="site-title">SC88</div>
+              <div class="site-subtitle">TRUY CẬP</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="site-actions">
+          <button type="button" class="select-all-btn" id="selectAllBtn">✅ Chọn Tất Cả</button>
+          <button type="button" class="deselect-all-btn" id="deselectAllBtn">❌ Bỏ Chọn Tất Cả</button>
+        </div>
+      </div>
+
+      <!-- Auto Complete Form -->
+      <div id="autoForm" style="display: block;">
+        <h2 class="title">🚀 Tự Động Hoàn Chỉnh</h2>
+
+        <div class="info-box"
+          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin: 15px 0;">
+          <p style="margin: 5px 0; font-size: 16px; font-weight: bold;">⚡ Chạy tuần tự tất cả các bước:</p>
+          <p style="margin: 8px 0 8px 20px;">1️⃣ Đăng ký tài khoản</p>
+          <p style="margin: 8px 0 8px 20px;">2️⃣ Thiết lập rút tiền & thêm bank</p>
+          <p style="margin: 8px 0 8px 20px;">3️⃣ Xác thực số điện thoại</p>
+          <p style="margin: 8px 0 8px 20px;">4️⃣ Nhận khuyến mãi 58K</p>
+          <p style="margin: 10px 0 5px 0; font-size: 14px;">⚠️ Nếu bước nào thất bại sẽ dừng lại</p>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">👤</span>
+          <input type="text" id="autoUsername" placeholder="* Nhập Số điện thoại/Tên tài khoản" required>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🔒</span>
+          <input type="password" id="autoPassword" placeholder="* Nhập mật khẩu" required>
+          <span class="toggle-password" id="toggleAutoPassword">👁️</span>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">👥</span>
+          <input type="text" id="autoFullname" placeholder="* Họ và Tên (trùng với tài khoản ngân hàng)" required>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🔐</span>
+          <input type="text" id="autoWithdrawPassword" placeholder="* Mật khẩu rút tiền (6 số)" maxlength="6"
+            pattern="[0-9]{6}" required>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🏦</span>
+          <input type="text" id="autoBankAccount" placeholder="* Số tài khoản ngân hàng" required>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🏛️</span>
+          <select id="autoBankName" required>
+            <option value="">-- Chọn ngân hàng --</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🔑</span>
+          <input type="text" id="autoApiKey" placeholder="* API Key SIM từ codesim.net" required>
+        </div>
+
+        <div style="font-size: 12px; color: #666; margin: -10px 0 15px 40px;">
+          Lấy API key tại: <a href="https://codesim.net/APIIntegration" target="_blank"
+            style="color: #0066cc;">codesim.net/APIIntegration</a>
+        </div>
+
+        <button class="register-btn" id="autoStartBtn"
+          style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 16px; padding: 15px;">
+          🚀 BẮT ĐẦU TỰ ĐỘNG
+        </button>
+
+        <div class="status-section" id="autoStatusSection" style="display: none;">
+          <div class="status-message" id="autoStatusMessage"></div>
+        </div>
+
+        <div class="progress-section" id="autoProgressSection" style="display: none;">
+          <div style="margin-bottom: 10px; font-weight: bold; color: #667eea;" id="autoCurrentStep">Bước 1/4: Đăng
+            ký...</div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="autoProgressFill"></div>
+          </div>
+          <div class="progress-text" id="autoProgressText">0 / 0</div>
+        </div>
+      </div>
+
+      <!-- Register Form -->
+      <div id="registerForm" style="display: none;">
+        <h2 class="title">Thông Tin Đăng Ký Tự Động</h2>
+
+        <div class="input-group">
+          <span class="icon">👤</span>
+          <input type="text" id="username" placeholder="* Nhập Số điện thoại/Tên tài khoản" required>
+        </div>
+
+        <div class="password-section">
+          <div class="password-header">
+            <span class="icon-star">⭐</span>
+            <span class="password-label">Đăng ký mật khẩu</span>
+            <span class="verify-code">123</span>
+            <span class="verify-label">Mã xác minh</span>
+          </div>
+
+          <div class="input-group">
+            <span class="icon">🔒</span>
+            <input type="password" id="password" placeholder="* Nhập mật khẩu" required>
+            <span class="toggle-password" id="togglePassword1">👁️</span>
+          </div>
+
+          <div class="password-strength">
+            <span>Độ mạnh mật khẩu</span>
+            <div class="strength-bars">
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+              <div class="bar"></div>
+            </div>
+          </div>
+
+          <div class="input-group">
+            <span class="icon">🔒</span>
+            <input type="password" id="confirmPassword" placeholder="* Nhập lại mật khẩu" required>
+            <span class="toggle-password" id="togglePassword2">👁️</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">👥</span>
+          <input type="text" id="fullname" placeholder="* Vui lòng nhập Họ và Tên thật của bạn" required>
+        </div>
+
+        <div class="warning">
+          Phải trùng tên với tài khoản ngân hàng rút tiền của bạn, chỉ viết hoa
+        </div>
+
+        <div class="checkbox-group">
+          <input type="checkbox" id="autoSubmit" checked>
+          <label for="autoSubmit">
+            🚀 Tự động nhấn nút Đăng Ký sau khi điền form
+          </label>
+        </div>
+
+        <button class="register-btn" id="registerBtn">🚀 Tự Động Đăng Ký</button>
+
+        <div class="status-section" id="statusSection" style="display: none;">
+          <div class="status-message" id="statusMessage"></div>
+        </div>
+
+        <div class="progress-section" id="progressSection" style="display: none;">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text" id="progressText">0 / 0</div>
+        </div>
+      </div>
+
+      <!-- Login Form -->
+      <div id="loginForm" style="display: none;">
+        <h2 class="title">🔐 Đăng Nhập Tự Động</h2>
+
+        <div class="info-box" style="background: #e7ffe7; padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <p style="margin: 5px 0;">✅ Tự động lấy thông tin từ lần đăng ký</p>
+          <p style="margin: 5px 0;">✅ Tự động điền username & password</p>
+          <p style="margin: 5px 0;">✅ Tự động submit form đăng nhập</p>
+          <p style="margin: 5px 0;">✅ Đăng nhập nhiều trang cùng lúc</p>
+        </div>
+
+        <div class="saved-credentials" id="savedCredentials"
+          style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0; display: none;">
+          <p style="margin: 5px 0; font-weight: bold;">📝 Thông tin đã lưu:</p>
+          <p style="margin: 5px 0;">👤 Username: <span id="savedUsername" style="color: #0066cc;">-</span></p>
+          <p style="margin: 5px 0;">🔒 Password: <span style="color: #666;">••••••••</span></p>
+        </div>
+
+        <div class="warning" id="noCredentialsWarning"
+          style="background: #fff3cd; padding: 10px; border-radius: 5px; margin: 10px 0;">
+          ⚠️ Chưa có thông tin đăng nhập! Hãy đăng ký tài khoản trước.
+        </div>
+
+        <button class="register-btn" id="loginBtn">🔐 Đăng Nhập Tự Động</button>
+
+        <div class="status-section" id="loginStatusSection" style="display: none;">
+          <div class="status-message" id="loginStatusMessage"></div>
+        </div>
+
+        <div class="progress-section" id="loginProgressSection" style="display: none;">
+          <div class="progress-bar">
+            <div class="progress-fill" id="loginProgressFill"></div>
+          </div>
+          <div class="progress-text" id="loginProgressText">0 / 0</div>
+        </div>
+      </div>
+
+      <!-- Withdraw Form -->
+      <div id="withdrawForm" style="display: none;">
+        <h2 class="title">💰 Thiết Lập Rút Tiền</h2>
+
+        <div class="info-box" style="background: #f0f8ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <p style="margin: 5px 0;">✅ Tự động đóng popup quảng cáo</p>
+          <p style="margin: 5px 0;">✅ Tự động vào menu Rút Tiền</p>
+          <p style="margin: 5px 0;">✅ Sẵn sàng thêm ngân hàng</p>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🔐</span>
+          <input type="text" id="withdrawPassword" placeholder="Mật khẩu rút tiền (6 số)" maxlength="6"
+            pattern="[0-9]{6}">
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🏦</span>
+          <input type="text" id="bankAccount" placeholder="Số tài khoản ngân hàng">
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🏛️</span>
+          <select id="bankName">
+            <option value="">Đang tải danh sách ngân hàng...</option>
+          </select>
+        </div>
+
+        <button class="register-btn" id="goToWithdrawBtn">💰 Thiết Lập Rút Tiền & Thêm Bank</button>
+
+        <div class="status-section" id="withdrawStatusSection" style="display: none;">
+          <div class="status-message" id="withdrawStatusMessage"></div>
+        </div>
+
+        <div class="progress-section" id="withdrawProgressSection" style="display: none;">
+          <div class="progress-bar">
+            <div class="progress-fill" id="withdrawProgressFill"></div>
+          </div>
+          <div class="progress-text" id="withdrawProgressText">0 / 0</div>
+        </div>
+      </div>
+
+      <!-- Phone Verification Form -->
+      <div id="phoneVerifyForm" style="display: none;">
+        <h2 class="title">📱 Xác Thực Số Điện Thoại</h2>
+
+        <div class="info-box" style="background: #e7f3ff; padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <p style="margin: 5px 0;">✅ Tự động lấy số điện thoại từ codesim.net</p>
+          <p style="margin: 5px 0;">✅ Tự động điền form và click "Lấy mã"</p>
+          <p style="margin: 5px 0;">✅ Tự động nhận OTP và xác nhận</p>
+          <p style="margin: 5px 0;">✅ Retry tự động nếu số bị trùng (tối đa 3 lần)</p>
+        </div>
+
+        <div class="input-group">
+          <span class="icon">🔑</span>
+          <input type="text" id="phoneVerifyApiKey" placeholder="Nhập API Key SIM từ codesim.net" required>
+        </div>
+
+        <div style="font-size: 12px; color: #666; margin: -10px 0 10px 40px;">
+          Lấy API key tại: <a href="https://codesim.net/APIIntegration" target="_blank"
+            style="color: #0066cc;">codesim.net/APIIntegration</a>
+        </div>
+
+        <div style="margin: 0 0 15px 0; padding: 10px; background: #f0f8ff; border-radius: 8px; display: none;"
+          id="phoneBalanceSection">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <span style="font-size: 14px; color: #666;">💰 Số dư tài khoản:</span>
+              <span style="font-size: 16px; font-weight: bold; color: #00aa00; margin-left: 10px;"
+                id="phoneBalanceAmount">-</span>
+            </div>
+            <button type="button" id="checkPhoneBalanceBtn"
+              style="padding: 5px 15px; background: #0066cc; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;">🔄
+              Kiểm tra</button>
+          </div>
+        </div>
+
+        <button class="register-btn" id="verifyPhoneBtn">📱 Bắt Đầu Xác Thực (Multi)</button>
+
+        <div class="progress-section" id="phoneVerifyProgressSection" style="display: none;">
+          <div class="progress-bar">
+            <div class="progress-fill" id="phoneVerifyProgressFill"></div>
+          </div>
+          <div class="progress-text" id="phoneVerifyProgressText">0 / 0</div>
+        </div>
+
+        <div class="status-section" id="phoneVerifyStatusSection" style="display: none;">
+          <div class="status-message" id="phoneVerifyStatusMessage"></div>
+        </div>
+      </div>
+
+      <!-- Promotion Form -->
+      <div id="promotionForm" style="display: none;">
+        <h2 class="title">🎁 Nhận Khuyến Mãi Tự Động</h2>
+
+        <div class="info-box" style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <p style="margin: 5px 0;">✅ Tự động mở trang khuyến mãi</p>
+          <p style="margin: 5px 0;">✅ Tự động click "Đăng Ký Ngay"</p>
+          <p style="margin: 5px 0;">✅ Tự động điền form 58K (trả lời "Có")</p>
+          <p style="margin: 5px 0;">⚠️ <strong>Cần xác thực SĐT trước</strong> (dùng tab "Xác Thực SĐT")</p>
+        </div>
+
+        <button class="register-btn" id="claimPromotionBtn">🎁 Nhận Khuyến Mãi (Không Xác Thực)</button>
+
+        <button class="register-btn" id="checkResultsBtn" style="background: #28a745; margin-top: 10px;">📊 Kiểm Tra Kết
+          Quả</button>
+
+        <div class="status-section" id="promotionStatusSection" style="display: none;">
+          <div class="status-message" id="promotionStatusMessage"></div>
+        </div>
+
+        <div class="progress-section" id="promotionProgressSection" style="display: none;">
+          <div class="progress-bar">
+            <div class="progress-fill" id="promotionProgressFill"></div>
+          </div>
+          <div class="progress-text" id="promotionProgressText">0 / 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>

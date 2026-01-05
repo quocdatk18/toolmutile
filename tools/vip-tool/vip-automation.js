@@ -1,5 +1,5 @@
 /**
- * VIP Tool Automation - 4 Categories (OKVIP, ABCVIP, JUN88, KJC)
+ * VIP Tool Automation - 3 Categories (OKVIP, ABCVIP, JUN88, JUN88V2, AccOKVIP)
  * Luồng chung: register → addbank → checkpromo
  * Form filling riêng cho từng category
  */
@@ -131,9 +131,9 @@ class VIPAutomation {
                 withdrawPassword: '/Account/ChangeMoneyPassword',//  k cần
                 bank: '/myaccount/bankdetails'
             },
-            'kjc': {
-                withdrawPassword: '/securityCenter/addBankCard?type=B',//  k cần
-                bank: '/Financial?type=withdraw'
+            '22vip': {
+                withdrawPassword: '/home/security?active=5',
+                bank: '/home/withdraw?active=0'
             }
         };
     }
@@ -1001,25 +1001,9 @@ class VIPAutomation {
                         }
                     }
 
-                    // Skip checkPromo nếu addBank failed hoặc category là ABCVIP/OKVIP/JUN88/78WIN (use separate tab)
-                    let checkPromoResult = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                    if (addBankResult?.success && category !== 'abcvip' && category !== 'okvip' && category !== 'jun88' && category !== '78win') {
-                        checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
-                    } else if (category === 'abcvip') {
-                        console.log(`⏭️ Skipping checkPromo for ${siteName} (ABCVIP - use separate tab)`);
-                        checkPromoResult = { success: true, skipped: true, message: 'Skipped - ABCVIP use separate tab' };
-                    } else if (category === 'okvip') {
-                        console.log(`⏭️ Skipping checkPromo for ${siteName} (OKVIP - use separate tab)`);
-                        checkPromoResult = { success: true, skipped: true, message: 'Skipped - OKVIP use separate tab' };
-                    } else if (category === 'jun88') {
-                        console.log(`⏭️ Skipping checkPromo for ${siteName} (JUN88 - use separate tab)`);
-                        checkPromoResult = { success: true, skipped: true, message: 'Skipped - JUN88 use separate tab' };
-                    } else if (category === '78win') {
-                        console.log(`⏭️ Skipping checkPromo for ${siteName} (78WIN - use separate tab)`);
-                        checkPromoResult = { success: true, skipped: true, message: 'Skipped - 78WIN use separate tab' };
-                    } else {
-                        console.log(`⏭️ Skipping checkPromo for ${siteName} (add bank failed)`);
-                    }
+                    // Skip checkPromo (all VIP use separate tab for checkPromo)
+                    const checkPromoResult = { success: true, skipped: true, message: 'Skipped - use separate tab' };
+                    console.log(`⏭️ Skipping checkPromo for ${siteName} (use separate tab)`);
 
                     // Build result object
                     const resultObj = {
@@ -1147,25 +1131,9 @@ class VIPAutomation {
                     }
                 }
 
-                // Skip checkPromo nếu addBank failed hoặc category là ABCVIP/OKVIP/JUN88/78WIN (use separate tab)
-                let checkPromoResult = { success: false, skipped: true, message: 'Skipped - add bank failed' };
-                if (addBankResult?.success && category !== 'abcvip' && category !== 'okvip' && category !== 'jun88' && category !== '78win') {
-                    checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
-                } else if (category === 'abcvip') {
-                    console.log(`⏭️ Skipping checkPromo for ${siteName} (ABCVIP - use separate tab)`);
-                    checkPromoResult = { success: true, skipped: true, message: 'Skipped - ABCVIP use separate tab' };
-                } else if (category === 'okvip') {
-                    console.log(`⏭️ Skipping checkPromo for ${siteName} (OKVIP - use separate tab)`);
-                    checkPromoResult = { success: true, skipped: true, message: 'Skipped - OKVIP use separate tab' };
-                } else if (category === 'jun88') {
-                    console.log(`⏭️ Skipping checkPromo for ${siteName} (JUN88 - use separate tab)`);
-                    checkPromoResult = { success: true, skipped: true, message: 'Skipped - JUN88 use separate tab' };
-                } else if (category === '78win') {
-                    console.log(`⏭️ Skipping checkPromo for ${siteName} (78WIN - use separate tab)`);
-                    checkPromoResult = { success: true, skipped: true, message: 'Skipped - 78WIN use separate tab' };
-                } else {
-                    console.log(`⏭️ Skipping checkPromo for ${siteName} (add bank failed)`);
-                }
+                // Skip checkPromo (all VIP use separate tab for checkPromo)
+                const checkPromoResult = { success: true, skipped: true, message: 'Skipped - use separate tab' };
+                console.log(`⏭️ Skipping checkPromo for ${siteName} (use separate tab)`);
 
                 // Build result object
                 const resultObj = {
@@ -1281,8 +1249,8 @@ class VIPAutomation {
             }
 
             // Solve captcha nếu có API key
-            // Skip captcha for JUN88V2 (no captcha after form fill)
-            const shouldSolveCaptcha = category !== 'jun88v2';
+            // Skip captcha for JUN88V2 and 22VIP (no captcha after form fill)
+            const shouldSolveCaptcha = !['jun88v2', '22vip'].includes(category);
             const apiKey = this.settings?.captchaApiKey || process.env.CAPTCHA_API_KEY;
             if (apiKey && shouldSolveCaptcha) {
                 console.log('🎵 Attempting to solve captcha...');
@@ -1295,35 +1263,14 @@ class VIPAutomation {
                 console.log(`⏳ Waiting ${captchaDelay}ms after captcha solve...`);
                 await new Promise(r => setTimeout(r, captchaDelay));
             } else if (!shouldSolveCaptcha) {
-                console.log('⏭️ Skipping captcha for JUN88V2 (no captcha after form fill)');
+                console.log('⏭️ Skipping captcha for JUN88V2 and 22VIP (no captcha after form fill)');
             } else {
                 console.warn('⚠️ No captcha API key provided');
             }
 
-            // For JUN88 categories: add extra anti-bot measures
-            const isJUN88Category = ['jun88', '78win', 'jun88v2'].includes(category);
-            if (isJUN88Category) {
-                console.log('🤖 JUN88 anti-bot: Adding extra delays and human-like interactions...');
-
-                // Scroll page to simulate user reading form
-                await page.evaluate(() => {
-                    window.scrollBy(0, 200);
-                });
-                await new Promise(r => setTimeout(r, 1500));
-
-                // Scroll back up
-                await page.evaluate(() => {
-                    window.scrollBy(0, -200);
-                });
-                await new Promise(r => setTimeout(r, 1500));
-
-                // Random delay 5-15s before submit (JUN88V2 needs more time for Cloudflare)
-                const delayBeforeSubmit = this.getRandomDelay(5000, 15000);
-                console.log(`⏳ JUN88 anti-bot: Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
-                await new Promise(r => setTimeout(r, delayBeforeSubmit));
-            } else if (category !== 'accOkvip') {
-                // Add random delay 5-20s before submit (other categories, but NOT AccOKVIP)
-                const delayBeforeSubmit = this.getRandomDelay(5000, 20000);
+            // Add random delay 2-5s before submit (all VIP categories, but NOT AccOKVIP)
+            if (category !== 'accOkvip') {
+                const delayBeforeSubmit = this.getRandomDelay(2000, 5000);
                 console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit registration...`);
                 await new Promise(r => setTimeout(r, delayBeforeSubmit));
             } else {
@@ -1334,124 +1281,96 @@ class VIPAutomation {
             // Submit form
             console.log(`📤 Submitting registration form for ${siteConfig.name}...`);
 
-            // For JUN88: use slower, more human-like click
-            if (isJUN88Category) {
-                try {
-                    // Find and scroll button into view
-                    const buttonFound = await page.evaluate(() => {
-                        const buttons = document.querySelectorAll('button');
-                        let submitBtn = null;
+            // Click submit button (like tool22vip does)
+            await page.evaluate(() => {
+                let submitBtn = null;
 
-                        // Find submit button - try multiple text patterns
-                        for (const btn of buttons) {
-                            const text = btn.textContent.trim().toUpperCase();
-                            if (text.includes('ĐĂNG KÝ') || text.includes('OK') || text.includes('REGISTER') || text.includes('SUBMIT')) {
-                                submitBtn = btn;
-                                break;
-                            }
-                        }
+                // For 22VIP/888P: use specific id
+                submitBtn = document.querySelector('#insideRegisterSubmitClick');
 
-                        if (!submitBtn) {
-                            // Try by class or id
-                            submitBtn = document.querySelector('button.submit') ||
-                                document.querySelector('button[type="submit"]') ||
-                                document.querySelector('button.btn-primary') ||
-                                document.querySelector('button.btn-success');
-                        }
-
-                        if (submitBtn) {
-                            // Scroll button into view
-                            submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            return true;
-                        }
-                        return false;
-                    });
-
-                    if (!buttonFound) {
-                        console.warn('⚠️ Submit button not found, trying alternative methods...');
-                    }
-
-                    // Wait for scroll to complete
-                    await new Promise(r => setTimeout(r, 1500));
-
-                    // Now click with human-like interaction
-                    const clickSuccess = await page.evaluate(() => {
-                        const buttons = document.querySelectorAll('button');
-                        let submitBtn = null;
-
-                        // Find submit button
-                        for (const btn of buttons) {
-                            const text = btn.textContent.trim().toUpperCase();
-                            if (text.includes('ĐĂNG KÝ') || text.includes('OK') || text.includes('REGISTER') || text.includes('SUBMIT')) {
-                                submitBtn = btn;
-                                break;
-                            }
-                        }
-
-                        if (!submitBtn) {
-                            submitBtn = document.querySelector('button.submit') ||
-                                document.querySelector('button[type="submit"]') ||
-                                document.querySelector('button.btn-primary') ||
-                                document.querySelector('button.btn-success');
-                        }
-
-                        if (submitBtn && submitBtn.offsetParent !== null) { // Check if visible
-                            // Simulate human-like interaction
-                            submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-                            submitBtn.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-                            setTimeout(() => {
-                                submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-                                setTimeout(() => {
-                                    submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-                                    submitBtn.click();
-                                    submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
-                                }, 100);
-                            }, 200);
-                            return true;
-                        }
-                        return false;
-                    });
-
-                    if (!clickSuccess) {
-                        console.warn('⚠️ Could not click submit button via evaluate, trying Puppeteer click...');
-                        // Try using Puppeteer's click method
-                        try {
-                            await page.click('button');
-                        } catch (e) {
-                            console.warn('⚠️ Puppeteer click also failed:', e.message);
-                        }
-                    }
-                } catch (error) {
-                    console.error('❌ Error clicking submit button:', error.message);
+                // Fallback for other categories
+                if (!submitBtn) {
+                    submitBtn = document.querySelector('button.ui-button--primary.ui-button--block');
                 }
-            } else {
-                // Original click for other categories
-                await page.evaluate(() => {
-                    let submitBtn = document.querySelector('button[type="submit"]');
 
-                    if (!submitBtn) {
-                        const buttons = document.querySelectorAll('button[type="button"]');
-                        for (const btn of buttons) {
-                            if (btn.textContent.includes('ĐĂNG KÝ') || btn.textContent.includes('OK')) {
-                                submitBtn = btn;
-                                break;
-                            }
+                if (!submitBtn) {
+                    submitBtn = document.querySelector('button[type="submit"]');
+                }
+
+                if (!submitBtn) {
+                    const buttons = document.querySelectorAll('button[type="button"]');
+                    for (const btn of buttons) {
+                        if (btn.textContent.includes('ĐĂNG KÝ') || btn.textContent.includes('OK')) {
+                            submitBtn = btn;
+                            break;
                         }
                     }
+                }
 
-                    if (submitBtn) {
-                        submitBtn.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-                        submitBtn.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
-                        submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-                        submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-                        submitBtn.click();
-                        submitBtn.dispatchEvent(new MouseEvent('mouseleave', { bubbles: true }));
+                // If not found in main document, search iframes
+                if (!submitBtn) {
+                    const iframes = document.querySelectorAll('iframe');
+                    for (let iframe of iframes) {
+                        try {
+                            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                            submitBtn = iframeDoc.querySelector('#insideRegisterSubmitClick') ||
+                                iframeDoc.querySelector('button.ui-button--primary.ui-button--block') ||
+                                iframeDoc.querySelector('button[type="submit"]');
+                            if (submitBtn) break;
+                        } catch (e) {
+                            // Skip iframes with access denied
+                        }
                     }
-                });
-            }
+                }
+
+                if (submitBtn) {
+                    // Scroll into view
+                    submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Wait a bit then click with multiple methods (like tool22vip)
+                    setTimeout(() => {
+                        // Method 1: TouchEvent
+                        try {
+                            const touchStart = new TouchEvent('touchstart', {
+                                bubbles: true,
+                                cancelable: true,
+                                view: window,
+                                touches: [new Touch({
+                                    identifier: 0,
+                                    target: submitBtn,
+                                    clientX: submitBtn.getBoundingClientRect().left + 10,
+                                    clientY: submitBtn.getBoundingClientRect().top + 10
+                                })]
+                            });
+                            submitBtn.dispatchEvent(touchStart);
+
+                            const touchEnd = new TouchEvent('touchend', {
+                                bubbles: true,
+                                cancelable: true,
+                                view: window
+                            });
+                            submitBtn.dispatchEvent(touchEnd);
+                        } catch (e) {
+                            // Touch not supported
+                        }
+
+                        // Method 2: PointerEvent
+                        submitBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+                        submitBtn.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, cancelable: true }));
+
+                        // Method 3: MouseEvent
+                        submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                        submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
+                        submitBtn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+
+                        // Method 4: Native click
+                        submitBtn.click();
+                    }, 3000);
+                }
+            });
 
             // Delay sau khi submit
-            await new Promise(r => setTimeout(r, 3000));
+            await new Promise(r => setTimeout(r, 5000));
 
             // For accOkvip: click "Gửi đi" button with retry logic for duplicate phone
             if (category === 'accOkvip') {
@@ -1887,8 +1806,8 @@ class VIPAutomation {
 
             // For jun88, 78win, jun88v2: wait delay then redirect to addbank page
             if (isManualCaptcha) {
-                // Add random delay 2-10s before redirect to bank (like OKVIP)
-                const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
+                // Add random delay 2-5s before redirect to bank (like OKVIP)
+                const delayBeforeBank = this.getRandomDelay(2000, 5000); // 2-5s
                 console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to addbank...`);
                 await new Promise(r => setTimeout(r, delayBeforeBank));
 
@@ -1960,8 +1879,8 @@ class VIPAutomation {
             return await this.addBank78WIN(browser, siteConfig, profileData, existingPage);
         } else if (category === 'jun88v2') {
             return await this.addBankJUN88V2(browser, siteConfig, profileData, existingPage);
-        } else if (category === 'kjc') {
-            return await this.addBankKJC(browser, siteConfig, profileData, existingPage);
+        } else if (category === '22vip') {
+            return await this.addBank22VIP(browser, siteConfig, profileData, existingPage);
         }
         return { success: false, error: 'Unknown category' };
     }
@@ -1984,7 +1903,7 @@ class VIPAutomation {
             console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
 
             // Add random delay 2-10s before redirect
-            const delayBeforeWithdraw = this.getRandomDelay(2000, 10000); // 2-10s
+            const delayBeforeWithdraw = this.getRandomDelay(2000, 5000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
             await new Promise(r => setTimeout(r, delayBeforeWithdraw));
 
@@ -2032,7 +1951,7 @@ class VIPAutomation {
             console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
-            const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
+            const delayBeforeBank = this.getRandomDelay(2000, 5000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
@@ -2269,7 +2188,7 @@ class VIPAutomation {
             console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
 
             // Add random delay 2-10s before redirect
-            const delayBeforeWithdraw = this.getRandomDelay(2000, 10000); // 2-10s
+            const delayBeforeWithdraw = this.getRandomDelay(2000, 5000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
             await new Promise(r => setTimeout(r, delayBeforeWithdraw));
 
@@ -2317,7 +2236,7 @@ class VIPAutomation {
             console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
-            const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
+            const delayBeforeBank = this.getRandomDelay(2000, 5000); // 2-10s
             console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
@@ -2688,6 +2607,167 @@ class VIPAutomation {
     }
 
     /**
+     * 22VIP/888P Register Form
+     * Selectors: data-input-name attributes (supports both TV88 and 888P)
+     */
+    async fill22VIPRegisterForm(page, profileData) {
+        try {
+            console.log('🤖 22VIP/888P Form - Filling...');
+
+            // Check if form is already visible (don't wait if it is)
+            const formExists = await page.evaluate(() => {
+                const inputs = document.querySelectorAll('input[data-input-name="account"]');
+                return inputs.length > 0;
+            });
+
+            if (!formExists) {
+                // Wait for form to load (reduced timeout to 10s)
+                try {
+                    await page.waitForSelector('input[data-input-name="account"]', { timeout: 10000 });
+                    console.log('✅ 22VIP/888P form loaded');
+                } catch (e) {
+                    console.warn('⚠️ Form selector timeout, trying to fill anyway...');
+                }
+            } else {
+                console.log('✅ 22VIP/888P form already visible');
+            }
+
+            // Check if form is in iframe
+            const iframes = await page.$$('iframe');
+            let formFound = false;
+
+            for (const iframe of iframes) {
+                try {
+                    const frameHandle = await iframe.contentFrame();
+                    if (frameHandle) {
+                        const selector = await frameHandle.$('input[data-input-name="account"]');
+                        if (selector) {
+                            console.log('✅ Form found in iframe');
+                            formFound = true;
+                            break;
+                        }
+                    }
+                } catch (err) {
+                    // Continue to next iframe
+                }
+            }
+
+            if (!formFound) {
+                throw new Error('Form not found in main page or iframes');
+            }
+
+            // Fill account (username/phone)
+            await page.evaluate((data) => {
+                // Find all inputs (main document + iframes)
+                const inputs = [];
+
+                // Method 1: Find in main document
+                const dataInputs = document.querySelectorAll('[data-input-name]');
+                inputs.push(...dataInputs);
+
+                const uiInputs = document.querySelectorAll('.ui-input__input');
+                uiInputs.forEach(inp => {
+                    if (!inputs.includes(inp)) inputs.push(inp);
+                });
+
+                // Method 2: Find in iframes
+                const iframes = document.querySelectorAll('iframe');
+                iframes.forEach((iframe) => {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        const iframeDataInputs = iframeDoc.querySelectorAll('[data-input-name]');
+                        const iframeUiInputs = iframeDoc.querySelectorAll('.ui-input__input');
+
+                        iframeDataInputs.forEach(inp => {
+                            if (!inputs.includes(inp)) inputs.push(inp);
+                        });
+                        iframeUiInputs.forEach(inp => {
+                            if (!inputs.includes(inp)) inputs.push(inp);
+                        });
+                    } catch (e) {
+                        // Skip iframes with access denied
+                    }
+                });
+
+                // Find specific inputs by data-input-name
+                const accountInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'account');
+                const passInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'userpass');
+                const confirmInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'confirmPassword');
+                const nameInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'realName');
+
+                // Fill account
+                if (accountInput) {
+                    accountInput.focus();
+                    accountInput.click();
+                    accountInput.value = data.username;
+                    accountInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    accountInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    accountInput.dispatchEvent(new Event('blur', { bubbles: true }));
+                }
+
+                // Fill password
+                if (passInput) {
+                    passInput.focus();
+                    passInput.click();
+                    passInput.value = data.password;
+                    passInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    passInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    passInput.dispatchEvent(new Event('blur', { bubbles: true }));
+                }
+
+                // Fill confirm password
+                if (confirmInput) {
+                    confirmInput.focus();
+                    confirmInput.click();
+                    confirmInput.value = data.password;
+                    confirmInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    confirmInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    confirmInput.dispatchEvent(new Event('blur', { bubbles: true }));
+                }
+
+                // Fill full name (uppercase)
+                if (nameInput) {
+                    nameInput.focus();
+                    nameInput.click();
+                    nameInput.value = '';
+                    // Type character by character
+                    const fullname = data.fullname.toUpperCase();
+                    for (let i = 0; i < fullname.length; i++) {
+                        nameInput.value += fullname[i];
+                        nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
+                    nameInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    nameInput.dispatchEvent(new Event('blur', { bubbles: true }));
+                }
+            }, profileData);
+
+            // Add delay between fill and next step
+            await new Promise(r => setTimeout(r, 500));
+
+            console.log(`✅ Filled account: ${profileData.username}`);
+            console.log(`✅ Filled password`);
+            console.log(`✅ Filled confirm password`);
+            const fullname = (profileData.fullname || profileData.username).toUpperCase();
+            console.log(`✅ Filled full name: ${fullname}`);
+
+            // Trigger change events
+            await page.evaluate(() => {
+                const inputs = document.querySelectorAll('input[data-input-name]');
+                inputs.forEach(input => {
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+                    input.dispatchEvent(new Event('blur', { bubbles: true }));
+                });
+            });
+
+            console.log('✅ 22VIP/888P form filled successfully');
+        } catch (error) {
+            console.error('❌ Error filling 22VIP/888P form:', error.message);
+            throw error;
+        }
+    }
+
+    /**
      * JUN88 Add Bank: Click bank field → select bank → fill account & password → submit
      */
     async addBankJUN88(browser, siteConfig, profileData, existingPage = null) {
@@ -2910,7 +2990,6 @@ class VIPAutomation {
      * 78WIN Add Bank (same as JUN88 - click button, select bank, fill account & password)
      */
     async addBank78WIN(browser, siteConfig, profileData, existingPage = null) {
-        const page = existingPage || await browser.newPage();
         try {
             console.log(`🏦 Add Bank step for ${siteConfig.name} (78WIN)...`);
 
@@ -3410,113 +3489,452 @@ class VIPAutomation {
     }
 
     /**
-     * KJC Add Bank: vào luôn trang submit bank (gộp mật khẩu rút)
+     * 22VIP Add Bank: redirect → submit mật khẩu rút → redirect → submit bank
+     * Giống OKVIP
      */
-    async addBankKJC(browser, siteConfig, profileData) {
-        const page = await browser.newPage();
+    async addBank22VIP(browser, siteConfig, profileData, existingPage = null) {
+        const page = existingPage || await browser.newPage();
         try {
-            console.log(`🏦 Add Bank step for ${siteConfig.name} (KJC)...`);
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (22VIP)...`);
 
             const domain = this.getDomain(siteConfig.registerUrl);
             if (!domain) throw new Error('Invalid domain');
 
-            const paths = this.categoryPaths.kjc;
-            const bankUrl = domain + paths.bank;
+            const paths = this.categoryPaths['22vip'];
 
+            // Bước 1: Vào trang submit mật khẩu rút
+            const withdrawPasswordUrl = domain + paths.withdrawPassword;
+            console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
+
+            // Add random delay 2-10s before redirect
+            const delayBeforeWithdraw = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
+            await new Promise(r => setTimeout(r, delayBeforeWithdraw));
+
+            await page.goto(withdrawPasswordUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+            // Wait for form fields to appear
+            try {
+                await page.waitForSelector('ul.ui-password-input__security, input[data-input-name="password"]', { timeout: 5000 });
+                console.log('✅ Withdraw password form loaded');
+            } catch (e) {
+                console.warn('⚠️ Withdraw password form not found, continuing anyway...');
+            }
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Fill withdraw password form using virtual keyboard (22VIP style)
+            const password = profileData.withdrawPassword;
+
+            // Click on password input area to show keyboard
+            await page.evaluate(() => {
+                const firstBox = document.querySelector('ul.ui-password-input__security li.ui-password-input__item');
+                if (firstBox) {
+                    firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstBox.focus();
+                    firstBox.click();
+                }
+            });
+
+            await new Promise(r => setTimeout(r, 1000));
+
+            // Helper: Click digits on keyboard using TouchEvent + MouseEvent (like hai2vip)
+            const clickDigitsOnKeyboard = async (pwd) => {
+                for (let i = 0; i < pwd.length; i++) {
+                    const digit = pwd[i];
+
+                    await new Promise(r => setTimeout(r, 200)); // Wait for UI update
+
+                    await page.evaluate((num) => {
+                        // Find keyboard buttons - be specific
+                        const buttons = document.querySelectorAll('button, div[role="button"]');
+                        let found = false;
+                        let candidates = [];
+
+                        for (let btn of buttons) {
+                            const text = btn.textContent.trim();
+
+                            // Match EXACT digit and ensure visible
+                            if (text === num && text.length === 1 && btn.offsetParent !== null) {
+                                const rect = btn.getBoundingClientRect();
+                                if (rect.width > 20 && rect.height > 20) {
+                                    candidates.push({ btn, rect });
+                                }
+                            }
+                        }
+
+                        if (candidates.length > 0) {
+                            // Sort by size (prefer ~50x50 buttons)
+                            candidates.sort((a, b) => {
+                                const areaA = a.rect.width * a.rect.height;
+                                const areaB = b.rect.width * b.rect.height;
+                                return Math.abs(areaB - 2500) - Math.abs(areaA - 2500);
+                            });
+
+                            const btn = candidates[0].btn;
+
+                            // TouchEvent method (primary for mobile sites)
+                            try {
+                                const rect = btn.getBoundingClientRect();
+                                const touchObj = new Touch({
+                                    identifier: Date.now(),
+                                    target: btn,
+                                    clientX: rect.left + rect.width / 2,
+                                    clientY: rect.top + rect.height / 2,
+                                    radiusX: 2.5,
+                                    radiusY: 2.5,
+                                    rotationAngle: 0,
+                                    force: 1
+                                });
+
+                                btn.dispatchEvent(new TouchEvent('touchstart', {
+                                    bubbles: true,
+                                    cancelable: true,
+                                    touches: [touchObj],
+                                    targetTouches: [touchObj],
+                                    changedTouches: [touchObj]
+                                }));
+
+                                setTimeout(() => {
+                                    btn.dispatchEvent(new TouchEvent('touchend', {
+                                        bubbles: true,
+                                        cancelable: true,
+                                        changedTouches: [touchObj]
+                                    }));
+                                }, 100);
+                            } catch (e) {
+                                console.log('Touch failed:', e.message);
+                            }
+
+                            // MouseEvent fallback
+                            btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                            btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                            btn.click();
+                        }
+                    }, digit);
+
+                    // 800-1200ms delay between digits
+                    await new Promise(r => setTimeout(r, 800 + Math.random() * 400));
+                }
+            };
+
+            // Click first password
+            console.log('🔐 Entering first password...');
+            await clickDigitsOnKeyboard(password);
+
+            // Wait for keyboard to reset
+            console.log('⏳ Waiting for keyboard to reset...');
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Page automatically focuses on confirm password field
+            // Click confirm password
+            console.log('🔐 Entering confirm password...');
+            await clickDigitsOnKeyboard(password);
+
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Submit form
+            await page.evaluate(() => {
+                const submitBtn = document.querySelector('button[type="button"]') || document.querySelector('button[type="submit"]');
+                if (submitBtn) submitBtn.click();
+            });
+
+            await page.waitForNavigation({ timeout: 15000 }).catch(() => {
+                console.log('⚠️ No navigation after withdraw password');
+            });
+
+            // Bước 2: Vào trang submit bank
+            const bankUrl = domain + paths.bank;
             console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
-            const delayBeforeBank = this.getRandomDelay(2000, 10000); // 2-10s
+            const delayBeforeBank = this.getRandomDelay(2000, 5000);
             console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
             await page.goto(bankUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+            // Wait for page to load
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Step 1: Click "Thêm Tài Khoản" button
+            console.log('🏦 Clicking "Thêm Tài Khoản" button...');
+            await page.evaluate(() => {
+                // Find by class or text
+                let addBtn = document.querySelector('div._addAccountInputBtn_1bihm_45');
+                if (!addBtn) {
+                    addBtn = Array.from(document.querySelectorAll('div, button')).find(el =>
+                        el.textContent.includes('Thêm Tài Khoản')
+                    );
+                }
+                if (addBtn) {
+                    addBtn.click();
+                }
+            });
+
             await new Promise(r => setTimeout(r, 1500));
 
-            // Helper function to find input field by multiple selectors
-            const findField = (selectors) => {
-                if (typeof selectors === 'string') selectors = [selectors];
-                for (const selector of selectors) {
-                    const field = document.querySelector(selector);
-                    if (field) return field;
+            // Step 2: Click "Tài khoản ngân hàng" option
+            console.log('🏦 Clicking "Tài khoản ngân hàng" option...');
+            await page.evaluate(() => {
+                // Find by id or text
+                let bankOption = document.getElementById('addAccountClick');
+                if (!bankOption) {
+                    bankOption = Array.from(document.querySelectorAll('div, button')).find(el =>
+                        el.textContent.includes('Tài khoản ngân hàng')
+                    );
                 }
-                return null;
-            };
+                if (bankOption) {
+                    bankOption.click();
+                }
+            });
 
-            // Điền cả mật khẩu rút + bank info
-            await page.evaluate((data) => {
-                const findField = (selectors) => {
-                    if (typeof selectors === 'string') selectors = [selectors];
-                    for (const selector of selectors) {
-                        const field = document.querySelector(selector);
-                        if (field) return field;
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Step 3: Re-enter withdraw password (password popup appears after clicking bank option)
+            console.log('🔐 Re-entering withdraw password for bank confirmation...');
+
+            // Check if password input appears
+            try {
+                await page.waitForSelector('ul.ui-password-input__security', { timeout: 5000 });
+                console.log('✅ Password input appeared');
+
+                // Click on password input to show keyboard
+                await page.evaluate(() => {
+                    const firstBox = document.querySelector('ul.ui-password-input__security li.ui-password-input__item');
+                    if (firstBox) {
+                        firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstBox.focus();
+                        firstBox.click();
                     }
-                    return null;
-                };
+                });
 
-                const withdrawField = findField([
-                    'input[name="withdrawPassword"]',
-                    'input[id*="withdraw" i]',
-                    'input[placeholder*="withdraw" i]'
-                ]);
+                await new Promise(r => setTimeout(r, 1000));
 
-                const bankNameField = findField([
-                    'input[name="bankName"]',
-                    'input[id*="bank" i]',
-                    'input[placeholder*="bank" i]',
-                    'select[name="bankName"]'
-                ]);
+                // Re-enter password using same keyboard click method
+                await clickDigitsOnKeyboard(password);
 
-                const accountField = findField([
-                    'input[name="accountNumber"]',
-                    'input[name="account"]',
-                    'input[id*="account" i]',
-                    'input[placeholder*="account" i]'
-                ]);
+                await new Promise(r => setTimeout(r, 1500));
 
-                if (withdrawField) {
-                    withdrawField.value = data.withdrawPassword;
-                    withdrawField.dispatchEvent(new Event('input', { bubbles: true }));
-                    withdrawField.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-                if (bankNameField) {
-                    bankNameField.value = data.bankName;
-                    bankNameField.dispatchEvent(new Event('input', { bubbles: true }));
-                    bankNameField.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-                if (accountField) {
-                    accountField.value = data.accountNumber;
-                    accountField.dispatchEvent(new Event('input', { bubbles: true }));
-                    accountField.dispatchEvent(new Event('change', { bubbles: true }));
+                // Submit password confirmation
+                await page.evaluate(() => {
+                    const submitBtn = document.querySelector('button[type="button"]') || document.querySelector('button[type="submit"]');
+                    if (submitBtn) submitBtn.click();
+                });
+
+                await new Promise(r => setTimeout(r, 2000));
+
+                // Click "Tiếp Theo" button to proceed to bank form
+                console.log('🔘 Clicking "Tiếp Theo" button...');
+                await page.evaluate(() => {
+                    const nextBtn = Array.from(document.querySelectorAll('button')).find(btn =>
+                        btn.textContent.includes('Tiếp Theo')
+                    );
+                    if (nextBtn) {
+                        nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        try {
+                            nextBtn.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
+                            nextBtn.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+                        } catch (e) { }
+                        nextBtn.click();
+                    }
+                });
+
+                await new Promise(r => setTimeout(r, 2000));
+            } catch (e) {
+                console.warn('⚠️ Password re-entry not required or failed:', e.message);
+            }
+
+            // Wait for bank form fields to appear
+            try {
+                await page.waitForSelector('input[placeholder="Vui lòng nhập số tài khoản ngân hàng"]', { timeout: 5000 });
+                console.log('✅ Bank form loaded');
+            } catch (e) {
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
+            }
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Fill bank form - account number and bank selection (like hai2vip)
+            await page.evaluate((data) => {
+                // Find account number input
+                const accountInput = document.querySelector('input[placeholder="Vui lòng nhập số tài khoản ngân hàng"]');
+
+                if (accountInput) {
+                    accountInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    accountInput.focus();
+                    accountInput.click();
+
+                    // Clear and set value using native setter
+                    accountInput.value = '';
+                    const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                    nativeSetter.call(accountInput, data.accountNumber);
+
+                    // Trigger events
+                    accountInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    accountInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    accountInput.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
+                    accountInput.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+
+                    console.log(`✅ Filled account number: ${data.accountNumber}`);
                 }
             }, profileData);
 
+            await new Promise(r => setTimeout(r, 1500));
+
+            // Find and click bank dropdown
+            console.log('🏦 Selecting bank...');
+            await page.evaluate((data) => {
+                // Find bank dropdown input
+                const bankDropdown = document.querySelector('input[type="search"][placeholder="Chọn ngân hàng phát hành"]');
+
+                if (bankDropdown) {
+                    bankDropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Click to open dropdown
+                    try {
+                        bankDropdown.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
+                        bankDropdown.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+                    } catch (e) { }
+
+                    bankDropdown.click();
+
+                    // Type bank name to filter
+                    setTimeout(() => {
+                        bankDropdown.value = '';
+                        const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                        nativeSetter.call(bankDropdown, data.bankName);
+
+                        bankDropdown.dispatchEvent(new Event('input', { bubbles: true }));
+                        bankDropdown.dispatchEvent(new Event('change', { bubbles: true }));
+                        bankDropdown.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
+
+                        // Wait for dropdown options to appear
+                        setTimeout(() => {
+                            const bankContainers = document.querySelectorAll('.ui-options__option');
+                            const searchStrategies = [
+                                data.bankName.toUpperCase(),
+                                data.bankName.replace(/([A-Z])([A-Z]+)/g, '$1$2 ').trim().toUpperCase(),
+                                data.bankName.replace('Bank', ' Bank').toUpperCase(),
+                                data.bankName.split(' ')[0].toUpperCase(),
+                                data.bankName.replace(' PAY', '').toUpperCase(),
+                                data.bankName.replace(' BANK', '').toUpperCase(),
+                                data.bankName.replace('BANK', '').toUpperCase(),
+                                data.bankName.substring(0, 3).toUpperCase()
+                            ];
+
+                            let bankOption = null;
+
+                            for (const container of bankContainers) {
+                                const text = container.textContent.trim().toUpperCase();
+
+                                for (const strategy of searchStrategies) {
+                                    const isMatch =
+                                        text === strategy ||
+                                        text === strategy + ' BANK' ||
+                                        text === strategy + 'BANK' ||
+                                        text.startsWith(strategy + ' ') ||
+                                        text.includes(strategy) ||
+                                        (text.startsWith(strategy) && text.length < 50);
+
+                                    if (isMatch) {
+                                        bankOption = container;
+                                        break;
+                                    }
+                                }
+
+                                if (bankOption) break;
+                            }
+
+                            if (bankOption) {
+                                bankOption.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                                setTimeout(() => {
+                                    try {
+                                        bankOption.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
+                                        bankOption.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+                                    } catch (e) { }
+
+                                    bankOption.click();
+                                    console.log(`✅ Selected bank: ${bankOption.textContent.trim()}`);
+                                }, 300);
+                            }
+                        }, 500);
+                    }, 300);
+                }
+            }, profileData);
+
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Fill account holder name if needed
+            await page.evaluate((data) => {
+                const nameField = document.querySelector('input[data-input-name="accountName"]') ||
+                    document.querySelector('input[placeholder*="chủ tài khoản"]');
+
+                if (nameField) {
+                    nameField.value = data.fullname.toUpperCase();
+                    nameField.dispatchEvent(new Event('input', { bubbles: true }));
+                    nameField.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }, profileData);
+
+            // Submit form - click "Xác Nhận" button
             console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
             await page.evaluate(() => {
-                // Try multiple submit button selectors
-                let submitBtn = document.querySelector('button[type="submit"]');
-                if (!submitBtn) submitBtn = document.querySelector('button:contains("Submit")');
-                if (!submitBtn) submitBtn = document.querySelector('button[id*="submit" i]');
+                // Find by id first (most reliable)
+                let submitBtn = document.getElementById('bindWithdrawAccountNextClick');
+
+                // Fallback to button with "Xác Nhận" text
                 if (!submitBtn) {
-                    // Find button by text content
-                    const buttons = Array.from(document.querySelectorAll('button'));
-                    submitBtn = buttons.find(btn => btn.textContent.toLowerCase().includes('submit') || btn.textContent.toLowerCase().includes('save'));
+                    submitBtn = Array.from(document.querySelectorAll('button')).find(btn =>
+                        btn.textContent.includes('Xác Nhận')
+                    );
                 }
-                if (submitBtn) submitBtn.click();
+
+                if (submitBtn) {
+                    submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    try {
+                        submitBtn.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
+                        submitBtn.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
+                    } catch (e) { }
+                    submitBtn.click();
+                }
             });
 
             // Wait for navigation after bank submission
             console.log(`⏳ Waiting for navigation after bank submission...`);
-            await page.waitForNavigation({ timeout: 15000 }).catch(() => {
+            let pageReloaded = false;
+            try {
+                await page.waitForNavigation({ timeout: 15000 });
+                console.log('✅ Page reloaded after bank submission');
+            } catch (e) {
                 console.log('⚠️ No navigation after add bank');
-            });
+            }
 
-            return { success: true, message: 'Add bank completed' };
+            // Check if bank was added successfully
+            await new Promise(r => setTimeout(r, 3000));
+            const result = await page.evaluate((expectedData, reloaded) => {
+                // For 22VIP, just check if page reloaded or if we can see success message
+                const successKeywords = ['thành công', 'success', 'added', 'completed'];
+                const pageText = document.body.innerText.toLowerCase();
+
+                if (reloaded || successKeywords.some(keyword => pageText.includes(keyword))) {
+                    return {
+                        success: true,
+                        message: 'Bank added successfully'
+                    };
+                }
+
+                return {
+                    success: false,
+                    message: 'Could not verify bank addition'
+                };
+            }, profileData, pageReloaded);
+
+            console.log(`✅ 22VIP Add Bank Result:`, result);
+            return result;
         } catch (error) {
-            console.error(`❌ KJC Add Bank Error:`, error.message);
+            console.error(`❌ 22VIP Add Bank Error:`, error.message);
             return { success: false, error: error.message };
         }
-        // Note: Keep page open for inspection/debugging
     }
 
     /**
@@ -3529,8 +3947,6 @@ class VIPAutomation {
             return await this.checkPromoABCVIP(browser, siteConfig, profileData);
         } else if (category === 'jun88') {
             return await this.checkPromoJUN88(browser, siteConfig, profileData);
-        } else if (category === 'kjc') {
-            return await this.checkPromoKJC(browser, siteConfig, profileData);
         }
         return { success: false, error: 'Unknown category' };
     }
@@ -3677,60 +4093,6 @@ class VIPAutomation {
     }
 
     /**
-     * KJC Check Promo
-     * Logic: Fill username only
-     */
-    async checkPromoKJC(browser, siteConfig, profileData = {}) {
-        const page = await browser.newPage();
-        try {
-            console.log(`🎁 Check Promo step for ${siteConfig.name} (KJC)...`);
-
-            await page.goto(siteConfig.checkPromoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
-            await new Promise(r => setTimeout(r, 3000));
-
-            // Fill username only
-            const username = profileData?.username || '';
-            console.log(`📝 Filling username: ${username}...`);
-            await page.evaluate((usernameValue) => {
-                // Helper function to find input field by multiple selectors
-                const findField = (selectors) => {
-                    if (typeof selectors === 'string') selectors = [selectors];
-                    for (const selector of selectors) {
-                        const field = document.querySelector(selector);
-                        if (field) return field;
-                    }
-                    return null;
-                };
-
-                // Try multiple username field selectors
-                const input = findField([
-                    'input[name="username"]',
-                    'input[formcontrolname="account"]',
-                    'input[id*="username" i]',
-                    'input[placeholder*="username" i]',
-                    'input[type="text"]:first-of-type'
-                ]);
-
-                if (input) {
-                    input.value = usernameValue;
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                    input.dispatchEvent(new Event('change', { bubbles: true }));
-                    input.dispatchEvent(new Event('blur', { bubbles: true }));
-                    console.log('✅ Username filled');
-                }
-            }, username);
-
-            console.log(`✅ Username filled successfully`);
-            console.log('📌 Keeping checkpromo page open for manual completion');
-
-            return { success: true, message: 'Username filled - manual completion required' };
-        } catch (error) {
-            console.error(`❌ KJC Check Promo Error:`, error.message);
-            return { success: false, error: error.message };
-        }
-    }
-
-    /**
      * Fill Register Form - riêng cho từng category
      */
     async fillRegisterForm(page, category, profileData, siteConfig) {
@@ -3746,8 +4108,8 @@ class VIPAutomation {
             await this.fill78WINRegisterForm(page, profileData);
         } else if (category === 'jun88v2') {
             await this.fillJUN88V2RegisterForm(page, profileData);
-        } else if (category === 'kjc') {
-            await this.fillKJCRegisterForm(page, profileData);
+        } else if (category === '22vip') {
+            await this.fill22VIPRegisterForm(page, profileData);
         }
     }
 
@@ -3896,28 +4258,6 @@ class VIPAutomation {
                     }
                 ]
             },
-            'kjc': {
-                name: 'KJC',
-                icon: 'KJC',
-                color: '#cc0000',
-                sites: [
-                    {
-                        name: 'OPEN88',
-                        registerUrl: 'https://www.open88a1.com/m/register',
-                        checkPromoUrl: 'https://kjc1.com/promo'
-                    },
-                    {
-                        name: 'XX88',
-                        registerUrl: 'https://www.clubxx88.com/m/register?affiliateCode=kjc8388',
-                        checkPromoUrl: 'https://kjc2.com/promo'
-                    },
-                    {
-                        name: 'KJC3',
-                        registerUrl: 'https://kjc3.com/register',
-                        checkPromoUrl: 'https://kjc3.com/promo'
-                    }
-                ]
-            },
             '78win': {
                 name: '78WIN',
                 icon: '78W',
@@ -3939,6 +4279,48 @@ class VIPAutomation {
                         name: 'JUN88V2',
                         registerUrl: 'https://www.ufhtoiklhkfkjguhd7eoij8icxhkjk9.com/vi-vn/register',
                         checkPromoUrl: 'https://jun88ok99.com/?promo_id=FR58'
+                    }
+                ]
+            },
+            '22vip': {
+                name: '22VIP',
+                icon: '22V',
+                color: '#ff6b35',
+                sites: [
+                    {
+                        name: 'TV88',
+                        registerUrl: 'https://tv88vip.com/home/register?id=324858250',
+                        checkPromoUrl: ''
+                    },
+                    {
+                        name: '28Bet',
+                        registerUrl: 'https://2899bb.com/?id=296686034',
+                        checkPromoUrl: ''
+                    },
+                    {
+                        name: '888Now',
+                        registerUrl: 'https://888now333.com/?id=122472500',
+                        checkPromoUrl: ''
+                    },
+                    {
+                        name: '888New',
+                        registerUrl: 'https://888new10.com/?id=314514939',
+                        checkPromoUrl: ''
+                    },
+                    {
+                        name: 'Win678',
+                        registerUrl: 'https://m.win678oo.com/?id=743351402',
+                        checkPromoUrl: ''
+                    },
+                    {
+                        name: '888Vi',
+                        registerUrl: 'https://888vi8.com/?id=486645938',
+                        checkPromoUrl: ''
+                    },
+                    {
+                        name: '888P',
+                        registerUrl: 'https://m.888p28.com/?fixed.iswebclip=2',
+                        checkPromoUrl: ''
                     }
                 ]
             }
@@ -4208,121 +4590,6 @@ class VIPAutomation {
     }
 
     /**
-     * KJC Register Form
-     * Supports: Open88, XX88 (no captcha needed)
-     */
-    async fillKJCRegisterForm(page, profileData, siteConfig) {
-        // Wait for form fields to appear
-        try {
-            // Try multiple selectors for username field
-            await page.waitForSelector('input[formcontrolname="account"], input[name="username"], input[id*="username" i], input[placeholder*="username" i]', { timeout: 15000 });
-            console.log('✅ KJC Register form loaded');
-        } catch (e) {
-            console.warn('⚠️ KJC Register form not fully loaded, continuing anyway...');
-        }
-        await new Promise(r => setTimeout(r, 1500));
-
-        await page.evaluate((data) => {
-            // Helper function to find input field by multiple selectors
-            const findField = (selectors) => {
-                if (typeof selectors === 'string') selectors = [selectors];
-                for (const selector of selectors) {
-                    const field = document.querySelector(selector);
-                    if (field) return field;
-                }
-                return null;
-            };
-
-            // Try multiple selector patterns for each field
-            const usernameInput = findField([
-                'input[formcontrolname="account"]',
-                'input[name="username"]',
-                'input[id*="username" i]',
-                'input[placeholder*="username" i]',
-                'input[data-field="username"]'
-            ]);
-
-            const passwordInput = findField([
-                'input[formcontrolname="password"]',
-                'input[name="password"]',
-                'input[id*="password" i]',
-                'input[placeholder*="password" i]',
-                'input[data-field="password"]'
-            ]);
-
-            const emailInput = findField([
-                'input[formcontrolname="email"]',
-                'input[name="email"]',
-                'input[id*="email" i]',
-                'input[placeholder*="email" i]',
-                'input[data-field="email"]'
-            ]);
-
-            const phoneInput = findField([
-                'input[formcontrolname="mobile"]',
-                'input[name="phone"]',
-                'input[name="mobile"]',
-                'input[name="mobileNum1"]',
-                'input[id*="phone" i]',
-                'input[id*="mobile" i]',
-                'input[placeholder*="phone" i]',
-                'input[placeholder*="mobile" i]',
-                'input[placeholder*="số điện thoại" i]',
-                'input[data-field="phone"]'
-            ]);
-
-            const fullnameInput = findField([
-                'input[formcontrolname="name"]',
-                'input[name="payeeName"]',
-                'input[name="fullname"]',
-                'input[id*="name" i]',
-                'input[placeholder*="họ và tên" i]',
-                'input[placeholder*="fullname" i]',
-                'input[data-field="fullname"]'
-            ]);
-
-            // Fill fields
-            if (usernameInput) {
-                usernameInput.value = data.username;
-                usernameInput.dispatchEvent(new Event('input', { bubbles: true }));
-                usernameInput.dispatchEvent(new Event('change', { bubbles: true }));
-                usernameInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                console.log('✅ Username filled');
-            }
-            if (passwordInput) {
-                passwordInput.value = data.password;
-                passwordInput.dispatchEvent(new Event('input', { bubbles: true }));
-                passwordInput.dispatchEvent(new Event('change', { bubbles: true }));
-                passwordInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                console.log('✅ Password filled');
-            }
-            if (emailInput && data.email) {
-                emailInput.value = data.email;
-                emailInput.dispatchEvent(new Event('input', { bubbles: true }));
-                emailInput.dispatchEvent(new Event('change', { bubbles: true }));
-                emailInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                console.log('✅ Email filled');
-            }
-            if (phoneInput && data.phone) {
-                phoneInput.value = data.phone;
-                phoneInput.dispatchEvent(new Event('input', { bubbles: true }));
-                phoneInput.dispatchEvent(new Event('change', { bubbles: true }));
-                phoneInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                console.log('✅ Phone filled');
-            }
-            if (fullnameInput && data.fullname) {
-                fullnameInput.value = data.fullname;
-                fullnameInput.dispatchEvent(new Event('input', { bubbles: true }));
-                fullnameInput.dispatchEvent(new Event('change', { bubbles: true }));
-                fullnameInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                console.log('✅ Fullname filled');
-            }
-        }, profileData);
-
-        console.log('✅ KJC form filled successfully');
-    }
-
-    /**
      * Auto-detect category from site URL
      * Phát hiện category dựa trên domain của site
      */
@@ -4364,9 +4631,9 @@ class VIPAutomation {
                 return 'jun88v2';
             }
 
-            // KJC sites
-            if (domain.includes('kjc') || domain.includes('k-jc')) {
-                return 'kjc';
+            // 22VIP sites
+            if (domain.includes('tv88') || domain.includes('22vip')) {
+                return '22vip';
             }
 
             console.warn(`⚠️ Could not auto-detect category for: ${domain}`);
