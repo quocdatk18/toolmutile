@@ -1,0 +1,43 @@
+{
+  "username": "FireBlade99c",
+  "password": "wjq3546w4",
+  "withdrawPassword": "727155",
+  "fullname": "NGUYENQUOCDAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "4340454046",
+    "accountNumber": "4340454046",
+    "accountHolder": "NGUYENQUOCDAT"
+  },
+  "registeredAt": "2026-01-16T02:21:56.930Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-16T02:21:56.930Z",
+  "bankVerified": false
+}

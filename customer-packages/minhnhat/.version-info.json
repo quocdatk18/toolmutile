@@ -1,0 +1,9 @@
+{
+  "customer": "minhnhat",
+  "version": "3.0.0",
+  "createdAt": "2026-01-21T14:06:26.824Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_minhnhat_94031_41348",
+  "machineId": null,
+  "obfuscated": true
+}

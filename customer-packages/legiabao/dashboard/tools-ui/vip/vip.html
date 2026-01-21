@@ -1,4 +1,4 @@
-<!-- Load Common CSS -->
+﻿<!-- Load Common CSS -->
 <link rel="stylesheet" href="tools-ui/common.css">
 <!-- Load VIP Tool Specific CSS -->
 <link rel="stylesheet" href="tools-ui/vip/vip.css">
@@ -18,7 +18,7 @@
     async function loadVipConfig() {
         try {
             // First, try to load from server API to get dynamic config from vip-automation.js
-            const categories = ['okvip', 'accOkvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+            const categories = ['okvip', 'accOkvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
             const sitesData = {};
 
             for (const category of categories) {
@@ -39,13 +39,13 @@
                 categories: [
                     { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
                     { id: 'accOkvip', icon: '📝', name: 'AccOKVIP', color: '#ff8c42' },
-                    { id: 'abcvip', icon: '🎲', name: 'ABCVIP', color: '#0066cc' },
+                    { id: 'abcvip', icon: '', name: 'ABCVIP', color: '#0066cc' },
                     { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
                     { id: '78win', icon: '🎯', name: '78WIN', color: '#ff9900' },
                     {
-                        id: 'jun88v2', icon: '�', name: 'JUN88V2', color: '#0099cc'
+                        id: 'jun88v2', icon: '🎯', name: 'JUN88V2', color: '#0099cc'
                     },
-                    { id: 'kjc', icon: '🎪', name: 'KJC', color: '#cc0000' }
+                    { id: '22vip', icon: '📺', name: '22VIP', color: '#ff6b35' }
                 ],
                 sites: sitesData
             };
@@ -64,11 +64,11 @@
                 categories: [
                     { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
                     { id: 'accOkvip', icon: '📝', name: 'AccOKVIP', color: '#ff8c42' },
-                    { id: 'abcvip', icon: '�,', name: 'ABCVIP', color: '#0066cc' },
+                    { id: 'abcvip', icon: '', name: 'ABCVIP', color: '#0066cc' },
                     { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
                     { id: '78win', icon: '🎯', name: '78WIN', color: '#ff9900' },
-                    { id: 'jun88v2', icon: '�a', name: 'JUN88V2', color: '#0099cc' },
-                    { id: 'kjc', icon: '🎪', name: 'KJC', color: '#cc0000' }
+                    { id: 'jun88v2', icon: '🎯', name: 'JUN88V2', color: '#0099cc' },
+                    { id: '22vip', icon: '📺', name: '22VIP', color: '#ff6b35' }
                 ],
                 sites: {
                     'okvip': [
@@ -98,11 +98,6 @@
                     ],
                     '78win': [
                         { name: '78WIN1', registerUrl: 'https://www.78win6.zone/signup', checkPromoUrl: 'https://daily78win.net/' }
-                    ],
-                    'kjc': [
-                        { name: 'KJC1', registerUrl: 'https://kjc1.com/register', checkPromoUrl: 'https://kjc1.com/promo' },
-                        { name: 'KJC2', registerUrl: 'https://kjc2.com/register', checkPromoUrl: 'https://kjc2.com/promo' },
-                        { name: 'KJC3', registerUrl: 'https://kjc3.com/register', checkPromoUrl: 'https://kjc3.com/promo' }
                     ]
                 }
             };
@@ -318,11 +313,11 @@
                                 <span style="font-size: 11px; font-weight: 600; color: #374151;">🎯 JUN88V2</span>
                             </label>
                             <label
-                                style="display: flex; align-items: center; gap: 6px; cursor: not-allowed; padding: 6px 8px; background: #f3f4f6; border-radius: 6px; border: 2px solid #d1d5db; transition: all 0.2s; opacity: 0.5;"
-                                class="category-label" title="Bảo trì - sẽ bật lại sau">
-                                <input type="radio" name="vipCategory" value="kjc" onchange="toggleCategorySites()"
-                                    style="width: 14px; height: 14px; cursor: not-allowed;" disabled>
-                                <span style="font-size: 11px; font-weight: 600; color: #9ca3af;">🎪 KJC (Bảo trì)</span>
+                                style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s;"
+                                class="category-label">
+                                <input type="radio" name="vipCategory" value="22vip" onchange="toggleCategorySites()"
+                                    style="width: 14px; height: 14px; cursor: pointer;">
+                                <span style="font-size: 11px; font-weight: 600;">📺 22VIP</span>
                             </label>
                         </div>
                     </div>
@@ -573,9 +568,9 @@
                     style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
                     🎯 JUN88
                 </button>
-                <button class="category-tab" data-category="kjc" onclick="switchCategoryTab('kjc')"
+                <button class="category-tab" data-category="22vip" onclick="switchCategoryTab('22vip')"
                     style="padding: 8px 16px; border: none; background: transparent; cursor: pointer; font-weight: 600; color: #6b7280; border-bottom: 3px solid transparent; transition: all 0.2s;">
-                    � KJC
+                    � 22VIP
                 </button>
 
             </div>
@@ -759,6 +754,34 @@
         toggleCategorySites(); // Initialize sites
         loadProfilesCarousel(); // Auto load profiles when opening modal
         loadBanksForTool(); // Load banks from vietQR API
+
+        // Initialize execution mode toggle (like Nohu does)
+        initExecutionModeToggle();
+    }
+
+    function initExecutionModeToggle() {
+        const radios = document.querySelectorAll('input[name="executionMode"]');
+        const parallelOptions = document.getElementById('parallelOptions');
+
+        radios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                if (parallelOptions) {
+                    parallelOptions.style.display = this.value === 'parallel' ? 'block' : 'none';
+                }
+            });
+        });
+
+        // Initial display based on current selection
+        updateExecutionModeDisplay();
+        console.log('✅ Execution mode toggle initialized');
+    }
+
+    function updateExecutionModeDisplay() {
+        const executionMode = document.querySelector('input[name="executionMode"]:checked').value;
+        const parallelOptions = document.getElementById('parallelOptions');
+        if (parallelOptions) {
+            parallelOptions.style.display = executionMode === 'parallel' ? 'block' : 'none';
+        }
     }
 
     function closeFormModal() {
@@ -1662,7 +1685,7 @@
         getCategoryBadge(category) {
         const categoryMap = {
             'okvip': 'category-okvip', 'abcvip'
-                : 'category-abcvip', 'jun88': 'category-jun88', 'kjc': 'category-kjc'
+                : 'category-abcvip', 'jun88': 'category-jun88'
         }; const
             className = categoryMap[category] || ''; return `<span class="category-badge ${className}">
                 ${category.toUpperCase()}</span>`;
@@ -2171,6 +2194,19 @@
         // Then do other initialization
         toggleCategorySites();
 
+        // Add execution mode change handler
+        const executionModeRadios = document.querySelectorAll('input[name="executionMode"]');
+        executionModeRadios.forEach(radio => {
+            radio.addEventListener('change', function () {
+                const parallelOptions = document.getElementById('parallelOptions');
+                if (this.value === 'sequential') {
+                    parallelOptions.style.display = 'none';
+                } else {
+                    parallelOptions.style.display = 'block';
+                }
+            });
+        });
+
         console.log('✅ VIP Tool initialized');
     });
 
@@ -2326,7 +2362,7 @@
             // If not found or category is undefined, try all categories
             if (!data || !data.success) {
                 console.log('🔍 Category not found or undefined, trying all categories...');
-                const categories = ['okvip', 'accOkvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+                const categories = ['okvip', 'accOkvip', 'abcvip', 'jun88', '78win', 'jun88v2'];
 
                 for (const cat of categories) {
                     response = await fetch(`/api/accounts/vip/${cat}/${username}`);
@@ -2485,9 +2521,9 @@
                 return 'jun88';
             }
 
-            // KJC sites
-            if (domain.includes('kjc') || domain.includes('k-jc')) {
-                return 'kjc';
+            // 22VIP sites
+            if (domain.includes('tv88') || domain.includes('22vip')) {
+                return '22vip';
             }
 
             return null; // Could not detect

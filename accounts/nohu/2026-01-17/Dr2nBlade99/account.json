@@ -1,0 +1,43 @@
+{
+  "username": "Dr2nBlade99",
+  "password": "int28v2w",
+  "withdrawPassword": "129463",
+  "fullname": "NGUYENQUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "9090919092",
+    "accountNumber": "9090919092",
+    "accountHolder": "NGUYENQUOC DAT"
+  },
+  "registeredAt": "2026-01-16T18:31:11.567Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-16T18:31:11.567Z",
+  "bankVerified": false
+}

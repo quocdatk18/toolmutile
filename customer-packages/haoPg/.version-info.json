@@ -1,9 +1,9 @@
 {
-  "customer": "haoPG",
+  "customer": "haoPg",
   "version": "3.0.0",
-  "createdAt": "2025-12-29T11:58:42.113Z",
+  "createdAt": "2026-01-06T06:09:17.620Z",
   "buildType": "customer-package",
-  "secretKey": "SECRET_haoPG_86137_39417",
+  "secretKey": "SECRET_haoPg_68770_10934",
   "machineId": null,
   "obfuscated": true
 }

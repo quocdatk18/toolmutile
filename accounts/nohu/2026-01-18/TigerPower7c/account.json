@@ -1,0 +1,43 @@
+{
+  "username": "TigerPower7c",
+  "password": "fo6874xze6a",
+  "withdrawPassword": "397861",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "140444045",
+    "accountNumber": "140444045",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2026-01-18T02:41:22.315Z",
+  "firstSite": "33WIN",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-18T02:41:22.315Z",
+  "bankVerified": false
+}

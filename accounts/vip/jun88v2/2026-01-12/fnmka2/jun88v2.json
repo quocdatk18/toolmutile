@@ -1,0 +1,22 @@
+{
+  "username": "fnmka2",
+  "password": "fi3wy29iz",
+  "withdrawPassword": "845038",
+  "fullname": "TRAN THI KIM QUY",
+  "email": "f3nq2c@gmail.com",
+  "phone": "0598140398",
+  "registeredAt": "2026-01-12T01:41:09.880Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10422048109401529",
+    "accountHolder": "TRAN THI KIM QUY"
+  }
+}

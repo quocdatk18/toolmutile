@@ -1,0 +1,9 @@
+{
+  "customer": "testNohu",
+  "version": "3.0.0",
+  "createdAt": "2026-01-05T15:15:39.304Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_testNohu_67652_47620",
+  "machineId": null,
+  "obfuscated": true
+}

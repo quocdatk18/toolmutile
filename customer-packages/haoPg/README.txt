@@ -2,7 +2,7 @@
 HIDEMIUM MULTI-TOOL
 ========================================
 
-Customer: haoPG
+Customer: haoPg
 License: 30 ngày
 
 CÀI ĐẶT & CHẠY:

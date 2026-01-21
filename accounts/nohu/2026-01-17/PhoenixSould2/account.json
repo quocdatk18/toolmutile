@@ -1,0 +1,43 @@
+{
+  "username": "PhoenixSould2",
+  "password": "hw1q1rey9",
+  "withdrawPassword": "306713",
+  "fullname": "NGUYEN QUOCDAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "1554964991",
+    "accountNumber": "1554964991",
+    "accountHolder": "NGUYEN QUOCDAT"
+  },
+  "registeredAt": "2026-01-16T17:44:20.752Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-16T17:44:20.752Z",
+  "bankVerified": false
+}

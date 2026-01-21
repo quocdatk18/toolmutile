@@ -12,19 +12,6 @@
     "machineIdSetAt": "2025-12-15T05:23:04.769Z",
     "packageCreatedTime": 1765776184769
   },
-  "Caibcr": {
-    "customerName": "Caibcr",
-    "machineId": "0b59cace23bae70c",
-    "notes": "Updated from package management. Package exists.",
-    "displayName": "",
-    "createdAt": "2025-12-15T06:19:57.007Z",
-    "updatedAt": "2025-12-15T06:19:57.007Z",
-    "updateCount": 0,
-    "licenseHistory": [],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-15T06:19:57.007Z",
-    "packageCreatedTime": 1765777173296
-  },
   "testfile": {
     "customerName": "testfile",
     "machineId": "9032bcaf63a998a8",
@@ -50,19 +37,6 @@
     "machineIdLocked": true,
     "machineIdSetAt": "2025-12-16T03:41:48.069Z",
     "packageCreatedTime": 1765856508069
-  },
-  "anhVu": {
-    "customerName": "anhVu",
-    "machineId": "12677cd1234c83e1",
-    "notes": "Upgraded package. Machine ID, Secret Key, and License preserved.",
-    "displayName": "",
-    "createdAt": "2025-12-16T19:49:30.347Z",
-    "updatedAt": "2025-12-16T19:49:30.347Z",
-    "updateCount": 0,
-    "licenseHistory": [],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-16T19:49:30.347Z",
-    "packageCreatedTime": 1765914569559
   },
   "sieuProxy": {
     "customerName": "sieuProxy",
@@ -115,28 +89,23 @@
     "updateCount": 0,
     "licenseHistory": [
       {
-        "licenseKey": "eyJ1c2VybmFtZSI6InZpbmhNbW8iLCJtYWNoaW5lSWQiOiI3ZGFlZDNkOTJmNmQyMzIwIiwiZXhwaXJ5IjoxNzY4MjIzNDAxNDcwLCJjcmVhdGVkIjoxNzY3MDEzODAxNDcwLCJhbGxvd2VkVG9vbHMiOlsibm9odS10b29sIiwidmlwLXRvb2wiXX0=.e69d760708aa7e661c4eeafcd1c9ca43b33f9eaa613b7565a262017b0694fb11",
+        "licenseKey": "eyJ1IjoidmluaE1tbyIsIm0iOiI3ZGFlZDNkOTJmNmQyMzIwIiwiZSI6MTc2ODMwODcwNiwidCI6WyJub2h1LXRvb2wiLCJ2aXAtdG9vbCJdfQ.15609702aaae1eac",
+        "expiryDays": 8,
+        "notes": "Generated from Customer Manager. 8 days. Tools: nohu-tool, vip-tool",
+        "createdAt": "2026-01-05T12:51:46.846Z",
+        "isActive": false
+      },
+      {
+        "licenseKey": "eyJ1IjoidmluaE1tbyIsIm0iOiI3ZGFlZDNkOTJmNmQyMzIwIiwiZSI6MTc2OTYwMjkzNSwidCI6WyJub2h1LXRvb2wiLCJ2aXAtdG9vbCJdfQ.19ea457ad303ab26",
         "expiryDays": 14,
         "notes": "Generated from Customer Manager. 14 days. Tools: nohu-tool, vip-tool",
-        "createdAt": "2025-12-29T13:10:01.471Z",
+        "createdAt": "2026-01-14T12:22:15.451Z",
         "isActive": true
       }
     ],
     "machineIdLocked": true,
     "machineIdSetAt": "2025-12-18T17:11:36.700Z",
     "packageCreatedTime": 1766077769974
-  },
-  "SieuTele": {
-    "customerName": "SieuTele",
-    "machineId": "3ef98832be6559d2",
-    "notes": "Updated from package management. Package exists.",
-    "displayName": "",
-    "createdAt": "2025-12-18T21:54:08.152Z",
-    "updatedAt": "2025-12-18T21:55:37.676Z",
-    "updateCount": 1,
-    "licenseHistory": [],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-18T21:55:37.676Z"
   },
   "BushXyz": {
     "customerName": "BushXyz",
@@ -168,11 +137,18 @@
     "updateCount": 1,
     "licenseHistory": [
       {
+        "licenseKey": "eyJ1c2VybmFtZSI6Inh1YW5EYW5nIiwibWFjaGluZUlkIjoiMGY0NzY0NDVjZGEzYWZmYyIsImV4cGlyeSI6MTc3MDYzNDQ5NjIyOCwiY3JlYXRlZCI6MTc2ODA0MjQ5NjIyOCwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCJdfQ==.0db34c5e4acb7dde7c8b38162bbf115e4b8c79800f1e924e0885e68d1be62938",
+        "expiryDays": 30,
+        "notes": "Generated from Customer Manager. 30 days. Tools: nohu-tool",
+        "createdAt": "2026-01-10T10:54:56.229Z",
+        "isActive": true
+      },
+      {
         "licenseKey": "eyJ1c2VybmFtZSI6Inh1YW5EYW5nIiwibWFjaGluZUlkIjoiMGY0NzY0NDVjZGEzYWZmYyIsImV4cGlyeSI6MTc2NzQ4NzExNjY3OCwiY3JlYXRlZCI6MTc2Njg4MjMxNjY3OCwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCIsInZpcC10b29sIl19.553df83b6a8c4ffcc2f979d6ed91027f30232fde5749de6d46f2d6300fa4de44",
         "expiryDays": 7,
         "notes": "Generated from Customer Manager. 7 days. Tools: nohu-tool, vip-tool",
         "createdAt": "2025-12-28T00:38:36.678Z",
-        "isActive": true
+        "isActive": false
       }
     ],
     "machineIdLocked": true,
@@ -272,26 +248,6 @@
     "machineIdLocked": true,
     "machineIdSetAt": "2025-12-25T04:06:44.919Z"
   },
-  "haoPG": {
-    "customerName": "haoPG",
-    "machineId": "e514f13fa60b1cde",
-    "notes": "Upgraded package. Machine ID, Secret Key, and License preserved.",
-    "displayName": "",
-    "createdAt": "2025-12-29T11:04:04.467Z",
-    "updatedAt": "2025-12-29T11:58:42.581Z",
-    "updateCount": 1,
-    "licenseHistory": [
-      {
-        "licenseKey": "eyJ1IjoiaGFvUEciLCJtIjoiZTUxNGYxM2ZhNjBiMWNkZSIsImUiOjE3Njc2MTEyMzEsInQiOlsibm9odS10b29sIiwidmlwLXRvb2wiXX0.73fffa9372dfa246",
-        "expiryDays": 7,
-        "notes": "Generated from Customer Manager. 7 days. Tools: nohu-tool, vip-tool",
-        "createdAt": "2025-12-29T11:07:11.098Z",
-        "isActive": true
-      }
-    ],
-    "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-29T11:06:58.601Z"
-  },
   "TuanAnhThang12m": {
     "customerName": "TuanAnhThang12m",
     "machineId": "1b4af2f9afeea9a7",
@@ -335,18 +291,25 @@
   "legiabao": {
     "customerName": "legiabao",
     "machineId": "bca8ae3a151ea641",
-    "notes": "Updated from package management. Package exists.",
+    "notes": "Upgraded package. Machine ID, Secret Key, and License preserved.",
     "displayName": "",
     "createdAt": "2026-01-04T08:11:13.841Z",
-    "updatedAt": "2026-01-04T08:21:33.223Z",
+    "updatedAt": "2026-01-05T15:21:32.934Z",
     "updateCount": 1,
     "licenseHistory": [
+      {
+        "licenseKey": "eyJ1IjoibGVnaWFiYW8iLCJtIjoiYmNhOGFlM2ExNTFlYTY0MSIsImUiOjE3NzAyMTgwNDMsInQiOlsibm9odS10b29sIiwidmlwLXRvb2wiXX0.270d41a921d2af0a",
+        "expiryDays": 30,
+        "notes": "Generated from Customer Manager. 30 days. Tools: nohu-tool, vip-tool",
+        "createdAt": "2026-01-05T15:14:03.855Z",
+        "isActive": true
+      },
       {
         "licenseKey": "eyJ1IjoibGVnaWFiYW8iLCJtIjoiYmNhOGFlM2ExNTFlYTY0MSIsImUiOjE3Njc2MDEzMTgsInQiOlsibm9odS10b29sIiwidmlwLXRvb2wiXX0.69a5a7f6610f3cab",
         "expiryDays": 1,
         "notes": "Generated from Customer Manager. 1 days. Tools: nohu-tool, vip-tool",
         "createdAt": "2026-01-04T08:21:58.483Z",
-        "isActive": true
+        "isActive": false
       }
     ],
     "machineIdLocked": true,
@@ -371,5 +334,65 @@
     ],
     "machineIdLocked": true,
     "machineIdSetAt": "2026-01-05T07:09:07.615Z"
+  },
+  "testNohu": {
+    "customerName": "testNohu",
+    "machineId": "fc53c6d850a0ab49",
+    "notes": "Updated from package management. Package exists.",
+    "displayName": "",
+    "createdAt": "2026-01-05T15:15:39.541Z",
+    "updatedAt": "2026-01-05T15:19:02.986Z",
+    "updateCount": 1,
+    "licenseHistory": [
+      {
+        "licenseKey": "eyJ1IjoidGVzdE5vaHUiLCJtIjoiZmM1M2M2ZDg1MGEwYWI0OSIsImUiOjE3Njc2Njg0MjAsInQiOlsibm9odS10b29sIiwidmlwLXRvb2wiXX0.1f61772914728394",
+        "expiryDays": 0.4861111111111111,
+        "notes": "Generated from Customer Manager. 700 minutes. Tools: nohu-tool, vip-tool",
+        "createdAt": "2026-01-05T15:20:20.127Z",
+        "isActive": true
+      }
+    ],
+    "machineIdLocked": true,
+    "machineIdSetAt": "2026-01-05T15:19:02.986Z"
+  },
+  "haoPg": {
+    "customerName": "haoPg",
+    "machineId": "e16f2465312a09df",
+    "notes": "Updated from package management. Package exists.",
+    "displayName": "",
+    "createdAt": "2026-01-06T06:09:17.824Z",
+    "updatedAt": "2026-01-06T06:15:46.914Z",
+    "updateCount": 1,
+    "licenseHistory": [
+      {
+        "licenseKey": "eyJ1IjoiaGFvUGciLCJtIjoiZTE2ZjI0NjUzMTJhMDlkZiIsImUiOjE3NzAyNzIxNjAsInQiOlsibm9odS10b29sIiwidmlwLXRvb2wiXX0.c51b5879c7357427",
+        "expiryDays": 30,
+        "notes": "Generated from Customer Manager. 30 days. Tools: nohu-tool, vip-tool",
+        "createdAt": "2026-01-06T06:16:00.169Z",
+        "isActive": true
+      }
+    ],
+    "machineIdLocked": true,
+    "machineIdSetAt": "2026-01-06T06:15:46.914Z"
+  },
+  "minhnhat": {
+    "customerName": "minhnhat",
+    "machineId": "f4a9eecd89e5054c",
+    "notes": "Updated from package management. Package exists.",
+    "displayName": "",
+    "createdAt": "2026-01-21T14:06:27.142Z",
+    "updatedAt": "2026-01-21T14:29:45.827Z",
+    "updateCount": 1,
+    "licenseHistory": [
+      {
+        "licenseKey": "eyJ1IjoibWluaG5oYXQiLCJtIjoiZjRhOWVlY2Q4OWU1MDU0YyIsImUiOjE3NjkwMDgyMDcsInQiOlsibm9odS10b29sIiwidmlwLXRvb2wiXX0.fd9b7ac8b28e1605",
+        "expiryDays": 0.027777777777777776,
+        "notes": "Generated from Customer Manager. 40 minutes. Tools: nohu-tool, vip-tool",
+        "createdAt": "2026-01-21T14:30:07.246Z",
+        "isActive": true
+      }
+    ],
+    "machineIdLocked": true,
+    "machineIdSetAt": "2026-01-21T14:29:45.827Z"
   }
 }

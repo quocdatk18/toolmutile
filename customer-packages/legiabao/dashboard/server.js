@@ -1063,7 +1063,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     // Check if account exists in any date folder (for VIP categories)
     const vipCategoriesDir = path.join(__dirname, '../accounts/vip');
     if (fs.existsSync(vipCategoriesDir)) {
-        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         for (const cat of vipCategories) {
             const catDir = path.join(vipCategoriesDir, cat);
             if (fs.existsSync(catDir)) {
@@ -1364,9 +1364,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, accokvip, abcvip, jun88, 78win, jun88v2, kjc)
+        // Try to find any VIP category file (okvip, accokvip, abcvip, jun88, 78win, jun88v2, 22vip)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1460,7 +1460,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.json({ success: false, error: 'Invalid category' });
         }
@@ -1500,7 +1500,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
     }
 });
 
-// Save account info for VIP categories (okvip, accOkvip, abcvip, jun88, 78win, jun88v2, kjc)
+// Save account info for VIP categories (okvip, accOkvip, abcvip, jun88, 78win, jun88v2)
 app.post('/api/accounts/:category/:username', (req, res) => {
     try {
         const { category, username } = req.params;
@@ -1511,7 +1511,7 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }

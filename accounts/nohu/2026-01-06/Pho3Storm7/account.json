@@ -1,0 +1,43 @@
+{
+  "username": "Pho3Storm7",
+  "password": "b4vzj457gb",
+  "withdrawPassword": "784951",
+  "fullname": "NGUYENQUOCDAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "4830323033",
+    "accountNumber": "4830323033",
+    "accountHolder": "NGUYENQUOCDAT"
+  },
+  "registeredAt": "2026-01-06T08:06:26.464Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-06T08:06:26.464Z",
+  "bankVerified": false
+}

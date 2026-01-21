@@ -1,0 +1,43 @@
+{
+  "username": "PhCcFury88",
+  "password": "w16nks7654",
+  "withdrawPassword": "398021",
+  "fullname": "NHAN HAI NGUYET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "HA NOI",
+    "accountNumber": "10427048110353828",
+    "accountHolder": "NHAN HAI NGUYET"
+  },
+  "registeredAt": "2026-01-16T22:00:26.865Z",
+  "firstSite": "88VV",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-16T22:00:26.865Z",
+  "bankVerified": false
+}

@@ -6,7 +6,7 @@ echo ========================================
 echo    HIDEMIUM MULTI-TOOL - INSTALLATION
 echo ========================================
 echo.
-echo Customer: haoPG
+echo Customer: haoPg
 echo.
 
 REM Check if Node.js is installed
