@@ -1,0 +1,37 @@
+{
+  "username": "EagleStrikend",
+  "password": "rew9t7no4",
+  "withdrawPassword": "1",
+  "fullname": "GIANG A CAU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BIEN HOA",
+    "accountNumber": "963012001032999",
+    "accountHolder": "GIANG A CAU"
+  },
+  "registeredAt": "2026-02-03T09:09:31.804Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-03T09:09:31.804Z",
+  "bankVerified": false
+}

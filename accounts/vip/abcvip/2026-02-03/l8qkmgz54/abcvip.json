@@ -1,0 +1,25 @@
+{
+  "username": "l8qkmgz54",
+  "password": "f2251pydk",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN THI HUNG",
+  "email": "fv78z2cb@gmail.com",
+  "phone": "0993599756",
+  "registeredAt": "2026-02-03T12:15:47.067Z",
+  "firstSite": "ABC8",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8",
+    "888clb"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001034792",
+    "accountHolder": "NGUYEN THI HUNG"
+  }
+}

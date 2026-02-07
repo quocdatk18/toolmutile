@@ -1,9 +1,9 @@
 {
   "customer": "bemotele",
   "version": "3.0.0",
-  "createdAt": "2026-01-02T16:22:33.012Z",
+  "createdAt": "2026-02-04T01:55:32.000Z",
   "buildType": "customer-package",
-  "secretKey": "SECRET_bemotele_52941_67716",
+  "secretKey": "SECRET_bemotele_80792_40208",
   "machineId": null,
   "obfuscated": true
 }

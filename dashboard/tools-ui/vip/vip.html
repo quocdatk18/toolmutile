@@ -18,7 +18,7 @@
     async function loadVipConfig() {
         try {
             // First, try to load from server API to get dynamic config from vip-automation.js
-            const categories = ['okvip', 'accOkvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
+            const categories = ['okvip', 'accOkvip', 'okvipOtp', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
             const sitesData = {};
 
             for (const category of categories) {
@@ -39,6 +39,7 @@
                 categories: [
                     { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
                     { id: 'accOkvip', icon: '📝', name: 'AccOKVIP', color: '#ff8c42' },
+                    { id: 'okvipOtp', icon: '🔐', name: 'OKVIP OTP', color: '#ff6b35' },
                     { id: 'abcvip', icon: '', name: 'ABCVIP', color: '#0066cc' },
                     { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
                     { id: '78win', icon: '🎯', name: '78WIN', color: '#ff9900' },
@@ -64,6 +65,7 @@
                 categories: [
                     { id: 'okvip', icon: '🎰', name: 'OKVIP', color: '#ff6b35' },
                     { id: 'accOkvip', icon: '📝', name: 'AccOKVIP', color: '#ff8c42' },
+                    { id: 'okvipOtp', icon: '🔐', name: 'OKVIP OTP', color: '#ff6b35' },
                     { id: 'abcvip', icon: '', name: 'ABCVIP', color: '#0066cc' },
                     { id: 'jun88', icon: '🎯', name: 'JUN88', color: '#00aa00' },
                     { id: '78win', icon: '🎯', name: '78WIN', color: '#ff9900' },
@@ -86,6 +88,9 @@
                         { name: 'NEW88', registerUrl: 'https://m.dxiidnc84gkoopfcmbpwhsgf.com/Account/Register', checkPromoUrl: 'https://khuyenmai-new88okvip1.pages.dev/?promo_id=N58' },
                         { name: 'MB66', registerUrl: 'https://m.wtyurfuijkxcvklrhyli3imxjuuflegmgkiow3i.com/Account/Register', checkPromoUrl: 'https://ttkm-mb66okvip02.pages.dev/?promo_id=FREE66' },
                         { name: '789BET', registerUrl: 'https://m.hsdh99hjsbcnjiufkxuuwvg.com/Account/Register', checkPromoUrl: 'https://ttkm789bet04.pages.dev/khuyenmai/?promo_id=FR58K' }
+                    ],
+                    'okvipOtp': [
+                        { name: 'SC881', registerUrl: 'https://m.sc881.com./home/register', checkPromoUrl: 'https://m.sc881.com./home/event/detail?current=1&template=1&eventId=1' }
                     ],
                     'abcvip': [
                         { name: 'U888', registerUrl: 'https://m.u888at.link/?f=2551606&app=1/Account/Register', checkPromoUrl: 'https://88u888.club/' },
@@ -283,6 +288,13 @@
                                 <input type="radio" name="vipCategory" value="accOkvip" onchange="toggleCategorySites()"
                                     style="width: 14px; height: 14px; cursor: pointer;">
                                 <span style="font-size: 11px; font-weight: 600;">📝 AccOKVIP</span>
+                            </label>
+                            <label
+                                style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s;"
+                                class="category-label">
+                                <input type="radio" name="vipCategory" value="okvipOtp" onchange="toggleCategorySites()"
+                                    style="width: 14px; height: 14px; cursor: pointer;">
+                                <span style="font-size: 11px; font-weight: 600;">🔐 OKVIP OTP</span>
                             </label>
                             <label
                                 style="display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 8px; background: #f9fafb; border-radius: 6px; border: 2px solid #e5e7eb; transition: all 0.2s;"

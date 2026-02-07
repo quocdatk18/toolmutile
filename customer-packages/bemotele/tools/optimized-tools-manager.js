@@ -18,7 +18,6 @@ class OptimizedToolsManager {
         this.smsSites = {
             okvip: ['SHBET', 'F8BET', 'NEW88', 'HI88', '789BET', 'MB66'],
             abcvip: ['J88', 'U888', 'ABC8', '88CLB'],
-            kjc: ['QQ88', 'RR88', 'XX88', 'MM88', 'X88'],
             '78win': ['JUN88', '78WIN']
         };
     }

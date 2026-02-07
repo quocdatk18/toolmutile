@@ -1,0 +1,25 @@
+{
+  "username": "FirePower",
+  "password": "s7306fzrxskk",
+  "withdrawPassword": "901951",
+  "fullname": "TONG THI CUONG HUNG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "NHA TRANG",
+    "accountNumber": "963012001054309",
+    "accountHolder": "TONG THI CUONG HUNG"
+  },
+  "registeredAt": "2026-02-07T04:07:03.981Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-07T04:07:03.981Z",
+  "bankVerified": true
+}

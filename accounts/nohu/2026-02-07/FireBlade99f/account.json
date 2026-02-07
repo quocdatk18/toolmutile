@@ -1,0 +1,25 @@
+{
+  "username": "FireBlade99f",
+  "password": "yusfu122bb3bg",
+  "withdrawPassword": "111222",
+  "fullname": "PHAN THI HUNG VAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VUNG TAU",
+    "accountNumber": "963012001053978",
+    "accountHolder": "PHAN THI HUNG VAN"
+  },
+  "registeredAt": "2026-02-07T04:00:26.924Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-07T04:00:26.924Z",
+  "bankVerified": true
+}

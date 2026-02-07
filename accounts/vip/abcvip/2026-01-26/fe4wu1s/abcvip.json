@@ -1,0 +1,25 @@
+{
+  "username": "fe4wu1s",
+  "password": "cf4ovvmw9",
+  "withdrawPassword": "166240",
+  "fullname": "KHUAT VAN THUC",
+  "email": "d53aag@gmail.com",
+  "phone": "0776716473",
+  "registeredAt": "2026-01-26T11:53:11.981Z",
+  "firstSite": "888clb",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8",
+    "888clb"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10426048112462897",
+    "accountHolder": "KHUAT VAN THUC"
+  }
+}

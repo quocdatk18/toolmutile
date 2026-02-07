@@ -15,7 +15,7 @@ class LicenseManager {
         // ⚠️ QUAN TRỌNG: Thay đổi secret key này trước khi gửi cho khách hàng!
         // Mỗi bản gửi khách nên có secret key khác nhau
         // Ví dụ: 'SECRET_CUSTOMER_001', 'SECRET_CUSTOMER_002', v.v.
-        this.secretKey = 'SECRET_SatamaHim_65152_26610'; // Thay đổi secret này
+        this.secretKey = 'SECRET_SatamaHim_29761_81031'; // Thay đổi secret này
 
         // Auto-cleanup expired license on startup
         this.autoCleanupExpired();

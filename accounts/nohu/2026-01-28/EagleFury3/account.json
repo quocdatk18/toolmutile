@@ -1,0 +1,43 @@
+{
+  "username": "EagleFury3",
+  "password": "f2viqi5jm",
+  "withdrawPassword": "592909",
+  "fullname": "DANG HUNG THANH HUNG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10428048112966769",
+    "accountHolder": "DANG HUNG THANH HUNG"
+  },
+  "registeredAt": "2026-01-28T12:52:54.887Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-28T12:52:54.887Z",
+  "bankVerified": false
+}

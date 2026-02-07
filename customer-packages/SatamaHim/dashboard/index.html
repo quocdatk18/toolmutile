@@ -93,13 +93,14 @@
 
                 <!-- SIM API Key Section -->
                 <div class="resource-section">
-                    <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #4a5568;">📱 SIM API (codesim.net)</h3>
+                    <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #4a5568;">📱 Viotp SIM API</h3>
                     <div class="api-usage-note">
                         <span class="usage-badge usage-badge-hai2vip">🎲 HAI2VIP Tool</span>
+                        <span class="usage-badge" style="background: #fef3c7; color: #92400e;">✨ AccOKVIP</span>
                     </div>
                     <div class="api-key-panel">
                         <div class="input-with-toggle">
-                            <input type="password" id="simApiKey" placeholder="Nhập API Key từ codesim.net">
+                            <input type="password" id="simApiKey" placeholder="Nhập API Token từ viotp.com">
                             <button class="btn-toggle-visibility" onclick="toggleSimApiKeyVisibility()"
                                 title="Hiện/Ẩn API Key">
                                 <span id="toggleSimIcon">👁️</span>
@@ -119,9 +120,9 @@
                             </div>
                         </div>
                         <div style="font-size: 11px; color: #718096; margin-top: 8px;">
-                            ℹ️ HAI2VIP Tool (xác thực SĐT)<br>
-                            📝 Lấy API key tại: <a href="https://codesim.net/APIIntegration" target="_blank"
-                                style="color: #667eea;">codesim.net/APIIntegration</a>
+                            ℹ️ Dùng cho HAI2VIP (xác thực SĐT) và AccOKVIP (lấy OTP)<br>
+                            📝 Lấy API token tại: <a href="https://viotp.com" target="_blank"
+                                style="color: #667eea;">viotp.com</a>
                         </div>
                     </div>
                 </div>
@@ -370,6 +371,22 @@
             <div class="confirm-modal-footer">
                 <button class="btn btn-secondary" onclick="closeConfirmModal()">Hủy</button>
                 <button class="btn btn-danger" id="confirmModalButton" onclick="confirmModalAction()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal (không tự ẩn) -->
+    <div class="confirm-modal" id="errorModal">
+        <div class="confirm-modal-overlay" onclick="closeErrorModal()"></div>
+        <div class="confirm-modal-content">
+            <div class="confirm-modal-header">
+                <h3 id="errorModalTitle">❌ Lỗi</h3>
+            </div>
+            <div class="confirm-modal-body">
+                <p id="errorModalMessage">Có lỗi xảy ra</p>
+            </div>
+            <div class="confirm-modal-footer">
+                <button class="btn btn-primary" onclick="closeErrorModal()">Đóng</button>
             </div>
         </div>
     </div>

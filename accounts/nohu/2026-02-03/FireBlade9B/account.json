@@ -1,0 +1,37 @@
+{
+  "username": "FireBlade9B",
+  "password": "vj613uxx8",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "340694070",
+    "accountNumber": "340694070",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2026-02-03T13:52:07.901Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-03T13:52:07.901Z",
+  "bankVerified": false
+}

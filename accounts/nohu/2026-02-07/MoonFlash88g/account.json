@@ -1,0 +1,31 @@
+{
+  "username": "MoonFlash88g",
+  "password": "gd7scbz1c39c",
+  "withdrawPassword": "438457",
+  "fullname": "PHAN THI HUNG VAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HO CHI MINH",
+    "accountNumber": "963012001053978",
+    "accountHolder": "PHAN THI HUNG VAN"
+  },
+  "registeredAt": "2026-02-07T01:17:42.159Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-07T01:17:42.159Z",
+  "bankVerified": false
+}

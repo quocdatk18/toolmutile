@@ -1,0 +1,31 @@
+{
+  "username": "PhoenixFlash1",
+  "password": "6r0g4bp8t2",
+  "withdrawPassword": "636835",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "22260706071",
+    "accountNumber": "22260706071",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2026-02-05T16:55:12.351Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-05T16:55:12.351Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "LionBolt3df",
+  "password": "u1skkow1rt08",
+  "withdrawPassword": "433188",
+  "fullname": "DUONG HOANG THI DAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "BIEN HOA",
+    "accountNumber": "10422048114253831",
+    "accountHolder": "DUONG HOANG THI DAM"
+  },
+  "registeredAt": "2026-02-02T08:49:35.779Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-02T08:49:35.779Z",
+  "bankVerified": false
+}

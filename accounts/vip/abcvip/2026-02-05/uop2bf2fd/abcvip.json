@@ -1,0 +1,25 @@
+{
+  "username": "uop2bf2fd",
+  "password": "mz02tk62lf",
+  "withdrawPassword": "754978",
+  "fullname": "TRAN CUONG HOANG VINH",
+  "email": "ypf77e@gmail.com",
+  "phone": "0898136108",
+  "registeredAt": "2026-02-05T14:59:45.951Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8",
+    "888clb"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001044101",
+    "accountHolder": "TRAN CUONG HOANG VINH"
+  }
+}

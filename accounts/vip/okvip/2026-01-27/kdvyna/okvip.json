@@ -1,0 +1,23 @@
+{
+  "username": "kdvyna",
+  "password": "f6x56u0sq",
+  "withdrawPassword": "878194",
+  "fullname": "HOANG HOANG HAI",
+  "email": "dzsx9fd@gmail.com",
+  "phone": "0776708914",
+  "registeredAt": "2026-01-26T18:39:34.309Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10427048112547395",
+    "accountHolder": "HOANG HOANG HAI"
+  }
+}

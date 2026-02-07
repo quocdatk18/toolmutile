@@ -1,0 +1,37 @@
+{
+  "username": "Eagle4gwer9",
+  "password": "tzi578c1tyqq",
+  "withdrawPassword": "516393",
+  "fullname": "VO TUAN TUAN LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BIEN HOA",
+    "accountNumber": "963012001037956",
+    "accountHolder": "VO TUAN TUAN LINH"
+  },
+  "registeredAt": "2026-02-04T04:53:08.650Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-04T04:53:08.650Z",
+  "bankVerified": false
+}

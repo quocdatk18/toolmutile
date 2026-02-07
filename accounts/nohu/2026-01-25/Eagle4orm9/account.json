@@ -1,0 +1,43 @@
+{
+  "username": "Eagle4orm9",
+  "password": "a4osov3yvd",
+  "withdrawPassword": "754012",
+  "fullname": "NGUYENQUOCDAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "640614062",
+    "accountNumber": "640614062",
+    "accountHolder": "NGUYENQUOCDAT"
+  },
+  "registeredAt": "2026-01-25T11:14:13.061Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-25T11:14:13.061Z",
+  "bankVerified": false
+}

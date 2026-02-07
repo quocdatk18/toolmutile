@@ -152,68 +152,20 @@ class FormFillerExtension {
       input.dispatchEvent(new Event('input', { bubbles: true }));
       await new Promise(r => setTimeout(r, 50));
 
-      for (let i = 0; i < value.length; i++) {
-        const char = value[i];
-
-        // Giai Đoạn 3: Lỗi gõ (5% cơ hội)
-        if (shouldAddTypingError()) {
-          const wrongChar = String.fromCharCode(65 + Math.floor(Math.random() * 26));
-          if (nativeInputValueSetter) {
-            nativeInputValueSetter.call(input, input.value + wrongChar);
-          } else {
-            input.value = input.value + wrongChar;
-          }
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-          console.log(`❌ Typing error: typed "${wrongChar}" instead of "${char}"`);
-          await randomDelay(300, 800);
-          if (nativeInputValueSetter) {
-            nativeInputValueSetter.call(input, input.value.slice(0, -1));
-          } else {
-            input.value = input.value.slice(0, -1);
-          }
-          input.dispatchEvent(new Event('input', { bubbles: true }));
-          console.log(`✏️ Corrected: removed wrong character`);
-          await randomDelay(200, 500);
-        }
-
-        if (nativeInputValueSetter) {
-          nativeInputValueSetter.call(input, input.value + char);
-        } else {
-          input.value = input.value + char;
-        }
-
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-
-        // Giai Đoạn 3: Biến thiên tốc độ gõ
-        const charDelay = getRealisticCharDelay(char);
-        await new Promise(r => setTimeout(r, charDelay));
-
-        // Giai Đoạn 1: Tạm dừng gõ (30% cơ hội)
-        if (i > 0 && i % (3 + Math.floor(Math.random() * 3)) === 0) {
-          if (shouldAddTypingPause()) {
-            const pauseDelay = getTypingPauseDelay();
-            console.log(`⏸️ Typing pause: ${Math.round(pauseDelay / 1000)}s (thinking...)`);
-            await new Promise(r => setTimeout(r, pauseDelay));
-          }
-        }
+      // Set value directly (no character-by-character input)
+      if (nativeInputValueSetter) {
+        nativeInputValueSetter.call(input, value);
+      } else {
+        input.value = value;
       }
 
+      input.dispatchEvent(new Event('input', { bubbles: true }));
       input.dispatchEvent(new Event('change', { bubbles: true }));
       input.dispatchEvent(new Event('blur', { bubbles: true }));
 
-      // Giai Đoạn 2: Focus/blur ngẫu nhiên (30% cơ hội)
-      if (shouldAddRandomFocusBlur()) {
-        await randomDelay(getFocusBlurDelay() - 50, getFocusBlurDelay() + 50);
-        input.focus();
-        console.log(`🔄 Random focus added`);
-        await randomDelay(getFocusBlurDelay() - 50, getFocusBlurDelay() + 50);
-        input.blur();
-        console.log(`🔄 Random blur added`);
-      }
-
+      console.log(`✅ ${opts.label} filled (setValue - instant)`);
       await randomDelay(opts.afterField - 100, opts.afterField + 100);
 
-      console.log(`✅ ${opts.label} filled`);
       return { success: true };
     } catch (error) {
       console.warn(`⚠️ Failed to fill ${opts.label}:`, error.message);
@@ -224,33 +176,40 @@ class FormFillerExtension {
   async fillMultipleFields(fields, options = {}) {
     const opts = { ...this.defaultDelay, ...options };
 
-    // Kiểm tra xem có password/confirmPassword dependency không
-    const hasPasswordDependency = fields.some(f => f.label === 'password') &&
-      fields.some(f => f.label === 'confirmPassword');
+    console.log(`📝 Setting ${fields.length} fields at once (batch mode)...`);
 
-    // Chỉ ngẫu nhiên hóa nếu KHÔNG có dependencies
-    let fieldsToFill = [...fields];
-
-    if (!hasPasswordDependency && shouldRandomizeFormOrder()) {
-      fieldsToFill.sort(() => Math.random() - 0.5);
-      console.log(`🔀 Form field order randomized`);
-    }
-
-    for (const field of fieldsToFill) {
+    // Set value cho tất cả fields 1 lượt
+    for (const field of fields) {
       if (!field.input) {
         console.warn(`⚠️ Input not found for ${field.label}`);
         continue;
       }
 
-      const result = await this.fillTextField(field.input, field.value, opts);
-      if (!result.success && !result.skipped) {
-        console.warn(`⚠️ Failed to fill ${field.label}`);
-      }
+      try {
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+          window.HTMLInputElement.prototype,
+          'value'
+        ).set;
 
-      // ⏱️ TIMING FIX: Thêm delay giữa các fields (500-1000ms)
-      // Mô phỏng người suy nghĩ giữa các fields
-      await randomDelay(500, 1000);
+        if (nativeInputValueSetter) {
+          nativeInputValueSetter.call(field.input, field.value);
+        } else {
+          field.input.value = field.value;
+        }
+
+        field.input.dispatchEvent(new Event('input', { bubbles: true }));
+        field.input.dispatchEvent(new Event('change', { bubbles: true }));
+        field.input.dispatchEvent(new Event('blur', { bubbles: true }));
+
+        console.log(`✅ ${field.label} set to: ${field.value}`);
+      } catch (error) {
+        console.warn(`⚠️ Failed to set ${field.label}:`, error.message);
+      }
     }
+
+    // Delay sau khi set tất cả fields
+    await randomDelay(opts.afterField - 100, opts.afterField + 100);
+    console.log(`✅ All fields set successfully`);
   }
 
   async simulateHumanInteraction() {
@@ -1509,8 +1468,8 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
                         showNotification('✅ Đã điền captcha: ' + captchaText);
 
-                        // Random delay trước submit captcha (8-15s)
-                        const captchaDelay = Math.random() * (15000 - 8000) + 8000;
+                        // Random delay trước submit captcha (3-5s)
+                        const captchaDelay = Math.random() * (5000 - 3000) + 3000;
                         const delaySeconds = Math.round(captchaDelay / 1000);
                         console.log(`⏳ Waiting ${delaySeconds}s before submitting captcha...`);
 
@@ -1598,9 +1557,9 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
                               console.log('✅ Captcha verified, now clicking "Nhận khuyến mãi"...');
                             }
 
-                            // Random delay 20-60s before clicking (anti-bot)
-                            // ⏱️ TIMING FIX: Giảm delay chờ click "Nhận khuyến mãi" (20-60s → 5-15s)
-                            const promoDelay = 5000 + Math.random() * 10000; // 5-15s (giảm từ 20-60s)
+                            // Random delay 1-2s before clicking (anti-bot)
+                            // ⏱️ TIMING FIX: Giảm delay chờ click "Nhận khuyến mãi" (5-15s → 1-2s)
+                            const promoDelay = 1000 + Math.random() * 1000; // 1-2s (giảm từ 5-15s)
                             const delaySeconds = Math.round(promoDelay / 1000);
                             console.log(`⏳ Waiting ${delaySeconds}s before clicking "Nhận khuyến mãi"...`);
 

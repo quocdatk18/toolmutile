@@ -1,0 +1,37 @@
+{
+  "username": "WolfStorm7bv",
+  "password": "bb20f6j5p33ke",
+  "withdrawPassword": "403678",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "77760696070",
+    "accountNumber": "77760696070",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2026-02-04T06:20:00.575Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-04T06:20:00.575Z",
+  "bankVerified": false
+}

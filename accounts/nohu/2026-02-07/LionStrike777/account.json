@@ -1,0 +1,25 @@
+{
+  "username": "LionStrike777",
+  "password": "wuu1ms73rxm",
+  "withdrawPassword": "848179",
+  "fullname": "PHAM HUONG VAN TRANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VUNG TAU",
+    "accountNumber": "963012001054282",
+    "accountHolder": "PHAM HUONG VAN TRANG"
+  },
+  "registeredAt": "2026-02-07T04:06:30.346Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-07T04:06:30.346Z",
+  "bankVerified": true
+}

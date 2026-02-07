@@ -1,0 +1,31 @@
+{
+  "username": "SkyBlade99v",
+  "password": "fd26mzdeqra",
+  "withdrawPassword": "436930",
+  "fullname": "TRAN CUONG HOANG VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HA NOI",
+    "accountNumber": "963012001044101",
+    "accountHolder": "TRAN CUONG HOANG VINH"
+  },
+  "registeredAt": "2026-02-05T14:38:15.153Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-05T14:38:15.153Z",
+  "bankVerified": false
+}

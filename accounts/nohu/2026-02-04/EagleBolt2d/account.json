@@ -1,0 +1,37 @@
+{
+  "username": "EagleBolt2d",
+  "password": "fybba9ii8o0f4",
+  "withdrawPassword": "762343",
+  "fullname": "TONG TUAN DUC LONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "ha noi",
+    "accountNumber": "963012001039184",
+    "accountHolder": "TONG TUAN DUC LONG"
+  },
+  "registeredAt": "2026-02-04T11:00:57.317Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-04T11:00:57.317Z",
+  "bankVerified": false
+}

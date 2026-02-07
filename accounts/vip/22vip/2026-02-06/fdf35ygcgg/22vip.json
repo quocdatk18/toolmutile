@@ -1,0 +1,28 @@
+{
+  "username": "fdf35ygcgg",
+  "password": "vgged09ve",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN TRAN MINH NGHI",
+  "email": "g2rp4knl@gmail.com",
+  "phone": "0922964234",
+  "registeredAt": "2026-02-06T14:50:57.817Z",
+  "firstSite": "888P",
+  "sites": [
+    "TV88",
+    "28Bet",
+    "888Now",
+    "888New",
+    "Win678",
+    "888Vi",
+    "888P"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "9686687660001001501",
+    "accountHolder": "NGUYEN TRAN MINH NGHI"
+  }
+}

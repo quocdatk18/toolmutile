@@ -644,10 +644,10 @@ app.get('/api/captcha/balance', async (req, res) => {
 });
 
 // ============================================
-// SIM API PROXY (codesim.net) - Fix CORS
+// SIM API PROXY (Viotp) - Fix CORS
 // ============================================
 
-// Check SIM balance
+// Check Viotp SIM balance
 app.get('/api/sim/balance', async (req, res) => {
     try {
         const { key } = req.query;
@@ -657,16 +657,15 @@ app.get('/api/sim/balance', async (req, res) => {
         }
 
         const axios = require('axios');
-        const response = await axios.get(`https://apisim.codesim.net/yourself/information-by-api-key?api_key=${key}`);
+        const response = await axios.get(`https://api.viotp.com/users/balance?token=${key}`);
 
-        console.log('SIM Balance response:', response.data);
+        console.log('Viotp Balance response:', response.data);
 
-        if (response.data.status === 200 && response.data.data) {
+        if (response.data.status_code === 200 && response.data.success && response.data.data) {
             res.json({
                 success: true,
                 balance: response.data.data.balance,
-                balanceFormatted: response.data.data.balance.toLocaleString('vi-VN') + ' VNĐ',
-                username: response.data.data.username || 'Unknown'
+                balanceFormatted: response.data.data.balance.toLocaleString('vi-VN') + ' VNĐ'
             });
         } else {
             res.json({
@@ -675,32 +674,32 @@ app.get('/api/sim/balance', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('SIM Balance check error:', error.message);
+        console.error('Viotp Balance check error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Get phone number from codesim
+// Get phone number from Viotp
 app.get('/api/sim/get-phone', async (req, res) => {
     try {
-        const { key, serviceId = 49, phonePrefix = '08' } = req.query;
+        const { key, serviceId = 1, network = 'MOBIFONE|VINAPHONE|VIETTEL|VIETNAMOBILE' } = req.query;
 
         if (!key) {
             return res.status(400).json({ success: false, error: 'API key required' });
         }
 
         const axios = require('axios');
-        const url = `https://apisim.codesim.net/sim/get_sim?service_id=${serviceId}&phone=${phonePrefix}&api_key=${key}`;
+        const url = `https://api.viotp.com/request/getv2?token=${key}&serviceId=${serviceId}&network=${network}`;
         const response = await axios.get(url);
 
-        console.log('Get phone response:', response.data);
+        console.log('Viotp get phone response:', response.data);
 
-        if (response.data.status === 200 && response.data.data) {
+        if (response.data.status_code === 200 && response.data.success && response.data.data) {
             res.json({
                 success: true,
-                phone: response.data.data.phone,
-                simId: response.data.data.simId,
-                otpId: response.data.data.otpId
+                phone: response.data.data.phone_number,
+                requestId: response.data.data.request_id,
+                rePhoneNumber: response.data.data.re_phone_number
             });
         } else {
             res.json({
@@ -709,30 +708,31 @@ app.get('/api/sim/get-phone', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Get phone error:', error.message);
+        console.error('Viotp get phone error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Get OTP from codesim
+// Get OTP from Viotp
 app.get('/api/sim/get-otp', async (req, res) => {
     try {
-        const { key, otpId } = req.query;
+        const { key, requestId } = req.query;
 
-        if (!key || !otpId) {
-            return res.status(400).json({ success: false, error: 'API key and OTP ID required' });
+        if (!key || !requestId) {
+            return res.status(400).json({ success: false, error: 'API key and request ID required' });
         }
 
         const axios = require('axios');
-        const url = `https://apisim.codesim.net/otp/get_otp_by_phone_api_key?otp_id=${otpId}&api_key=${key}`;
+        const url = `https://api.viotp.com/session/getv2?requestId=${requestId}&token=${key}`;
         const response = await axios.get(url);
 
-        console.log('Get OTP response:', response.data);
+        console.log('Viotp get OTP response:', response.data);
 
-        if (response.data.status === 200 && response.data.data && response.data.data.code) {
+        if (response.data.status_code === 200 && response.data.success && response.data.data && response.data.data.Code) {
             res.json({
                 success: true,
-                code: response.data.data.code
+                code: response.data.data.Code,
+                status: response.data.data.Status
             });
         } else {
             res.json({
@@ -741,30 +741,30 @@ app.get('/api/sim/get-otp', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Get OTP error:', error.message);
+        console.error('Viotp get OTP error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Cancel SIM
+// Cancel/Reset SIM from Viotp
 app.get('/api/sim/cancel', async (req, res) => {
     try {
-        const { key, simId } = req.query;
+        const { key } = req.query;
 
-        if (!key || !simId) {
-            return res.status(400).json({ success: false, error: 'API key and SIM ID required' });
+        if (!key) {
+            return res.status(400).json({ success: false, error: 'API key required' });
         }
 
         const axios = require('axios');
-        const url = `https://apisim.codesim.net/sim/cancel_api_key/${simId}?api_key=${key}`;
+        const url = `https://api.viotp.com/session/reset-gsm?token=${key}`;
         const response = await axios.get(url);
 
-        console.log('Cancel SIM response:', response.data);
+        console.log('Viotp reset SIM response:', response.data);
 
-        if (response.data.status === 200) {
+        if (response.data.status_code === 200 && response.data.success) {
             res.json({
                 success: true,
-                message: 'Sim cancelled'
+                message: 'SIM reset successfully'
             });
         } else {
             res.json({
@@ -1063,7 +1063,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     // Check if account exists in any date folder (for VIP categories)
     const vipCategoriesDir = path.join(__dirname, '../accounts/vip');
     if (fs.existsSync(vipCategoriesDir)) {
-        const vipCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         for (const cat of vipCategories) {
             const catDir = path.join(vipCategoriesDir, cat);
             if (fs.existsSync(catDir)) {
@@ -1147,12 +1147,37 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
             if (files.length > 0) {
                 files.forEach(file => {
                     const stats = fs.statSync(path.join(sessionDir, file));
-                    const siteName = file.replace('.png', ''); // Filename is just sitename.png
+                    const siteName = file.replace('.png', ''); // Extract site name from filename
 
                     // Determine screenshot path based on structure
                     const screenshotPath = toolId
                         ? `/screenshots/${toolId}/${username}/${sessionId}/${file}` // New structure
                         : `/screenshots/${username}/${sessionId}/${file}`; // Old structure
+
+                    // Try to load results.json from session folder
+                    let resultData = {
+                        register: { success: true },
+                        addBank: { success: true },
+                        checkPromo: { success: true }
+                    };
+
+                    const resultsJsonPath = path.join(sessionDir, 'results.json');
+                    if (fs.existsSync(resultsJsonPath)) {
+                        try {
+                            const resultsJson = JSON.parse(fs.readFileSync(resultsJsonPath, 'utf8'));
+                            // Find result for this site
+                            const siteResult = resultsJson.find(r => r.site === siteName);
+                            if (siteResult) {
+                                resultData = {
+                                    register: siteResult.register || { success: true },
+                                    addBank: siteResult.addBank || { success: true },
+                                    checkPromo: siteResult.checkPromo || { success: true }
+                                };
+                            }
+                        } catch (err) {
+                            console.warn(`⚠️ Could not read results.json for ${siteName}:`, err.message);
+                        }
+                    }
 
                     results.push({
                         profileName: profileName, // Use profile name from metadata
@@ -1165,7 +1190,10 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
                         timestamp: stats.mtimeMs,
                         status: 'success',
                         screenshot: screenshotPath,
-                        hasAccountInfo: hasAccountInfo // Flag to show account info button
+                        hasAccountInfo: hasAccountInfo, // Flag to show account info button
+                        register: resultData.register,
+                        addBank: resultData.addBank,
+                        checkPromo: resultData.checkPromo
                     });
                 });
             }
@@ -1336,9 +1364,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, abcvip, jun88, 78win, jun88v2, kjc)
+        // Try to find any VIP category file (okvip, accokvip, abcvip, jun88, 78win, jun88v2, 22vip)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1432,12 +1460,12 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.json({ success: false, error: 'Invalid category' });
         }
 
-        const categoryDir = path.join(vipDir, category);
+        const categoryDir = path.join(vipDir, category.toLowerCase());
         if (!fs.existsSync(categoryDir)) {
             return res.json({ success: false, error: `Category folder not found: ${category}` });
         }
@@ -1472,7 +1500,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
     }
 });
 
-// Save account info for VIP categories (okvip, abcvip, jun88, 78win, kjc)
+// Save account info for VIP categories (okvip, accOkvip, abcvip, jun88, 78win, jun88v2)
 app.post('/api/accounts/:category/:username', (req, res) => {
     try {
         const { category, username } = req.params;
@@ -1483,13 +1511,13 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'abcvip', 'jun88', '78win', 'jun88v2', 'kjc'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }
 
         const accountsDir = path.join(__dirname, '../accounts');
-        const vipCategoryDir = path.join(accountsDir, 'vip', category);
+        const vipCategoryDir = path.join(accountsDir, 'vip', category.toLowerCase());
 
         // Get today's date in YYYY-MM-DD format (using local timezone, not UTC)
         const today = new Date();
@@ -2869,17 +2897,21 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
             captchaSolver
         };
 
-        // Get API key from profileData (like nohu-tool) or environment
+        // Get API keys from profileData or environment
         const apiKey = profileData?.apiKey || process.env.CAPTCHA_API_KEY;
+        const viotpToken = profileData?.viotpToken || process.env.VIOTP_TOKEN;
 
         const settings = {
-            captchaApiKey: apiKey
+            captchaApiKey: apiKey,
+            viotpToken: viotpToken
         };
 
         console.log('🔑 API Key available:', apiKey ? 'YES' : 'NO');
+        console.log('🔑 Viotp Token available:', viotpToken ? 'YES' : 'NO');
         console.log('📊 profileData received:', {
             username: profileData?.username,
-            apiKey: profileData?.apiKey ? `${profileData.apiKey.substring(0, 5)}...` : 'MISSING'
+            apiKey: profileData?.apiKey ? `${profileData.apiKey.substring(0, 5)}...` : 'MISSING',
+            viotpToken: profileData?.viotpToken ? `${profileData.viotpToken.substring(0, 5)}...` : 'MISSING'
         });
 
         const vipAutomation = new VIPAutomation(settings, scripts);
@@ -3099,13 +3131,13 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
 
 // NOHU app sites config (centralized - used by both frontend and backend)
 const nohuSitesConfig = {
-    'Go99': { name: 'Go99', registerUrl: 'https://m.goshhh99uuu-66ooo.xyz/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
-    'NOHU': { name: 'NOHU', registerUrl: 'https://m.88807888.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
-    'TT88': { name: 'TT88', registerUrl: 'https://m.ttfffashhsh-88anjsje.vip/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
-    'MMOO': { name: 'MMOO', registerUrl: 'https://m.3mmoo.com/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
-    '789P': { name: '789P', registerUrl: 'https://m.nn789p.com/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
-    '33WIN': { name: '33WIN', registerUrl: 'https://m.330756.com/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
-    '88VV': { name: '88VV', registerUrl: 'https://m.88vv.gd/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
+    'Go99': { name: 'Go99', registerUrl: 'https://1go99.vip/Account/Register?f=3528698&app=1', checkPromoUrl: 'https://go99code.store' },
+    'NOHU': { name: 'NOHU', registerUrl: 'https://8nohu.vip/Account/Register?f=6344995&app=1 ', checkPromoUrl: 'https://nohucode.shop/' },
+    'TT88': { name: 'TT88', registerUrl: 'https://1tt88.vip/Register?f=3535864&app=1', checkPromoUrl: 'https://tt88code.win' },
+    'MMOO': { name: 'MMOO', registerUrl: 'http://www.mmoo.team/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
+    '789P': { name: '789P', registerUrl: 'https://www.789p1.vip/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
+    '33WIN': { name: '33WIN', registerUrl: 'https://m.3333win.cc/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
+    '88VV': { name: '88VV', registerUrl: 'https://888vvv.bet/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
 };
 
 // Get NOHU sites config

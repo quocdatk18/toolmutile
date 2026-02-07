@@ -1,0 +1,25 @@
+{
+  "username": "wc1w7af",
+  "password": "g94i63avdyc",
+  "withdrawPassword": "1",
+  "fullname": "HOANG TU BANG HOA",
+  "email": "zu5vil@gmail.com",
+  "phone": "0993611644",
+  "registeredAt": "2026-02-04T00:05:48.010Z",
+  "firstSite": "ABC8",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8",
+    "888clb"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001037224",
+    "accountHolder": "HOANG TU BANG HOA"
+  }
+}

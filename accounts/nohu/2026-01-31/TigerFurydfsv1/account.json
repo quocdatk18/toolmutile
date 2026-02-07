@@ -1,0 +1,43 @@
+{
+  "username": "TigerFurydfsv1",
+  "password": "zkw25076z",
+  "withdrawPassword": "1",
+  "fullname": "PHAM AN THINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HAI PHONG",
+    "accountNumber": "96487410131377283",
+    "accountHolder": "PHAM AN THINH"
+  },
+  "registeredAt": "2026-01-31T09:44:34.627Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-31T09:44:34.627Z",
+  "bankVerified": false
+}

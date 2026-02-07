@@ -1,0 +1,22 @@
+{
+  "username": "t5mh74f",
+  "password": "r1kljix3g",
+  "withdrawPassword": "484067",
+  "fullname": "GIANG A XUAN",
+  "email": "zm8amv8@gmail.com",
+  "phone": "0776727048",
+  "registeredAt": "2026-01-26T05:18:41.218Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10426048112360523",
+    "accountHolder": "GIANG A XUAN"
+  }
+}

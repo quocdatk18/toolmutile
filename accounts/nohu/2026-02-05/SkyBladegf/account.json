@@ -1,0 +1,31 @@
+{
+  "username": "SkyBladegf",
+  "password": "ggg5r0i4qd8k",
+  "withdrawPassword": "111222",
+  "fullname": "HUYNH TAN CONG LO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "NHA TRANG",
+    "accountNumber": "963012001042840",
+    "accountHolder": "HUYNH TAN CONG LO"
+  },
+  "registeredAt": "2026-02-05T11:31:57.074Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-05T11:31:57.074Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "StarFlash1gd",
+  "password": "g67inn1d2l",
+  "withdrawPassword": "745253",
+  "fullname": "TIEU HUNG KHANH QUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "NHA TRANG",
+    "accountNumber": "963012001054707",
+    "accountHolder": "TIEU HUNG KHANH QUY"
+  },
+  "registeredAt": "2026-02-07T05:00:49.798Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-07T05:00:49.798Z",
+  "bankVerified": true
+}

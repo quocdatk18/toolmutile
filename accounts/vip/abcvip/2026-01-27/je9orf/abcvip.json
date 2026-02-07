@@ -1,0 +1,24 @@
+{
+  "username": "je9orf",
+  "password": "q04nx2pns",
+  "withdrawPassword": "228043",
+  "fullname": "TAY BAN NHA",
+  "email": "o2wzs@gmail.com",
+  "phone": "0776770385",
+  "registeredAt": "2026-01-26T20:40:35.840Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10427048112557347",
+    "accountHolder": "TAY BAN NHA"
+  }
+}

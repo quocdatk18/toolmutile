@@ -1,0 +1,37 @@
+{
+  "username": "TigerStorm1v",
+  "password": "f5iujh6k0ihz7",
+  "withdrawPassword": "1234",
+  "fullname": "LE THU TINH CA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HA NOI",
+    "accountNumber": "963012001037231",
+    "accountHolder": "LE THU TINH CA"
+  },
+  "registeredAt": "2026-02-04T00:22:25.605Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-04T00:22:25.605Z",
+  "bankVerified": false
+}

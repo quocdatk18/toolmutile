@@ -1,0 +1,25 @@
+{
+  "username": "SkyBlade7g",
+  "password": "zsv2lt7bg",
+  "withdrawPassword": "733628",
+  "fullname": "DANG TUAN HUONG THU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "NHA TRANG",
+    "accountNumber": "963012001054549",
+    "accountHolder": "DANG TUAN HUONG THU"
+  },
+  "registeredAt": "2026-02-07T04:11:34.169Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-07T04:11:34.169Z",
+  "bankVerified": false
+}

@@ -1,0 +1,43 @@
+{
+  "username": "SkyStfcrm88",
+  "password": "a1245ubl0gbu",
+  "withdrawPassword": "1",
+  "fullname": "TRINH TRAN PHUONG HUONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BIEN HOA",
+    "accountNumber": "963012001026343",
+    "accountHolder": "TRINH TRAN PHUONG HUONG"
+  },
+  "registeredAt": "2026-02-02T13:33:50.110Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-02T13:33:50.110Z",
+  "bankVerified": false
+}

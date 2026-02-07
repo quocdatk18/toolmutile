@@ -3137,7 +3137,8 @@ const nohuSitesConfig = {
     'MMOO': { name: 'MMOO', registerUrl: 'http://www.mmoo.team/Account/Register?f=394579&app=1', checkPromoUrl: 'https://mmoocode.shop' },
     '789P': { name: '789P', registerUrl: 'https://www.789p1.vip/Account/Register?f=784461&app=1', checkPromoUrl: 'https://789pcode.store' },
     '33WIN': { name: '33WIN', registerUrl: 'https://m.3333win.cc/Account/Register?f=3115867&app=1', checkPromoUrl: 'https://33wincode.com' },
-    '88VV': { name: '88VV', registerUrl: 'https://888vvv.bet/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' }
+    '88VV': { name: '88VV', registerUrl: 'https://888vvv.bet/Account/Register?f=1054152&app=1', checkPromoUrl: 'https://88vvcode.com' },
+    'Pkwin': { name: 'Pkwin', registerUrl: 'https://m.798868.com/Account/Register?f=513914&app=1', checkPromoUrl: 'https://pkwincode.shop' }
 };
 
 // Get NOHU sites config
@@ -3156,7 +3157,7 @@ app.get('/api/nohu-automation/sites', (req, res) => {
 const nohuSmsSiteConfigs = {
     'Go99': { registerSmsUrl: 'https://m.91111119.com/Account/Register?f=4860523' },
     'NOHU': { registerSmsUrl: null },
-    'TT88': { registerSmsUrl: null },
+    'Pkwin': { registerSmsUrl: 'https://m.798868.com/Account/Register?f=513914&app=1' },
     'MMOO': { registerSmsUrl: null },
     '789P': { registerSmsUrl: null },
     '33WIN': { registerSmsUrl: null },
@@ -3228,6 +3229,68 @@ app.post('/api/nohu-automation/sms-config/update', (req, res) => {
         res.json({ success: true, message: `Updated ${siteName}`, data: nohuSmsSiteConfigs[siteName] });
     } catch (error) {
         console.error('❌ Error updating SMS config:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+// Save SMS account info (POST /api/accounts/sms/:username)
+app.post('/api/accounts/sms/:username', (req, res) => {
+    try {
+        const username = req.params.username;
+        let { siteName, password, phoneNumber, bankName, bankBranch, accountNumber } = req.body;
+
+        // Handle siteName if it's an object (extract name property)
+        if (typeof siteName === 'object' && siteName !== null) {
+            siteName = siteName.name || siteName.siteName || JSON.stringify(siteName);
+        }
+
+        if (!username || !siteName) {
+            return res.status(400).json({ success: false, error: 'username and siteName are required' });
+        }
+
+        // Create SMS account directory
+        const smsAccountDir = path.join(process.cwd(), 'accounts', 'sms', username);
+        if (!fs.existsSync(smsAccountDir)) {
+            fs.mkdirSync(smsAccountDir, { recursive: true });
+        }
+
+        // Prepare account data
+        const accountData = {
+            username: username,
+            siteName: siteName,
+            password: password,
+            phoneNumber: phoneNumber,
+            bankName: bankName,
+            bankBranch: bankBranch,
+            accountNumber: accountNumber,
+            savedAt: new Date().toISOString()
+        };
+
+        // Save as account.json
+        const accountJsonFile = path.join(smsAccountDir, `${siteName}.json`);
+        fs.writeFileSync(accountJsonFile, JSON.stringify(accountData, null, 2));
+        console.log(`✅ Saved SMS account info: ${accountJsonFile}`);
+
+        // Also save as readable text file
+        const accountTextFile = path.join(smsAccountDir, `${siteName}.txt`);
+        const accountText = `
+SMS Account Information
+=======================
+Username: ${username}
+Site: ${siteName}
+Password: ${password}
+Phone Number: ${phoneNumber}
+Bank Name: ${bankName}
+Bank Branch: ${bankBranch}
+Account Number: ${accountNumber}
+Saved At: ${new Date().toISOString()}
+`;
+        fs.writeFileSync(accountTextFile, accountText);
+        console.log(`✅ Saved SMS account info (TXT): ${accountTextFile}`);
+
+        res.json({ success: true, message: 'SMS account info saved successfully' });
+    } catch (error) {
+        console.error('❌ Error saving SMS account:', error);
         res.status(500).json({ success: false, error: error.message });
     }
 });

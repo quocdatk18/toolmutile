@@ -1,0 +1,23 @@
+{
+  "username": "uvhcn23",
+  "password": "wet3shuy042",
+  "withdrawPassword": "484040",
+  "fullname": "TRAN QUANG QUAN",
+  "email": "f5y8al@gmail.com",
+  "phone": "0776706870",
+  "registeredAt": "2026-01-26T18:43:30.350Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "IndovinaBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10427048112548072",
+    "accountHolder": "TRAN QUANG QUAN"
+  }
+}

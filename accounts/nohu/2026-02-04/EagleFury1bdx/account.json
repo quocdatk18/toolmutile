@@ -1,0 +1,37 @@
+{
+  "username": "EagleFury1bdx",
+  "password": "bc2l8kot4",
+  "withdrawPassword": "214377",
+  "fullname": "TIEU DUNG THI AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "CAN THO",
+    "accountNumber": "963012001038075",
+    "accountHolder": "TIEU DUNG THI AN"
+  },
+  "registeredAt": "2026-02-04T05:18:04.916Z",
+  "firstSite": "TT88",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-04T05:18:04.916Z",
+  "bankVerified": false
+}

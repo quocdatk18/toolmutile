@@ -1,0 +1,43 @@
+{
+  "username": "StarStorm888x",
+  "password": "z6do1ji4c2yf",
+  "withdrawPassword": "1",
+  "fullname": "TRAN KY PHONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "NHA TRANG",
+    "accountNumber": "96487410131377280",
+    "accountHolder": "TRAN KY PHONG"
+  },
+  "registeredAt": "2026-01-31T11:10:54.032Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-31T11:10:54.032Z",
+  "bankVerified": false
+}

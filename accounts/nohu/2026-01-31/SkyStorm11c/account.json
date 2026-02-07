@@ -1,0 +1,43 @@
+{
+  "username": "SkyStorm11c",
+  "password": "zw56q2pf",
+  "withdrawPassword": "1",
+  "fullname": "VO NHAT UYEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HA NOI",
+    "accountNumber": "96487410131377284",
+    "accountHolder": "VO NHAT UYEN"
+  },
+  "registeredAt": "2026-01-31T01:01:33.035Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "88VV"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-01-31T01:01:33.035Z",
+  "bankVerified": false
+}

@@ -1,0 +1,37 @@
+{
+  "username": "SkyPower9cv",
+  "password": "al7acn3gy",
+  "withdrawPassword": "469192",
+  "fullname": "NHAN KHANH VAN DAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VUNG TAU",
+    "accountNumber": "963012001031068",
+    "accountHolder": "NHAN KHANH VAN DAM"
+  },
+  "registeredAt": "2026-02-03T01:18:03.611Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-03T01:18:03.611Z",
+  "bankVerified": false
+}

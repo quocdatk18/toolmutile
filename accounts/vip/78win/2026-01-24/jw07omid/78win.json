@@ -1,0 +1,22 @@
+{
+  "username": "jw07omid",
+  "password": "pos0ga6x9o",
+  "withdrawPassword": "549941",
+  "fullname": "TRU TRI CHUA TAY",
+  "email": "hjsvbc@gmail.com",
+  "phone": "0379775824",
+  "registeredAt": "2026-01-24T08:22:28.887Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "KienLongBank",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "10424048112045246",
+    "accountHolder": "TRU TRI CHUA TAY"
+  }
+}
