@@ -4,6 +4,7 @@
     "key": "",
     "balance": 0
   },
+  "codeSimToken": "",
   "dashboard": {
     "port": 3000,
     "theme": "light",

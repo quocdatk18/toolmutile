@@ -11,13 +11,40 @@ class SimApiManager {
     /**
      * Lưu SIM API Key
      */
-    save(apiKey) {
+    async save(apiKey) {
         try {
+            // Lưu vào localStorage (browser)
             localStorage.setItem(this.storageKey, apiKey);
             localStorage.setItem(this.storageTime, Date.now().toString());
+
+            // Lưu vào backend settings (server)
+            await this.saveToBackend(apiKey);
+
             return { success: true };
         } catch (error) {
             return { success: false, error: error.message };
+        }
+    }
+
+    /**
+     * Lưu token vào backend settings
+     */
+    async saveToBackend(apiKey) {
+        try {
+            const response = await fetch('/api/settings/codesim-token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: apiKey })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                console.log('✅ CodeSim token saved to backend');
+            } else {
+                console.warn('⚠️ Failed to save CodeSim token to backend:', data.error);
+            }
+        } catch (error) {
+            console.error('❌ Error saving CodeSim token to backend:', error);
         }
     }
 

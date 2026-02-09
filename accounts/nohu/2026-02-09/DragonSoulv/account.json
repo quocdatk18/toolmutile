@@ -1,0 +1,25 @@
+{
+  "username": "DragonSoulv",
+  "password": "f0eafqv50",
+  "withdrawPassword": "429890",
+  "fullname": "HOANG TRANG DUNG MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "CAN THO",
+    "accountNumber": "963012001069845",
+    "accountHolder": "HOANG TRANG DUNG MINH"
+  },
+  "registeredAt": "2026-02-09T07:37:25.529Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T07:37:25.529Z",
+  "bankVerified": true
+}

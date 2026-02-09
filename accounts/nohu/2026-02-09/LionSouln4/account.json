@@ -1,0 +1,25 @@
+{
+  "username": "LionSouln4",
+  "password": "c9wj0x83cf",
+  "withdrawPassword": "344796",
+  "fullname": "TONG TIEN VINH HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VUNG TAU",
+    "accountNumber": "963012001069848",
+    "accountHolder": "TONG TIEN VINH HUY"
+  },
+  "registeredAt": "2026-02-09T07:38:00.134Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T07:38:00.134Z",
+  "bankVerified": false
+}

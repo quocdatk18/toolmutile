@@ -1,0 +1,19 @@
+[
+  {
+    "site": "SC881",
+    "register": {
+      "success": false,
+      "error": "CodeSim token not provided"
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  }
+]

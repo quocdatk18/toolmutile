@@ -8,6 +8,8 @@
 <script src="core/profile-manager.js"></script>
 <!-- Load API Key Manager -->
 <script src="core/api-key-manager.js"></script>
+<!-- Load SIM API Manager -->
+<script src="core/sim-api-manager.js"></script>
 
 <!-- Load VIP Config -->
 <script>
@@ -956,7 +958,7 @@
         const apiKey = typeof apiKeyManager !== 'undefined' ? apiKeyManager.get() :
             localStorage.getItem('hidemium_global_api_key') || '';
 
-        const viotpToken = typeof apiKeyManager !== 'undefined' ? apiKeyManager.getSimApiKey() :
+        const codeSimToken = typeof simApiManager !== 'undefined' ? simApiManager.get() :
             localStorage.getItem('hidemium_sim_api_key') || '';
 
         const profileData = {
@@ -970,7 +972,7 @@
             bankName: document.getElementById('autoBankName').value.trim(),
             accountNumber: document.getElementById('autoAccountNumber').value.trim(),
             apiKey: apiKey,
-            viotpToken: viotpToken,
+            codeSimToken: codeSimToken,
             simMode: document.getElementById('simMode')?.value || 'api' // 📱 SIM mode: 'api' or 'manual'
         };
 

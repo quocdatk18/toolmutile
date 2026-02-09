@@ -1,0 +1,25 @@
+{
+  "username": "MoonBlade1v",
+  "password": "g9yeja0jn38w",
+  "withdrawPassword": "483682",
+  "fullname": "LE MINH QUANG HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BIEN HOA",
+    "accountNumber": "963012001069825",
+    "accountHolder": "LE MINH QUANG HUY"
+  },
+  "registeredAt": "2026-02-09T07:33:57.866Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T07:33:57.866Z",
+  "bankVerified": false
+}

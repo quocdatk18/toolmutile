@@ -65,6 +65,15 @@ try {
     console.error('Error loading tools config:', error);
 }
 
+// Load settings configuration
+let settings = {};
+try {
+    const settingsPath = path.join(__dirname, '../config/settings.json');
+    settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+} catch (error) {
+    console.error('Error loading settings config:', error);
+}
+
 // ============================================
 // MAIN ROUTES
 // ============================================
@@ -182,6 +191,60 @@ app.get('/api/license/allowed-tools', (req, res) => {
 // Get tools list
 app.get('/api/tools', (req, res) => {
     res.json(toolsConfig);
+});
+
+// Save CodeSim token to settings
+app.post('/api/settings/codesim-token', (req, res) => {
+    try {
+        const { token } = req.body;
+
+        if (!token) {
+            return res.status(400).json({
+                success: false,
+                error: 'CodeSim token required'
+            });
+        }
+
+        // Update settings object
+        settings.codeSimToken = token;
+
+        // Save to file
+        const settingsPath = path.join(__dirname, '../config/settings.json');
+        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+
+        console.log('✅ CodeSim token saved to settings');
+
+        res.json({
+            success: true,
+            message: 'CodeSim token saved successfully'
+        });
+    } catch (error) {
+        console.error('Error saving CodeSim token:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Get CodeSim token from settings
+app.get('/api/settings/codesim-token', (req, res) => {
+    try {
+        const token = settings?.codeSimToken || '';
+        const hasToken = !!token;
+
+        res.json({
+            success: true,
+            hasToken: hasToken,
+            tokenPreview: hasToken ? token.substring(0, 20) + '...' : ''
+        });
+    } catch (error) {
+        console.error('Error getting CodeSim token:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
 });
 
 // Hidemium status
@@ -644,10 +707,10 @@ app.get('/api/captcha/balance', async (req, res) => {
 });
 
 // ============================================
-// SIM API PROXY (Viotp) - Fix CORS
+// SIM API PROXY (CodeSim) - Fix CORS
 // ============================================
 
-// Check Viotp SIM balance
+// Check CodeSim SIM balance
 app.get('/api/sim/balance', async (req, res) => {
     try {
         const { key } = req.query;
@@ -657,11 +720,11 @@ app.get('/api/sim/balance', async (req, res) => {
         }
 
         const axios = require('axios');
-        const response = await axios.get(`https://api.viotp.com/users/balance?token=${key}`);
+        const response = await axios.get(`https://apisim.codesim.net/yourself/information-by-api-key?api_key=${key}`);
 
-        console.log('Viotp Balance response:', response.data);
+        console.log('CodeSim Balance response:', response.data);
 
-        if (response.data.status_code === 200 && response.data.success && response.data.data) {
+        if (response.data.status === 200 && response.data.data) {
             res.json({
                 success: true,
                 balance: response.data.data.balance,
@@ -674,32 +737,33 @@ app.get('/api/sim/balance', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Viotp Balance check error:', error.message);
+        console.error('CodeSim Balance check error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Get phone number from Viotp
+// Get phone number from CodeSim
 app.get('/api/sim/get-phone', async (req, res) => {
     try {
-        const { key, serviceId = 1, network = 'MOBIFONE|VINAPHONE|VIETTEL|VIETNAMOBILE' } = req.query;
+        const { key, serviceId = 49, phonePrefix = '08' } = req.query;
 
         if (!key) {
             return res.status(400).json({ success: false, error: 'API key required' });
         }
 
         const axios = require('axios');
-        const url = `https://api.viotp.com/request/getv2?token=${key}&serviceId=${serviceId}&network=${network}`;
+        // Use correct CodeSim API endpoint: /sim/get_sim
+        const url = `https://apisim.codesim.net/sim/get_sim?service_id=${serviceId}&phone=${phonePrefix}&api_key=${key}`;
         const response = await axios.get(url);
 
-        console.log('Viotp get phone response:', response.data);
+        console.log('CodeSim get phone response:', response.data);
 
-        if (response.data.status_code === 200 && response.data.success && response.data.data) {
+        if (response.data.status === 200 && response.data.data) {
             res.json({
                 success: true,
-                phone: response.data.data.phone_number,
-                requestId: response.data.data.request_id,
-                rePhoneNumber: response.data.data.re_phone_number
+                phone: response.data.data.phone,
+                otpId: response.data.data.otpId,
+                simId: response.data.data.simId
             });
         } else {
             res.json({
@@ -708,31 +772,31 @@ app.get('/api/sim/get-phone', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Viotp get phone error:', error.message);
+        console.error('CodeSim get phone error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Get OTP from Viotp
+// Get OTP from CodeSim
 app.get('/api/sim/get-otp', async (req, res) => {
     try {
-        const { key, requestId } = req.query;
+        const { key, otpId } = req.query;
 
-        if (!key || !requestId) {
-            return res.status(400).json({ success: false, error: 'API key and request ID required' });
+        if (!key || !otpId) {
+            return res.status(400).json({ success: false, error: 'API key and OTP ID required' });
         }
 
         const axios = require('axios');
-        const url = `https://api.viotp.com/session/getv2?requestId=${requestId}&token=${key}`;
+        // Use correct CodeSim API endpoint: /otp/get_otp_by_phone_api_key
+        const url = `https://apisim.codesim.net/otp/get_otp_by_phone_api_key?otp_id=${otpId}&api_key=${key}`;
         const response = await axios.get(url);
 
-        console.log('Viotp get OTP response:', response.data);
+        console.log('CodeSim get OTP response:', response.data);
 
-        if (response.data.status_code === 200 && response.data.success && response.data.data && response.data.data.Code) {
+        if (response.data.status === 200 && response.data.data && response.data.data.code) {
             res.json({
                 success: true,
-                code: response.data.data.Code,
-                status: response.data.data.Status
+                code: response.data.data.code
             });
         } else {
             res.json({
@@ -741,30 +805,31 @@ app.get('/api/sim/get-otp', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error('Viotp get OTP error:', error.message);
+        console.error('CodeSim get OTP error:', error.message);
         res.status(500).json({ success: false, error: error.message });
     }
 });
 
-// Cancel/Reset SIM from Viotp
+// Cancel/Reset SIM from CodeSim
 app.get('/api/sim/cancel', async (req, res) => {
     try {
-        const { key } = req.query;
+        const { key, simId } = req.query;
 
-        if (!key) {
-            return res.status(400).json({ success: false, error: 'API key required' });
+        if (!key || !simId) {
+            return res.status(400).json({ success: false, error: 'API key and SIM ID required' });
         }
 
         const axios = require('axios');
-        const url = `https://api.viotp.com/session/reset-gsm?token=${key}`;
+        // Use correct CodeSim API endpoint: /sim/cancel_api_key/{sim_id}
+        const url = `https://apisim.codesim.net/sim/cancel_api_key/${simId}?api_key=${key}`;
         const response = await axios.get(url);
 
-        console.log('Viotp reset SIM response:', response.data);
+        console.log('CodeSim cancel SIM response:', response.data);
 
-        if (response.data.status_code === 200 && response.data.success) {
+        if (response.data.status === 200) {
             res.json({
                 success: true,
-                message: 'SIM reset successfully'
+                message: 'SIM cancelled successfully'
             });
         } else {
             res.json({
@@ -1460,7 +1525,7 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip', 'okvipOtp'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.json({ success: false, error: 'Invalid category' });
         }
@@ -1511,7 +1576,7 @@ app.post('/api/accounts/:category/:username', (req, res) => {
         }
 
         // Validate category
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip', 'okvipOtp'];
         if (!validCategories.includes(category.toLowerCase())) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }
@@ -2897,24 +2962,24 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
             captchaSolver
         };
 
-        // Get API keys from profileData or environment
-        const apiKey = profileData?.apiKey || process.env.CAPTCHA_API_KEY;
-        const viotpToken = profileData?.viotpToken || process.env.VIOTP_TOKEN;
+        // Get API keys from profileData or environment or settings
+        const apiKey = profileData?.apiKey || process.env.CAPTCHA_API_KEY || settings?.apiKey?.key;
+        const codeSimToken = profileData?.codeSimToken || process.env.CODESIM_TOKEN || settings?.codeSimToken;
 
-        const settings = {
+        const vipSettings = {
             captchaApiKey: apiKey,
-            viotpToken: viotpToken
+            codeSimToken: codeSimToken
         };
 
         console.log('🔑 API Key available:', apiKey ? 'YES' : 'NO');
-        console.log('🔑 Viotp Token available:', viotpToken ? 'YES' : 'NO');
+        console.log('🔑 CodeSim Token available:', codeSimToken ? 'YES' : 'NO');
         console.log('📊 profileData received:', {
             username: profileData?.username,
             apiKey: profileData?.apiKey ? `${profileData.apiKey.substring(0, 5)}...` : 'MISSING',
-            viotpToken: profileData?.viotpToken ? `${profileData.viotpToken.substring(0, 5)}...` : 'MISSING'
+            codeSimToken: profileData?.codeSimToken ? `${profileData.codeSimToken.substring(0, 5)}...` : 'MISSING'
         });
 
-        const vipAutomation = new VIPAutomation(settings, scripts);
+        const vipAutomation = new VIPAutomation(vipSettings, scripts);
 
         // Get Puppeteer browser instance
         const puppeteer = require('puppeteer-core');

@@ -1,0 +1,12 @@
+{
+  "profileName": "admin5",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "okvipOtp",
+  "sites": [
+    "SC881"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2026-02-09T10:15:05.090Z"
+}

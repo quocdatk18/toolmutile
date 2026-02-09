@@ -356,7 +356,7 @@ async function saveSimApiKey() {
         return;
     }
 
-    const result = simApiManager.save(apiKey);
+    const result = await simApiManager.save(apiKey);
 
     if (result.success) {
         loadSimApiKeyInfo();

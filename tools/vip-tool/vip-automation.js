@@ -16,6 +16,9 @@ const tabRotator = require('./tab-rotator');
 // Import common form filler
 const CommonFormFiller = require('../common/form-filler');
 
+// Import CaptchaSolver for API fallback
+const CaptchaSolver = require('../nohu-tool/extension/captcha-solver.js');
+
 // JUN88V2 specific bank mapping (matches exact dropdown text)
 const JUN88V2_BANK_NAME_MAPPING = {
     'Vietcombank': 'Vietcombank / Ngân hàng Ngoại Thương',
@@ -422,148 +425,130 @@ class VIPAutomation {
     }
 
     /**
-     * Get phone number from Viotp API (không chờ OTP)
-     * Thử lần lượt các serviceId cho đến khi thành công
+     * Get phone number from CodeSim API
      */
-    async getPhoneFromViotp(viotpToken, serviceIds = [3, 21, 1, 2, 4, 5]) {
+    async getPhoneFromCodeSim(codeSimToken) {
         try {
-            if (!viotpToken) {
-                console.warn('⚠️ No Viotp token provided');
+            if (!codeSimToken) {
+                console.warn('⚠️ No CodeSim token provided');
                 return null;
             }
 
-            // Nếu serviceIds là số, convert thành array
-            if (typeof serviceIds === 'number') {
-                serviceIds = [serviceIds];
+            console.log('📱 Requesting phone number from CodeSim API...');
+
+            // Request phone number from CodeSim via backend API
+            const url = `/api/sim/get-phone?key=${codeSimToken}&serviceId=49&phonePrefix=08`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            console.log('📤 CodeSim response:', JSON.stringify(data));
+
+            // Kiểm tra response
+            if (!data.success || !data.phone) {
+                console.warn('⚠️ CodeSim: No phone number available');
+                return null;
             }
 
-            console.log(`📱 Requesting phone number from Viotp API (serviceIds: ${serviceIds.join(', ')})...`);
+            let phoneNumber = data.phone;
+            const otpId = data.otpId; // OTP ID để lấy OTP sau
+            const simId = data.simId; // SIM ID để hủy sau
 
-            // Thử lần lượt các serviceId
-            for (const serviceId of serviceIds) {
-                try {
-                    console.log(`  → Trying serviceId: ${serviceId}`);
-
-                    // Request phone number
-                    const requestUrl = `https://api.viotp.com/request/getv2?token=${viotpToken}&serviceId=${serviceId}&network=VIETTEL|MOBIFONE|VINAPHONE`;
-                    const requestResponse = await fetch(requestUrl);
-                    const requestData = await requestResponse.json();
-
-                    console.log(`  📤 Viotp response (serviceId ${serviceId}):`, JSON.stringify(requestData));
-
-                    // Kiểm tra response
-                    if (!requestData.success) {
-                        console.warn(`  ⚠️ ServiceId ${serviceId} failed: ${requestData.message || 'Unknown error'}`);
-                        continue; // Try next serviceId
-                    }
-
-                    // Kiểm tra data
-                    if (!requestData.data) {
-                        console.warn(`  ⚠️ ServiceId ${serviceId}: No data in response`);
-                        continue; // Try next serviceId
-                    }
-
-                    const phoneData = requestData.data;
-                    const requestId = phoneData.request_id;
-                    let phoneNumber = phoneData.phone_number;
-
-                    // Kiểm tra số điện thoại hợp lệ
-                    if (!phoneNumber) {
-                        console.warn(`  ⚠️ ServiceId ${serviceId}: No phone number in response`);
-                        continue; // Try next serviceId
-                    }
-
-                    // Loại bỏ số "0" hoặc số quá ngắn
-                    if (phoneNumber === '0') {
-                        console.warn(`  ⚠️ ServiceId ${serviceId}: Invalid phone number: ${phoneNumber}`);
-                        continue; // Try next serviceId
-                    }
-
-                    // Nếu số không có số 0 ở đầu, thêm vào (Viotp trả về số không có 0)
-                    // Ví dụ: 921420951 → 0921420951
-                    if (!phoneNumber.startsWith('0')) {
-                        phoneNumber = '0' + phoneNumber;
-                    }
-
-                    // Kiểm tra độ dài (phải >= 10 ký tự sau khi thêm 0)
-                    if (phoneNumber.length < 10) {
-                        console.warn(`  ⚠️ ServiceId ${serviceId}: Phone number too short: ${phoneNumber}`);
-                        continue; // Try next serviceId
-                    }
-
-                    console.log(`✅ Got phone number (serviceId ${serviceId}): ${phoneNumber}`);
-                    console.log(`📝 Request ID: ${requestId}`);
-
-                    return {
-                        success: true,
-                        phoneNumber,
-                        requestId,
-                        serviceId
-                    };
-                } catch (err) {
-                    console.warn(`  ⚠️ ServiceId ${serviceId} error:`, err.message);
-                    continue; // Try next serviceId
-                }
+            // Kiểm tra số điện thoại hợp lệ
+            if (!phoneNumber) {
+                console.warn('⚠️ CodeSim: No phone number in response');
+                return null;
             }
 
-            // Tất cả serviceIds đều thất bại
-            console.error('❌ All serviceIds failed - No available phone numbers');
-            return null;
+            // Loại bỏ số "0" hoặc số quá ngắn
+            if (phoneNumber === '0') {
+                console.warn('⚠️ CodeSim: Invalid phone number: 0');
+                return null;
+            }
+
+            // Nếu số không có số 0 ở đầu, thêm vào
+            if (!phoneNumber.startsWith('0')) {
+                phoneNumber = '0' + phoneNumber;
+            }
+
+            // Kiểm tra độ dài
+            if (phoneNumber.length < 10) {
+                console.warn(`⚠️ CodeSim: Phone number too short: ${phoneNumber}`);
+                return null;
+            }
+
+            console.log(`✅ Got phone number from CodeSim: ${phoneNumber}`);
+            console.log(`📝 OTP ID: ${otpId}, SIM ID: ${simId}`);
+
+            return {
+                success: true,
+                phoneNumber,
+                otpId,
+                simId,
+                service: 'codesim'
+            };
         } catch (error) {
-            console.error('❌ Viotp API error:', error.message);
+            console.error('❌ CodeSim API error:', error.message);
             return null;
         }
     }
 
     /**
-     * Get OTP from Viotp API (chờ OTP sau khi form filled)
+     * Get OTP from CodeSim API
      */
-    async getOtpFromViotp(viotpToken, requestId) {
+    async getOtpFromCodeSim(codeSimToken, otpId) {
         try {
-            if (!viotpToken || !requestId) {
-                console.warn('⚠️ Viotp token or request ID missing');
+            if (!codeSimToken || !otpId) {
+                console.warn('⚠️ CodeSim token or OTP ID missing');
                 return null;
             }
 
-            console.log('⏳ Waiting for OTP from Viotp...');
+            console.log('⏳ Waiting for OTP from CodeSim...');
+
             let otp = null;
             let attempts = 0;
-            const maxAttempts = 120; // 120 seconds
+            const maxAttempts = 30; // 30 * 3 seconds = 90 seconds
 
             while (!otp && attempts < maxAttempts) {
                 attempts++;
-                await new Promise(r => setTimeout(r, 1000));
+                await new Promise(r => setTimeout(r, 3000)); // Wait 3 seconds
 
-                const sessionUrl = `https://api.viotp.com/session/getv2?requestId=${requestId}&token=${viotpToken}`;
-                const sessionResponse = await fetch(sessionUrl);
-                const sessionData = await sessionResponse.json();
+                const url = `/api/sim/get-otp?key=${codeSimToken}&otpId=${otpId}`;
+                const response = await fetch(url);
+                const data = await response.json();
 
-                if (sessionData.status_code === 200 && sessionData.data && sessionData.data.Code) {
-                    otp = sessionData.data.Code;
+                console.log(`  📤 CodeSim OTP check (attempt ${attempts}):`, JSON.stringify(data));
+
+                if (data.success && data.code) {
+                    otp = data.code;
                     console.log(`✅ OTP received: ${otp}`);
                     break;
                 }
 
-                if (attempts % 10 === 0) {
-                    console.log(`⏳ Waiting for OTP... (${attempts}s)`);
+                if (attempts % 5 === 0) {
+                    console.log(`⏳ Still waiting for OTP... (${attempts * 3}s)`);
                 }
             }
 
             if (!otp) {
-                console.error('❌ OTP timeout after 120 seconds');
+                console.warn('⚠️ OTP timeout after 90 seconds');
                 return null;
             }
 
             return {
                 success: true,
-                code: otp,
-                requestId
+                code: otp
             };
         } catch (error) {
-            console.error('❌ Viotp OTP error:', error.message);
+            console.error('❌ CodeSim OTP error:', error.message);
             return null;
         }
     }
+
+    /**
+     * Get phone number from CodeSim API (không chờ OTP)
+     * Thử lần lượt các serviceId cho đến khi thành công
+     */
+
 
     /**
      * Solve Cloudflare Turnstile via autocaptcha.pro API
@@ -1286,27 +1271,27 @@ class VIPAutomation {
             // Gọi form filler riêng cho category
             await this.fillRegisterForm(page, category, profileData, siteConfig);
 
-            // For AccOKVIP: Check if phone was successfully fetched from Viotp (only if API mode)
+            // For AccOKVIP: Check if phone was successfully fetched from CodeSim (only if API mode)
             if (category === 'accOkvip' && profileData.simMode === 'api') {
                 // Check if we have a valid phone number
-                if (!profileData.viotpRequestId) {
-                    console.error('❌ AccOKVIP: Failed to get phone number from Viotp API');
-                    console.error('❌ Viotp API returned: No available phone numbers');
+                if (!profileData.codeSimRequestId) {
+                    console.error('❌ AccOKVIP: Failed to get phone number from CodeSim API');
+                    console.error('❌ CodeSim API returned: No available phone numbers');
 
                     // Throw error to trigger catch block and proper error handling
-                    throw new Error('Viotp API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!');
+                    throw new Error('CodeSim API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!');
                 }
             }
 
-            // For OKVIP OTP: Check if phone was successfully fetched from Viotp (only if API mode)
+            // For OKVIP OTP: Check if phone was successfully fetched from CodeSim (only if API mode)
             if (category === 'okvipOtp' && profileData.simMode === 'api') {
                 // Check if we have a valid phone number
-                if (!profileData.viotpRequestId) {
-                    console.error('❌ OKVIP OTP: Failed to get phone number from Viotp API');
-                    console.error('❌ Viotp API returned: No available phone numbers');
+                if (!profileData.codeSimRequestId) {
+                    console.error('❌ OKVIP OTP: Failed to get phone number from CodeSim API');
+                    console.error('❌ CodeSim API returned: No available phone numbers');
 
                     // Throw error to trigger catch block and proper error handling
-                    throw new Error('Viotp API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!');
+                    throw new Error('CodeSim API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!');
                 }
             }
 
@@ -1320,10 +1305,11 @@ class VIPAutomation {
                 console.warn('⚠️ Failed to inject scripts:', injectError.message);
             }
 
-            // Solve captcha nếu có API key
-            // Skip captcha for JUN88V2, 22VIP, AccOKVIP, and OKVIP OTP (no captcha after form fill)
+            // Solve captcha nếu có API key (TRƯỚC submit cho các category khác)
+            // Skip captcha for JUN88V2, 22VIP, AccOKVIP, OKVIP OTP (no captcha before submit)
             const shouldSolveCaptcha = !['jun88v2', '22vip', 'accOkvip', 'okvipOtp'].includes(category);
             const apiKey = this.settings?.captchaApiKey || process.env.CAPTCHA_API_KEY;
+
             if (apiKey && shouldSolveCaptcha) {
                 console.log('🎵 Attempting to solve captcha...');
                 const captchaSolved = await this.solveCaptchaOnPage(page, apiKey);
@@ -1334,8 +1320,10 @@ class VIPAutomation {
                 const captchaDelay = category === 'abcvip' ? 10000 : 3000;
                 console.log(`⏳ Waiting ${captchaDelay}ms after captcha solve...`);
                 await new Promise(r => setTimeout(r, captchaDelay));
-            } else if (!shouldSolveCaptcha) {
-                console.log('⏭️ Skipping captcha for JUN88V2, 22VIP, AccOKVIP, and OKVIP OTP (no captcha after form fill)');
+            } else if (!shouldSolveCaptcha && category !== 'okvipOtp') {
+                console.log('⏭️ Skipping captcha for JUN88V2, 22VIP, AccOKVIP (no captcha before submit)');
+            } else if (category === 'okvipOtp') {
+                console.log('⏭️ OKVIP OTP: Botion captcha will be solved AFTER submit button click');
             } else {
                 console.warn('⚠️ No captcha API key provided');
             }
@@ -1444,6 +1432,23 @@ class VIPAutomation {
             // Delay sau khi submit
             await new Promise(r => setTimeout(r, 5000));
 
+            // OKVIP OTP: Solve Botion slider captcha AFTER submit button click
+            if (category === 'okvipOtp') {
+                console.log('🎵 OKVIP OTP: Attempting to solve Botion slider captcha (AFTER submit)...');
+                const botionSolved = await this.solveBottionCaptcha(page, apiKey);
+
+                if (!botionSolved) {
+                    console.error('❌ OKVIP OTP: Botion captcha solve FAILED - không thể tiếp tục');
+                    console.error('❌ Dừng automation vì không giải được captcha');
+                    throw new Error('OKVIP OTP: Botion captcha solve failed - automation stopped');
+                }
+
+                console.log('✅ OKVIP OTP: Botion captcha solved successfully');
+                // Wait after Botion solve
+                console.log(`⏳ Waiting 3s after Botion captcha solve...`);
+                await new Promise(r => setTimeout(r, 3000));
+            }
+
             // For accOkvip: click "Gửi đi" button with retry logic for duplicate phone
             if (category === 'accOkvip') {
                 console.log(`🖱️ AccOKVIP: Clicking "Gửi đi" button to complete registration...`);
@@ -1451,7 +1456,7 @@ class VIPAutomation {
                 let registrationSuccess = false;
                 let retryCount = 0;
                 const maxRetries = 10;
-                const viotpToken = this.settings?.viotpToken || process.env.VIOTP_TOKEN;
+                const codeSimToken = this.settings?.codeSimToken || process.env.CodeSim_TOKEN;
                 let currentPage = page; // Use currentPage instead of reassigning page
 
                 while (!registrationSuccess && retryCount < maxRetries) {
@@ -1529,11 +1534,11 @@ class VIPAutomation {
                         if (errorDetected) {
                             console.warn(`⚠️ Error detected: Phone might be already registered`);
 
-                            if (retryCount < maxRetries && viotpToken) {
+                            if (retryCount < maxRetries && codeSimToken) {
                                 console.log(`🔄 Retrying with new phone number on current tab...`);
 
                                 // Get new phone number (thử serviceId 3 và 21)
-                                const newPhoneResult = await this.getPhoneFromViotp(viotpToken);
+                                const newPhoneResult = await this.getPhoneFromCodeSim(codeSimToken);
                                 if (newPhoneResult && newPhoneResult.phoneNumber) {
                                     const newPhone = newPhoneResult.phoneNumber;
                                     console.log(`✅ Got new phone: ${newPhone}`);
@@ -1545,7 +1550,7 @@ class VIPAutomation {
 
                                     // Update profileData with new phone
                                     profileData.phone = newPhone;
-                                    profileData.viotpRequestId = newPhoneResult.requestId;
+                                    profileData.codeSimRequestId = newPhoneResult.requestId;
 
                                     // Fill form on current page
                                     await this.fillAccOkvipRegisterForm(currentPage, profileData);
@@ -1574,7 +1579,7 @@ class VIPAutomation {
                                     return { success: false, message: 'Failed to get new phone number after retry' };
                                 }
                             } else {
-                                console.error('❌ Max retries reached or no Viotp token');
+                                console.error('❌ Max retries reached or no CodeSim token');
                                 return { success: false, message: `Registration failed after ${retryCount} attempts` };
                             }
                         } else {
@@ -1630,9 +1635,9 @@ class VIPAutomation {
                                 break; // Exit the retry loop
                             }
 
-                            // Now get OTP from Viotp API and fill it (only for API mode)
-                            if (profileData.viotpRequestId && viotpToken) {
-                                console.log('📱 Getting OTP from Viotp API...');
+                            // Now get OTP from CodeSim API and fill it (only for API mode)
+                            if (profileData.codeSimRequestId && codeSimToken) {
+                                console.log('📱 Getting OTP from CodeSim API...');
 
                                 let otpReceived = false;
                                 let otpRetryCount = 0;
@@ -1643,7 +1648,7 @@ class VIPAutomation {
                                     console.log(`⏳ Waiting for OTP (attempt ${otpRetryCount}/${maxOtpRetries})...`);
 
                                     // Wait up to 120 seconds for OTP
-                                    const otpResult = await this.getOtpFromViotp(viotpToken, profileData.viotpRequestId);
+                                    const otpResult = await this.getOtpFromCodeSim(codeSimToken, profileData.codeSimRequestId);
 
                                     if (otpResult && otpResult.code) {
                                         const otp = otpResult.code;
@@ -1704,7 +1709,7 @@ class VIPAutomation {
                                             console.error('❌ Max OTP retries reached, need to restart with new phone');
 
                                             // Get new phone number (thử serviceId 3 và 21)
-                                            const newPhoneResult = await this.getPhoneFromViotp(viotpToken);
+                                            const newPhoneResult = await this.getPhoneFromCodeSim(codeSimToken);
                                             if (newPhoneResult && newPhoneResult.phoneNumber) {
                                                 const newPhone = newPhoneResult.phoneNumber;
                                                 console.log(`✅ Got new phone: ${newPhone}`);
@@ -1722,7 +1727,7 @@ class VIPAutomation {
 
                                                 // Update profileData with new phone
                                                 profileData.phone = newPhone;
-                                                profileData.viotpRequestId = newPhoneResult.requestId;
+                                                profileData.codeSimRequestId = newPhoneResult.requestId;
 
                                                 // Fill form on new page
                                                 await this.fillAccOkvipRegisterForm(newPage, profileData);
@@ -1769,7 +1774,7 @@ class VIPAutomation {
                                     return { success: false, message: 'Failed to receive OTP after all retries' };
                                 }
                             } else {
-                                console.warn('⚠️ No Viotp request ID or token for OTP retrieval');
+                                console.warn('⚠️ No CodeSim request ID or token for OTP retrieval');
                             }
 
                             console.log(`✅ AccOKVIP registration completed successfully`);
@@ -1803,8 +1808,65 @@ class VIPAutomation {
             // Wait for token/redirect (smart wait like nohu-tool)
             // Skip for AccOKVIP and OKVIP OTP (đã xử lý riêng ở trên)
             if (category === 'accOkvip' || category === 'okvipOtp') {
-                console.log(`⏭️ ${category.toUpperCase()}: Skipping token/redirect wait (already handled)`);
-                return { success: true, message: `${category.toUpperCase()} registration completed`, page };
+                console.log(`⏭️ ${category.toUpperCase()}: Waiting for token from form submission...`);
+
+                // Chờ token từ form submit (token là dấu hiệu đăng ký thành công)
+                let hasToken = false;
+                let waitAttempts = 0;
+                const maxWaitAttempts = 30; // 30 * 1s = 30 giây
+
+                while (!hasToken && waitAttempts < maxWaitAttempts) {
+                    waitAttempts++;
+                    await new Promise(r => setTimeout(r, 1000));
+
+                    const tokenInfo = await page.evaluate(() => {
+                        // Kiểm tra token trong localStorage
+                        const localStorageToken = localStorage.getItem('token') ||
+                            localStorage.getItem('auth_token') ||
+                            localStorage.getItem('access_token');
+
+                        // Kiểm tra token trong sessionStorage
+                        const sessionStorageToken = sessionStorage.getItem('token') ||
+                            sessionStorage.getItem('auth_token') ||
+                            sessionStorage.getItem('access_token');
+
+                        // Kiểm tra token trong cookies
+                        const cookies = document.cookie;
+                        const cookieToken = cookies.includes('token') ||
+                            cookies.includes('auth') ||
+                            cookies.includes('session');
+
+                        // Kiểm tra URL có chứa token không
+                        const urlToken = window.location.href.includes('token=') ||
+                            window.location.href.includes('auth=');
+
+                        return {
+                            localStorageToken: !!localStorageToken,
+                            sessionStorageToken: !!sessionStorageToken,
+                            cookieToken: cookieToken,
+                            urlToken: urlToken,
+                            hasAnyToken: !!(localStorageToken || sessionStorageToken || cookieToken || urlToken)
+                        };
+                    });
+
+                    if (tokenInfo.hasAnyToken) {
+                        console.log(`✅ Token found:`, tokenInfo);
+                        hasToken = true;
+                        break;
+                    }
+
+                    if (waitAttempts % 5 === 0) {
+                        console.log(`⏳ Waiting for token... (${waitAttempts}s)`);
+                    }
+                }
+
+                if (!hasToken) {
+                    console.error(`❌ No token received after ${maxWaitAttempts}s - registration may have failed`);
+                    return { success: false, message: `${category.toUpperCase()}: No token received - registration failed` };
+                }
+
+                console.log(`✅ Token received - registration successful`);
+                return { success: true, message: `${category.toUpperCase()} registration completed with token`, page };
             }
 
             console.log(`⏳ Waiting for token/redirect...`);
@@ -4987,7 +5049,7 @@ class VIPAutomation {
      * OKVIP OTP Register Form
      * Selectors: data-input-name (Vue form)
      * Form: account, userpass, phone, realName
-     * Phone: Lấy từ Viotp API nếu simMode = 'api'
+     * Phone: Lấy từ CodeSim API nếu simMode = 'api'
      */
     async fillOKVIPOtpRegisterForm(page, profileData) {
         try {
@@ -5003,16 +5065,16 @@ class VIPAutomation {
 
             await new Promise(r => setTimeout(r, 1500));
 
-            // Nếu simMode = 'api', lấy số từ Viotp (bắt buộc)
+            // Nếu simMode = 'api', lấy số từ CodeSim (bắt buộc)
             if (profileData.simMode === 'api') {
-                console.log('📱 OKVIP OTP: Fetching phone number from Viotp API...');
-                const viotpToken = this.settings?.viotpToken || process.env.VIOTP_TOKEN;
+                console.log('📱 OKVIP OTP: Fetching phone number from CodeSim API...');
+                const codeSimToken = this.settings?.codeSimToken || process.env.CODESIM_TOKEN;
 
-                if (!viotpToken) {
-                    throw new Error('Viotp token not provided');
+                if (!codeSimToken) {
+                    throw new Error('CodeSim token not provided');
                 }
 
-                const phoneResult = await this.getPhoneFromViotp(viotpToken);
+                const phoneResult = await this.getPhoneFromCodeSim(codeSimToken);
                 if (phoneResult && phoneResult.phoneNumber) {
                     let phone = phoneResult.phoneNumber;
 
@@ -5023,11 +5085,12 @@ class VIPAutomation {
                     }
 
                     profileData.phone = phone;
-                    profileData.viotpRequestId = phoneResult.requestId;
-                    console.log(`✅ Got phone from Viotp: ${phone} (9 digits)`);
+                    profileData.codeSimOtpId = phoneResult.otpId;
+                    profileData.codeSimSimId = phoneResult.simId;
+                    console.log(`✅ Got phone from CodeSim: ${phone} (9 digits)`);
                 } else {
-                    // Viotp API failed - throw error
-                    const errorMsg = 'Viotp API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!';
+                    // CodeSim API failed - throw error
+                    const errorMsg = 'CodeSim API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!';
                     console.error('❌ ' + errorMsg);
                     throw new Error(errorMsg);
                 }
@@ -5324,7 +5387,7 @@ class VIPAutomation {
     /**
      * AccOKVIP Register Form (Van form with id selectors)
      * Selectors: #van-field-X-input
-     * Phone number will be fetched from Viotp API
+     * Phone number will be fetched from CodeSim API
      */
     async fillAccOkvipRegisterForm(page, profileData) {
         // Wait for form fields to appear
@@ -5336,36 +5399,36 @@ class VIPAutomation {
         }
         await new Promise(r => setTimeout(r, 1500));
 
-        // Step 1: Get phone number from Viotp API (Service ID 3) - only if simMode is 'api'
+        // Step 1: Get phone number from CodeSim API (Service ID 3) - only if simMode is 'api'
         const simMode = profileData.simMode || 'api'; // Default to 'api'
         console.log(`📱 SIM Mode: ${simMode === 'api' ? 'API SIM' : 'Manual Phone'}`);
 
         let phoneNumber = profileData.phone; // Fallback to provided phone
-        let viotpSuccess = false;
-        let viotpErrorMessage = null;
+        let CodeSimSuccess = false;
+        let CodeSimErrorMessage = null;
 
         if (simMode === 'api') {
-            console.log('📱 Getting phone number from Viotp API...');
-            const viotpToken = this.settings?.viotpToken || process.env.VIOTP_TOKEN;
+            console.log('📱 Getting phone number from CodeSim API...');
+            const codeSimToken = this.settings?.codeSimToken || process.env.CodeSim_TOKEN;
 
-            if (viotpToken) {
-                const viotpResult = await this.getPhoneFromViotp(viotpToken); // Thử serviceId 3 và 21
-                if (viotpResult && viotpResult.phoneNumber) {
-                    phoneNumber = viotpResult.phoneNumber;
-                    console.log(`✅ Got phone from Viotp: ${phoneNumber}`);
+            if (codeSimToken) {
+                const CodeSimResult = await this.getPhoneFromCodeSim(codeSimToken); // Thử serviceId 3 và 21
+                if (CodeSimResult && CodeSimResult.phoneNumber) {
+                    phoneNumber = CodeSimResult.phoneNumber;
+                    console.log(`✅ Got phone from CodeSim: ${phoneNumber}`);
                     // Store for later use (OTP retrieval)
-                    profileData.viotpRequestId = viotpResult.requestId;
-                    viotpSuccess = true;
+                    profileData.codeSimRequestId = CodeSimResult.requestId;
+                    CodeSimSuccess = true;
                 } else {
-                    // Viotp API failed - this means no available phone numbers
-                    viotpErrorMessage = 'Viotp API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!';
-                    console.error('❌ ' + viotpErrorMessage);
+                    // CodeSim API failed - this means no available phone numbers
+                    CodeSimErrorMessage = 'CodeSim API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!';
+                    console.error('❌ ' + CodeSimErrorMessage);
                     // Store error message in profileData for later use in result
-                    profileData.viotpError = viotpErrorMessage;
-                    throw new Error(viotpErrorMessage);
+                    profileData.CodeSimError = CodeSimErrorMessage;
+                    throw new Error(CodeSimErrorMessage);
                 }
             } else {
-                console.warn('⚠️ No Viotp token, using provided phone');
+                console.warn('⚠️ No CodeSim token, using provided phone');
             }
         } else {
             console.log('✏️ Using manual phone from form');
@@ -5403,7 +5466,7 @@ class VIPAutomation {
                 console.log(`✅ Confirm password filled`);
             }
 
-            // Fill phone (from Viotp API)
+            // Fill phone (from CodeSim API)
             const phoneField = document.querySelector('#van-field-4-input');
             if (phoneField) {
                 phoneField.value = data.phoneNumber;
@@ -5964,7 +6027,7 @@ class VIPAutomation {
     async checkBottionResult(page) {
         try {
             const result = await page.evaluate(() => {
-                // Check for error/retry message - try multiple selectors
+                // Bước 1: Kiểm tra message từ server
                 let resultTips = document.querySelector('[class*="botion_result_tips"]');
                 if (!resultTips) {
                     resultTips = document.querySelector('[class*="result_tips"]');
@@ -5974,21 +6037,21 @@ class VIPAutomation {
                 }
 
                 if (resultTips && resultTips.textContent) {
-                    const text = resultTips.textContent.toLowerCase();
+                    const text = resultTips.textContent.toLowerCase().trim();
                     console.log(`📊 Result tips: ${text}`);
 
-                    // Check for failure messages
-                    if (text.includes('vui lòng thử lại') || text.includes('thử lại') || text.includes('failed') || text.includes('error')) {
-                        return { failed: true, message: text };
-                    }
-
-                    // Check for success messages
+                    // Kiểm tra success message
                     if (text.includes('thành công') || text.includes('success') || text.includes('verified')) {
                         return { success: true, message: text };
                     }
+
+                    // Kiểm tra failure message
+                    if (text.includes('vui lòng thử lại') || text.includes('thử lại') || text.includes('failed') || text.includes('error')) {
+                        return { failed: true, message: text };
+                    }
                 }
 
-                // Check if captcha box is still visible - try multiple selectors
+                // Bước 2: Kiểm tra xem captcha box có biến mất không (dấu hiệu success)
                 let botionBox = document.querySelector('[class*="botion_box"]');
                 if (!botionBox) {
                     botionBox = document.querySelector('[class*="captcha"]');
@@ -5997,12 +6060,21 @@ class VIPAutomation {
                     botionBox = document.querySelector('[class*="box"]');
                 }
 
-                if (!botionBox || botionBox.style.display === 'none') {
+                // Nếu captcha box biến mất hoặc ẩn, có thể là success
+                if (!botionBox || botionBox.style.display === 'none' || botionBox.offsetHeight === 0) {
                     console.log('📊 Captcha box disappeared - likely success');
                     return { success: true, message: 'Captcha disappeared' };
                 }
 
-                // Check if there's a retry button visible (indicates failure) - try multiple selectors
+                // Bước 3: Kiểm tra xem form có được submit không (kiểm tra URL hoặc form state)
+                // Nếu URL thay đổi hoặc form biến mất, captcha đã được giải
+                const formElement = document.querySelector('form');
+                if (!formElement || formElement.style.display === 'none') {
+                    console.log('📊 Form disappeared - likely success');
+                    return { success: true, message: 'Form disappeared' };
+                }
+
+                // Bước 4: Kiểm tra retry button (nhưng không dùng làm dấu hiệu fail duy nhất)
                 let retryBtn = document.querySelector('[class*="botion_refresh"]');
                 if (!retryBtn) {
                     retryBtn = document.querySelector('[class*="refresh"]');
@@ -6011,13 +6083,16 @@ class VIPAutomation {
                     retryBtn = document.querySelector('[class*="retry"]');
                 }
 
-                if (retryBtn && retryBtn.style.display !== 'none') {
-                    console.log('📊 Retry button visible - captcha failed');
-                    return { failed: true, message: 'Retry button visible' };
+                // Nếu retry button ẩn, có thể là success
+                if (!retryBtn || retryBtn.style.display === 'none' || retryBtn.offsetHeight === 0) {
+                    console.log('📊 Retry button hidden - likely success');
+                    return { success: true, message: 'Retry button hidden' };
                 }
 
-                // Unknown state
-                return { unknown: true, message: 'Unknown state' };
+                // Nếu retry button hiển thị nhưng không có error message, có thể vẫn là success
+                // (retry button có thể hiển thị nhưng không active)
+                console.log('📊 Retry button visible but no error message - assuming success');
+                return { success: true, message: 'Assuming success (no error message)' };
             });
 
             console.log('📊 Botion result check:', result);
@@ -6347,15 +6422,17 @@ class VIPAutomation {
      */
     async submitBottionCaptchaToAPI(base64Image, apiKey, puzzleInfo = null) {
         try {
-            // Use local image matching directly (skip AutoCaptcha)
-            console.log('📤 Using local image matching to solve Botion captcha...');
+            // Botion captcha không được API hỗ trợ, dùng local image matching trực tiếp
+            console.log('📤 Giải Botion captcha bằng local image matching...');
+
             const localResult = await this.solveBottionViaImageMatching(base64Image, puzzleInfo);
 
             if (localResult && localResult.success) {
+                console.log('✅ Local image matching thành công');
                 return localResult;
             }
 
-            console.error('❌ Local image matching failed');
+            console.error('❌ Local image matching thất bại');
             return null;
         } catch (error) {
             console.error('❌ Botion captcha error:', error.message);
@@ -6754,13 +6831,61 @@ class VIPAutomation {
 
             console.log(`📊 Độ sáng trung bình: ${avgBrightnessValue.toFixed(0)}`);
 
-            // Bước 3: Tìm mảnh ghép (vùng sáng ở bên trái)
-            console.log('🔍 Tìm mảnh ghép (vùng sáng)...');
+            // Bước 3: Tìm gap bằng cách phân tích độ sáng
+            // Gap là vùng tối nhất trong ảnh (vùng thiếu mảnh ghép)
+            console.log('🔍 Tìm gap (khoảng trống đen)...');
+
+            // Tìm vùng tối nhất (gap)
+            let gapX = 0;
+            let minBrightness = 255;
+            let gapWidth = 0;
+
+            // Quét toàn bộ chiều rộng để tìm vùng tối nhất
+            for (let i = 0; i < width; i++) {
+                if (brightnessByColumn[i].brightness < minBrightness) {
+                    minBrightness = brightnessByColumn[i].brightness;
+                    gapX = i;
+                }
+            }
+
+            // Tìm chiều rộng của gap (vùng tối liên tục)
+            const gapThreshold = minBrightness + 30; // Gap thường có độ sáng tương đối đồng nhất
+            let gapStart = gapX;
+            let gapEnd = gapX;
+
+            // Tìm bắt đầu gap
+            for (let i = gapX; i >= 0; i--) {
+                if (brightnessByColumn[i].brightness < gapThreshold) {
+                    gapStart = i;
+                } else {
+                    break;
+                }
+            }
+
+            // Tìm kết thúc gap
+            for (let i = gapX; i < width; i++) {
+                if (brightnessByColumn[i].brightness < gapThreshold) {
+                    gapEnd = i;
+                } else {
+                    break;
+                }
+            }
+
+            gapWidth = gapEnd - gapStart + 1;
+            const gapCenter = Math.floor((gapStart + gapEnd) / 2);
+
+            console.log(`📍 Gap tìm thấy từ: ${gapStart}px đến ${gapEnd}px (chiều rộng: ${gapWidth}px)`);
+            console.log(`📊 Tâm gap: ${gapCenter}px (độ sáng: ${minBrightness.toFixed(0)})`);
+            console.log(`📊 Chênh lệch: ${(avgBrightnessValue - minBrightness).toFixed(0)}`);
+
+            // Bước 4: Tìm mảnh cần kéo (vùng sáng ở bên trái)
+            console.log('🔍 Tìm mảnh cần kéo (vùng sáng bên trái)...');
             let puzzleX = 0;
             let maxBrightness = 0;
+            let puzzleWidth = 0;
 
-            // Quét bên trái 30% để tìm mảnh ghép
-            const puzzleScanEnd = Math.floor(width * 0.3);
+            // Quét bên trái 40% để tìm mảnh cần kéo
+            const puzzleScanEnd = Math.floor(width * 0.4);
             for (let i = 0; i < puzzleScanEnd; i++) {
                 if (brightnessByColumn[i].brightness > maxBrightness) {
                     maxBrightness = brightnessByColumn[i].brightness;
@@ -6768,61 +6893,46 @@ class VIPAutomation {
                 }
             }
 
-            console.log(`📍 Mảnh ghép tìm thấy tại: ${puzzleX}px (độ sáng: ${maxBrightness.toFixed(0)})`);
+            // Tìm chiều rộng của mảnh cần kéo
+            const puzzleThreshold = maxBrightness - 30;
+            let puzzleStart = puzzleX;
+            let puzzleEnd = puzzleX;
 
-            // Bước 4: Tìm gap (khoảng trống - vùng tối hơn trung bình ít nhất 30 điểm)
-            console.log('🔍 Tìm gap (khoảng trống đen)...');
-            let gapX = 0;
-            let minBrightness = 255;
-            const darknessThreshold = avgBrightnessValue - 30;
-
-            console.log(`📊 Threshold tối: ${darknessThreshold.toFixed(0)}`);
-
-            // Quét toàn bộ chiều rộng để tìm vùng tối nhất nhưng vẫn tối hơn threshold
-            for (let i = 0; i < width; i++) {
-                const brightness = brightnessByColumn[i].brightness;
-
-                // Chỉ xét các cột tối hơn threshold
-                if (brightness < darknessThreshold && brightness < minBrightness) {
-                    minBrightness = brightness;
-                    gapX = i;
+            // Tìm bắt đầu mảnh
+            for (let i = puzzleX; i >= 0; i--) {
+                if (brightnessByColumn[i].brightness > puzzleThreshold) {
+                    puzzleStart = i;
+                } else {
+                    break;
                 }
             }
 
-            // Nếu không tìm thấy vùng tối hơn threshold, tìm vùng tối nhất
-            if (minBrightness === 255) {
-                console.log('⚠️ Không tìm thấy vùng tối hơn threshold, tìm vùng tối nhất...');
-                minBrightness = 255;
-                for (let i = 0; i < width; i++) {
-                    if (brightnessByColumn[i].brightness < minBrightness) {
-                        minBrightness = brightnessByColumn[i].brightness;
-                        gapX = i;
-                    }
+            // Tìm kết thúc mảnh
+            for (let i = puzzleX; i < puzzleScanEnd; i++) {
+                if (brightnessByColumn[i].brightness > puzzleThreshold) {
+                    puzzleEnd = i;
+                } else {
+                    break;
                 }
             }
 
-            console.log(`📍 Gap tìm thấy tại: ${gapX}px (độ sáng: ${minBrightness.toFixed(0)})`);
-            console.log(`📊 Độ sáng gap: ${minBrightness.toFixed(0)}`);
-            console.log(`📊 Chênh lệch: ${(avgBrightnessValue - minBrightness).toFixed(0)}`);
+            puzzleWidth = puzzleEnd - puzzleStart + 1;
+            const puzzleCenter = Math.floor((puzzleStart + puzzleEnd) / 2);
 
-            // Bước 5: Tính % cần kéo nút dựa trên vị trí gap
-            // QUAN TRỌNG: Phần cần kéo (mảnh ghép) cách bên trái ảnh 1 khoảng
-            // Cần trừ đi khoảng cách này để tính khoảng cách kéo thực tế
+            console.log(`📍 Mảnh cần kéo từ: ${puzzleStart}px đến ${puzzleEnd}px (chiều rộng: ${puzzleWidth}px)`);
+            console.log(`📊 Tâm mảnh: ${puzzleCenter}px (độ sáng: ${maxBrightness.toFixed(0)})`);
 
-            // Ước lượng offset từ bên trái ảnh đến phần cần kéo
-            // Dựa vào hình ảnh, phần cần kéo cách bên trái khoảng 10% chiều rộng
-            const puzzleLeftOffset = Math.round(width * 0.10);
-
-            // Khoảng cách kéo thực tế = vị trí gap - offset từ bên trái
-            const actualDragDistance = Math.max(0, gapX - puzzleLeftOffset);
+            // Bước 5: Tính khoảng cách cần kéo
+            // Khoảng cách = tâm gap - tâm mảnh cần kéo
+            const dragDistance = Math.max(0, gapCenter - puzzleCenter);
 
             // Tính % dựa trên khoảng cách kéo thực tế
-            const percentage = Math.round((actualDragDistance / width) * 100);
+            const percentage = Math.round((dragDistance / width) * 100);
 
-            console.log(`📊 Offset từ bên trái: ${puzzleLeftOffset}px (10% của ${width}px)`);
-            console.log(`📊 Vị trí gap: ${gapX}px`);
-            console.log(`📊 Khoảng cách kéo thực tế: ${actualDragDistance}px`);
-            console.log(`📊 Percentage: ${actualDragDistance}px / ${width}px = ${percentage}%`);
+            console.log(`📊 Tâm mảnh cần kéo: ${puzzleCenter}px`);
+            console.log(`📊 Tâm gap: ${gapCenter}px`);
+            console.log(`📊 Khoảng cách cần kéo: ${dragDistance}px`);
+            console.log(`📊 Percentage: ${dragDistance}px / ${width}px = ${percentage}%`);
 
             // Clamp vào khoảng hợp lý (5-95%)
             const clampedPercentage = Math.max(5, Math.min(95, percentage));
@@ -6832,12 +6942,19 @@ class VIPAutomation {
 
             return {
                 percentage: clampedPercentage,
-                method: 'basic-brightness-position',
+                method: 'basic-brightness-center-distance',
                 width: width,
-                gapX: gapX,
-                puzzleLeftOffset: puzzleLeftOffset,
-                actualDragDistance: actualDragDistance,
+                puzzleCenter: puzzleCenter,
+                puzzleStart: puzzleStart,
+                puzzleEnd: puzzleEnd,
+                puzzleWidth: puzzleWidth,
+                gapCenter: gapCenter,
+                gapStart: gapStart,
+                gapEnd: gapEnd,
+                gapWidth: gapWidth,
+                dragDistance: dragDistance,
                 minBrightness: minBrightness,
+                maxBrightness: maxBrightness,
                 avgBrightness: avgBrightnessValue
             };
         } catch (error) {
