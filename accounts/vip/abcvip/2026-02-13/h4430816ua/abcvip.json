@@ -1,0 +1,23 @@
+{
+  "username": "h4430816ua",
+  "password": "p9z04d0t7",
+  "withdrawPassword": "111222",
+  "fullname": "PHAM MINH CHIEN TU",
+  "email": "m4af8@gmail.com",
+  "phone": "0777601502",
+  "registeredAt": "2026-02-12T20:01:25.729Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102601",
+    "accountHolder": "PHAM MINH CHIEN TU"
+  }
+}

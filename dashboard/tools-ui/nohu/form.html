@@ -176,24 +176,25 @@
 
             <!-- Account Info -->
             <div class="form-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
-                    <button class="btn btn-secondary btn-sm" onclick="randomAllForm()" title="Random toàn bộ form">🎲
-                        Random</button>
-                </div>
+                <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
                 <div class="form-grid">
-                    <input type="text" id="autoUsername" placeholder="Tên tài khoản">
-                    <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)">
-                    <input type="text" id="autoPassword" placeholder="Mật khẩu">
-                    <input type="text" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền">
+                    <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)" required>
                 </div>
+                <div style="font-size: 11px; color: #718096; margin-top: 8px; font-style: italic;">
+                    💡 Username, Password, Mật khẩu rút sẽ được random tự động
+                </div>
+                <!-- Hidden fields for auto-filled values -->
+                <input type="hidden" id="autoUsername">
+                <input type="hidden" id="autoPassword">
+                <input type="hidden" id="autoWithdrawPassword">
+                <input type="hidden" id="autoBankBranch">
             </div>
 
             <!-- Bank Info -->
             <div class="form-section">
                 <h3>🏦 Thông Tin Ngân Hàng</h3>
                 <div class="form-grid">
-                    <select id="autoBankName">
+                    <select id="autoBankName" required>
                         <option value="">-- Chọn ngân hàng --</option>
                         <option value="VIETINBANK">VIETINBANK</option>
                         <option value="TECHCOMBANK">TECHCOMBANK</option>
@@ -205,7 +206,10 @@
                         <option value="SACOMBANK">SACOMBANK</option>
                         <option value="ACB">ACB</option>
                     </select>
-                    <input type="text" id="autoAccountNumber" placeholder="Số tài khoản ngân hàng">
+                    <input type="text" id="autoAccountNumber" placeholder="Số tài khoản ngân hàng" required>
+                </div>
+                <div style="font-size: 11px; color: #718096; margin-top: 8px; font-style: italic;">
+                    💡 Chi nhánh sẽ được random từ 64 tỉnh thành
                 </div>
             </div>
 

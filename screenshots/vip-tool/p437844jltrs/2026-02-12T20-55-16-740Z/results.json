@@ -1,0 +1,19 @@
+[
+  {
+    "site": "Jun881",
+    "register": {
+      "success": false,
+      "error": "JUN88: Captcha solve failed - automation stopped"
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  }
+]

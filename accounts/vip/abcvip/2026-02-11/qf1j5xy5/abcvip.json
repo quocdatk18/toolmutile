@@ -1,0 +1,23 @@
+{
+  "username": "qf1j5xy5",
+  "password": "z4gf7wbbl68",
+  "withdrawPassword": "1",
+  "fullname": "TRAN THANH VINH",
+  "email": "svt3lwl@gmail.com",
+  "phone": "0778418014",
+  "registeredAt": "2026-02-11T02:54:55.909Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089287",
+    "accountHolder": "TRAN THANH VINH"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "username": "ckrb0seyf86",
+  "password": "re4wm5l3",
+  "withdrawPassword": "1",
+  "fullname": "VU HOANG TUAN LAC",
+  "email": "z2sd5q@gmail.com",
+  "phone": "0993701351",
+  "registeredAt": "2026-02-10T10:46:37.403Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001079852",
+    "accountHolder": "VU HOANG TUAN LAC"
+  }
+}

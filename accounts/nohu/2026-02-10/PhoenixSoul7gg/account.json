@@ -1,0 +1,25 @@
+{
+  "username": "PhoenixSoul7gg",
+  "password": "fnt27iei9kq",
+  "withdrawPassword": "1",
+  "fullname": "LE ANH HUNG CUONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DA NANG",
+    "accountNumber": "963012001082065",
+    "accountHolder": "LE ANH HUNG CUONG"
+  },
+  "registeredAt": "2026-02-10T14:28:01.424Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T14:28:01.424Z",
+  "bankVerified": false
+}

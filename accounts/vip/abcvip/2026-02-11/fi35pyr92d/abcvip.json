@@ -1,0 +1,24 @@
+{
+  "username": "fi35pyr92d",
+  "password": "f8a9pe0enr",
+  "withdrawPassword": "1",
+  "fullname": "VU HOANG HUNG PHEP",
+  "email": "iqx8c@gmail.com",
+  "phone": "0777987358",
+  "registeredAt": "2026-02-11T03:59:43.103Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089678",
+    "accountHolder": "VU HOANG HUNG PHEP"
+  }
+}

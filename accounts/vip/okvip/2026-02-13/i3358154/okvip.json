@@ -1,0 +1,22 @@
+{
+  "username": "i3358154",
+  "password": "2ycop831f8",
+  "withdrawPassword": "111222",
+  "fullname": "PHAM MINH CHIEN TU",
+  "email": "v1oah@gmail.com",
+  "phone": "0779300349",
+  "registeredAt": "2026-02-12T18:53:21.592Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102601",
+    "accountHolder": "PHAM MINH CHIEN TU"
+  }
+}

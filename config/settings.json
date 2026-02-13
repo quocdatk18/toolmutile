@@ -1,15 +1,27 @@
 {
   "apiKey": {
-    "service": "autocaptcha.pro",
+    "service": "2captcha",
     "key": "",
     "balance": 0
   },
-  "codeSimToken": "",
+  "codeSimToken": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJkYXRjaG9pc2EiLCJqdGkiOiI4MDAzNCIsImlhdCI6MTc2MDg5MzczMSwiZXhwIjoxODIzMTAxNzMxfQ.bCQSclABf1KFuLsOuYJBS0h3dphrcEqL9otPqPriBW6UBNvkIPO5IJSKrsoL0eXDXEfEo19Q0vdyxvD0Qt6C8w",
   "dashboard": {
     "port": 3000,
     "theme": "light",
     "language": "vi",
     "title": "Hidemium Multi-Tool Dashboard"
+  },
+  "delays": {
+    "beforeSubmit": {
+      "min": 2000,
+      "max": 5000,
+      "description": "Delay trước khi submit form (milliseconds)"
+    },
+    "afterCaptcha": {
+      "default": 3000,
+      "abcvip": 10000,
+      "description": "Delay sau khi giải captcha (milliseconds)"
+    }
   },
   "tools": {
     "enabled": [

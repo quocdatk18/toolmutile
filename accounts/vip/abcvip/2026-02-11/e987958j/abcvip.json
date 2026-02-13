@@ -1,0 +1,23 @@
+{
+  "username": "e987958j",
+  "password": "8vu26stkgic",
+  "withdrawPassword": "111222",
+  "fullname": "O MA NHI",
+  "email": "tzg8r@gmail.com",
+  "phone": "0776612409",
+  "registeredAt": "2026-02-11T13:21:07.980Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001094131",
+    "accountHolder": "O MA NHI"
+  }
+}

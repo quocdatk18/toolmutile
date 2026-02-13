@@ -1,0 +1,25 @@
+{
+  "username": "EagleStorm7ggdf",
+  "password": "b215h50exds5",
+  "withdrawPassword": "1",
+  "fullname": "TRAN VINH TUAN TUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VUNG TAU",
+    "accountNumber": "963012001078890",
+    "accountHolder": "TRAN VINH TUAN TUAN"
+  },
+  "registeredAt": "2026-02-10T08:01:34.449Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T08:01:34.449Z",
+  "bankVerified": true
+}

@@ -1,0 +1,25 @@
+{
+  "username": "DragonStrike9g",
+  "password": "vsjx1056xj1x",
+  "withdrawPassword": "1",
+  "fullname": "BUI PHONG THI QUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DA NANG",
+    "accountNumber": "963012001078888",
+    "accountHolder": "BUI PHONG THI QUY"
+  },
+  "registeredAt": "2026-02-10T08:01:05.739Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T08:01:05.739Z",
+  "bankVerified": false
+}

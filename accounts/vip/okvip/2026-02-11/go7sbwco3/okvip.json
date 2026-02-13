@@ -1,0 +1,23 @@
+{
+  "username": "go7sbwco3",
+  "password": "rrtzr9jo86u",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN QUANG QUAN",
+  "email": "gg4ahuk@gmail.com",
+  "phone": "0778510157",
+  "registeredAt": "2026-02-11T03:01:22.713Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089330",
+    "accountHolder": "NGUYEN QUANG QUAN"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "username": "b678663iroa",
+  "password": "1saytgnl9",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN TAT PHAT DONG",
+  "email": "qq71l@gmail.com",
+  "phone": "0776271504",
+  "registeredAt": "2026-02-12T12:52:04.943Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001099737",
+    "accountHolder": "TRAN TAT PHAT DONG"
+  }
+}

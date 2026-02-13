@@ -1,0 +1,23 @@
+{
+  "username": "q570901ocam2",
+  "password": "r2oriu6ok",
+  "withdrawPassword": "111222",
+  "fullname": "HOANG HOA LUU DEP",
+  "email": "rcqvpmj@gmail.com",
+  "phone": "0776273408",
+  "registeredAt": "2026-02-12T10:03:56.310Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001099086",
+    "accountHolder": "HOANG HOA LUU DEP"
+  }
+}

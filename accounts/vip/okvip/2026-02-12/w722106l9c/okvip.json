@@ -1,0 +1,22 @@
+{
+  "username": "w722106l9c",
+  "password": "xpt5z4r2fkx5",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN NHU KIEU",
+  "email": "rpelgq@gmail.com",
+  "phone": "0776318873",
+  "registeredAt": "2026-02-12T09:33:09.291Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098956",
+    "accountHolder": "TRAN NHU KIEU"
+  }
+}

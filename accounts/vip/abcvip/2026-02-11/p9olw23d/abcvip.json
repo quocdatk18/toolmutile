@@ -1,0 +1,23 @@
+{
+  "username": "p9olw23d",
+  "password": "nkckes6o6qe5",
+  "withdrawPassword": "1",
+  "fullname": "HOANG DUC HUNG NHO",
+  "email": "tzsb954@gmail.com",
+  "phone": "0778422404",
+  "registeredAt": "2026-02-11T04:55:11.031Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089939",
+    "accountHolder": "HOANG DUC HUNG NHO"
+  }
+}

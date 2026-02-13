@@ -1,0 +1,25 @@
+{
+  "username": "FireSoul1f",
+  "password": "fi4d2x7ggkf",
+  "withdrawPassword": "1",
+  "fullname": "TRUONG TRANG VINH HA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BIEN HOA",
+    "accountNumber": "963012001071829",
+    "accountHolder": "TRUONG TRANG VINH HA"
+  },
+  "registeredAt": "2026-02-09T10:46:31.244Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:46:31.244Z",
+  "bankVerified": false
+}

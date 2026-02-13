@@ -1,0 +1,23 @@
+{
+  "username": "z614114qx",
+  "password": "8wyz432ur",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN LOC SHADOW",
+  "email": "ml6i15@gmail.com",
+  "phone": "0776798393",
+  "registeredAt": "2026-02-12T13:40:58.308Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "9686687660001038458",
+    "accountHolder": "NGUYEN LOC SHADOW"
+  }
+}

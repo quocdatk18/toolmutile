@@ -1,0 +1,24 @@
+{
+  "username": "m110889clw33",
+  "password": "y3djc64s5",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN TIEN CONG THU",
+  "email": "qpyaqpj@gmail.com",
+  "phone": "0776302961",
+  "registeredAt": "2026-02-12T11:52:37.038Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098895",
+    "accountHolder": "NGUYEN TIEN CONG THU"
+  }
+}

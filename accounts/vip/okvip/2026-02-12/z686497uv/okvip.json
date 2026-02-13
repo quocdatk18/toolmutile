@@ -1,0 +1,22 @@
+{
+  "username": "z686497uv",
+  "password": "vul5rr46buz",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN THI NHA TRANG",
+  "email": "2yb9lh0@gmail.com",
+  "phone": "0776302961",
+  "registeredAt": "2026-02-12T09:32:32.669Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098933",
+    "accountHolder": "TRAN THI NHA TRANG"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "username": "l097726ty",
+  "password": "1vk0jk8p",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN VAN LUU LY",
+  "email": "dn73r@gmail.com",
+  "phone": "0777713964",
+  "registeredAt": "2026-02-12T17:59:33.165Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098730",
+    "accountHolder": "NGUYEN VAN LUU LY"
+  }
+}

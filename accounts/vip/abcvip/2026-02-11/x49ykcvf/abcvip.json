@@ -1,0 +1,24 @@
+{
+  "username": "x49ykcvf",
+  "password": "g3k6miwj8s",
+  "withdrawPassword": "1",
+  "fullname": "PHAN DUC TUAN VINH",
+  "email": "jj0a5g@gmail.com",
+  "phone": "0778476544",
+  "registeredAt": "2026-02-11T04:06:36.122Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089701",
+    "accountHolder": "PHAN DUC TUAN VINH"
+  }
+}

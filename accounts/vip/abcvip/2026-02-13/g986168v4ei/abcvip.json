@@ -1,0 +1,25 @@
+{
+  "username": "g986168v4ei",
+  "password": "8r7gqzif543",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN NHU KIEN TRI",
+  "email": "azsuzoh@gmail.com",
+  "phone": "0777142613",
+  "registeredAt": "2026-02-12T19:37:10.267Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8",
+    "888clb"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102255",
+    "accountHolder": "TRAN NHU KIEN TRI"
+  }
+}

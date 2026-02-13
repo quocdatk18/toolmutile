@@ -1,0 +1,23 @@
+{
+  "username": "x769204exxtn",
+  "password": "t45qpib7ezz",
+  "withdrawPassword": "111222",
+  "fullname": "LEE CHIEU MON DO",
+  "email": "g2cetor@gmail.com",
+  "phone": "0777941319",
+  "registeredAt": "2026-02-11T07:09:46.898Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001091036",
+    "accountHolder": "LEE CHIEU MON DO"
+  }
+}

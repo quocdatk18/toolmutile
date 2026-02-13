@@ -1,0 +1,25 @@
+{
+  "username": "WolfBlade9b2",
+  "password": "ty1f76ep56",
+  "withdrawPassword": "781511",
+  "fullname": "TRINH MINH PHONG THU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HAI PHONG",
+    "accountNumber": "963012001071915",
+    "accountHolder": "TRINH MINH PHONG THU"
+  },
+  "registeredAt": "2026-02-09T10:54:12.816Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:54:12.816Z",
+  "bankVerified": true
+}

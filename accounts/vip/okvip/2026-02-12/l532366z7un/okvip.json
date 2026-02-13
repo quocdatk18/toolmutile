@@ -1,0 +1,24 @@
+{
+  "username": "l532366z7un",
+  "password": "evdqfx04pc",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN TAT PHAT DONG",
+  "email": "iwvfp@gmail.com",
+  "phone": "0776271504",
+  "registeredAt": "2026-02-12T12:33:17.365Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "789BET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001099737",
+    "accountHolder": "TRAN TAT PHAT DONG"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "username": "MoonS34f",
+  "password": "ff9436kckf",
+  "withdrawPassword": "1",
+  "fullname": "PHAM DUNG TRANG AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DA NANG",
+    "accountNumber": "963012001078839",
+    "accountHolder": "PHAM DUNG TRANG AN"
+  },
+  "registeredAt": "2026-02-10T07:49:38.601Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T07:49:38.601Z",
+  "bankVerified": false
+}

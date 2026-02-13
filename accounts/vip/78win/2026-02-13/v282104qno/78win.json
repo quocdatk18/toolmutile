@@ -1,0 +1,22 @@
+{
+  "username": "v282104qno",
+  "password": "mm57qye2",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN AI NU TU",
+  "email": "smehsh3@gmail.com",
+  "phone": "0776379672",
+  "registeredAt": "2026-02-12T17:12:15.211Z",
+  "firstSite": "78WIN1",
+  "sites": [
+    "78WIN1"
+  ],
+  "status": "active",
+  "category": "78win",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001092378",
+    "accountHolder": "NGUYEN AI NU TU"
+  }
+}

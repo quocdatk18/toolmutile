@@ -1,0 +1,25 @@
+{
+  "username": "SkyStorm9bdf",
+  "password": "sdsd3fj985xjr",
+  "withdrawPassword": "1",
+  "fullname": "TRUONG DUC PHONG NGUYET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DA NANG",
+    "accountNumber": "963012001078891",
+    "accountHolder": "TRUONG DUC PHONG NGUYET"
+  },
+  "registeredAt": "2026-02-10T08:01:51.538Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T08:01:51.538Z",
+  "bankVerified": true
+}

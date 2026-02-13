@@ -1,0 +1,23 @@
+{
+  "username": "z866092r9p5",
+  "password": "f5c3a0su",
+  "withdrawPassword": "111222",
+  "fullname": "QUANG THANG GAP",
+  "email": "zyogo0@gmail.com",
+  "phone": "0776271782",
+  "registeredAt": "2026-02-12T09:02:13.197Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098793",
+    "accountHolder": "QUANG THANG GAP"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "username": "m990169npf5b",
+  "password": "vqa1jj80ydj",
+  "withdrawPassword": "111222",
+  "fullname": "AP HOANG HUY TUONG",
+  "email": "qdzyo@gmail.com",
+  "phone": "0776242484",
+  "registeredAt": "2026-02-12T20:27:50.794Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "VietCapitalBank",
+    "branch": "TP. Hồ Chí Minh",
+    "accountNumber": "99900031701919",
+    "accountHolder": "AP HOANG HUY TUONG"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "username": "SkyFury99gfg",
+  "password": "j69bub5zgg",
+  "withdrawPassword": "1",
+  "fullname": "TRUONG DUC PHONG NGUYET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VUNG TAU",
+    "accountNumber": "963012001078891",
+    "accountHolder": "TRUONG DUC PHONG NGUYET"
+  },
+  "registeredAt": "2026-02-10T08:27:21.164Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T08:27:21.164Z",
+  "bankVerified": false
+}

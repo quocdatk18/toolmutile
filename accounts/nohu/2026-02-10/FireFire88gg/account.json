@@ -1,0 +1,25 @@
+{
+  "username": "FireFire88gg",
+  "password": "fdf28lkk72yb",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN TUAN VINH HIEU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "CAN THO",
+    "accountNumber": "963012001078865",
+    "accountHolder": "NGUYEN TUAN VINH HIEU"
+  },
+  "registeredAt": "2026-02-10T07:58:58.704Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T07:58:58.704Z",
+  "bankVerified": true
+}

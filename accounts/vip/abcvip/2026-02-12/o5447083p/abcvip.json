@@ -1,0 +1,24 @@
+{
+  "username": "o5447083p",
+  "password": "m46smw9nb",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN NHU KIEU",
+  "email": "smjazj@gmail.com",
+  "phone": "0777377683",
+  "registeredAt": "2026-02-12T12:16:29.145Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098956",
+    "accountHolder": "TRAN NHU KIEU"
+  }
+}

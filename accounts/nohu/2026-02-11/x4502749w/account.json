@@ -1,0 +1,25 @@
+{
+  "username": "x4502749w",
+  "password": "lk975l7xu74",
+  "withdrawPassword": "1",
+  "fullname": "PHAM NGU LAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "THANH HOA",
+    "accountNumber": "963012001090672",
+    "accountHolder": "PHAM NGU LAO"
+  },
+  "registeredAt": "2026-02-11T05:58:18.125Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-11T05:58:18.125Z",
+  "bankVerified": false
+}

@@ -1,0 +1,22 @@
+{
+  "username": "rfsd2jgfjhz1f",
+  "password": "cry8sv65h3",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN ANH BINH AN",
+  "email": "cialt3q@gmail.com",
+  "phone": "0915451058",
+  "registeredAt": "2026-02-10T14:06:22.359Z",
+  "firstSite": "789BET",
+  "sites": [
+    "789BET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001081974",
+    "accountHolder": "NGUYEN ANH BINH AN"
+  }
+}

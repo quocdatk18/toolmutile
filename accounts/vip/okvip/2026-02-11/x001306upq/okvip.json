@@ -1,0 +1,22 @@
+{
+  "username": "x001306upq",
+  "password": "xba3vq4g190",
+  "withdrawPassword": "111222",
+  "fullname": "SI MA TA MA",
+  "email": "0b7oh@gmail.com",
+  "phone": "0961419815",
+  "registeredAt": "2026-02-11T10:34:14.040Z",
+  "firstSite": "789BET",
+  "sites": [
+    "789BET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001092661",
+    "accountHolder": "SI MA TA MA"
+  }
+}

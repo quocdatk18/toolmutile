@@ -1,0 +1,23 @@
+{
+  "username": "c033812dq1",
+  "password": "69ifn3o64",
+  "withdrawPassword": "111222",
+  "fullname": "THAN KIM QUY",
+  "email": "y3pk0c@gmail.com",
+  "phone": "0777713817",
+  "registeredAt": "2026-02-12T20:11:15.913Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102631",
+    "accountHolder": "THAN KIM QUY"
+  }
+}

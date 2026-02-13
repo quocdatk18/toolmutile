@@ -1,0 +1,25 @@
+{
+  "username": "f8279878qh81",
+  "password": "rf4m6iw3qpv",
+  "withdrawPassword": "1",
+  "fullname": "tran nhu kien",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BA RIA VUNG TAU",
+    "accountNumber": "963012001093564",
+    "accountHolder": "tran nhu kien"
+  },
+  "registeredAt": "2026-02-11T11:54:42.511Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-11T11:54:42.511Z",
+  "bankVerified": false
+}

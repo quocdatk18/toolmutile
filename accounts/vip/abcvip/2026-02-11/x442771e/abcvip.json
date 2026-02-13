@@ -1,0 +1,24 @@
+{
+  "username": "x442771e",
+  "password": "155ngwd00r8j",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN HOANG HUY LAM",
+  "email": "1us7z@gmail.com",
+  "phone": "0777096112",
+  "registeredAt": "2026-02-11T07:37:41.804Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001091345",
+    "accountHolder": "NGUYEN HOANG HUY LAM"
+  }
+}

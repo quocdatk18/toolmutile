@@ -1,0 +1,22 @@
+{
+  "username": "c714558l4vo",
+  "password": "s830l0jtn",
+  "withdrawPassword": "111222",
+  "fullname": "kim mao su vuong",
+  "email": "gvxffj@gmail.com",
+  "phone": "0779219927",
+  "registeredAt": "2026-02-12T18:59:43.670Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102648",
+    "accountHolder": "kim mao su vuong"
+  }
+}

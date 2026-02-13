@@ -1,0 +1,23 @@
+{
+  "username": "a587105m",
+  "password": "c5edtl29f",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN QUOC DAT AU",
+  "email": "7en1wk@gmail.com",
+  "phone": "0779278334",
+  "registeredAt": "2026-02-12T19:47:08.110Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102569",
+    "accountHolder": "NGUYEN QUOC DAT AU"
+  }
+}

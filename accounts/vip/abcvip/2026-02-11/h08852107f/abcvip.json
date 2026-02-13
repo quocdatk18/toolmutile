@@ -1,0 +1,23 @@
+{
+  "username": "h08852107f",
+  "password": "m2crwo49m",
+  "withdrawPassword": "111222",
+  "fullname": "GIANG HOA SHU",
+  "email": "c41teko@gmail.com",
+  "phone": "0778399896",
+  "registeredAt": "2026-02-11T06:25:06.267Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001090828",
+    "accountHolder": "GIANG HOA SHU"
+  }
+}

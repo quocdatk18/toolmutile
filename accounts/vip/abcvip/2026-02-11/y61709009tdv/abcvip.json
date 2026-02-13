@@ -1,0 +1,24 @@
+{
+  "username": "y61709009tdv",
+  "password": "443f4hia1up",
+  "withdrawPassword": "111222",
+  "fullname": "tran quang minh chinh",
+  "email": "rtvjg@gmail.com",
+  "phone": "0777506873",
+  "registeredAt": "2026-02-11T08:13:55.777Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001091826",
+    "accountHolder": "tran quang minh chinh"
+  }
+}

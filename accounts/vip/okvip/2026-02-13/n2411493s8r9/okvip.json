@@ -1,0 +1,23 @@
+{
+  "username": "n2411493s8r9",
+  "password": "jjmx1r91",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN TUAN ANH LUXURY",
+  "email": "86gp0@gmail.com",
+  "phone": "0776206414",
+  "registeredAt": "2026-02-12T18:35:09.718Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102326",
+    "accountHolder": "NGUYEN TUAN ANH LUXURY"
+  }
+}

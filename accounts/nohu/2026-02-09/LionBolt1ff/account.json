@@ -1,0 +1,25 @@
+{
+  "username": "LionBolt1ff",
+  "password": "gd0is0k2a",
+  "withdrawPassword": "1",
+  "fullname": "PHAN HOANG LINH THU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HA NOI",
+    "accountNumber": "963012001071947",
+    "accountHolder": "PHAN HOANG LINH THU"
+  },
+  "registeredAt": "2026-02-09T10:59:58.011Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:59:58.011Z",
+  "bankVerified": true
+}

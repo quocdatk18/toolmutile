@@ -19,7 +19,7 @@ class ApiKeyValidator {
         try {
             const config = JSON.parse(fs.readFileSync(this.configPath, 'utf8'));
             return {
-                service: config.apiKey?.service || 'autocaptcha.pro',
+                service: config.apiKey?.service || '2captcha',
                 key: config.apiKey?.key || '',
                 balance: config.apiKey?.balance || 0
             };
@@ -63,7 +63,7 @@ class ApiKeyValidator {
     }
 
     /**
-     * Check API key balance (for autocaptcha.pro)
+     * Check API key balance (for 2Captcha)
      */
     async checkBalance(apiKey) {
         return new Promise((resolve) => {

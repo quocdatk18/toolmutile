@@ -1,0 +1,25 @@
+{
+  "username": "TigerBlade7fv",
+  "password": "nghb3me3f",
+  "withdrawPassword": "1",
+  "fullname": "TONG TRANG HOANG KHANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HO CHI MINH",
+    "accountNumber": "963012001078757",
+    "accountHolder": "TONG TRANG HOANG KHANH"
+  },
+  "registeredAt": "2026-02-10T07:45:39.809Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T07:45:39.809Z",
+  "bankVerified": true
+}

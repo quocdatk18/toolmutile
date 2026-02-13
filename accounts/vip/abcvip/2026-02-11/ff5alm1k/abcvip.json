@@ -1,0 +1,23 @@
+{
+  "username": "ff5alm1k",
+  "password": "dpc4r16m7a0n",
+  "withdrawPassword": "1",
+  "fullname": "VU HOANG TAM",
+  "email": "h2jga@gmail.com",
+  "phone": "0778588350",
+  "registeredAt": "2026-02-11T03:21:25.720Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089479",
+    "accountHolder": "VU HOANG TAM"
+  }
+}

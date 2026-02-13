@@ -1,0 +1,23 @@
+{
+  "username": "h300983vsxx3",
+  "password": "jgia7s282e",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN ICH TAC MY",
+  "email": "ty5ody9@gmail.com",
+  "phone": "0778382824",
+  "registeredAt": "2026-02-11T06:45:19.564Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001090913",
+    "accountHolder": "TRAN ICH TAC MY"
+  }
+}

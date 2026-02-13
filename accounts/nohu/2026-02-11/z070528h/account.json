@@ -1,0 +1,34 @@
+{
+  "username": "z070528h",
+  "password": "0rru8lninau",
+  "withdrawPassword": "1",
+  "fullname": "PHUNG THANH DO TAY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "LAM DONG",
+    "accountNumber": "963012001094591",
+    "accountHolder": "PHUNG THANH DO TAY"
+  },
+  "registeredAt": "2026-02-11T15:18:47.923Z",
+  "firstSite": "Go99",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-11T15:18:47.923Z",
+  "bankVerified": true
+}

@@ -1,0 +1,25 @@
+{
+  "username": "StarBlade7bd",
+  "password": "ys0nw6x6qe",
+  "withdrawPassword": "1",
+  "fullname": "NHAN THANH THI HA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HAI PHONG",
+    "accountNumber": "963012001078746",
+    "accountHolder": "NHAN THANH THI HA"
+  },
+  "registeredAt": "2026-02-10T07:42:56.326Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T07:42:56.326Z",
+  "bankVerified": true
+}

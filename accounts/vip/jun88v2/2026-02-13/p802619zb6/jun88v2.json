@@ -1,0 +1,22 @@
+{
+  "username": "p802619zb6",
+  "password": "4exz301q",
+  "withdrawPassword": "111222",
+  "fullname": "KIM XUAN LAM AN",
+  "email": "ta9tq@gmail.com",
+  "phone": "0776172918",
+  "registeredAt": "2026-02-12T17:38:00.346Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098467",
+    "accountHolder": "KIM XUAN LAM AN"
+  }
+}

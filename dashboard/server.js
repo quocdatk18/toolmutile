@@ -247,6 +247,65 @@ app.get('/api/settings/codesim-token', (req, res) => {
     }
 });
 
+// Save Captcha API key to settings
+app.post('/api/settings/captcha-key', (req, res) => {
+    try {
+        const { key } = req.body;
+
+        if (!key) {
+            return res.status(400).json({
+                success: false,
+                error: 'Captcha API key required'
+            });
+        }
+
+        // Update settings object
+        if (!settings.apiKey) {
+            settings.apiKey = {};
+        }
+        settings.apiKey.key = key;
+        settings.apiKey.service = '2captcha';
+
+        // Save to file
+        const settingsPath = path.join(__dirname, '../config/settings.json');
+        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+
+        console.log('✅ Captcha API key saved to settings');
+
+        res.json({
+            success: true,
+            message: 'Captcha API key saved successfully'
+        });
+    } catch (error) {
+        console.error('Error saving Captcha API key:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+// Get Captcha API key from settings
+app.get('/api/settings/captcha-key', (req, res) => {
+    try {
+        const key = settings?.apiKey?.key || '';
+        const hasKey = !!key;
+
+        res.json({
+            success: true,
+            hasKey: hasKey,
+            keyPreview: hasKey ? key.substring(0, 20) + '...' : '',
+            service: settings?.apiKey?.service || '2captcha'
+        });
+    } catch (error) {
+        console.error('Error getting Captcha API key:', error);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
 // Hidemium status
 app.get('/api/hidemium/status', async (req, res) => {
     try {
@@ -695,11 +754,26 @@ app.get('/api/captcha/balance', async (req, res) => {
         }
 
         const axios = require('axios');
-        const response = await axios.get(`https://autocaptcha.pro/apiv3/balance?key=${key}`);
+        // 2Captcha API endpoint for balance check
+        const response = await axios.post('https://api.2captcha.com/getBalance', {
+            clientKey: key
+        });
 
-        console.log('Balance response:', response.data);
+        console.log('2Captcha balance response:', response.data);
 
-        res.json(response.data);
+        // Convert 2Captcha response format to match expected format
+        if (response.data.errorId === 0) {
+            res.json({
+                success: true,
+                balance: response.data.balance,
+                currency: 'USD'
+            });
+        } else {
+            res.json({
+                success: false,
+                error: response.data.errorDescription || 'Failed to get balance'
+            });
+        }
     } catch (error) {
         console.error('Balance check error:', error.message);
         res.status(500).json({ success: false, error: error.message });
@@ -745,7 +819,7 @@ app.get('/api/sim/balance', async (req, res) => {
 // Get phone number from CodeSim
 app.get('/api/sim/get-phone', async (req, res) => {
     try {
-        const { key, serviceId = 49, phonePrefix = '08' } = req.query;
+        const { key, serviceId = 1, phonePrefix } = req.query;
 
         if (!key) {
             return res.status(400).json({ success: false, error: 'API key required' });
@@ -753,7 +827,8 @@ app.get('/api/sim/get-phone', async (req, res) => {
 
         const axios = require('axios');
         // Use correct CodeSim API endpoint: /sim/get_sim
-        const url = `https://apisim.codesim.net/sim/get_sim?service_id=${serviceId}&phone=${phonePrefix}&api_key=${key}`;
+        // Only use service_id=1, don't filter by phonePrefix
+        const url = `https://apisim.codesim.net/sim/get_sim?service_id=1&api_key=${key}`;
         const response = await axios.get(url);
 
         console.log('CodeSim get phone response:', response.data);
@@ -2978,6 +3053,11 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
             apiKey: profileData?.apiKey ? `${profileData.apiKey.substring(0, 5)}...` : 'MISSING',
             codeSimToken: profileData?.codeSimToken ? `${profileData.codeSimToken.substring(0, 5)}...` : 'MISSING'
         });
+        console.log('📊 Token sources:');
+        console.log('  - profileData.codeSimToken:', profileData?.codeSimToken ? 'YES' : 'NO');
+        console.log('  - process.env.CODESIM_TOKEN:', process.env.CODESIM_TOKEN ? 'YES' : 'NO');
+        console.log('  - settings.codeSimToken:', settings?.codeSimToken ? 'YES' : 'NO');
+        console.log('📊 Final codeSimToken:', codeSimToken ? `${codeSimToken.substring(0, 20)}...` : 'EMPTY');
 
         const vipAutomation = new VIPAutomation(vipSettings, scripts);
 
@@ -3093,42 +3173,46 @@ app.post('/api/vip-automation/run', checkLicense, async (req, res) => {
                 console.log(`✅ Cleared running flag for profile: ${profileId} (VIP automation completed)`);
             }
 
-            // Save results to file (like NOHU tool)
-            const screenshotsDir = path.join(__dirname, '../screenshots');
-            const toolDir = path.join(screenshotsDir, 'vip-tool');
-            const username = profileData?.username || 'unknown';
-            const sessionId = new Date().toISOString().replace(/[:.]/g, '-');
-            const sessionDir = path.join(toolDir, username, sessionId);
+            // Save results to file (like NOHU tool) - chỉ lưu khi mode là 'auto', không lưu khi mode là 'promo'
+            if (mode === 'auto') {
+                const screenshotsDir = path.join(__dirname, '../screenshots');
+                const toolDir = path.join(screenshotsDir, 'vip-tool');
+                const username = profileData?.username || 'unknown';
+                const sessionId = new Date().toISOString().replace(/[:.]/g, '-');
+                const sessionDir = path.join(toolDir, username, sessionId);
 
-            // Create directories
-            if (!fs.existsSync(sessionDir)) {
-                fs.mkdirSync(sessionDir, { recursive: true });
+                // Create directories
+                if (!fs.existsSync(sessionDir)) {
+                    fs.mkdirSync(sessionDir, { recursive: true });
+                }
+
+                // Save metadata
+                const metadata = {
+                    profileName: profile?.name || 'Profile',
+                    runNumber: 1,
+                    toolId: 'vip-tool',
+                    category: category,
+                    sites: sites,
+                    mode: mode,
+                    executionMode: executionMode,
+                    timestamp: new Date().toISOString()
+                };
+                fs.writeFileSync(path.join(sessionDir, 'metadata.json'), JSON.stringify(metadata, null, 2));
+
+                // Save results as JSON
+                fs.writeFileSync(path.join(sessionDir, 'results.json'), JSON.stringify(results, null, 2));
+
+                // Create dummy screenshot files for each site (for UI display)
+                results.forEach(result => {
+                    const screenshotFile = path.join(sessionDir, `${result.site}.png`);
+                    // Create empty file (UI will use this to detect results)
+                    fs.writeFileSync(screenshotFile, '');
+                });
+
+                console.log(`✅ Results saved to: ${sessionDir}`);
+            } else if (mode === 'promo') {
+                console.log(`⏭️ Promo mode - kết quả không được lưu vào bảng kết quả`);
             }
-
-            // Save metadata
-            const metadata = {
-                profileName: profile?.name || 'Profile',
-                runNumber: 1,
-                toolId: 'vip-tool',
-                category: category,
-                sites: sites,
-                mode: mode,
-                executionMode: executionMode,
-                timestamp: new Date().toISOString()
-            };
-            fs.writeFileSync(path.join(sessionDir, 'metadata.json'), JSON.stringify(metadata, null, 2));
-
-            // Save results as JSON
-            fs.writeFileSync(path.join(sessionDir, 'results.json'), JSON.stringify(results, null, 2));
-
-            // Create dummy screenshot files for each site (for UI display)
-            results.forEach(result => {
-                const screenshotFile = path.join(sessionDir, `${result.site}.png`);
-                // Create empty file (UI will use this to detect results)
-                fs.writeFileSync(screenshotFile, '');
-            });
-
-            console.log(`✅ Results saved to: ${sessionDir}`);
 
             res.json({ success: true, results });
 

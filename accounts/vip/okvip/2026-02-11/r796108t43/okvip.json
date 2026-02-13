@@ -1,0 +1,22 @@
+{
+  "username": "r796108t43",
+  "password": "8kbf92i2x2",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN AI NU TU",
+  "email": "04aiqc@gmail.com",
+  "phone": "0778809915",
+  "registeredAt": "2026-02-11T10:30:22.920Z",
+  "firstSite": "789BET",
+  "sites": [
+    "789BET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001092378",
+    "accountHolder": "NGUYEN AI NU TU"
+  }
+}

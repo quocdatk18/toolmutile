@@ -1,0 +1,22 @@
+{
+  "username": "vlk423ff4",
+  "password": "f2rlp2kvuzd",
+  "withdrawPassword": "1",
+  "fullname": "TRAN VINH TUAN TUAN",
+  "email": "mn54rha@gmail.com",
+  "phone": "0993735710",
+  "registeredAt": "2026-02-10T13:57:57.721Z",
+  "firstSite": "789BET",
+  "sites": [
+    "789BET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001078890",
+    "accountHolder": "TRAN VINH TUAN TUAN"
+  }
+}

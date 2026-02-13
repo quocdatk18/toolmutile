@@ -1,0 +1,124 @@
+[
+  {
+    "site": "TV88",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": false,
+      "error": "clickDigitsOnKeyboard is not defined"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "28Bet",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame 'B05076606439B5BBA62D262CB85132F9'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "888Now",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '28A59BF069E54E71264F8E87EF399208'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "888New",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '1633139AF296211F3B5DDE54F7D569EF'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "Win678",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '1A8C2944C770BD12E692E4E5EC1B80E2'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "888Vi",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame 'F89E0ABFAC949AACD51958F76510320D'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "888P",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '6E71597C963C0D726BAFE3CFF3DDF30D'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  }
+]

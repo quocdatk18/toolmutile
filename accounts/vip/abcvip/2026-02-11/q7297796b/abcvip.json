@@ -1,0 +1,23 @@
+{
+  "username": "q7297796b",
+  "password": "2tfxgee8",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN TRAN RUBY",
+  "email": "ub96wge@gmail.com",
+  "phone": "0778409202",
+  "registeredAt": "2026-02-11T06:19:28.391Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001090803",
+    "accountHolder": "NGUYEN TRAN RUBY"
+  }
+}

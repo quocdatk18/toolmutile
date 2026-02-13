@@ -1,0 +1,22 @@
+{
+  "username": "g4850200",
+  "password": "5l4idf68v18",
+  "withdrawPassword": "111222",
+  "fullname": "than kim quy",
+  "email": "ybc03@gmail.com",
+  "phone": "0779278334",
+  "registeredAt": "2026-02-12T18:55:54.629Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102631",
+    "accountHolder": "than kim quy"
+  }
+}

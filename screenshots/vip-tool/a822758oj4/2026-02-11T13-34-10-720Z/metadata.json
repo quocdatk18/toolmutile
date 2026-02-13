@@ -1,0 +1,16 @@
+{
+  "profileName": "admin1",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "okvipOtp",
+  "sites": [
+    "SC881",
+    "Fly88",
+    "F168",
+    "CM88",
+    "C168"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2026-02-11T13:34:10.721Z"
+}

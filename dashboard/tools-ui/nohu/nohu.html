@@ -595,19 +595,13 @@
                         </div>
 
                         <div class="form-section">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
-                                <button class="btn btn-secondary btn-sm" onclick="randomAllForm()"
-                                    title="Random toàn bộ form">
-                                    🎲 Random
-                                </button>
-                            </div>
+                            <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
                             <div class="form-grid">
-                                <input type="text" id="autoUsername" placeholder="Tên tài khoản">
+                                <input type="text" id="autoUsername" placeholder="Tên tài khoản" style="display: none;">
                                 <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)">
-                                <input type="text" id="autoPassword" placeholder="Mật khẩu">
-                                <input type="text" id="autoWithdrawPassword" placeholder="MK rút tiền">
+                                <input type="text" id="autoPassword" placeholder="Mật khẩu" style="display: none;">
+                                <input type="text" id="autoWithdrawPassword" placeholder="MK rút tiền"
+                                    style="display: none;">
                             </div>
                         </div>
 
@@ -617,8 +611,11 @@
                                 <select id="autoBankName">
                                     <option value="">Chọn ngân hàng...</option>
                                 </select>
-                                <input type="text" id="autoBankBranch" placeholder="Chi nhánh">
+                                <input type="text" id="autoBankBranch" placeholder="Chi nhánh" style="display: none;">
                                 <input type="text" id="autoAccountNumber" placeholder="Số tài khoản">
+                            </div>
+                            <div style="font-size: 11px; color: #718096; margin-top: 8px; font-style: italic;">
+                                💡 Chi nhánh sẽ được random từ 64 tỉnh thành
                             </div>
                         </div>
 
@@ -1072,13 +1069,18 @@
 
     // Clear form functions
     function clearAutoForm() {
-        document.getElementById('autoUsername').value = '';
+        // Chỉ clear những field mà user cần điền
         document.getElementById('autoFullname').value = '';
+        document.getElementById('autoBankName').value = '';
+        document.getElementById('autoAccountNumber').value = '';
+
+        // Clear auto-filled fields (sẽ được random lại khi click CHẠY)
+        document.getElementById('autoUsername').value = '';
         document.getElementById('autoPassword').value = '';
         document.getElementById('autoWithdrawPassword').value = '';
-        document.getElementById('autoBankName').value = '';
         document.getElementById('autoBankBranch').value = '';
-        document.getElementById('autoAccountNumber').value = '';
+
+        // Clear site selections
         document.querySelectorAll('#appPromoSites .site-check').forEach(cb => cb.checked = false);
         document.querySelectorAll('#smsPromoSites .site-check-sms').forEach(cb => cb.checked = false);
     }
@@ -1334,6 +1336,77 @@
         showToast('success', 'Random thành công', 'Đã random toàn bộ thông tin');
     }
 
+    // Auto-fill form khi user click CHẠY (chỉ random username, password, withdraw password, chi nhánh)
+    function autoFillFormBeforeRun() {
+        console.log('🤖 Auto-filling form before run...');
+
+        // 1. Random username - Bắt đầu bằng chữ, khó trùng
+        const username = generateRandomUsernameHardToCollide();
+        document.getElementById('autoUsername').value = username;
+        console.log('✅ Generated username:', username);
+
+        // 2. Random password (8-12 characters)
+        const passwordLength = 8 + Math.floor(Math.random() * 5);
+        const letters = 'abcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        let password = '';
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        const allChars = letters + numbers;
+        for (let i = 4; i < passwordLength; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+        password = password.split('').sort(() => Math.random() - 0.5).join('');
+        document.getElementById('autoPassword').value = password;
+        console.log('✅ Generated password:', password);
+
+        // 3. Set mật khẩu rút = "1"
+        document.getElementById('autoWithdrawPassword').value = '1';
+        console.log('✅ Set withdraw password: 1');
+
+        // 4. Random chi nhánh từ 64 tỉnh thành
+        const branches = [
+            'AN GIANG', 'BA RIA VUNG TAU', 'BAC GIANG', 'BAC KAN', 'BAC LIEU', 'BAC NINH',
+            'BEN TRE', 'BINH DINH', 'BINH DUONG', 'BINH PHUOC', 'BINH THUAN', 'CA MAU',
+            'CAN THO', 'CAO BANG', 'DA LAT', 'DA NANG', 'DAK LAK', 'DAK NONG', 'DIEN BIEN',
+            'DONG NAI', 'DONG THAP', 'GIA LAI', 'HA GIANG', 'HA NAM', 'HA NOI', 'HA TAY',
+            'HA TINH', 'HAI DUONG', 'HAI PHONG', 'HAU GIANG', 'HO CHI MINH', 'HOA BINH',
+            'HUNG YEN', 'KHANH HOA', 'KIEN GIANG', 'KON TUM', 'LAI CHAU', 'LAM DONG',
+            'LANG SON', 'LAO CAI', 'LONG AN', 'NAM DINH', 'NGHE AN', 'NINH BINH',
+            'NINH THUAN', 'PHU THO', 'PHU YEN', 'QUANG BINH', 'QUANG NAM', 'QUANG NGAI',
+            'QUANG NINH', 'QUANG TRI', 'SOCTRANG', 'SON LA', 'TAY NINH', 'THAI BINH',
+            'THAI NGUYEN', 'THANH HOA', 'THU DUC', 'TIEN GIANG', 'TON DUC THANG', 'TPHCM',
+            'TRA VINH', 'TUYÊN QUANG', 'VINH LONG', 'VINH PHUC', 'YEN BAI'
+        ];
+        const branch = branches[Math.floor(Math.random() * branches.length)];
+        document.getElementById('autoBankBranch').value = branch;
+        console.log('✅ Generated branch:', branch);
+    }
+
+    // Generate random username khó trùng (bắt đầu bằng chữ)
+    function generateRandomUsernameHardToCollide() {
+        const letters = 'abcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const allChars = letters + numbers;
+
+        // Bắt đầu bằng chữ
+        let username = letters[Math.floor(Math.random() * letters.length)];
+
+        // Thêm timestamp (milliseconds) để tránh trùng
+        const timestamp = Date.now().toString().slice(-6); // 6 chữ số cuối
+        username += timestamp;
+
+        // Thêm random characters để đủ độ dài (8-12 ký tự)
+        const targetLength = 8 + Math.floor(Math.random() * 5);
+        while (username.length < targetLength) {
+            username += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+
+        return username.slice(0, targetLength); // Đảm bảo không vượt quá độ dài
+    }
+
     // Run action based on current active tab
     function runCurrentTabAction() {
         const btn = document.getElementById('btnRunAction');
@@ -1441,6 +1514,44 @@
                 }
                 return;
             }
+
+            // Validate fullname và bankName trước khi auto-fill
+            const fullname = document.getElementById('autoFullname').value.trim();
+            const bankName = document.getElementById('autoBankName').value.trim();
+            const accountNumber = document.getElementById('autoAccountNumber').value.trim();
+
+            if (!fullname) {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập Họ và Tên');
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            if (!bankName) {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn Ngân hàng');
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            if (!accountNumber) {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập Số tài khoản');
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            // Auto-fill form trước khi lấy giá trị
+            autoFillFormBeforeRun();
 
             const config = {
                 username: document.getElementById('autoUsername').value.trim(),

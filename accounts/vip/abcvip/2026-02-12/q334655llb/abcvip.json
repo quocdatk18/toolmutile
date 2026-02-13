@@ -1,0 +1,24 @@
+{
+  "username": "q334655llb",
+  "password": "2p8zp7o2",
+  "withdrawPassword": "111222",
+  "fullname": "PHAM TAN PHIEU",
+  "email": "j5stkxb@gmail.com",
+  "phone": "0776257734",
+  "registeredAt": "2026-02-12T13:02:58.421Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001099862",
+    "accountHolder": "PHAM TAN PHIEU"
+  }
+}

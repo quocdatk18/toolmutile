@@ -1,0 +1,22 @@
+{
+  "username": "p061866bnl",
+  "password": "58faapq64",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN VAN CUA",
+  "email": "i78tvvk@gmail.com",
+  "phone": "0777601502",
+  "registeredAt": "2026-02-12T18:15:33.827Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098835",
+    "accountHolder": "TRAN VAN CUA"
+  }
+}

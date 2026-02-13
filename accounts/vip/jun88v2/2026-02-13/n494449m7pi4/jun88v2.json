@@ -1,0 +1,22 @@
+{
+  "username": "n494449m7pi4",
+  "password": "01bj53djwfp",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN AI NU TU",
+  "email": "0ecm63@gmail.com",
+  "phone": "0776379672",
+  "registeredAt": "2026-02-12T17:16:04.858Z",
+  "firstSite": "JUN88V2",
+  "sites": [
+    "JUN88V2"
+  ],
+  "status": "active",
+  "category": "jun88v2",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102038",
+    "accountHolder": "NGUYEN AI NU TU"
+  }
+}

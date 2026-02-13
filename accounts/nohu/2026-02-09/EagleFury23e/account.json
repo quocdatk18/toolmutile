@@ -1,0 +1,25 @@
+{
+  "username": "EagleFury23e",
+  "password": "ff4f4mi4b1s",
+  "withdrawPassword": "1",
+  "fullname": "TRAN DUC HOANG NHUNG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "CAN THO",
+    "accountNumber": "963012001071949",
+    "accountHolder": "TRAN DUC HOANG NHUNG"
+  },
+  "registeredAt": "2026-02-09T11:00:13.619Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T11:00:13.619Z",
+  "bankVerified": false
+}

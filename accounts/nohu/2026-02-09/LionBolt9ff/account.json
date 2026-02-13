@@ -1,0 +1,25 @@
+{
+  "username": "LionBolt9ff",
+  "password": "sm7a42d5gzc5",
+  "withdrawPassword": "1",
+  "fullname": "BUI MINH LINH HA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BIEN HOA",
+    "accountNumber": "963012001071826",
+    "accountHolder": "BUI MINH LINH HA"
+  },
+  "registeredAt": "2026-02-09T10:46:10.534Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:46:10.534Z",
+  "bankVerified": false
+}

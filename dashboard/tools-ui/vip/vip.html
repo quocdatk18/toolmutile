@@ -460,25 +460,17 @@
                                         <option value="api">📱 API SIM</option>
                                         <option value="manual">✏️ Điền SĐT</option>
                                     </select>
-                                    <button class="btn btn-secondary btn-sm" onclick="randomAllForm()"
-                                        title="Random toàn bộ form">🎲
-                                        Random</button>
                                     <button class="btn btn-secondary btn-sm" onclick="resetFormInputs()"
                                         title="Reset form về trạng thái ban đầu">🔄
                                         Reset</button>
                                 </div>
                             </div>
                             <div class="form-grid">
-                                <input type="text" id="autoUsername" placeholder="Tên tài khoản" class="form-input">
-                                <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)"
-                                    class="form-input">
-                                <input type="text" id="autoPassword" placeholder="Mật khẩu" class="form-input">
-                                <input type="text" id="autoWithdrawPassword" placeholder="Mật khẩu rút tiền"
-                                    class="form-input">
-                                <input type="email" id="autoEmail" placeholder="Email" class="form-input">
+                                <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)" class="form-input"
+                                    required>
                                 <input type="tel" id="autoPhone" placeholder="Số điện thoại (10-11 chữ số)"
-                                    class="form-input">
-                                <select id="autoBankName" class="form-input">
+                                    class="form-input" required>
+                                <select id="autoBankName" class="form-input" required>
                                     <option value="">-- Chọn ngân hàng --</option>
                                     <option value="VIETINBANK">VIETINBANK</option>
                                     <option value="TECHCOMBANK">TECHCOMBANK</option>
@@ -491,8 +483,17 @@
                                     <option value="ACB">ACB</option>
                                 </select>
                                 <input type="text" id="autoAccountNumber" placeholder="Số tài khoản ngân hàng"
-                                    class="form-input">
+                                    class="form-input" required>
                             </div>
+                            <div style="font-size: 11px; color: #718096; margin-top: 8px; font-style: italic;">
+                                💡 Username, Password sẽ được random tự động. Mật khẩu rút tiền = 111222
+                            </div>
+                            <!-- Hidden fields for auto-filled values -->
+                            <input type="hidden" id="autoUsername">
+                            <input type="hidden" id="autoPassword">
+                            <input type="hidden" id="autoWithdrawPassword">
+                            <input type="hidden" id="autoEmail">
+                            <input type="hidden" id="autoBankBranch">
                         </div>
                     </div>
 
@@ -803,15 +804,17 @@
     }
 
     function resetFormInputs() {
-        // Clear ALL form inputs - Auto tab
-        document.getElementById('autoUsername').value = '';
-        document.getElementById('autoPassword').value = '';
-        document.getElementById('autoWithdrawPassword').value = '';
+        // Clear những field mà user cần điền
         document.getElementById('autoFullname').value = '';
-        document.getElementById('autoEmail').value = '';
         document.getElementById('autoPhone').value = '';
         document.getElementById('autoBankName').value = '';
         document.getElementById('autoAccountNumber').value = '';
+
+        // Clear auto-filled fields (sẽ được random lại khi click CHẠY)
+        document.getElementById('autoUsername').value = '';
+        document.getElementById('autoPassword').value = '';
+        document.getElementById('autoWithdrawPassword').value = '';
+        document.getElementById('autoEmail').value = '';
 
         // Clear Promo tab
         document.getElementById('promoUsername').value = '';
@@ -961,6 +964,51 @@
         const codeSimToken = typeof simApiManager !== 'undefined' ? simApiManager.get() :
             localStorage.getItem('hidemium_sim_api_key') || '';
 
+        // Validate fullname, phone, bankName, accountNumber trước khi auto-fill
+        const fullname = document.getElementById('autoFullname').value.trim();
+        const phone = document.getElementById('autoPhone').value.trim();
+        const bankName = document.getElementById('autoBankName').value.trim();
+        const accountNumber = document.getElementById('autoAccountNumber').value.trim();
+
+        if (!fullname) {
+            showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập Họ và Tên');
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        if (!phone) {
+            showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập Số điện thoại');
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        if (!/^\d{10,11}$/.test(phone)) {
+            showToast('warning', 'SĐT không hợp lệ', 'SĐT phải có 10-11 chữ số');
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        if (!bankName) {
+            showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn Ngân hàng');
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        if (!accountNumber) {
+            showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập Số tài khoản');
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        if (!/^\d+$/.test(accountNumber)) {
+            showToast('warning', 'Số tài khoản không hợp lệ', 'Số tài khoản chỉ được chứa chữ số');
+            if (btnRunAction) enableButton(btnRunAction);
+            return;
+        }
+
+        // Auto-fill form trước khi lấy giá trị
+        autoFillVipFormBeforeRun();
+
         const profileData = {
             profileId: selectedProfile?.uuid || selectedProfile?.id,
             username: document.getElementById('autoUsername').value.trim(),
@@ -971,9 +1019,11 @@
             phone: document.getElementById('autoPhone').value.trim(),
             bankName: document.getElementById('autoBankName').value.trim(),
             accountNumber: document.getElementById('autoAccountNumber').value.trim(),
+            bankBranch: document.getElementById('autoBankBranch').value.trim(),
             apiKey: apiKey,
             codeSimToken: codeSimToken,
-            simMode: document.getElementById('simMode')?.value || 'api' // 📱 SIM mode: 'api' or 'manual'
+            simMode: document.getElementById('simMode')?.value || 'api', // 📱 SIM mode: 'api' or 'manual'
+            captchaDelay: parseInt(document.getElementById('autoCaptchaDelay')?.value || '0') * 1000 // ⏱️ Convert seconds to milliseconds
         };
 
         // Validate form data
@@ -1046,9 +1096,6 @@
 
         // 🔥 ENABLE button after marking as running (so user can run other profiles)
         if (btnRunAction) enableButton(btnRunAction);
-
-        // Refresh results table immediately to show running status
-        loadResultsFromAPI();
 
         // Send to backend
         try {
@@ -1182,9 +1229,6 @@
         // 🔥 ENABLE button after marking as running (so user can run other profiles)
         if (btnRunAction) enableButton(btnRunAction);
 
-        // Refresh results table immediately to show running status
-        loadResultsFromAPI();
-
         try {
             const response = await fetch('/api/vip-automation/run', {
                 method: 'POST',
@@ -1289,6 +1333,88 @@
         const suffix = uniqueWords.suffixes[Math.floor(Math.random() * uniqueWords.suffixes.length)];
         const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
         return prefix + suffix + number;
+    }
+
+    // Auto-fill form khi user click CHẠY (chỉ random username, password, set withdraw password = 111222)
+    function autoFillVipFormBeforeRun() {
+        console.log('🤖 Auto-filling VIP form before run...');
+
+        // 1. Random username - Bắt đầu bằng chữ, khó trùng
+        const username = generateRandomUsernameHardToCollideVip();
+        document.getElementById('autoUsername').value = username;
+        console.log('✅ Generated username:', username);
+
+        // 2. Random password (8-12 characters)
+        const passwordLength = 8 + Math.floor(Math.random() * 5);
+        const letters = 'abcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        let password = '';
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        const allChars = letters + numbers;
+        for (let i = 4; i < passwordLength; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+        password = password.split('').sort(() => Math.random() - 0.5).join('');
+        document.getElementById('autoPassword').value = password;
+        console.log('✅ Generated password:', password);
+
+        // 3. Set mật khẩu rút = "111222"
+        document.getElementById('autoWithdrawPassword').value = '111222';
+        console.log('✅ Set withdraw password: 111222');
+
+        // 4. Random email
+        const emailLength = 5 + Math.floor(Math.random() * 3);
+        const lowerChars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        let email = '';
+        for (let i = 0; i < emailLength; i++) {
+            email += lowerChars[Math.floor(Math.random() * lowerChars.length)];
+        }
+        email += '@gmail.com';
+        document.getElementById('autoEmail').value = email;
+        console.log('✅ Generated email:', email);
+
+        // 5. Random chi nhánh từ 63 tỉnh thành
+        const provinces = [
+            'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh',
+            'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau',
+            'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp',
+            'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Nội', 'Hà Tĩnh', 'Hải Dương',
+            'Hải Phòng', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang',
+            'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An',
+            'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên',
+            'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng',
+            'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế',
+            'Tiền Giang', 'TP. Hồ Chí Minh', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc',
+            'Yên Bái'
+        ];
+        const randomProvince = provinces[Math.floor(Math.random() * provinces.length)];
+        document.getElementById('autoBankBranch').value = randomProvince;
+        console.log('✅ Generated bank branch:', randomProvince);
+    }
+
+    // Generate random username khó trùng cho VIP (bắt đầu bằng chữ)
+    function generateRandomUsernameHardToCollideVip() {
+        const letters = 'abcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        const allChars = letters + numbers;
+
+        // Bắt đầu bằng chữ
+        let username = letters[Math.floor(Math.random() * letters.length)];
+
+        // Thêm timestamp (milliseconds) để tránh trùng
+        const timestamp = Date.now().toString().slice(-6); // 6 chữ số cuối
+        username += timestamp;
+
+        // Thêm random characters để đủ độ dài (8-12 ký tự)
+        const targetLength = 8 + Math.floor(Math.random() * 5);
+        while (username.length < targetLength) {
+            username += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+
+        return username.slice(0, targetLength); // Đảm bảo không vượt quá độ dài
     }
 
     // Random toàn bộ form

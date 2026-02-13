@@ -1,0 +1,22 @@
+{
+  "username": "gd2pq41",
+  "password": "gg1r65t786jsyq",
+  "withdrawPassword": "1",
+  "fullname": "HOANG QUANG CUONG",
+  "email": "gg3j7ocz@gmail.com",
+  "phone": "0778582301",
+  "registeredAt": "2026-02-11T03:37:38.145Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089528",
+    "accountHolder": "HOANG QUANG CUONG"
+  }
+}

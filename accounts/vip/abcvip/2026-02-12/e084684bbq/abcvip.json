@@ -1,0 +1,23 @@
+{
+  "username": "e084684bbq",
+  "password": "101xe69tdg",
+  "withdrawPassword": "111222",
+  "fullname": "HOANG HOA LUU DEP",
+  "email": "zyg0s@gmail.com",
+  "phone": "0776242484",
+  "registeredAt": "2026-02-12T10:12:10.411Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001099086",
+    "accountHolder": "HOANG HOA LUU DEP"
+  }
+}

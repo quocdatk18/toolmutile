@@ -1,0 +1,25 @@
+{
+  "username": "a380296b5xr",
+  "password": "ywm16xv1opx",
+  "withdrawPassword": "111222",
+  "fullname": "GIANG VAN COT",
+  "email": "241qox2@gmail.com",
+  "phone": "0776257734",
+  "registeredAt": "2026-02-12T19:26:40.989Z",
+  "firstSite": "888clb",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8",
+    "888clb"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102062",
+    "accountHolder": "GIANG VAN COT"
+  }
+}

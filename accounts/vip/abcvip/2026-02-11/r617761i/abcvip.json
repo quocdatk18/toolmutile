@@ -1,0 +1,23 @@
+{
+  "username": "r617761i",
+  "password": "15q0rully4j",
+  "withdrawPassword": "111222",
+  "fullname": "TRUONG TUAN ANH LOC",
+  "email": "gsc55@gmail.com",
+  "phone": "0776625989",
+  "registeredAt": "2026-02-11T11:01:09.944Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001093104",
+    "accountHolder": "TRUONG TUAN ANH LOC"
+  }
+}

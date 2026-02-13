@@ -1,0 +1,25 @@
+{
+  "username": "WolfPower3rv",
+  "password": "ffvo0r3z9t1",
+  "withdrawPassword": "1",
+  "fullname": "TONG THI CUONG VINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "CAN THO",
+    "accountNumber": "963012001071928",
+    "accountHolder": "TONG THI CUONG VINH"
+  },
+  "registeredAt": "2026-02-09T10:54:46.097Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:54:46.097Z",
+  "bankVerified": true
+}

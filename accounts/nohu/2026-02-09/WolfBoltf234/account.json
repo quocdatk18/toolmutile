@@ -1,0 +1,25 @@
+{
+  "username": "WolfBoltf234",
+  "password": "a08aii0ko74q",
+  "withdrawPassword": "1",
+  "fullname": "VO PHONG MINH LOC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HA NOI",
+    "accountNumber": "963012001071788",
+    "accountHolder": "VO PHONG MINH LOC"
+  },
+  "registeredAt": "2026-02-09T10:42:48.000Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:42:48.000Z",
+  "bankVerified": true
+}

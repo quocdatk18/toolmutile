@@ -1,0 +1,23 @@
+{
+  "username": "e561658osrd",
+  "password": "r58z7ou548",
+  "withdrawPassword": "111222",
+  "fullname": "HOANG HOA THAM DEP",
+  "email": "4gf9uim@gmail.com",
+  "phone": "0776275835",
+  "registeredAt": "2026-02-12T09:47:05.763Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001099011",
+    "accountHolder": "HOANG HOA THAM DEP"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "username": "FireFury9f",
+  "password": "f0slaut2jv0",
+  "withdrawPassword": "1",
+  "fullname": "LE HIEU QUANG HUONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HO CHI MINH",
+    "accountNumber": "963012001071803",
+    "accountHolder": "LE HIEU QUANG HUONG"
+  },
+  "registeredAt": "2026-02-09T10:44:07.588Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:44:07.588Z",
+  "bankVerified": true
+}

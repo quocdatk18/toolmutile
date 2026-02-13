@@ -1,0 +1,23 @@
+{
+  "username": "x544bgf2",
+  "password": "k6o302g5",
+  "withdrawPassword": "1",
+  "fullname": "DANG THANH PHONG",
+  "email": "smg70j@gmail.com",
+  "phone": "0778248545",
+  "registeredAt": "2026-02-11T02:44:44.614Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089238",
+    "accountHolder": "DANG THANH PHONG"
+  }
+}

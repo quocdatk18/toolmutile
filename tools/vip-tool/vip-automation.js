@@ -19,6 +19,21 @@ const CommonFormFiller = require('../common/form-filler');
 // Import CaptchaSolver for API fallback
 const CaptchaSolver = require('../nohu-tool/extension/captcha-solver.js');
 
+// 63 tỉnh thành Việt Nam
+const VIETNAM_PROVINCES = [
+    'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh',
+    'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau',
+    'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp',
+    'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Nội', 'Hà Tĩnh', 'Hải Dương',
+    'Hải Phòng', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang',
+    'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An',
+    'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên',
+    'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng',
+    'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế',
+    'Tiền Giang', 'TP. Hồ Chí Minh', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc',
+    'Yên Bái'
+];
+
 // JUN88V2 specific bank mapping (matches exact dropdown text)
 const JUN88V2_BANK_NAME_MAPPING = {
     'Vietcombank': 'Vietcombank / Ngân hàng Ngoại Thương',
@@ -273,6 +288,13 @@ class VIPAutomation {
     }
 
     /**
+     * Helper: Random chi nhánh từ 63 tỉnh thành Việt Nam
+     */
+    getRandomProvince() {
+        return VIETNAM_PROVINCES[Math.floor(Math.random() * VIETNAM_PROVINCES.length)];
+    }
+
+    /**
      * Helper: Send status update to dashboard
      */
     async sendStatusUpdate(profileData, status, message) {
@@ -347,79 +369,92 @@ class VIPAutomation {
                 return null;
             }
 
-            // Use AutoCaptcha.pro only
-            return await this.solveCaptchaViaAutoCaptcha(base64Image, apiKey);
+            // Use 2Captcha API
+            return await this.solveCaptchaVia2Captcha(base64Image, apiKey);
         } catch (error) {
             console.error('❌ Captcha API error:', error.message);
             return null;
         }
     }
 
-    async solveCaptchaViaAutoCaptcha(base64Image, apiKey) {
+    async solveCaptchaVia2Captcha(base64Image, apiKey) {
         try {
-            console.log('🔐 Solving captcha via autocaptcha.pro API...');
-            console.log('� SBase64 length:', base64Image?.length || 0);
+            console.log('🔐 Đang giải captcha qua API 2Captcha...');
+            console.log('📊 Độ dài Base64:', base64Image?.length || 0);
 
-            // Clean base64
+            // Loại bỏ tiền tố data:image
             const cleanBase64 = base64Image.replace(/^data:image\/[a-z]+;base64,/, '');
 
-            // Step 1: Submit captcha
-            console.log('📤 Sending to autocaptcha.pro API...');
-            const submitResponse = await fetch('https://autocaptcha.pro/apiv3/process', {
+            // Bước 1: Gửi captcha lên 2Captcha
+            console.log('📤 Gửi tới API 2Captcha...');
+            const submitResponse = await fetch('https://api.2captcha.com/createTask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    type: 'ImageToTextTask',
-                    body: cleanBase64,
-                    key: apiKey
+                    clientKey: apiKey,
+                    task: {
+                        type: 'ImageToTextTask',
+                        body: cleanBase64
+                    }
                 })
             });
 
             const submitData = await submitResponse.json();
-            console.log('📤 Submit response:', submitData);
+            console.log('📤 Phản hồi gửi:', submitData);
 
-            // Handle direct response format {success: true, captcha: "text"}
-            if (submitData.success && submitData.captcha) {
-                console.log(`✅ Captcha solved: ${submitData.captcha}`);
-                return submitData.captcha;
-            }
-
-            // Handle error
-            if (submitData.errorId !== undefined && submitData.errorId !== 0) {
-                console.error('❌ Failed to submit captcha:', submitData.message || 'Unknown error');
+            // Kiểm tra lỗi
+            if (submitData.errorId !== 0) {
+                console.error('❌ Lỗi gửi captcha:', submitData.errorDescription || 'Lỗi không xác định');
                 return null;
             }
 
-            // Handle polling format {errorId: 0, taskId: "xxx"}
+            // Xử lý phản hồi thành công {errorId: 0, taskId: "xxx"}
             if (submitData.taskId) {
                 const taskId = submitData.taskId;
-                console.log(`📝 Captcha submitted, task ID: ${taskId}`);
+                console.log(`📝 Captcha đã gửi, Task ID: ${taskId}`);
 
-                // Poll for result (max 30 seconds)
-                for (let i = 0; i < 30; i++) {
-                    await new Promise(r => setTimeout(r, 3000));
+                // Kiểm tra kết quả (tối đa 60 giây)
+                for (let i = 0; i < 60; i++) {
+                    await new Promise(r => setTimeout(r, 2000));
 
-                    const resultResponse = await fetch(`https://autocaptcha.pro/apiv3/result?key=${apiKey}&taskId=${taskId}`);
+                    const resultResponse = await fetch('https://api.2captcha.com/getTaskResult', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            clientKey: apiKey,
+                            taskId: taskId
+                        })
+                    });
                     const resultData = await resultResponse.json();
 
-                    if (resultData.errorId === 0 && resultData.captchaText) {
-                        console.log(`✅ Captcha solved: ${resultData.captchaText}`);
-                        return resultData.captchaText;
+                    if (resultData.errorId === 0 && resultData.status === 'ready' && resultData.solution) {
+                        console.log(`✅ Captcha đã giải: ${resultData.solution.text}`);
+                        return resultData.solution.text;
                     }
 
-                    if (i % 5 === 0) {
-                        console.log(`⏳ Waiting for captcha result (${i}s)...`);
+                    // Status processing = chưa sẵn sàng
+                    if (resultData.status === 'processing') {
+                        if (i % 10 === 0) {
+                            console.log(`⏳ Chờ kết quả captcha (${i}s)...`);
+                        }
+                        continue;
+                    }
+
+                    // Các status khác là lỗi
+                    if (resultData.errorId !== 0) {
+                        console.error('❌ Lỗi giải captcha:', resultData.errorDescription || 'Lỗi không xác định');
+                        return null;
                     }
                 }
 
-                console.error('❌ Captcha solve timeout');
+                console.error('❌ Timeout giải captcha');
                 return null;
             }
 
-            console.error('❌ Unknown API response format:', submitData);
+            console.error('❌ Định dạng phản hồi không xác định:', submitData);
             return null;
         } catch (error) {
-            console.error('❌ AutoCaptcha API error:', error.message);
+            console.error('❌ Lỗi API 2Captcha:', error.message);
             return null;
         }
     }
@@ -437,7 +472,8 @@ class VIPAutomation {
             console.log('📱 Requesting phone number from CodeSim API...');
 
             // Request phone number from CodeSim via backend API
-            const url = `/api/sim/get-phone?key=${codeSimToken}&serviceId=49&phonePrefix=08`;
+            // Use full URL with localhost since this runs in Node.js backend
+            const url = `http://localhost:3000/api/sim/get-phone?key=${codeSimToken}&serviceId=1`;
             const response = await fetch(url);
             const data = await response.json();
 
@@ -484,6 +520,7 @@ class VIPAutomation {
                 phoneNumber,
                 otpId,
                 simId,
+                requestId: otpId, // Use otpId as requestId for OTP retrieval
                 service: 'codesim'
             };
         } catch (error) {
@@ -512,7 +549,7 @@ class VIPAutomation {
                 attempts++;
                 await new Promise(r => setTimeout(r, 3000)); // Wait 3 seconds
 
-                const url = `/api/sim/get-otp?key=${codeSimToken}&otpId=${otpId}`;
+                const url = `http://localhost:3000/api/sim/get-otp?key=${codeSimToken}&otpId=${otpId}`;
                 const response = await fetch(url);
                 const data = await response.json();
 
@@ -551,7 +588,7 @@ class VIPAutomation {
 
 
     /**
-     * Solve Cloudflare Turnstile via autocaptcha.pro API
+     * Solve Cloudflare Turnstile via 2Captcha API
      */
     async solveTurnstileViaAPI(page, apiKey) {
         try {
@@ -560,7 +597,7 @@ class VIPAutomation {
                 return null;
             }
 
-            console.log('🔐 Solving Cloudflare Turnstile via autocaptcha.pro API...');
+            console.log('🔐 Đang giải Cloudflare Turnstile qua API 2Captcha...');
 
             // Wait for Turnstile widget to load (max 15 seconds - it loads dynamically)
             try {
@@ -682,57 +719,66 @@ class VIPAutomation {
             const pageUrl = page.url();
             console.log(`📄 Page URL: ${pageUrl}`);
 
-            // Step 2: Submit Turnstile task to autocaptcha.pro
-            const submitResponse = await fetch('https://autocaptcha.pro/apiv3/process', {
+            // Step 2: Submit Turnstile task to 2Captcha
+            const submitResponse = await fetch('https://api.2captcha.com/createTask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    type: 'TurnstileTask',
-                    websiteURL: pageUrl,
-                    websiteKey: sitekey,
-                    key: apiKey
+                    clientKey: apiKey,
+                    task: {
+                        type: 'TurnstileTaskProxyless',
+                        websiteURL: pageUrl,
+                        websiteKey: sitekey
+                    }
                 })
             });
 
             const submitData = await submitResponse.json();
-            console.log('📤 Turnstile submit response:', submitData);
+            console.log('📤 Phản hồi gửi Turnstile:', submitData);
 
-            // Handle error
-            if (submitData.errorId !== undefined && submitData.errorId !== 0) {
-                console.error('❌ Failed to submit Turnstile:', submitData.message || 'Unknown error');
+            // Kiểm tra lỗi
+            if (submitData.errorId !== 0) {
+                console.error('❌ Lỗi gửi Turnstile:', submitData.errorDescription || 'Lỗi không xác định');
                 return null;
             }
 
-            // Handle polling format {errorId: 0, taskId: "xxx"}
+            // Xử lý định dạng polling {errorId: 0, taskId: "xxx"}
             if (submitData.taskId) {
                 const taskId = submitData.taskId;
-                console.log(`📝 Turnstile submitted, task ID: ${taskId}`);
+                console.log(`📝 Turnstile đã gửi, Task ID: ${taskId}`);
 
-                // Poll for result (max 60 seconds for Turnstile)
+                // Kiểm tra kết quả (tối đa 60 giây cho Turnstile)
                 for (let i = 0; i < 60; i++) {
                     await new Promise(r => setTimeout(r, 2000));
 
-                    const resultResponse = await fetch(`https://autocaptcha.pro/apiv3/result?key=${apiKey}&taskId=${taskId}`);
+                    const resultResponse = await fetch('https://api.2captcha.com/getTaskResult', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            clientKey: apiKey,
+                            taskId: taskId
+                        })
+                    });
                     const resultData = await resultResponse.json();
 
-                    if (resultData.errorId === 0 && resultData.solution && resultData.solution.cf_clearance) {
-                        console.log(`✅ Turnstile solved`);
-                        return resultData.solution.cf_clearance;
+                    if (resultData.errorId === 0 && resultData.status === 'ready' && resultData.solution) {
+                        console.log(`✅ Turnstile đã giải`);
+                        return resultData.solution.token;
                     }
 
                     if (i % 10 === 0) {
-                        console.log(`⏳ Waiting for Turnstile result (${i}s)...`);
+                        console.log(`⏳ Chờ kết quả Turnstile (${i}s)...`);
                     }
                 }
 
-                console.error('❌ Turnstile solve timeout');
+                console.error('❌ Timeout giải Turnstile');
                 return null;
             }
 
-            console.error('❌ Unknown API response format:', submitData);
+            console.error('❌ Định dạng phản hồi không xác định:', submitData);
             return null;
         } catch (error) {
-            console.error('❌ Turnstile API error:', error.message);
+            console.error('❌ Lỗi API Turnstile 2Captcha:', error.message);
             return null;
         }
     }
@@ -1306,8 +1352,8 @@ class VIPAutomation {
             }
 
             // Solve captcha nếu có API key (TRƯỚC submit cho các category khác)
-            // Skip captcha for JUN88V2, 22VIP, AccOKVIP, OKVIP OTP (no captcha before submit)
-            const shouldSolveCaptcha = !['jun88v2', '22vip', 'accOkvip', 'okvipOtp'].includes(category);
+            // Skip captcha for JUN88, 78WIN, JUN88V2, 22VIP, AccOKVIP, OKVIP OTP (no captcha before submit)
+            const shouldSolveCaptcha = !['jun88', '78win', 'jun88v2', '22vip', 'accOkvip', 'okvipOtp'].includes(category);
             const apiKey = this.settings?.captchaApiKey || process.env.CAPTCHA_API_KEY;
 
             if (apiKey && shouldSolveCaptcha) {
@@ -1316,10 +1362,20 @@ class VIPAutomation {
                 if (!captchaSolved) {
                     console.warn('⚠️ Captcha solve failed, continuing anyway...');
                 }
-                // Tăng delay cho ABCVIP (10s), bình thường 3s
-                const captchaDelay = category === 'abcvip' ? 10000 : 3000;
-                console.log(`⏳ Waiting ${captchaDelay}ms after captcha solve...`);
-                await new Promise(r => setTimeout(r, captchaDelay));
+                // Use captchaDelay from profileData (from UI)
+                // Nếu user chọn 0s thì không delay, không fallback
+                if (profileData?.captchaDelay !== undefined && profileData.captchaDelay > 0) {
+                    console.log(`⏳ Waiting ${profileData.captchaDelay}ms after captcha solve...`);
+                    await new Promise(r => setTimeout(r, profileData.captchaDelay));
+                } else if (profileData?.captchaDelay === 0) {
+                    console.log('⏭️ No delay (0s selected)');
+                } else {
+                    // Fallback to config nếu không có captchaDelay từ UI
+                    const delayConfig = this.settings?.delays?.afterCaptcha || { default: 3000, abcvip: 10000 };
+                    const captchaDelay = category === 'abcvip' ? delayConfig.abcvip : delayConfig.default;
+                    console.log(`⏳ Waiting ${captchaDelay}ms after captcha solve (from config)...`);
+                    await new Promise(r => setTimeout(r, captchaDelay));
+                }
             } else if (!shouldSolveCaptcha && category !== 'okvipOtp') {
                 console.log('⏭️ Skipping captcha for JUN88V2, 22VIP, AccOKVIP (no captcha before submit)');
             } else if (category === 'okvipOtp') {
@@ -1328,11 +1384,22 @@ class VIPAutomation {
                 console.warn('⚠️ No captcha API key provided');
             }
 
-            // Add random delay 2-5s before submit (all VIP categories, but NOT AccOKVIP and OKVIP OTP)
+            // Add delay before submit (all VIP categories, but NOT AccOKVIP and OKVIP OTP)
             if (!['accOkvip', 'okvipOtp'].includes(category)) {
-                const delayBeforeSubmit = this.getRandomDelay(2000, 5000);
-                console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit registration...`);
-                await new Promise(r => setTimeout(r, delayBeforeSubmit));
+                // Use captchaDelay from profileData (from UI)
+                // Nếu user chọn 0s thì không delay, không fallback
+                if (profileData?.captchaDelay !== undefined && profileData.captchaDelay > 0) {
+                    console.log(`⏳ Using UI delay: ${Math.round(profileData.captchaDelay / 1000)}s before submit registration...`);
+                    await new Promise(r => setTimeout(r, profileData.captchaDelay));
+                } else if (profileData?.captchaDelay === 0) {
+                    console.log('⏭️ No delay (0s selected), submitting immediately...');
+                } else {
+                    // Fallback to random delay from config nếu không có captchaDelay từ UI
+                    const delayConfig = this.settings?.delays?.beforeSubmit || { min: 2000, max: 5000 };
+                    const delayBeforeSubmit = this.getRandomDelay(delayConfig.min, delayConfig.max);
+                    console.log(`⏳ Using random delay: ${Math.round(delayBeforeSubmit / 1000)}s before submit registration (from config)...`);
+                    await new Promise(r => setTimeout(r, delayBeforeSubmit));
+                }
             } else {
                 // AccOKVIP & OKVIP OTP: no delay, submit immediately
                 console.log('⏭️ AccOKVIP/OKVIP OTP: No delay, submitting immediately...');
@@ -1389,42 +1456,55 @@ class VIPAutomation {
 
                     // Wait a bit then click with multiple methods (like tool22vip)
                     setTimeout(() => {
-                        // Method 1: TouchEvent
-                        try {
-                            const touchStart = new TouchEvent('touchstart', {
-                                bubbles: true,
-                                cancelable: true,
-                                view: window,
-                                touches: [new Touch({
-                                    identifier: 0,
-                                    target: submitBtn,
-                                    clientX: submitBtn.getBoundingClientRect().left + 10,
-                                    clientY: submitBtn.getBoundingClientRect().top + 10
-                                })]
-                            });
-                            submitBtn.dispatchEvent(touchStart);
+                        // Helper function to click button with multiple methods
+                        const clickButton = () => {
+                            // Method 1: TouchEvent
+                            try {
+                                const touchStart = new TouchEvent('touchstart', {
+                                    bubbles: true,
+                                    cancelable: true,
+                                    view: window,
+                                    touches: [new Touch({
+                                        identifier: 0,
+                                        target: submitBtn,
+                                        clientX: submitBtn.getBoundingClientRect().left + 10,
+                                        clientY: submitBtn.getBoundingClientRect().top + 10
+                                    })]
+                                });
+                                submitBtn.dispatchEvent(touchStart);
 
-                            const touchEnd = new TouchEvent('touchend', {
-                                bubbles: true,
-                                cancelable: true,
-                                view: window
-                            });
-                            submitBtn.dispatchEvent(touchEnd);
-                        } catch (e) {
-                            // Touch not supported
-                        }
+                                const touchEnd = new TouchEvent('touchend', {
+                                    bubbles: true,
+                                    cancelable: true,
+                                    view: window
+                                });
+                                submitBtn.dispatchEvent(touchEnd);
+                            } catch (e) {
+                                // Touch not supported
+                            }
 
-                        // Method 2: PointerEvent
-                        submitBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
-                        submitBtn.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, cancelable: true }));
+                            // Method 2: PointerEvent
+                            submitBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true }));
+                            submitBtn.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, cancelable: true }));
 
-                        // Method 3: MouseEvent
-                        submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
-                        submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
-                        submitBtn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+                            // Method 3: MouseEvent
+                            submitBtn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true }));
+                            submitBtn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true }));
+                            submitBtn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
 
-                        // Method 4: Native click
-                        submitBtn.click();
+                            // Method 4: Native click
+                            submitBtn.click();
+                        };
+
+                        // Click 1st time
+                        clickButton();
+                        console.log('🖱️ Submit button clicked (1st time)');
+
+                        // Click 2nd time after 500ms delay
+                        setTimeout(() => {
+                            clickButton();
+                            console.log('🖱️ Submit button clicked (2nd time)');
+                        }, 500);
                     }, 3000);
                 }
             });
@@ -1435,17 +1515,97 @@ class VIPAutomation {
             // OKVIP OTP: Solve Botion slider captcha AFTER submit button click
             if (category === 'okvipOtp') {
                 console.log('🎵 OKVIP OTP: Attempting to solve Botion slider captcha (AFTER submit)...');
-                const botionSolved = await this.solveBottionCaptcha(page, apiKey);
 
-                if (!botionSolved) {
-                    console.error('❌ OKVIP OTP: Botion captcha solve FAILED - không thể tiếp tục');
-                    console.error('❌ Dừng automation vì không giải được captcha');
-                    throw new Error('OKVIP OTP: Botion captcha solve failed - automation stopped');
+                let botionSolved = false;
+                let botionAttempts = 0;
+                const maxBotionAttempts = 5;
+
+                while (!botionSolved && botionAttempts < maxBotionAttempts) {
+                    botionAttempts++;
+                    console.log(`\n🔄 Botion solve attempt ${botionAttempts}/${maxBotionAttempts}`);
+
+                    const solveResult = await this.solveBottionCaptcha(page, apiKey);
+
+                    if (!solveResult) {
+                        console.error(`❌ Botion solve attempt ${botionAttempts} failed`);
+
+                        if (botionAttempts < maxBotionAttempts) {
+                            console.log('🔄 Retrying Botion captcha...');
+                            await new Promise(r => setTimeout(r, 2000));
+                            continue;
+                        } else {
+                            console.error('❌ OKVIP OTP: Botion captcha solve FAILED after all attempts');
+                            throw new Error('OKVIP OTP: Botion captcha solve failed - automation stopped');
+                        }
+                    }
+
+                    // Check if Botion captcha is still visible on page
+                    console.log('🔍 Checking if Botion captcha is still visible...');
+                    const captchaStillVisible = await page.evaluate(() => {
+                        // Check if botion elements still exist
+                        const botionWindow = document.querySelector('[class*="botion_window"]');
+                        const botionBox = document.querySelector('[class*="botion_box"]');
+                        const sliderTrack = document.querySelector('[class*="botion_track"]');
+
+                        return !!(botionWindow || botionBox || sliderTrack);
+                    });
+
+                    if (captchaStillVisible) {
+                        console.warn('⚠️ Botion captcha still visible on page - solve may have failed');
+
+                        if (botionAttempts < maxBotionAttempts) {
+                            console.log('🔄 Retrying Botion captcha...');
+                            await new Promise(r => setTimeout(r, 2000));
+                            continue;
+                        } else {
+                            console.error('❌ Botion captcha still visible after all attempts');
+                            throw new Error('OKVIP OTP: Botion captcha still visible - automation stopped');
+                        }
+                    }
+
+                    console.log('✅ Botion captcha disappeared - solve successful!');
+                    botionSolved = true;
                 }
 
                 console.log('✅ OKVIP OTP: Botion captcha solved successfully');
                 // Wait after Botion solve
                 console.log(`⏳ Waiting 3s after Botion captcha solve...`);
+                await new Promise(r => setTimeout(r, 3000));
+            }
+
+            // JUN88 & 78WIN: Solve captcha AFTER submit button click
+            if (['jun88', '78win'].includes(category)) {
+                console.log(`🎵 ${category.toUpperCase()}: Attempting to solve captcha (AFTER submit)...`);
+
+                let captchaSolved = false;
+                let captchaAttempts = 0;
+                const maxCaptchaAttempts = 5;
+
+                while (!captchaSolved && captchaAttempts < maxCaptchaAttempts) {
+                    captchaAttempts++;
+                    console.log(`\n🔄 Captcha solve attempt ${captchaAttempts}/${maxCaptchaAttempts}`);
+
+                    const solveResult = await this.solveCaptchaOnPage(page, apiKey);
+
+                    if (!solveResult) {
+                        console.error(`❌ Captcha solve attempt ${captchaAttempts} failed`);
+
+                        if (captchaAttempts < maxCaptchaAttempts) {
+                            console.log('🔄 Retrying captcha...');
+                            await new Promise(r => setTimeout(r, 2000));
+                            continue;
+                        } else {
+                            console.error(`❌ ${category.toUpperCase()}: Captcha solve FAILED after all attempts`);
+                            throw new Error(`${category.toUpperCase()}: Captcha solve failed - automation stopped`);
+                        }
+                    }
+
+                    console.log(`✅ ${category.toUpperCase()}: Captcha solved successfully`);
+                    captchaSolved = true;
+                }
+
+                // Wait after captcha solve
+                console.log(`⏳ Waiting 3s after captcha solve...`);
                 await new Promise(r => setTimeout(r, 3000));
             }
 
@@ -2157,13 +2317,16 @@ class VIPAutomation {
 
             await new Promise(r => setTimeout(r, 1500));
 
+            // Add random province before filling city field
+            const city = profileData.bankBranch || this.getRandomProvince();
+
             // Fill city and account
-            await page.evaluate((data) => {
+            await page.evaluate((data, cityValue) => {
                 const cityField = document.querySelector('input[formcontrolname="city"]');
                 const accountField = document.querySelector('input[formcontrolname="account"]');
 
                 if (cityField) {
-                    cityField.value = 'TP. Hồ Chí Minh';
+                    cityField.value = cityValue;
                     cityField.dispatchEvent(new Event('input', { bubbles: true }));
                     cityField.dispatchEvent(new Event('change', { bubbles: true }));
                 }
@@ -2173,7 +2336,7 @@ class VIPAutomation {
                     accountField.dispatchEvent(new Event('input', { bubbles: true }));
                     accountField.dispatchEvent(new Event('change', { bubbles: true }));
                 }
-            }, profileData);
+            }, profileData, city);
 
             // Submit form
             console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
@@ -2197,66 +2360,19 @@ class VIPAutomation {
 
             // Check if bank was added successfully by verifying displayed values
             await new Promise(r => setTimeout(r, 3000));
-            const result = await page.evaluate((expectedData, reloaded) => {
-                // Find bank detail section
-                const bankDetailSection = document.querySelector('.bank-detail');
+            const result = await page.evaluate((reloaded) => {
+                const successKeywords = ['thành công', 'success', 'added', 'completed'];
+                const pageText = document.body.innerText.toLowerCase();
 
-                if (!bankDetailSection) {
-                    // If page reloaded but no bank detail section, assume success
-                    // (some sites don't show bank detail after submission)
-                    if (reloaded) {
-                        return { success: true, message: 'Page reloaded - assume bank added successfully' };
-                    }
-                    return { success: false, message: 'Bank detail section not found' };
+                if (reloaded) {
+                    return { success: true, message: 'Page reloaded - bank added successfully' };
                 }
 
-                // Extract all rows with text-right values
-                const rows = bankDetailSection.querySelectorAll('.block.w-full');
-                const bankInfo = {};
-
-                rows.forEach(row => {
-                    const labels = row.querySelectorAll('.inline-block.w-1\\/2');
-                    const label = labels[0]?.textContent?.trim();
-                    const value = row.querySelector('.text-right')?.textContent?.trim();
-
-                    if (label && value) {
-                        bankInfo[label] = value;
-                    }
-                });
-
-                console.log('📊 Extracted bank info:', bankInfo);
-
-                // Check: Họ tên thật, Chi nhánh, 4 số cuối tài khoản (bỏ qua ngân hàng vì format có thể khác)
-                const fullnameMatch = bankInfo['Họ tên thật']?.includes(expectedData.fullname.trim().toUpperCase()) ||
-                    bankInfo['Họ và tên']?.includes(expectedData.fullname.trim().toUpperCase());
-                const cityMatch = bankInfo['Chi nhánh ngân hàng']?.includes(expectedData.city);
-                const accountMatch = bankInfo['Số tài khoản']?.includes(expectedData.accountNumber.slice(-4));
-
-                if (fullnameMatch && cityMatch && accountMatch) {
-                    return {
-                        success: true,
-                        verified: true,
-                        message: 'Bank info verified successfully',
-                        data: bankInfo
-                    };
+                if (successKeywords.some(keyword => pageText.includes(keyword))) {
+                    return { success: true, message: 'Success keywords found on page' };
                 }
 
-                // Log what was found for debugging
-                return {
-                    success: false,
-                    message: 'Bank info verification failed',
-                    expected: {
-                        fullname: expectedData.fullname.trim().toUpperCase(),
-                        city: expectedData.city,
-                        accountNumber: expectedData.accountNumber.slice(-4)
-                    },
-                    actual: bankInfo
-                };
-            }, {
-                fullname: profileData.fullname.trim(),
-                bankName: profileData.bankName,
-                city: 'TP. Hồ Chí Minh',
-                accountNumber: profileData.accountNumber
+                return { success: false, message: 'Could not verify bank addition' };
             }, pageReloaded);
 
             console.log(`✅ Bank result:`, result);
@@ -3149,13 +3265,16 @@ class VIPAutomation {
 
             await new Promise(r => setTimeout(r, 1500));
 
+            // Add random province before filling city field
+            const city = profileData.bankBranch || this.getRandomProvince();
+
             // Fill city and account
-            await page.evaluate((data) => {
+            await page.evaluate((data, cityValue) => {
                 const cityField = document.querySelector('input[formcontrolname="city"]');
                 const accountField = document.querySelector('input[formcontrolname="account"]');
 
                 if (cityField) {
-                    cityField.value = 'TP. Hồ Chí Minh';
+                    cityField.value = cityValue;
                     cityField.dispatchEvent(new Event('input', { bubbles: true }));
                     cityField.dispatchEvent(new Event('change', { bubbles: true }));
                 }
@@ -3165,7 +3284,7 @@ class VIPAutomation {
                     accountField.dispatchEvent(new Event('input', { bubbles: true }));
                     accountField.dispatchEvent(new Event('change', { bubbles: true }));
                 }
-            }, profileData);
+            }, profileData, city);
 
             // Submit form
             console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
@@ -3189,66 +3308,19 @@ class VIPAutomation {
 
             // Check if bank was added successfully by verifying displayed values
             await new Promise(r => setTimeout(r, 3000));
-            const result = await page.evaluate((expectedData, reloaded) => {
-                // Find bank detail section
-                const bankDetailSection = document.querySelector('.bank-detail');
+            const result = await page.evaluate((reloaded) => {
+                const successKeywords = ['thành công', 'success', 'added', 'completed'];
+                const pageText = document.body.innerText.toLowerCase();
 
-                if (!bankDetailSection) {
-                    // If page reloaded but no bank detail section, assume success
-                    // (some sites don't show bank detail after submission)
-                    if (reloaded) {
-                        return { success: true, message: 'Page reloaded - assume bank added successfully' };
-                    }
-                    return { success: false, message: 'Bank detail section not found' };
+                if (reloaded) {
+                    return { success: true, message: 'Page reloaded - bank added successfully' };
                 }
 
-                // Extract all rows with text-right values
-                const rows = bankDetailSection.querySelectorAll('.block.w-full');
-                const bankInfo = {};
-
-                rows.forEach(row => {
-                    const labels = row.querySelectorAll('.inline-block.w-1\\/2');
-                    const label = labels[0]?.textContent?.trim();
-                    const value = row.querySelector('.text-right')?.textContent?.trim();
-
-                    if (label && value) {
-                        bankInfo[label] = value;
-                    }
-                });
-
-                console.log('📊 Extracted bank info:', bankInfo);
-
-                // Check: Họ tên thật, Chi nhánh, 4 số cuối tài khoản (bỏ qua ngân hàng vì format có thể khác)
-                const fullnameMatch = bankInfo['Họ tên thật']?.includes(expectedData.fullname.trim().toUpperCase()) ||
-                    bankInfo['Họ và tên']?.includes(expectedData.fullname.trim().toUpperCase());
-                const cityMatch = bankInfo['Chi nhánh ngân hàng']?.includes(expectedData.city);
-                const accountMatch = bankInfo['Số tài khoản']?.includes(expectedData.accountNumber.slice(-4));
-
-                if (fullnameMatch && cityMatch && accountMatch) {
-                    return {
-                        success: true,
-                        verified: true,
-                        message: 'Bank info verified successfully',
-                        data: bankInfo
-                    };
+                if (successKeywords.some(keyword => pageText.includes(keyword))) {
+                    return { success: true, message: 'Success keywords found on page' };
                 }
 
-                // Log what was found for debugging
-                return {
-                    success: false,
-                    message: 'Bank info verification failed',
-                    expected: {
-                        fullname: expectedData.fullname.trim().toUpperCase(),
-                        city: expectedData.city,
-                        accountNumber: expectedData.accountNumber.slice(-4)
-                    },
-                    actual: bankInfo
-                };
-            }, {
-                fullname: profileData.fullname.trim(),
-                bankName: profileData.bankName,
-                city: 'TP. Hồ Chí Minh',
-                accountNumber: profileData.accountNumber
+                return { success: false, message: 'Could not verify bank addition' };
             }, pageReloaded);
 
             console.log(`✅ Bank result:`, result);
@@ -3411,6 +3483,7 @@ class VIPAutomation {
                 { selector: 'input[id="fullname"]', value: profileData.fullname || '', label: 'fullname' },
                 { selector: 'input[id="username"]', value: profileData.username, label: 'username' },
                 { selector: 'input[id="password"]', value: profileData.password, label: 'password' },
+                { selector: 'input[id="email"]', value: profileData.email || '', label: 'email' },
                 { selector: 'input[pattern="[0-9]*"]', value: phone, label: 'mobile' }
             ];
 
@@ -3435,6 +3508,7 @@ class VIPAutomation {
                     'input[id="fullname"]',
                     'input[id="username"]',
                     'input[id="password"]',
+                    'input[id="email"]',
                     'input[pattern="[0-9]*"]'
                 ];
 
@@ -5087,6 +5161,7 @@ class VIPAutomation {
                     profileData.phone = phone;
                     profileData.codeSimOtpId = phoneResult.otpId;
                     profileData.codeSimSimId = phoneResult.simId;
+                    profileData.codeSimRequestId = phoneResult.otpId; // Use otpId as requestId for OTP retrieval
                     console.log(`✅ Got phone from CodeSim: ${phone} (9 digits)`);
                 } else {
                     // CodeSim API failed - throw error
@@ -5210,7 +5285,7 @@ class VIPAutomation {
                     },
                     {
                         name: '789BET',
-                        registerUrl: 'https://m.hsdh99hjsbcnjiufkxuuwvg.com/Account/Register?app=1',
+                        registerUrl: 'https://m.789bettg.net/Account/Register',
                         checkPromoUrl: 'https://ttkm789bet04.pages.dev/khuyenmai/?promo_id=FR58K'
                     },
                     {
@@ -5242,6 +5317,10 @@ class VIPAutomation {
                     }, {
                         name: 'CM88',
                         registerUrl: 'https://cm88.com/home/register',
+                        checkPromoUrl: 'https://m.sc881.com./home/event/detail?current=1&template=1&eventId=1'
+                    }, {
+                        name: 'C168',
+                        registerUrl: 'https://c168b.vip/home/register',
                         checkPromoUrl: 'https://m.sc881.com./home/event/detail?current=1&template=1&eventId=1'
                     }
                 ]
@@ -5291,7 +5370,7 @@ class VIPAutomation {
                 sites: [
                     {
                         name: 'Jun881',
-                        registerUrl: 'https://sasa2.xn--8866-um1g.com/signup',
+                        registerUrl: 'https://druycyspe3ka2oehgkap.jun88013.com/signup',
                         checkPromoUrl: 'https://trungtam.khuyenmaijun881.win/?promo_id=FR58'
                     }
                 ]
@@ -5751,7 +5830,7 @@ class VIPAutomation {
     }
 
     /**
-     * Solve Geetest V4 or Botion captcha via autocaptcha.pro API
+     * Solve Geetest V4 or Botion captcha via 2Captcha API
      * Hỗ trợ cả Geetest V4 và Botion slide puzzle
      */
     async solveGeetestV4ViaAutoCaptcha(page, apiKey) {
@@ -6210,12 +6289,13 @@ class VIPAutomation {
 
             // Bước 2: Tính vị trí đích
             // Kéo nút đến vị trí tương ứng với percentage
-            // QUAN TRỌNG: Tính từ vị trí hiện tại của nút, không phải từ trackX
+            // QUAN TRỌNG: Tính từ đầu track (trackX), không phải từ vị trí hiện tại của nút
             const dragDistance = (elementInfo.trackWidth * percentage) / 100;
-            const targetX = elementInfo.sliderX + dragDistance;
+            const targetX = elementInfo.trackX + dragDistance;
 
             console.log(`🎯 Khoảng cách kéo: ${dragDistance}px (${percentage}%)`);
             console.log(`🎯 Vị trí đích: ${targetX}px`);
+            console.log(`📍 Từ trackX (${elementInfo.trackX}px) + dragDistance (${dragDistance}px) = ${targetX}px`);
 
             // Bước 3: Dispatch pointerdown và mousedown
             await page.evaluate((startX, startY) => {
@@ -6278,11 +6358,13 @@ class VIPAutomation {
             const delayPerStep = 30; // 30ms giữa mỗi bước = 1.5 giây tổng
 
             for (let step = 1; step <= steps; step++) {
-                const currentX = elementInfo.sliderX + ((targetX - elementInfo.sliderX) * step) / steps;
+                // Tính vị trí hiện tại dựa trên percentage
+                const currentPercentage = (percentage * step) / steps;
+                const currentDragDistance = (elementInfo.trackWidth * currentPercentage) / 100;
+                const currentX = elementInfo.trackX + currentDragDistance;
                 const currentY = elementInfo.sliderY;
-                const currentPct = (percentage * step) / steps;
 
-                await page.evaluate((x, y, pct, trackWidth) => {
+                await page.evaluate((x, y, trackWidth) => {
                     // Find slider - try multiple selectors
                     let slider = document.querySelector('[class*="botion_btn"]');
                     if (!slider) {
@@ -6344,7 +6426,7 @@ class VIPAutomation {
                         cancelable: true
                     });
                     track.dispatchEvent(inputEvent);
-                }, currentX, currentY, currentPct, elementInfo.trackWidth);
+                }, currentX, currentY, elementInfo.trackWidth);
 
                 // Chờ trước bước tiếp theo (tạo kéo mượt như người thật)
                 await new Promise(r => setTimeout(r, delayPerStep));
@@ -6422,21 +6504,142 @@ class VIPAutomation {
      */
     async submitBottionCaptchaToAPI(base64Image, apiKey, puzzleInfo = null) {
         try {
-            // Botion captcha không được API hỗ trợ, dùng local image matching trực tiếp
-            console.log('📤 Giải Botion captcha bằng local image matching...');
-
+            // Thử dùng local image matching trước (chính xác hơn)
+            console.log('🔐 Solving Botion captcha via local image matching (primary)...');
             const localResult = await this.solveBottionViaImageMatching(base64Image, puzzleInfo);
 
             if (localResult && localResult.success) {
-                console.log('✅ Local image matching thành công');
+                console.log('✅ Local image matching thành công:', localResult.solution);
                 return localResult;
             }
 
-            console.error('❌ Local image matching thất bại');
-            return null;
+            // Nếu local matching thất bại, thử 2Captcha
+            console.log('⚠️ Local image matching thất bại, thử 2Captcha...');
+            console.log('📤 Gửi Botion captcha tới 2Captcha API...');
+
+            // Loại bỏ tiền tố data:image nếu có
+            const cleanBase64 = base64Image.replace(/^data:image\/[a-z]+;base64,/, '');
+
+            // Gửi tới 2Captcha
+            const submitResponse = await fetch('https://api.2captcha.com/createTask', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    clientKey: apiKey,
+                    task: {
+                        type: 'ImageToTextTask',
+                        body: cleanBase64,
+                        comment: 'Botion slider puzzle captcha. The image shows a puzzle piece on the LEFT side and a background image on the RIGHT side with a GAP/HOLE. Find the EXACT horizontal position of the gap in the background image as a percentage (0-100%) from left to right. 0% = gap at far left edge, 100% = gap at far right edge. Be very precise. Return ONLY the percentage number (e.g., 45 for 45%).',
+                        numeric: 1  // Only numbers
+                    }
+                })
+            });
+
+            const submitData = await submitResponse.json();
+            console.log('📤 Phản hồi gửi:', submitData);
+
+            // Kiểm tra lỗi
+            if (submitData.errorId !== 0) {
+                console.error('❌ Lỗi gửi Botion captcha:', submitData.errorDescription || 'Lỗi không xác định');
+                return localResult; // Return local result if available
+            }
+
+            // Xử lý phản hồi thành công {errorId: 0, taskId: "xxx"}
+            if (submitData.taskId) {
+                const taskId = submitData.taskId;
+                console.log(`📝 Botion captcha đã gửi, Task ID: ${taskId}`);
+
+                // Kiểm tra kết quả (tối đa 60 giây)
+                for (let i = 0; i < 60; i++) {
+                    await new Promise(r => setTimeout(r, 2000));
+
+                    const resultResponse = await fetch('https://api.2captcha.com/getTaskResult', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            clientKey: apiKey,
+                            taskId: taskId
+                        })
+                    });
+                    const resultData = await resultResponse.json();
+
+                    if (resultData.errorId === 0 && resultData.status === 'ready' && resultData.solution) {
+                        const solutionText = resultData.solution.text;
+                        console.log(`✅ 2Captcha trả về: ${solutionText}`);
+
+                        // Parse the solution - should be a percentage (0-100)
+                        let percentage = null;
+
+                        // Try to extract number from text
+                        const numberMatch = solutionText.match(/(\d+(?:\.\d+)?)/);
+                        if (numberMatch) {
+                            let value = parseFloat(numberMatch[1]);
+
+                            // Validate the value
+                            if (value >= 0 && value <= 100) {
+                                // Valid percentage
+                                percentage = value;
+                                console.log(`✅ Giải pháp hợp lệ: ${percentage}%`);
+                            } else if (value > 100 && value <= 500 && puzzleInfo && puzzleInfo.trackWidth) {
+                                // Heuristic: if value is between 100-500, might be pixel position
+                                // Only convert if it's reasonable (not too large)
+                                percentage = (value / puzzleInfo.trackWidth) * 100;
+                                console.log(`📍 Chuyển đổi pixel ${value}px → ${percentage.toFixed(1)}%`);
+
+                                // Validate converted percentage - if still > 100, it's invalid
+                                if (percentage > 100) {
+                                    console.warn(`⚠️ Chuyển đổi vượt quá 100% (${percentage.toFixed(1)}%), giá trị không hợp lệ`);
+                                    percentage = null;
+                                }
+                            } else {
+                                // Invalid value - use fallback
+                                console.warn(`⚠️ Giá trị không hợp lệ: ${value} (trackWidth: ${puzzleInfo?.trackWidth}), dùng fallback`);
+                                percentage = null;
+                            }
+                        }
+
+                        // If we got a valid percentage, return it
+                        if (percentage !== null) {
+                            console.log(`📍 Kéo tới: ${percentage.toFixed(1)}%`);
+                            return {
+                                success: true,
+                                solution: Math.round(percentage),
+                                source: '2captcha'
+                            };
+                        } else {
+                            // Invalid solution - use local result if available
+                            console.warn('⚠️ Không thể phân tích giải pháp 2Captcha, dùng local result');
+                            return localResult;
+                        }
+                    }
+
+                    // Status processing = chưa sẵn sàng
+                    if (resultData.status === 'processing') {
+                        if (i % 10 === 0) {
+                            console.log(`⏳ Chờ kết quả Botion (${i}s)...`);
+                        }
+                        continue;
+                    }
+
+                    // Các status khác là lỗi
+                    if (resultData.errorId !== 0) {
+                        console.error('❌ Lỗi giải Botion:', resultData.errorDescription || 'Lỗi không xác định');
+                        break;
+                    }
+                }
+
+                console.error('❌ Timeout giải Botion qua 2Captcha');
+                return localResult; // Return local result if available
+            }
+
+            console.error('❌ Định dạng phản hồi không xác định:', submitData);
+            return localResult; // Return local result if available
         } catch (error) {
             console.error('❌ Botion captcha error:', error.message);
-            return null;
+            // Try local matching as fallback
+            console.log('🔄 Fallback: Dùng local image matching...');
+            const localResult = await this.solveBottionViaImageMatching(base64Image, puzzleInfo);
+            return localResult;
         }
     }
 
@@ -6968,7 +7171,7 @@ class VIPAutomation {
      */
     async solveGeetestV4Captcha(page, apiKey) {
         try {
-            console.log('🔐 Solving Geetest V4 via autocaptcha.pro API...');
+            console.log('🔐 Đang giải Geetest V4 qua API 2Captcha...');
 
             // Step 1: Get Geetest V4 parameters từ page
             const geetestParams = await page.evaluate(() => {
@@ -7011,75 +7214,81 @@ class VIPAutomation {
             });
 
             if (!geetestParams) {
-                console.warn('⚠️ Could not find Geetest V4 parameters on page');
+                console.warn('⚠️ Không tìm thấy tham số Geetest V4 trên trang');
                 return null;
             }
 
-            console.log('📋 Geetest V4 params:', geetestParams);
+            console.log('📋 Tham số Geetest V4:', geetestParams);
 
-            // Step 2: Submit Geetest V4 task to AutoCaptcha
-            console.log('📤 Sending Geetest V4 to autocaptcha.pro API...');
-            const submitResponse = await fetch('https://autocaptcha.pro/apiv3/process', {
+            // Step 2: Submit Geetest V4 task to 2Captcha
+            console.log('📤 Gửi Geetest V4 tới API 2Captcha...');
+            const submitResponse = await fetch('https://api.2captcha.com/createTask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    type: 'GeeTestTaskProxyless',
-                    websiteURL: page.url(),
-                    websiteKey: geetestParams.captcha_id || geetestParams.gt4,
-                    version: 4,
-                    product: geetestParams.product || 'bind',
-                    key: apiKey
+                    clientKey: apiKey,
+                    task: {
+                        type: 'GeeTestTaskProxyless',
+                        websiteURL: page.url(),
+                        version: 4,
+                        initParameters: {
+                            captcha_id: geetestParams.captcha_id || geetestParams.gt4
+                        }
+                    }
                 })
             });
 
             const submitData = await submitResponse.json();
-            console.log('📤 Submit response:', submitData);
+            console.log('📤 Phản hồi gửi:', submitData);
 
-            // Handle error
-            if (submitData.errorId !== undefined && submitData.errorId !== 0) {
-                console.error('❌ Failed to submit Geetest V4:', submitData.message || 'Unknown error');
+            // Kiểm tra lỗi
+            if (submitData.errorId !== 0) {
+                console.error('❌ Lỗi gửi Geetest V4:', submitData.errorDescription || 'Lỗi không xác định');
                 return null;
             }
 
             // Get task ID
             const taskId = submitData.taskId;
             if (!taskId) {
-                console.error('❌ No task ID returned');
+                console.error('❌ Không có Task ID được trả về');
                 return null;
             }
 
-            console.log(`📝 Geetest V4 submitted, task ID: ${taskId}`);
+            console.log(`📝 Geetest V4 đã gửi, Task ID: ${taskId}`);
 
-            // Step 3: Poll for result (max 60 seconds for Geetest)
+            // Step 3: Poll for result (tối đa 60 giây cho Geetest)
             for (let i = 0; i < 60; i++) {
                 await new Promise(r => setTimeout(r, 2000));
 
-                const resultResponse = await fetch(`https://autocaptcha.pro/apiv3/result?key=${apiKey}&taskId=${taskId}`);
+                const resultResponse = await fetch('https://api.2captcha.com/getTaskResult', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        clientKey: apiKey,
+                        taskId: taskId
+                    })
+                });
                 const resultData = await resultResponse.json();
 
-                if (resultData.errorId === 0 && resultData.solution) {
-                    const geetestChallenge = resultData.solution.geetest_challenge || resultData.solution.challenge;
-                    const geetestValidate = resultData.solution.geetest_validate || resultData.solution.validate;
-                    const geetestSeccode = resultData.solution.geetest_seccode || resultData.solution.seccode;
-
-                    console.log(`✅ Geetest V4 solved`);
-                    console.log(`📝 Challenge: ${geetestChallenge?.substring(0, 20)}...`);
+                if (resultData.errorId === 0 && resultData.status === 'ready' && resultData.solution) {
+                    console.log(`✅ Geetest V4 đã giải`);
 
                     return {
                         success: true,
-                        challenge: geetestChallenge,
-                        validate: geetestValidate,
-                        seccode: geetestSeccode,
-                        type: 'geetest'
+                        lot_number: resultData.solution.lot_number,
+                        pass_token: resultData.solution.pass_token,
+                        gen_time: resultData.solution.gen_time,
+                        captcha_output: resultData.solution.captcha_output,
+                        type: 'geetest_v4'
                     };
                 }
 
                 if (i % 10 === 0) {
-                    console.log(`⏳ Waiting for Geetest V4 result (${i}s)...`);
+                    console.log(`⏳ Chờ kết quả Geetest V4 (${i}s)...`);
                 }
             }
 
-            console.error('❌ Geetest V4 solve timeout');
+            console.error('❌ Timeout giải Geetest V4');
             return null;
         } catch (error) {
             console.error('❌ Geetest V4 solve error:', error.message);

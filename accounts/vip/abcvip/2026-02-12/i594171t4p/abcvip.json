@@ -1,0 +1,24 @@
+{
+  "username": "i594171t4p",
+  "password": "i2e344moew",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN VAN CUA",
+  "email": "c8z4s@gmail.com",
+  "phone": "0776301036",
+  "registeredAt": "2026-02-12T11:43:59.533Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88",
+    "ABC8"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098835",
+    "accountHolder": "TRAN VAN CUA"
+  }
+}

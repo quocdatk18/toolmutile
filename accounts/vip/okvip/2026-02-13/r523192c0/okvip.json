@@ -1,0 +1,22 @@
+{
+  "username": "r523192c0",
+  "password": "5x9h5j6am",
+  "withdrawPassword": "111222",
+  "fullname": "CAU TAC CHUNG",
+  "email": "84ha4i@gmail.com",
+  "phone": "0779262094",
+  "registeredAt": "2026-02-12T18:56:35.547Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102634",
+    "accountHolder": "CAU TAC CHUNG"
+  }
+}

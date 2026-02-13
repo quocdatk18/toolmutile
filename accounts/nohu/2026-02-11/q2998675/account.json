@@ -1,0 +1,31 @@
+{
+  "username": "q2998675",
+  "password": "481os4g0tn0x",
+  "withdrawPassword": "1",
+  "fullname": "PHAM NGU LAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "TAY NINH",
+    "accountNumber": "963012001090672",
+    "accountHolder": "PHAM NGU LAO"
+  },
+  "registeredAt": "2026-02-11T05:55:53.433Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-11T05:55:53.433Z",
+  "bankVerified": true
+}

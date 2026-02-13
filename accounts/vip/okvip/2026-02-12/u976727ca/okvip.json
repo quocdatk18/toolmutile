@@ -1,0 +1,24 @@
+{
+  "username": "u976727ca",
+  "password": "vz97q8ebic",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN VAN LUU LY",
+  "email": "gm0u4@gmail.com",
+  "phone": "0776260329",
+  "registeredAt": "2026-02-12T08:47:21.539Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "789BET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098730",
+    "accountHolder": "NGUYEN VAN LUU LY"
+  }
+}

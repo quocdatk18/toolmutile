@@ -1,0 +1,25 @@
+{
+  "username": "StarFury888ff",
+  "password": "gcsdmcu71ff",
+  "withdrawPassword": "1",
+  "fullname": "DUONG VAN VAN MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VUNG TAU",
+    "accountNumber": "963012001078881",
+    "accountHolder": "DUONG VAN VAN MINH"
+  },
+  "registeredAt": "2026-02-10T08:00:33.746Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T08:00:33.746Z",
+  "bankVerified": false
+}

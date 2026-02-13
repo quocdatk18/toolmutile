@@ -1,0 +1,25 @@
+{
+  "username": "MoonStrike7vs",
+  "password": "ff78u8pb5tqa1j",
+  "withdrawPassword": "1",
+  "fullname": "TRAN TIEN CUONG HIEU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DA NANG",
+    "accountNumber": "963012001078860",
+    "accountHolder": "TRAN TIEN CUONG HIEU"
+  },
+  "registeredAt": "2026-02-10T07:57:19.987Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-10T07:57:19.987Z",
+  "bankVerified": false
+}

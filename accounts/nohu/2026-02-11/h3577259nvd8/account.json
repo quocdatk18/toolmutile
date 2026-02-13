@@ -1,0 +1,25 @@
+{
+  "username": "h3577259nvd8",
+  "password": "brmysvy4r57t",
+  "withdrawPassword": "1",
+  "fullname": "TRUONG TUAN ANH LOC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HAU GIANG",
+    "accountNumber": "963012001093104",
+    "accountHolder": "TRUONG TUAN ANH LOC"
+  },
+  "registeredAt": "2026-02-11T11:46:50.999Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-11T11:46:50.999Z",
+  "bankVerified": true
+}

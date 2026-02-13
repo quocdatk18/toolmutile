@@ -1,0 +1,22 @@
+{
+  "username": "k710383ptebz",
+  "password": "3hg6xpuif",
+  "withdrawPassword": "111222",
+  "fullname": "PHAM LOC PHU HO",
+  "email": "p73wc@gmail.com",
+  "phone": "0778582301",
+  "registeredAt": "2026-02-11T16:02:54.311Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001094788",
+    "accountHolder": "PHAM LOC PHU HO"
+  }
+}

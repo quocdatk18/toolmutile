@@ -1,0 +1,25 @@
+{
+  "username": "WolfStrike11f",
+  "password": "f0l2526tmpi",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN HUONG TIEN HUONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "CAN THO",
+    "accountNumber": "963012001071872",
+    "accountHolder": "NGUYEN HUONG TIEN HUONG"
+  },
+  "registeredAt": "2026-02-09T10:50:27.267Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:50:27.267Z",
+  "bankVerified": true
+}

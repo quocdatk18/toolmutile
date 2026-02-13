@@ -1,0 +1,22 @@
+{
+  "username": "tp3ywfs",
+  "password": "fi2m6p1liwch",
+  "withdrawPassword": "1",
+  "fullname": "LE DUC VINH",
+  "email": "egfrjl@gmail.com",
+  "phone": "0776155717",
+  "registeredAt": "2026-02-11T03:11:07.734Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089415",
+    "accountHolder": "LE DUC VINH"
+  }
+}

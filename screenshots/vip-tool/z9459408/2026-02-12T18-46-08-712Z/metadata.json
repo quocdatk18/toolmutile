@@ -1,0 +1,12 @@
+{
+  "profileName": "admin3 (2)",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "okvip",
+  "sites": [
+    "SHBET"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2026-02-12T18:46:08.712Z"
+}

@@ -1,0 +1,23 @@
+{
+  "username": "a005414rq",
+  "password": "k8bxm61ibw4",
+  "withdrawPassword": "111222",
+  "fullname": "GIANG VAN COT",
+  "email": "0i372kq@gmail.com",
+  "phone": "0776354727",
+  "registeredAt": "2026-02-12T17:25:34.890Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102062",
+    "accountHolder": "GIANG VAN COT"
+  }
+}

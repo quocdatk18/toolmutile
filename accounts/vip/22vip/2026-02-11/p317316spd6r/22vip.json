@@ -1,0 +1,28 @@
+{
+  "username": "p317316spd6r",
+  "password": "7gmt4seq",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN ANH BINH AN",
+  "email": "1vcuvtg@gmail.com",
+  "phone": "0914184144",
+  "registeredAt": "2026-02-11T12:18:50.360Z",
+  "firstSite": "TV88",
+  "sites": [
+    "TV88",
+    "28Bet",
+    "888Now",
+    "888New",
+    "Win678",
+    "888Vi",
+    "888P"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001081974",
+    "accountHolder": "NGUYEN ANH BINH AN"
+  }
+}

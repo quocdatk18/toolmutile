@@ -1,0 +1,23 @@
+{
+  "username": "mmsr7re2",
+  "password": "g9ikewq6h",
+  "withdrawPassword": "1",
+  "fullname": "LE HOANG QUAN TU",
+  "email": "i9k8ifmi@gmail.com",
+  "phone": "0777983031",
+  "registeredAt": "2026-02-11T03:54:10.767Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001089640",
+    "accountHolder": "LE HOANG QUAN TU"
+  }
+}

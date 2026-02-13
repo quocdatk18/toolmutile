@@ -1,0 +1,23 @@
+{
+  "username": "m166521gly6t",
+  "password": "35kgvpn3n2",
+  "withdrawPassword": "111222",
+  "fullname": "PHAM HONG THANH",
+  "email": "klytd@gmail.com",
+  "phone": "0776206414",
+  "registeredAt": "2026-02-12T13:33:27.611Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001100600",
+    "accountHolder": "PHAM HONG THANH"
+  }
+}

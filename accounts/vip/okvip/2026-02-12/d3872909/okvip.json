@@ -1,0 +1,23 @@
+{
+  "username": "d3872909",
+  "password": "d51mzl9ga8o",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN VAN CUA",
+  "email": "71v3oz@gmail.com",
+  "phone": "0776298849",
+  "registeredAt": "2026-02-12T09:10:53.239Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001098835",
+    "accountHolder": "TRAN VAN CUA"
+  }
+}

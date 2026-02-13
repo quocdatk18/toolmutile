@@ -1,0 +1,25 @@
+{
+  "username": "p7074277a7o3",
+  "password": "uhkju72i",
+  "withdrawPassword": "1",
+  "fullname": "TRUONG HUNG HOANG KHANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DAK NONG",
+    "accountNumber": "963012001090569",
+    "accountHolder": "TRUONG HUNG HOANG KHANH"
+  },
+  "registeredAt": "2026-02-11T05:45:59.529Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-11T05:45:59.529Z",
+  "bankVerified": true
+}

@@ -1,0 +1,25 @@
+{
+  "username": "MoonFlash9f",
+  "password": "f0kk85e8aotxi",
+  "withdrawPassword": "1",
+  "fullname": "NHAN DUNG TRANG PHUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HA NOI",
+    "accountNumber": "963012001071896",
+    "accountHolder": "NHAN DUNG TRANG PHUC"
+  },
+  "registeredAt": "2026-02-09T10:51:56.542Z",
+  "firstSite": "Pkwin-SMS",
+  "sites": [
+    {
+      "name": "Pkwin-SMS"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-09T10:51:56.542Z",
+  "bankVerified": true
+}

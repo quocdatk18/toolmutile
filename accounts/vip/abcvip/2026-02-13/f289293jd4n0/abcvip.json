@@ -1,0 +1,23 @@
+{
+  "username": "f289293jd4n0",
+  "password": "n4izo7chuvr",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN TUAN ANH LUXURY",
+  "email": "dk2jx6j@gmail.com",
+  "phone": "0779300349",
+  "registeredAt": "2026-02-12T19:42:10.765Z",
+  "firstSite": "J88",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Thành phố Hồ Chí Minh",
+    "accountNumber": "963012001102326",
+    "accountHolder": "NGUYEN TUAN ANH LUXURY"
+  }
+}
