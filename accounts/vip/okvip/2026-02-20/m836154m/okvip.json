@@ -1,0 +1,24 @@
+{
+  "username": "m836154m",
+  "password": "6kurt9vy17",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "9di4kk@gmail.com",
+  "phone": "0993942354",
+  "registeredAt": "2026-02-20T06:28:07.483Z",
+  "firstSite": "MB66",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Kon Tum",
+    "accountNumber": "040534054",
+    "accountHolder": "NGUYEN QUOC DAT"
+  }
+}

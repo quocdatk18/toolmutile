@@ -1,0 +1,40 @@
+{
+  "username": "HolyViper2",
+  "password": "awii5q4yf4",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "BAC NINH",
+    "accountNumber": "040534054",
+    "accountHolder": "NGUYEN QUOC DAT"
+  },
+  "registeredAt": "2026-02-20T06:12:04.128Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-20T06:12:04.128Z",
+  "bankVerified": true
+}

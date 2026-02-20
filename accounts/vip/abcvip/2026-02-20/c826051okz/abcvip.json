@@ -1,0 +1,23 @@
+{
+  "username": "c826051okz",
+  "password": "af0n6kt9o1q4",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "nrcgmj@gmail.com",
+  "phone": "0993942354",
+  "registeredAt": "2026-02-20T06:28:23.257Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Bạc Liêu",
+    "accountNumber": "040534054",
+    "accountHolder": "NGUYEN QUOC DAT"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "username": "WaterOmega3",
+  "password": "xrkn8a8txy",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN PHI LE BA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "LAI CHAU",
+    "accountNumber": "963012001156605",
+    "accountHolder": "NGUYEN PHI LE BA"
+  },
+  "registeredAt": "2026-02-20T05:03:46.616Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-20T05:03:46.616Z",
+  "bankVerified": true
+}

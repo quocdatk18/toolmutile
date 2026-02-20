@@ -895,69 +895,121 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 // RANDOM USERNAME GENERATOR
 // ============================================
 
-// Danh sách từ độc đáo để tạo username
+// Danh sách từ độc đáo có ý nghĩa để tạo username
 const uniqueWords = {
   prefixes: [
-    'Sky', 'Moon', 'Star', 'Sun', 'Fire', 'Ice', 'Wind', 'Storm',
-    'Dark', 'Light', 'Shadow', 'Ghost', 'Dragon', 'Phoenix', 'Tiger',
-    'Wolf', 'Eagle', 'Hawk', 'Lion', 'Bear', 'Fox', 'Raven',
-    'Cyber', 'Neon', 'Pixel', 'Quantum', 'Cosmic', 'Mystic', 'Epic',
-    'Ultra', 'Mega', 'Super', 'Hyper', 'Alpha', 'Beta', 'Omega',
-    'Ninja', 'Samurai', 'Knight', 'Warrior', 'Hunter', 'Ranger',
-    'Ace', 'King', 'Queen', 'Prince', 'Duke', 'Lord', 'Master',
-    'Void', 'Nova', 'Aura', 'Zen', 'Flux', 'Apex', 'Vortex',
-    'Blaze', 'Frost', 'Thunder', 'Lightning', 'Crystal', 'Diamond',
-    'Steel', 'Iron', 'Gold', 'Silver', 'Platinum', 'Titanium'
+    // Thiên nhiên & Vũ trụ
+    'Sky', 'Moon', 'Star', 'Sun', 'Ocean', 'River', 'Mountain', 'Forest',
+    'Cloud', 'Rain', 'Snow', 'Wind', 'Storm', 'Thunder', 'Lightning', 'Aurora',
+    'Comet', 'Galaxy', 'Nebula', 'Cosmos', 'Stellar', 'Lunar', 'Solar', 'Nova',
+    
+    // Nguyên tố & Sức mạnh
+    'Fire', 'Ice', 'Water', 'Earth', 'Metal', 'Wood', 'Light', 'Dark',
+    'Shadow', 'Flame', 'Frost', 'Crystal', 'Diamond', 'Ruby', 'Jade', 'Pearl',
+    'Gold', 'Silver', 'Platinum', 'Titanium', 'Steel', 'Iron', 'Bronze', 'Copper',
+    
+    // Động vật huyền thoại & Mạnh mẽ
+    'Dragon', 'Phoenix', 'Tiger', 'Wolf', 'Eagle', 'Hawk', 'Lion', 'Bear',
+    'Fox', 'Raven', 'Falcon', 'Panther', 'Leopard', 'Jaguar', 'Cobra', 'Viper',
+    'Shark', 'Whale', 'Dolphin', 'Pegasus', 'Griffin', 'Unicorn', 'Hydra', 'Kraken',
+    
+    // Phong cách hiện đại
+    'Cyber', 'Neon', 'Pixel', 'Quantum', 'Cosmic', 'Mystic', 'Epic', 'Legendary',
+    'Ultra', 'Mega', 'Super', 'Hyper', 'Alpha', 'Beta', 'Omega', 'Prime',
+    'Turbo', 'Nitro', 'Blitz', 'Sonic', 'Atomic', 'Nuclear', 'Plasma', 'Laser',
+    
+    // Chiến binh & Anh hùng
+    'Ninja', 'Samurai', 'Knight', 'Warrior', 'Hunter', 'Ranger', 'Assassin', 'Gladiator',
+    'Ace', 'King', 'Queen', 'Prince', 'Duke', 'Lord', 'Master', 'Champion',
+    'Hero', 'Legend', 'Titan', 'Immortal', 'Divine', 'Sacred', 'Holy', 'Eternal',
+    
+    // Đặc biệt & Độc đáo
+    'Void', 'Aura', 'Zen', 'Flux', 'Apex', 'Vortex', 'Nexus', 'Zenith',
+    'Blaze', 'Inferno', 'Tempest', 'Cyclone', 'Typhoon', 'Hurricane', 'Tornado', 'Avalanche',
+    'Phantom', 'Specter', 'Wraith', 'Spirit', 'Ghost', 'Demon', 'Angel', 'Seraph'
   ],
   suffixes: [
-    'Blade', 'Strike', 'Storm', 'Fire', 'Frost', 'Bolt', 'Flash',
-    'Fury', 'Rage', 'Soul', 'Spirit', 'Heart', 'Mind', 'Force',
-    'Power', 'Might', 'Glory', 'Honor', 'Pride', 'Valor', 'Brave',
-    'Swift', 'Quick', 'Sharp', 'Keen', 'Wise', 'True', 'Pure',
-    'Wild', 'Free', 'Bold', 'Fierce', 'Strong', 'Tough', 'Hard',
-    'Slayer', 'Hunter', 'Seeker', 'Walker', 'Rider', 'Runner',
-    'Maker', 'Breaker', 'Keeper', 'Watcher', 'Guardian', 'Defender',
-    'Master', 'Lord', 'King', 'Emperor', 'Legend', 'Hero', 'Champion',
-    'Warrior', 'Fighter', 'Soldier', 'Knight', 'Paladin', 'Crusader'
+    // Hành động & Sức mạnh
+    'Blade', 'Strike', 'Storm', 'Fire', 'Frost', 'Bolt', 'Flash', 'Blaze',
+    'Fury', 'Rage', 'Wrath', 'Vengeance', 'Justice', 'Chaos', 'Havoc', 'Mayhem',
+    'Soul', 'Spirit', 'Heart', 'Mind', 'Force', 'Energy', 'Aura', 'Essence',
+    'Power', 'Might', 'Strength', 'Glory', 'Honor', 'Pride', 'Valor', 'Courage',
+    
+    // Tính cách & Đặc điểm
+    'Brave', 'Swift', 'Quick', 'Sharp', 'Keen', 'Wise', 'True', 'Pure',
+    'Wild', 'Free', 'Bold', 'Fierce', 'Strong', 'Tough', 'Hard', 'Solid',
+    'Silent', 'Stealth', 'Shadow', 'Ghost', 'Phantom', 'Mystic', 'Magic', 'Divine',
+    
+    // Vai trò & Chức năng
+    'Slayer', 'Hunter', 'Seeker', 'Walker', 'Rider', 'Runner', 'Flyer', 'Diver',
+    'Maker', 'Breaker', 'Keeper', 'Watcher', 'Guardian', 'Defender', 'Protector', 'Savior',
+    'Master', 'Lord', 'King', 'Emperor', 'Legend', 'Hero', 'Champion', 'Victor',
+    'Warrior', 'Fighter', 'Soldier', 'Knight', 'Paladin', 'Crusader', 'Gladiator', 'Samurai',
+    
+    // Đặc biệt
+    'Born', 'Forged', 'Blessed', 'Cursed', 'Chosen', 'Destined', 'Fated', 'Marked',
+    'Rising', 'Falling', 'Soaring', 'Flying', 'Dancing', 'Singing', 'Roaring', 'Howling',
+    'Eternal', 'Immortal', 'Ancient', 'Primal', 'Cosmic', 'Stellar', 'Lunar', 'Solar'
   ],
-  numbers: ['', '1', '2', '3', '7', '9', '88', '99', '777', '888', '999', 'X', 'Z']
+  numbers: ['', '1', '2', '3', '7', '9', '13', '21', '69', '77', '88', '99', '108', '777', '888', '999', 'X', 'Z', 'Pro', 'Max']
 };
 
-// Hàm tạo username ngẫu nhiên
+// Hàm tạo username ngẫu nhiên với nhiều style độc đáo
 function generateRandomUsername() {
   const style = Math.random();
 
-  if (style < 0.4) {
-    // Style 1: Prefix + Suffix (40%)
+  if (style < 0.35) {
+    // Style 1: Prefix + Suffix + Number (35%) - Ví dụ: DragonBlade777, PhoenixStorm99
     const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
     const suffix = uniqueWords.suffixes[Math.floor(Math.random() * uniqueWords.suffixes.length)];
     const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
     return prefix + suffix + number;
-  } else if (style < 0.7) {
-    // Style 2: Prefix + Number (30%)
+  } else if (style < 0.60) {
+    // Style 2: Prefix + Number (25%) - Ví dụ: Dragon777, Phoenix99
     const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
-    const number = Math.floor(Math.random() * 9999) + 100;
+    const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+    // Nếu number rỗng, thêm số ngẫu nhiên
+    if (!number) {
+      return prefix + (Math.floor(Math.random() * 999) + 100);
+    }
     return prefix + number;
+  } else if (style < 0.80) {
+    // Style 3: Prefix + Prefix + Number (20%) - Ví dụ: FireDragon88, IcePhoenix777
+    const prefix1 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+    const prefix2 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+    // Đảm bảo 2 prefix khác nhau
+    if (prefix1 === prefix2) {
+      const prefix3 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+      const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+      return prefix1 + prefix3 + number;
+    }
+    const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+    return prefix1 + prefix2 + number;
   } else {
-    // Style 3: Random letters + numbers (30%)
+    // Style 4: Consonant-Vowel pattern (20%) - Ví dụ: Xaviro123, Keluna77
     const consonants = 'bcdfghjklmnpqrstvwxz';
     const vowels = 'aeiou';
     let username = '';
 
-    // Tạo 3-4 cặp consonant-vowel
+    // Tạo 3-4 cặp consonant-vowel để tạo tên dễ đọc
     const pairs = 3 + Math.floor(Math.random() * 2);
     for (let i = 0; i < pairs; i++) {
       username += consonants[Math.floor(Math.random() * consonants.length)];
       username += vowels[Math.floor(Math.random() * vowels.length)];
     }
 
-    // Thêm số ngẫu nhiên
-    if (Math.random() > 0.5) {
-      username += Math.floor(Math.random() * 999) + 1;
-    }
-
     // Capitalize chữ cái đầu
     username = username.charAt(0).toUpperCase() + username.slice(1);
+
+    // Thêm số ngẫu nhiên (70% chance)
+    if (Math.random() > 0.3) {
+      const randomNum = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+      if (randomNum) {
+        username += randomNum;
+      } else {
+        username += Math.floor(Math.random() * 999) + 1;
+      }
+    }
 
     return username;
   }

@@ -1,0 +1,13 @@
+{
+  "profileName": "admin4",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "abcvip",
+  "sites": [
+    "ABC8",
+    "888clb"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2026-02-20T06:37:36.564Z"
+}

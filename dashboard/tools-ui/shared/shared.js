@@ -244,12 +244,33 @@ function formatDateTime(timestamp) {
 }
 
 function generateRandomUsername(length = 8) {
-    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    // Danh sách từ độc đáo có ý nghĩa
+    const prefixes = [
+        'Sky', 'Moon', 'Star', 'Sun', 'Fire', 'Ice', 'Dragon', 'Phoenix', 'Tiger', 'Wolf',
+        'Eagle', 'Lion', 'Fox', 'Cyber', 'Neon', 'Alpha', 'Omega', 'Ninja', 'Knight', 'Hero'
+    ];
+    const suffixes = [
+        'Blade', 'Strike', 'Storm', 'Bolt', 'Flash', 'Fury', 'Soul', 'Power', 'Force', 'Legend'
+    ];
+    const numbers = ['', '7', '9', '77', '88', '99', '777', '888', 'X', 'Pro'];
+    
+    const style = Math.random();
+    
+    if (style < 0.5) {
+        // Style 1: Prefix + Suffix + Number
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+        const number = numbers[Math.floor(Math.random() * numbers.length)];
+        return prefix + suffix + number;
+    } else {
+        // Style 2: Prefix + Number
+        const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const number = numbers[Math.floor(Math.random() * numbers.length)];
+        if (!number) {
+            return prefix + (Math.floor(Math.random() * 999) + 100);
+        }
+        return prefix + number;
     }
-    return result;
 }
 
 function generateRandomPassword(length = 10) {

@@ -1,0 +1,14 @@
+{
+  "profileName": "admin4",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "okvip",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2026-02-20T06:28:53.254Z"
+}

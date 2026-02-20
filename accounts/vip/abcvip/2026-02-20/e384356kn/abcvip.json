@@ -1,0 +1,23 @@
+{
+  "username": "e384356kn",
+  "password": "ob73s3k03",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "m804m@gmail.com",
+  "phone": "0993942354",
+  "registeredAt": "2026-02-20T06:37:23.640Z",
+  "firstSite": "888clb",
+  "sites": [
+    "ABC8",
+    "888clb"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Hòa Bình",
+    "accountNumber": "040534054",
+    "accountHolder": "NGUYEN QUOC DAT"
+  }
+}
