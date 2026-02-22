@@ -1,0 +1,25 @@
+{
+  "username": "Duke1",
+  "password": "mlrj5wjr7lx6",
+  "withdrawPassword": "1",
+  "fullname": "TRAN HAC PHONG BAO LAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DA LAT",
+    "accountNumber": "963012001168266",
+    "accountHolder": "TRAN HAC PHONG BAO LAM"
+  },
+  "registeredAt": "2026-02-21T17:01:58.763Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:01:58.763Z",
+  "bankVerified": false
+}

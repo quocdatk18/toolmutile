@@ -1,0 +1,25 @@
+{
+  "username": "CyberOmega99",
+  "password": "4q6ho5g57",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN MINH DUC ANH KHOA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "QUANG NINH",
+    "accountNumber": "9686687660001100075",
+    "accountHolder": "NGUYEN MINH DUC ANH KHOA"
+  },
+  "registeredAt": "2026-02-21T14:08:56.160Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T14:08:56.160Z",
+  "bankVerified": false
+}

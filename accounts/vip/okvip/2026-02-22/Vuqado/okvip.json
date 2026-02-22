@@ -1,0 +1,23 @@
+{
+  "username": "Vuqado",
+  "password": "y1ga3qv5",
+  "withdrawPassword": "111222",
+  "fullname": "QUE THI NGOC HOI",
+  "email": "cvv166u@gmail.com",
+  "phone": "0837287817",
+  "registeredAt": "2026-02-22T06:46:52.587Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Đồng Nai",
+    "accountNumber": "963012001170453",
+    "accountHolder": "QUE THI NGOC HOI"
+  }
+}

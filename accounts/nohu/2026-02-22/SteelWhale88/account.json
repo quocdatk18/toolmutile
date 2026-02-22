@@ -1,0 +1,25 @@
+{
+  "username": "SteelWhale88",
+  "password": "f2h5k3tmy6t",
+  "withdrawPassword": "1",
+  "fullname": "PHAM DUC THIEN HUYET ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DIEN BIEN",
+    "accountNumber": "963012001168269",
+    "accountHolder": "PHAM DUC THIEN HUYET ANH"
+  },
+  "registeredAt": "2026-02-21T17:02:37.568Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:02:37.568Z",
+  "bankVerified": false
+}

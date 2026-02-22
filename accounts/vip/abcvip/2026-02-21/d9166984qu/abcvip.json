@@ -1,0 +1,22 @@
+{
+  "username": "d9166984qu",
+  "password": "2t25uju1jkj",
+  "withdrawPassword": "111222",
+  "fullname": "AP DUONG TAU",
+  "email": "m8zmr45@gmail.com",
+  "phone": "0812444562",
+  "registeredAt": "2026-02-21T14:59:49.163Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "VietCapitalBank",
+    "branch": "Vĩnh Phúc",
+    "accountNumber": "99900031741807",
+    "accountHolder": "AP DUONG TAU"
+  }
+}

@@ -107,13 +107,6 @@
         "notes": "Generated from Customer Manager. 30 days. Tools: nohu-tool",
         "createdAt": "2026-01-10T10:54:56.229Z",
         "isActive": true
-      },
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6Inh1YW5EYW5nIiwibWFjaGluZUlkIjoiMGY0NzY0NDVjZGEzYWZmYyIsImV4cGlyeSI6MTc2NzQ4NzExNjY3OCwiY3JlYXRlZCI6MTc2Njg4MjMxNjY3OCwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCIsInZpcC10b29sIl19.553df83b6a8c4ffcc2f979d6ed91027f30232fde5749de6d46f2d6300fa4de44",
-        "expiryDays": 7,
-        "notes": "Generated from Customer Manager. 7 days. Tools: nohu-tool, vip-tool",
-        "createdAt": "2025-12-28T00:38:36.678Z",
-        "isActive": false
       }
     ],
     "machineIdLocked": true,
@@ -128,13 +121,6 @@
     "updatedAt": "2025-12-20T17:19:50.073Z",
     "updateCount": 1,
     "licenseHistory": [
-      {
-        "licenseKey": "eyJ1c2VybmFtZSI6ImRhdEJlb1hrIiwibWFjaGluZUlkIjoiYjViZDBkZWZmOWU3NzA3OSIsImV4cGlyeSI6MTc3MTQzNTE5OTU4MywiY3JlYXRlZCI6MTc2NjI1MTE5OTU4MywiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCIsInZpcC10b29sIl19.09a668608e1c92a9e62aa8fbd0acf0c90f84ef910bf179efd0919778beba42b7",
-        "expiryDays": 60,
-        "notes": "Generated from Customer Manager. 60 days. Tools: nohu-tool, vip-tool",
-        "createdAt": "2025-12-20T17:19:59.583Z",
-        "isActive": false
-      },
       {
         "licenseKey": "eyJ1c2VybmFtZSI6ImRhdEJlb1hrIiwibWFjaGluZUlkIjoiYjViZDBkZWZmOWU3NzA3OSIsImV4cGlyeSI6MTc2OTQxNDI5ODg5NSwiY3JlYXRlZCI6MTc2NjgyMjI5ODg5NSwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCIsInZpcC10b29sIl19.4102573fdc4a1fce80e9d4d4821316a6fba330d7421216f2def18affbc993ae3",
         "expiryDays": 30,
@@ -328,23 +314,32 @@
   },
   "SatamaHim": {
     "customerName": "SatamaHim",
-    "machineId": "6cdb552b85bd1343",
-    "notes": "Updated from package management. Package exists.",
+    "machineId": "50b6f289839c6f84",
+    "notes": "Machine ID updated and locked by admin.",
     "displayName": "",
     "createdAt": "2026-01-31T09:24:42.452Z",
-    "updatedAt": "2026-01-31T09:26:45.251Z",
-    "updateCount": 1,
+    "updatedAt": "2026-02-21T14:43:37.114Z",
+    "updateCount": 2,
     "licenseHistory": [
       {
         "licenseKey": "eyJ1IjoiU2F0YW1hSGltIiwibSI6IjZjZGI1NTJiODViZDEzNDMiLCJlIjoxNzcyNDQzNjIwLCJ0IjpbIm5vaHUtdG9vbCJdfQ.50b6f289839c6f84",
         "expiryDays": 30,
         "notes": "Generated from Customer Manager. 30 days. Tools: nohu-tool",
         "createdAt": "2026-01-31T09:27:00.858Z",
+        "isActive": false
+      },
+      {
+        "licenseKey": "eyJ1IjoiU2F0YW1hSGltIiwibSI6IjUwYjZmMjg5ODM5YzZmODQiLCJlIjotMSwidCI6WyJub2h1LXRvb2wiXX0.43753c740f8314c4",
+        "expiryDays": -1,
+        "notes": "Generated from Customer Manager. Lifetime. Tools: nohu-tool",
+        "createdAt": "2026-02-21T14:44:41.856Z",
         "isActive": true
       }
     ],
     "machineIdLocked": true,
-    "machineIdSetAt": "2026-01-31T09:26:45.251Z"
+    "machineIdSetAt": "2026-02-21T14:43:37.114Z",
+    "machineIdUnlockedAt": "2026-02-21T14:43:34.667Z",
+    "unlockReason": "Admin unlock for editing"
   },
   "bemotele": {
     "customerName": "bemotele",

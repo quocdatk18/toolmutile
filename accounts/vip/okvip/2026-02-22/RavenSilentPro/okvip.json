@@ -1,0 +1,22 @@
+{
+  "username": "RavenSilentPro",
+  "password": "6zzhg1lc",
+  "withdrawPassword": "111222",
+  "fullname": "HO QUAN TRONG NHAT",
+  "email": "ifzgw@gmail.com",
+  "phone": "0842210454",
+  "registeredAt": "2026-02-22T07:30:44.868Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Phú Yên",
+    "accountNumber": "9686687660001103195",
+    "accountHolder": "HO QUAN TRONG NHAT"
+  }
+}

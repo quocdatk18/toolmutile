@@ -1,0 +1,25 @@
+{
+  "username": "Eternal9",
+  "password": "1fc777yt8",
+  "withdrawPassword": "1",
+  "fullname": "HO QUAN TRONG NHAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CAO BANG",
+    "accountNumber": "9686687660001103195",
+    "accountHolder": "HO QUAN TRONG NHAT"
+  },
+  "registeredAt": "2026-02-22T07:42:36.593Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T07:42:36.593Z",
+  "bankVerified": true
+}

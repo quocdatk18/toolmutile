@@ -1,0 +1,40 @@
+{
+  "username": "PegasusCursed13",
+  "password": "5ryfcgt02yw",
+  "withdrawPassword": "1",
+  "fullname": "TRAN TO UYEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THANH HOA",
+    "accountNumber": "9686687660001103128",
+    "accountHolder": "TRAN TO UYEN"
+  },
+  "registeredAt": "2026-02-22T07:07:29.303Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T07:07:29.303Z",
+  "bankVerified": false
+}

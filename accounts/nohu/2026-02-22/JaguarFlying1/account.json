@@ -1,0 +1,25 @@
+{
+  "username": "JaguarFlying1",
+  "password": "dzx2h77rlpvi",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN THI BE BA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DAK LAK",
+    "accountNumber": "9686687660001103271",
+    "accountHolder": "NGUYEN THI BE BA"
+  },
+  "registeredAt": "2026-02-22T10:32:12.290Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T10:32:12.290Z",
+  "bankVerified": false
+}

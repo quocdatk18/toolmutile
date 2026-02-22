@@ -1,0 +1,23 @@
+{
+  "username": "Ludoto2",
+  "password": "6e855zo2o",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN THI BE BA",
+  "email": "3prq08@gmail.com",
+  "phone": "0836520154",
+  "registeredAt": "2026-02-22T07:59:14.839Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thái Nguyên",
+    "accountNumber": "9686687660001103271",
+    "accountHolder": "NGUYEN THI BE BA"
+  }
+}

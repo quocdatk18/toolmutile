@@ -1,0 +1,25 @@
+{
+  "username": "MetalDemon1",
+  "password": "cy9c3dptcn5",
+  "withdrawPassword": "1",
+  "fullname": "HOANG KY PHONG AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "KON TUM",
+    "accountNumber": "9686687660001103401",
+    "accountHolder": "HOANG KY PHONG AN"
+  },
+  "registeredAt": "2026-02-22T11:36:02.460Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T11:36:02.460Z",
+  "bankVerified": false
+}

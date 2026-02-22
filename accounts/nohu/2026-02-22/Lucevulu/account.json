@@ -1,0 +1,25 @@
+{
+  "username": "Lucevulu",
+  "password": "vqc81o8kvtf",
+  "withdrawPassword": "1",
+  "fullname": "LE ANH TUAN PHAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TRA VINH",
+    "accountNumber": "9686687660001103242",
+    "accountHolder": "LE ANH TUAN PHAT"
+  },
+  "registeredAt": "2026-02-22T10:29:57.350Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T10:29:57.350Z",
+  "bankVerified": true
+}

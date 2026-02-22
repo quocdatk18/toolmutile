@@ -1,0 +1,23 @@
+{
+  "username": "Guxiko",
+  "password": "79d4fxj37717",
+  "withdrawPassword": "111222",
+  "fullname": "VI HOANG KIET THANG",
+  "email": "c6fdu@gmail.com",
+  "phone": "0825188413",
+  "registeredAt": "2026-02-22T07:57:28.533Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Thừa Thiên Huế",
+    "accountNumber": "9686687660001103261",
+    "accountHolder": "VI HOANG KIET THANG"
+  }
+}

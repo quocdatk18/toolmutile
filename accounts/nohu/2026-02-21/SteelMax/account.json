@@ -1,0 +1,40 @@
+{
+  "username": "SteelMax",
+  "password": "dbi0re3e37",
+  "withdrawPassword": "1",
+  "fullname": "AP SU HAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "VietCapitalBank",
+    "branch": "LONG AN",
+    "accountNumber": "99900031742634",
+    "accountHolder": "AP SU HAO"
+  },
+  "registeredAt": "2026-02-21T13:25:08.612Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T13:25:08.612Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "Sihawi",
+  "password": "aaxc5st980l",
+  "withdrawPassword": "1",
+  "fullname": "LE KY LUAN MINH TRI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "LANG SON",
+    "accountNumber": "963012001168268",
+    "accountHolder": "LE KY LUAN MINH TRI"
+  },
+  "registeredAt": "2026-02-21T17:02:14.943Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:02:14.943Z",
+  "bankVerified": false
+}

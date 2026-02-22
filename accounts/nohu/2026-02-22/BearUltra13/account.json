@@ -1,0 +1,25 @@
+{
+  "username": "BearUltra13",
+  "password": "gq9s18920",
+  "withdrawPassword": "1",
+  "fullname": "VI HOANG KIET THANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DONG THAP",
+    "accountNumber": "9686687660001103261",
+    "accountHolder": "VI HOANG KIET THANG"
+  },
+  "registeredAt": "2026-02-22T10:34:19.779Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T10:34:19.779Z",
+  "bankVerified": false
+}

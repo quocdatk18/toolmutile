@@ -1,0 +1,23 @@
+{
+  "username": "GladiatorHavoc3",
+  "password": "50222byzy0",
+  "withdrawPassword": "111222",
+  "fullname": "PHAM GIA BAO LONG",
+  "email": "3w0vi@gmail.com",
+  "phone": "0813901840",
+  "registeredAt": "2026-02-22T09:02:41.546Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Đắk Lắk",
+    "accountNumber": "9686687660001103400",
+    "accountHolder": "PHAM GIA BAO LONG"
+  }
+}

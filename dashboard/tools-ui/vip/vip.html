@@ -1321,20 +1321,6 @@
         }
     }
 
-    // Random username generator
-    const uniqueWords = {
-        prefixes: ['Sky', 'Moon', 'Star', 'Fire', 'Dragon', 'Phoenix', 'Tiger', 'Wolf', 'Eagle', 'Lion'],
-        suffixes: ['Blade', 'Strike', 'Storm', 'Fire', 'Bolt', 'Flash', 'Fury', 'Soul', 'Power'],
-        numbers: ['', '1', '7', '9', '88', '99', '777', '888']
-    };
-
-    function generateRandomUsername() {
-        const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
-        const suffix = uniqueWords.suffixes[Math.floor(Math.random() * uniqueWords.suffixes.length)];
-        const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
-        return prefix + suffix + number;
-    }
-
     // Auto-fill form khi user click CHẠY (chỉ random username, password, set withdraw password = 111222)
     function autoFillVipFormBeforeRun() {
         console.log('🤖 Auto-filling VIP form before run...');
@@ -1395,26 +1381,118 @@
         console.log('✅ Generated bank branch:', randomProvince);
     }
 
-    // Generate random username khó trùng cho VIP (bắt đầu bằng chữ)
+    // Generate random username khó trùng cho VIP - Sử dụng logic từ Nohu tool
     function generateRandomUsernameHardToCollideVip() {
-        const letters = 'abcdefghijklmnopqrstuvwxyz';
-        const numbers = '0123456789';
-        const allChars = letters + numbers;
+        const uniqueWords = {
+            prefixes: [
+                // Thiên nhiên & Vũ trụ
+                'Sky', 'Moon', 'Star', 'Sun', 'Ocean', 'River', 'Mountain', 'Forest',
+                'Cloud', 'Rain', 'Snow', 'Wind', 'Storm', 'Thunder', 'Lightning', 'Aurora',
+                'Comet', 'Galaxy', 'Nebula', 'Cosmos', 'Stellar', 'Lunar', 'Solar', 'Nova',
 
-        // Bắt đầu bằng chữ
-        let username = letters[Math.floor(Math.random() * letters.length)];
+                // Nguyên tố & Sức mạnh
+                'Fire', 'Ice', 'Water', 'Earth', 'Metal', 'Wood', 'Light', 'Dark',
+                'Shadow', 'Flame', 'Frost', 'Crystal', 'Diamond', 'Ruby', 'Jade', 'Pearl',
+                'Gold', 'Silver', 'Platinum', 'Titanium', 'Steel', 'Iron', 'Bronze', 'Copper',
 
-        // Thêm timestamp (milliseconds) để tránh trùng
-        const timestamp = Date.now().toString().slice(-6); // 6 chữ số cuối
-        username += timestamp;
+                // Động vật huyền thoại & Mạnh mẽ
+                'Dragon', 'Phoenix', 'Tiger', 'Wolf', 'Eagle', 'Hawk', 'Lion', 'Bear',
+                'Fox', 'Raven', 'Falcon', 'Panther', 'Leopard', 'Jaguar', 'Cobra', 'Viper',
+                'Shark', 'Whale', 'Dolphin', 'Pegasus', 'Griffin', 'Unicorn', 'Hydra', 'Kraken',
 
-        // Thêm random characters để đủ độ dài (8-12 ký tự)
-        const targetLength = 8 + Math.floor(Math.random() * 5);
-        while (username.length < targetLength) {
-            username += allChars[Math.floor(Math.random() * allChars.length)];
+                // Phong cách hiện đại
+                'Cyber', 'Neon', 'Pixel', 'Quantum', 'Cosmic', 'Mystic', 'Epic', 'Legendary',
+                'Ultra', 'Mega', 'Super', 'Hyper', 'Alpha', 'Beta', 'Omega', 'Prime',
+                'Turbo', 'Nitro', 'Blitz', 'Sonic', 'Atomic', 'Nuclear', 'Plasma', 'Laser',
+
+                // Chiến binh & Anh hùng
+                'Ninja', 'Samurai', 'Knight', 'Warrior', 'Hunter', 'Ranger', 'Assassin', 'Gladiator',
+                'Ace', 'King', 'Queen', 'Prince', 'Duke', 'Lord', 'Master', 'Champion',
+                'Hero', 'Legend', 'Titan', 'Immortal', 'Divine', 'Sacred', 'Holy', 'Eternal',
+
+                // Đặc biệt & Độc đáo
+                'Void', 'Aura', 'Zen', 'Flux', 'Apex', 'Vortex', 'Nexus', 'Zenith',
+                'Blaze', 'Inferno', 'Tempest', 'Cyclone', 'Typhoon', 'Hurricane', 'Tornado', 'Avalanche',
+                'Phantom', 'Specter', 'Wraith', 'Spirit', 'Ghost', 'Demon', 'Angel', 'Seraph'
+            ],
+            suffixes: [
+                // Hành động & Sức mạnh
+                'Blade', 'Strike', 'Storm', 'Fire', 'Frost', 'Bolt', 'Flash', 'Blaze',
+                'Fury', 'Rage', 'Wrath', 'Vengeance', 'Justice', 'Chaos', 'Havoc', 'Mayhem',
+                'Soul', 'Spirit', 'Heart', 'Mind', 'Force', 'Energy', 'Aura', 'Essence',
+                'Power', 'Might', 'Strength', 'Glory', 'Honor', 'Pride', 'Valor', 'Courage',
+
+                // Tính cách & Đặc điểm
+                'Brave', 'Swift', 'Quick', 'Sharp', 'Keen', 'Wise', 'True', 'Pure',
+                'Wild', 'Free', 'Bold', 'Fierce', 'Strong', 'Tough', 'Hard', 'Solid',
+                'Silent', 'Stealth', 'Shadow', 'Ghost', 'Phantom', 'Mystic', 'Magic', 'Divine',
+
+                // Vai trò & Chức năng
+                'Slayer', 'Hunter', 'Seeker', 'Walker', 'Rider', 'Runner', 'Flyer', 'Diver',
+                'Maker', 'Breaker', 'Keeper', 'Watcher', 'Guardian', 'Defender', 'Protector', 'Savior',
+                'Master', 'Lord', 'King', 'Emperor', 'Legend', 'Hero', 'Champion', 'Victor',
+                'Warrior', 'Fighter', 'Soldier', 'Knight', 'Paladin', 'Crusader', 'Gladiator', 'Samurai',
+
+                // Đặc biệt
+                'Born', 'Forged', 'Blessed', 'Cursed', 'Chosen', 'Destined', 'Fated', 'Marked',
+                'Rising', 'Falling', 'Soaring', 'Flying', 'Dancing', 'Singing', 'Roaring', 'Howling',
+                'Eternal', 'Immortal', 'Ancient', 'Primal', 'Cosmic', 'Stellar', 'Lunar', 'Solar'
+            ],
+            numbers: ['', '1', '2', '3', '7', '9', '13', '21', '69', '77', '88', '99', '108', '777', '888', '999', 'X', 'Z', 'Pro', 'Max']
+        };
+
+        const style = Math.random();
+
+        if (style < 0.35) {
+            // Style 1: Prefix + Suffix + Number (35%)
+            const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const suffix = uniqueWords.suffixes[Math.floor(Math.random() * uniqueWords.suffixes.length)];
+            const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+            return prefix + suffix + number;
+        } else if (style < 0.60) {
+            // Style 2: Prefix + Number (25%)
+            const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+            if (!number) {
+                return prefix + (Math.floor(Math.random() * 999) + 100);
+            }
+            return prefix + number;
+        } else if (style < 0.80) {
+            // Style 3: Prefix + Prefix + Number (20%)
+            const prefix1 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const prefix2 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            if (prefix1 === prefix2) {
+                const prefix3 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+                const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+                return prefix1 + prefix3 + number;
+            }
+            const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+            return prefix1 + prefix2 + number;
+        } else {
+            // Style 4: Consonant-Vowel pattern (20%)
+            const consonants = 'bcdfghjklmnpqrstvwxz';
+            const vowels = 'aeiou';
+            let username = '';
+
+            const pairs = 3 + Math.floor(Math.random() * 2);
+            for (let i = 0; i < pairs; i++) {
+                username += consonants[Math.floor(Math.random() * consonants.length)];
+                username += vowels[Math.floor(Math.random() * vowels.length)];
+            }
+
+            username = username.charAt(0).toUpperCase() + username.slice(1);
+
+            if (Math.random() > 0.3) {
+                const randomNum = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+                if (randomNum) {
+                    username += randomNum;
+                } else {
+                    username += Math.floor(Math.random() * 999) + 1;
+                }
+            }
+
+            return username;
         }
-
-        return username.slice(0, targetLength); // Đảm bảo không vượt quá độ dài
     }
 
     // Random toàn bộ form

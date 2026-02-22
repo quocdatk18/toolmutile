@@ -1,0 +1,22 @@
+{
+  "username": "LaserAngel2",
+  "password": "yn49mi8ff97",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN TAN PHAT TAI",
+  "email": "7bpw8@gmail.com",
+  "phone": "0856161782",
+  "registeredAt": "2026-02-22T07:26:44.293Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Hà Nam",
+    "accountNumber": "9686687660001103176",
+    "accountHolder": "NGUYEN TAN PHAT TAI"
+  }
+}

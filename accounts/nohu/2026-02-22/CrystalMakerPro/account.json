@@ -1,0 +1,25 @@
+{
+  "username": "CrystalMakerPro",
+  "password": "s25wfq69",
+  "withdrawPassword": "1",
+  "fullname": "VU THIEN AN KHA MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DONG NAI",
+    "accountNumber": "963012001168272",
+    "accountHolder": "VU THIEN AN KHA MINH"
+  },
+  "registeredAt": "2026-02-21T17:07:19.739Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:07:19.739Z",
+  "bankVerified": false
+}

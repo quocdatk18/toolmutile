@@ -1,0 +1,25 @@
+{
+  "username": "Sodazelu",
+  "password": "1ms9jzz3z9w1",
+  "withdrawPassword": "1",
+  "fullname": "LE ANH PHI LE",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THAI NGUYEN",
+    "accountNumber": "9686687660001103199",
+    "accountHolder": "LE ANH PHI LE"
+  },
+  "registeredAt": "2026-02-22T07:43:01.152Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T07:43:01.152Z",
+  "bankVerified": false
+}

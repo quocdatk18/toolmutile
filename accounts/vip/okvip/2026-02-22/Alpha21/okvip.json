@@ -1,0 +1,23 @@
+{
+  "username": "Alpha21",
+  "password": "ss26r039n",
+  "withdrawPassword": "111222",
+  "fullname": "VU BAO KHANG MINH",
+  "email": "pzeas@gmail.com",
+  "phone": "0842459196",
+  "registeredAt": "2026-02-22T09:41:40.418Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Lạng Sơn",
+    "accountNumber": "9686687660001103404",
+    "accountHolder": "VU BAO KHANG MINH"
+  }
+}

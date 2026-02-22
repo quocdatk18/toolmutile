@@ -1,0 +1,40 @@
+{
+  "username": "TivebiPro",
+  "password": "06vvk9ku",
+  "withdrawPassword": "1",
+  "fullname": "AP LA VI EM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "VietCapitalBank",
+    "branch": "DONG THAP",
+    "accountNumber": "99900031742704",
+    "accountHolder": "AP LA VI EM"
+  },
+  "registeredAt": "2026-02-21T13:34:49.650Z",
+  "firstSite": "MMOO",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T13:34:49.650Z",
+  "bankVerified": false
+}

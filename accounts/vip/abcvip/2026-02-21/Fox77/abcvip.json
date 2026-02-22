@@ -1,0 +1,23 @@
+{
+  "username": "Fox77",
+  "password": "8f9kblbto56r",
+  "withdrawPassword": "111222",
+  "fullname": "AP HOA QUE",
+  "email": "g48q6q@gmail.com",
+  "phone": "0836667956",
+  "registeredAt": "2026-02-21T15:41:51.078Z",
+  "firstSite": "U888",
+  "sites": [
+    "U888",
+    "J88"
+  ],
+  "status": "active",
+  "category": "abcvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "VietCapitalBank",
+    "branch": "Cà Mau",
+    "accountNumber": "99900031740696",
+    "accountHolder": "AP HOA QUE"
+  }
+}

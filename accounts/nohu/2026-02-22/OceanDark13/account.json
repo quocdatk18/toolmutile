@@ -1,0 +1,25 @@
+{
+  "username": "OceanDark13",
+  "password": "527duyhq",
+  "withdrawPassword": "1",
+  "fullname": "DANG MINH CHIEN BAO KIET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "QUANG TRI",
+    "accountNumber": "963012001168274",
+    "accountHolder": "DANG MINH CHIEN BAO KIET"
+  },
+  "registeredAt": "2026-02-21T17:08:01.659Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:08:01.659Z",
+  "bankVerified": false
+}

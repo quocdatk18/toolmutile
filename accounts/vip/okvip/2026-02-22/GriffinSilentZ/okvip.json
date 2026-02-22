@@ -1,0 +1,23 @@
+{
+  "username": "GriffinSilentZ",
+  "password": "1x8j10u5qc",
+  "withdrawPassword": "111222",
+  "fullname": "DOAN THANH NAM KIET",
+  "email": "a29dco@gmail.com",
+  "phone": "0824082766",
+  "registeredAt": "2026-02-22T09:35:39.635Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Sơn La",
+    "accountNumber": "9686687660001103403",
+    "accountHolder": "DOAN THANH NAM KIET"
+  }
+}

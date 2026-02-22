@@ -1,0 +1,25 @@
+{
+  "username": "HydraLegend13",
+  "password": "4zwmp1ne0il",
+  "withdrawPassword": "1",
+  "fullname": "HO THI NGOC HOI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DONG NAI",
+    "accountNumber": "963012001170713",
+    "accountHolder": "HO THI NGOC HOI"
+  },
+  "registeredAt": "2026-02-22T07:42:18.511Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T07:42:18.511Z",
+  "bankVerified": false
+}

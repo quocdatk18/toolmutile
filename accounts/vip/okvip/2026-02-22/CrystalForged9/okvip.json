@@ -1,0 +1,23 @@
+{
+  "username": "CrystalForged9",
+  "password": "k330r7yl4",
+  "withdrawPassword": "111222",
+  "fullname": "LE ANH TUAN PHAT",
+  "email": "wp704@gmail.com",
+  "phone": "0943923715",
+  "registeredAt": "2026-02-22T07:50:13.757Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Đồng Tháp",
+    "accountNumber": "9686687660001103242",
+    "accountHolder": "LE ANH TUAN PHAT"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "username": "ThunderMoonZ",
+  "password": "pq2w9wltl2",
+  "withdrawPassword": "1",
+  "fullname": "DOAN THANH NAM KIET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC LIEU",
+    "accountNumber": "9686687660001103403",
+    "accountHolder": "DOAN THANH NAM KIET"
+  },
+  "registeredAt": "2026-02-22T11:36:34.869Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T11:36:34.869Z",
+  "bankVerified": false
+}

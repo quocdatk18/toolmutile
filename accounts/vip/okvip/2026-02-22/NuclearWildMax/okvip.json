@@ -1,0 +1,23 @@
+{
+  "username": "NuclearWildMax",
+  "password": "hx47jqbtyhlp",
+  "withdrawPassword": "111222",
+  "fullname": "PHAM THI DUNG TUNG",
+  "email": "523gry@gmail.com",
+  "phone": "0917421483",
+  "registeredAt": "2026-02-22T06:24:11.272Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Nam Định",
+    "accountNumber": "963012001170336",
+    "accountHolder": "PHAM THI DUNG TUNG"
+  }
+}

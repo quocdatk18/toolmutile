@@ -1,0 +1,25 @@
+{
+  "username": "SunRaven3",
+  "password": "rvg31afd",
+  "withdrawPassword": "1",
+  "fullname": "LE MINH TRI DUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CAN THO",
+    "accountNumber": "9686687660001103294",
+    "accountHolder": "LE MINH TRI DUC"
+  },
+  "registeredAt": "2026-02-22T11:33:03.302Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T11:33:03.302Z",
+  "bankVerified": false
+}

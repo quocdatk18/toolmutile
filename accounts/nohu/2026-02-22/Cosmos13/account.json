@@ -1,0 +1,25 @@
+{
+  "username": "Cosmos13",
+  "password": "y39dfmikew23",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN TAN PHAT TAI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THAI NGUYEN",
+    "accountNumber": "9686687660001103176",
+    "accountHolder": "NGUYEN TAN PHAT TAI"
+  },
+  "registeredAt": "2026-02-22T07:41:36.159Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T07:41:36.159Z",
+  "bankVerified": true
+}

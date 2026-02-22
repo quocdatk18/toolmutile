@@ -1,0 +1,23 @@
+{
+  "username": "Zowicoxi3",
+  "password": "g06ekp7y0y",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN GIA HUY MINH",
+  "email": "4em2x@gmail.com",
+  "phone": "0949994104",
+  "registeredAt": "2026-02-22T08:06:43.966Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Sơn La",
+    "accountNumber": "9686687660001103292",
+    "accountHolder": "NGUYEN GIA HUY MINH"
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "username": "Turbo7",
+  "password": "t17sigwq4egb",
+  "withdrawPassword": "1",
+  "fullname": "TRAN BAO KIET ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA GIANG",
+    "accountNumber": "9686687660001103293",
+    "accountHolder": "TRAN BAO KIET ANH"
+  },
+  "registeredAt": "2026-02-22T11:32:29.491Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T11:32:29.491Z",
+  "bankVerified": false
+}

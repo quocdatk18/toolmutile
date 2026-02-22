@@ -1,0 +1,23 @@
+{
+  "username": "GoldSamurai2",
+  "password": "f6d3aba8qd7y",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN BAO KIET ANH",
+  "email": "oeodqe@gmail.com",
+  "phone": "0942897727",
+  "registeredAt": "2026-02-22T08:17:54.044Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Nghệ An",
+    "accountNumber": "9686687660001103293",
+    "accountHolder": "TRAN BAO KIET ANH"
+  }
+}

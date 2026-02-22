@@ -1,0 +1,25 @@
+{
+  "username": "DukePixel1",
+  "password": "7im8seie5k",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN GIA HUY MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC GIANG",
+    "accountNumber": "9686687660001103292",
+    "accountHolder": "NGUYEN GIA HUY MINH"
+  },
+  "registeredAt": "2026-02-22T10:34:43.331Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T10:34:43.331Z",
+  "bankVerified": false
+}

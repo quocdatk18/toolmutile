@@ -1,0 +1,25 @@
+{
+  "username": "Bear21",
+  "password": "p244c9un3q",
+  "withdrawPassword": "1",
+  "fullname": "BUI KY PHUC THANH SON",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HA GIANG",
+    "accountNumber": "963012001168273",
+    "accountHolder": "BUI KY PHUC THANH SON"
+  },
+  "registeredAt": "2026-02-21T17:07:43.159Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:07:43.159Z",
+  "bankVerified": false
+}

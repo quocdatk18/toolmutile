@@ -1,0 +1,25 @@
+{
+  "username": "RangerMax",
+  "password": "m9anrz22odqk",
+  "withdrawPassword": "1",
+  "fullname": "DOAN NHAT LONG KY PHONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VINH LONG",
+    "accountNumber": "963012001168271",
+    "accountHolder": "DOAN NHAT LONG KY PHONG"
+  },
+  "registeredAt": "2026-02-21T17:05:25.830Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:05:25.830Z",
+  "bankVerified": false
+}

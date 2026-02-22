@@ -1,0 +1,25 @@
+{
+  "username": "Ice1",
+  "password": "93v5odwhbn",
+  "withdrawPassword": "1",
+  "fullname": "PHAN THIEN BAO HAC VU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "VINH PHUC",
+    "accountNumber": "963012001168275",
+    "accountHolder": "PHAN THIEN BAO HAC VU"
+  },
+  "registeredAt": "2026-02-21T17:08:25.655Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:08:25.655Z",
+  "bankVerified": false
+}

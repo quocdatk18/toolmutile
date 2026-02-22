@@ -1,0 +1,40 @@
+{
+  "username": "QueenFalling1",
+  "password": "msbr83wzcr",
+  "withdrawPassword": "1",
+  "fullname": "LE THU NHAT HUYEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TIEN GIANG",
+    "accountNumber": "9686687660001103134",
+    "accountHolder": "LE THU NHAT HUYEN"
+  },
+  "registeredAt": "2026-02-22T07:08:47.994Z",
+  "firstSite": "789P",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T07:08:47.994Z",
+  "bankVerified": false
+}

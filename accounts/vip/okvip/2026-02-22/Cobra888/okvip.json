@@ -1,0 +1,23 @@
+{
+  "username": "Cobra888",
+  "password": "3h9fzp1habp",
+  "withdrawPassword": "111222",
+  "fullname": "HOANG KY PHONG AN",
+  "email": "ehozix@gmail.com",
+  "phone": "0919602935",
+  "registeredAt": "2026-02-22T09:20:40.863Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Vĩnh Phúc",
+    "accountNumber": "9686687660001103401",
+    "accountHolder": "HOANG KY PHONG AN"
+  }
+}

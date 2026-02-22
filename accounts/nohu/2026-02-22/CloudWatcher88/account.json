@@ -1,0 +1,25 @@
+{
+  "username": "CloudWatcher88",
+  "password": "kyt8f7e95",
+  "withdrawPassword": "1",
+  "fullname": "HOANG BACH DUONG GIA HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "HA GIANG",
+    "accountNumber": "963012001168270",
+    "accountHolder": "HOANG BACH DUONG GIA HUY"
+  },
+  "registeredAt": "2026-02-21T17:05:14.313Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T17:05:14.313Z",
+  "bankVerified": false
+}

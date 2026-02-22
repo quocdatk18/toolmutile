@@ -1,0 +1,23 @@
+{
+  "username": "Eternal99",
+  "password": "brp8krc0vfvt",
+  "withdrawPassword": "111222",
+  "fullname": "LE MINH TRI DUC",
+  "email": "nh7uq@gmail.com",
+  "phone": "0915812875",
+  "registeredAt": "2026-02-22T08:30:39.770Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Sóc Trăng",
+    "accountNumber": "9686687660001103294",
+    "accountHolder": "LE MINH TRI DUC"
+  }
+}

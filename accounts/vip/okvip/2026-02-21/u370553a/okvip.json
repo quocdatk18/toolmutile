@@ -1,0 +1,23 @@
+{
+  "username": "u370553a",
+  "password": "8wprzp42u4",
+  "withdrawPassword": "111222",
+  "fullname": "AP DUONG TAU",
+  "email": "ak0l2ga@gmail.com",
+  "phone": "0812444562",
+  "registeredAt": "2026-02-21T14:50:22.513Z",
+  "firstSite": "SHBET",
+  "sites": [
+    "SHBET",
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "VietCapitalBank",
+    "branch": "Nghệ An",
+    "accountNumber": "99900031741807",
+    "accountHolder": "AP DUONG TAU"
+  }
+}

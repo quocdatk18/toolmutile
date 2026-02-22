@@ -1,0 +1,25 @@
+{
+  "username": "Miwiba13",
+  "password": "fvfr9w7978",
+  "withdrawPassword": "1",
+  "fullname": "TRAN THI KHA NHU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "GIA LAI",
+    "accountNumber": "9686687660001103172",
+    "accountHolder": "TRAN THI KHA NHU"
+  },
+  "registeredAt": "2026-02-22T07:40:54.641Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T07:40:54.641Z",
+  "bankVerified": false
+}

@@ -1,0 +1,22 @@
+{
+  "username": "Kohihe21",
+  "password": "rv3m140s",
+  "withdrawPassword": "111222",
+  "fullname": "HO THI NGOC HOI",
+  "email": "0uo0x9@gmail.com",
+  "phone": "0819506461",
+  "registeredAt": "2026-02-22T07:29:39.790Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Tuyên Quang",
+    "accountNumber": "963012001170713",
+    "accountHolder": "HO THI NGOC HOI"
+  }
+}

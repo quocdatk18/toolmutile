@@ -1,0 +1,25 @@
+{
+  "username": "Nuclear1",
+  "password": "a992o6xl",
+  "withdrawPassword": "1",
+  "fullname": "TRAN HOANG GIA BAO AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "NGHE AN",
+    "accountNumber": "9686687660001100077",
+    "accountHolder": "TRAN HOANG GIA BAO AN"
+  },
+  "registeredAt": "2026-02-21T14:13:47.164Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-21T14:13:47.164Z",
+  "bankVerified": false
+}

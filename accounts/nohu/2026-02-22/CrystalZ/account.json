@@ -1,0 +1,25 @@
+{
+  "username": "CrystalZ",
+  "password": "608bw5cjw",
+  "withdrawPassword": "1",
+  "fullname": "PHAM GIA BAO LONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAM DONG",
+    "accountNumber": "9686687660001103400",
+    "accountHolder": "PHAM GIA BAO LONG"
+  },
+  "registeredAt": "2026-02-22T11:34:07.741Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T11:34:07.741Z",
+  "bankVerified": false
+}

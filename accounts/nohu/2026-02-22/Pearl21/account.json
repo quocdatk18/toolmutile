@@ -1,0 +1,25 @@
+{
+  "username": "Pearl21",
+  "password": "e70urivf4",
+  "withdrawPassword": "1",
+  "fullname": "VU BAO KHANG MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LONG AN",
+    "accountNumber": "9686687660001103404",
+    "accountHolder": "VU BAO KHANG MINH"
+  },
+  "registeredAt": "2026-02-22T11:36:52.589Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-22T11:36:52.589Z",
+  "bankVerified": false
+}

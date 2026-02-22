@@ -1,0 +1,22 @@
+{
+  "username": "PearlCrusader2",
+  "password": "luxq15s3j",
+  "withdrawPassword": "111222",
+  "fullname": "TRAN THI KHA NHU",
+  "email": "do1bc68@gmail.com",
+  "phone": "0919750811",
+  "registeredAt": "2026-02-22T07:24:41.462Z",
+  "firstSite": "NEW88",
+  "sites": [
+    "NEW88"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MSB",
+    "branch": "Vĩnh Phúc",
+    "accountNumber": "9686687660001103172",
+    "accountHolder": "TRAN THI KHA NHU"
+  }
+}
