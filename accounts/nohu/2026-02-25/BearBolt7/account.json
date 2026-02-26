@@ -1,0 +1,25 @@
+{
+  "username": "BearBolt7",
+  "password": "yq75sqj6zg4g",
+  "withdrawPassword": "1",
+  "fullname": "VU THANH MINH PHUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "KIEN GIANG",
+    "accountNumber": "963012001192801",
+    "accountHolder": "VU THANH MINH PHUC"
+  },
+  "registeredAt": "2026-02-24T22:20:07.961Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:20:07.961Z",
+  "bankVerified": true
+}

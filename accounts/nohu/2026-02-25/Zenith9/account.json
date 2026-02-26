@@ -1,0 +1,25 @@
+{
+  "username": "Zenith9",
+  "password": "0e1y358r70wc",
+  "withdrawPassword": "1",
+  "fullname": "VU THI THANH NGOC MAI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THU DUC",
+    "accountNumber": "9686687660001118325",
+    "accountHolder": "VU THI THANH NGOC MAI"
+  },
+  "registeredAt": "2026-02-25T11:20:40.855Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T11:20:40.855Z",
+  "bankVerified": false
+}

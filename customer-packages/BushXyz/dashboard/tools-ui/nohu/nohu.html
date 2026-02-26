@@ -595,19 +595,13 @@
                         </div>
 
                         <div class="form-section">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
-                                <button class="btn btn-secondary btn-sm" onclick="randomAllForm()"
-                                    title="Random toàn bộ form">
-                                    🎲 Random
-                                </button>
-                            </div>
+                            <h3 style="margin: 0;">👤 Thông Tin Tài Khoản</h3>
                             <div class="form-grid">
-                                <input type="text" id="autoUsername" placeholder="Tên tài khoản">
+                                <input type="text" id="autoUsername" placeholder="Tên tài khoản" style="display: none;">
                                 <input type="text" id="autoFullname" placeholder="Họ và Tên (IN HOA)">
-                                <input type="text" id="autoPassword" placeholder="Mật khẩu">
-                                <input type="text" id="autoWithdrawPassword" placeholder="MK rút tiền">
+                                <input type="text" id="autoPassword" placeholder="Mật khẩu" style="display: none;">
+                                <input type="text" id="autoWithdrawPassword" placeholder="MK rút tiền"
+                                    style="display: none;">
                             </div>
                         </div>
 
@@ -617,8 +611,11 @@
                                 <select id="autoBankName">
                                     <option value="">Chọn ngân hàng...</option>
                                 </select>
-                                <input type="text" id="autoBankBranch" placeholder="Chi nhánh">
+                                <input type="text" id="autoBankBranch" placeholder="Chi nhánh" style="display: none;">
                                 <input type="text" id="autoAccountNumber" placeholder="Số tài khoản">
+                            </div>
+                            <div style="font-size: 11px; color: #718096; margin-top: 8px; font-style: italic;">
+                                💡 Chi nhánh sẽ được random từ 64 tỉnh thành
                             </div>
                         </div>
 
@@ -1072,13 +1069,18 @@
 
     // Clear form functions
     function clearAutoForm() {
-        document.getElementById('autoUsername').value = '';
+        // Chỉ clear những field mà user cần điền
         document.getElementById('autoFullname').value = '';
+        document.getElementById('autoBankName').value = '';
+        document.getElementById('autoAccountNumber').value = '';
+
+        // Clear auto-filled fields (sẽ được random lại khi click CHẠY)
+        document.getElementById('autoUsername').value = '';
         document.getElementById('autoPassword').value = '';
         document.getElementById('autoWithdrawPassword').value = '';
-        document.getElementById('autoBankName').value = '';
         document.getElementById('autoBankBranch').value = '';
-        document.getElementById('autoAccountNumber').value = '';
+
+        // Clear site selections
         document.querySelectorAll('#appPromoSites .site-check').forEach(cb => cb.checked = false);
         document.querySelectorAll('#smsPromoSites .site-check-sms').forEach(cb => cb.checked = false);
     }
@@ -1204,37 +1206,177 @@
         }
     }
 
-    // Random username generator
+    // Random username generator - Danh sách từ độc đáo có ý nghĩa
     const uniqueWords = {
-        prefixes: ['Sky', 'Moon', 'Star', 'Fire', 'Dragon', 'Phoenix', 'Tiger', 'Wolf', 'Eagle', 'Lion'],
-        suffixes: ['Blade', 'Strike', 'Storm', 'Fire', 'Bolt', 'Flash', 'Fury', 'Soul', 'Power'],
-        numbers: ['', '1', '7', '9', '88', '99', '777', '888']
+        prefixes: [
+            // Thiên nhiên & Vũ trụ
+            'Sky', 'Moon', 'Star', 'Sun', 'Ocean', 'River', 'Mountain', 'Forest',
+            'Cloud', 'Rain', 'Snow', 'Wind', 'Storm', 'Thunder', 'Lightning', 'Aurora',
+            'Comet', 'Galaxy', 'Nebula', 'Cosmos', 'Stellar', 'Lunar', 'Solar', 'Nova',
+
+            // Nguyên tố & Sức mạnh
+            'Fire', 'Ice', 'Water', 'Earth', 'Metal', 'Wood', 'Light', 'Dark',
+            'Shadow', 'Flame', 'Frost', 'Crystal', 'Diamond', 'Ruby', 'Jade', 'Pearl',
+            'Gold', 'Silver', 'Platinum', 'Titanium', 'Steel', 'Iron', 'Bronze', 'Copper',
+
+            // Động vật huyền thoại & Mạnh mẽ
+            'Dragon', 'Phoenix', 'Tiger', 'Wolf', 'Eagle', 'Hawk', 'Lion', 'Bear',
+            'Fox', 'Raven', 'Falcon', 'Panther', 'Leopard', 'Jaguar', 'Cobra', 'Viper',
+            'Shark', 'Whale', 'Dolphin', 'Pegasus', 'Griffin', 'Unicorn', 'Hydra', 'Kraken',
+
+            // Phong cách hiện đại
+            'Cyber', 'Neon', 'Pixel', 'Quantum', 'Cosmic', 'Mystic', 'Epic', 'Legendary',
+            'Ultra', 'Mega', 'Super', 'Hyper', 'Alpha', 'Beta', 'Omega', 'Prime',
+            'Turbo', 'Nitro', 'Blitz', 'Sonic', 'Atomic', 'Nuclear', 'Plasma', 'Laser',
+
+            // Chiến binh & Anh hùng
+            'Ninja', 'Samurai', 'Knight', 'Warrior', 'Hunter', 'Ranger', 'Assassin', 'Gladiator',
+            'Ace', 'King', 'Queen', 'Prince', 'Duke', 'Lord', 'Master', 'Champion',
+            'Hero', 'Legend', 'Titan', 'Immortal', 'Divine', 'Sacred', 'Holy', 'Eternal',
+
+            // Đặc biệt & Độc đáo
+            'Void', 'Aura', 'Zen', 'Flux', 'Apex', 'Vortex', 'Nexus', 'Zenith',
+            'Blaze', 'Inferno', 'Tempest', 'Cyclone', 'Typhoon', 'Hurricane', 'Tornado', 'Avalanche',
+            'Phantom', 'Specter', 'Wraith', 'Spirit', 'Ghost', 'Demon', 'Angel', 'Seraph'
+        ],
+        suffixes: [
+            // Hành động & Sức mạnh
+            'Blade', 'Strike', 'Storm', 'Fire', 'Frost', 'Bolt', 'Flash', 'Blaze',
+            'Fury', 'Rage', 'Wrath', 'Vengeance', 'Justice', 'Chaos', 'Havoc', 'Mayhem',
+            'Soul', 'Spirit', 'Heart', 'Mind', 'Force', 'Energy', 'Aura', 'Essence',
+            'Power', 'Might', 'Strength', 'Glory', 'Honor', 'Pride', 'Valor', 'Courage',
+
+            // Tính cách & Đặc điểm
+            'Brave', 'Swift', 'Quick', 'Sharp', 'Keen', 'Wise', 'True', 'Pure',
+            'Wild', 'Free', 'Bold', 'Fierce', 'Strong', 'Tough', 'Hard', 'Solid',
+            'Silent', 'Stealth', 'Shadow', 'Ghost', 'Phantom', 'Mystic', 'Magic', 'Divine',
+
+            // Vai trò & Chức năng
+            'Slayer', 'Hunter', 'Seeker', 'Walker', 'Rider', 'Runner', 'Flyer', 'Diver',
+            'Maker', 'Breaker', 'Keeper', 'Watcher', 'Guardian', 'Defender', 'Protector', 'Savior',
+            'Master', 'Lord', 'King', 'Emperor', 'Legend', 'Hero', 'Champion', 'Victor',
+            'Warrior', 'Fighter', 'Soldier', 'Knight', 'Paladin', 'Crusader', 'Gladiator', 'Samurai',
+
+            // Đặc biệt
+            'Born', 'Forged', 'Blessed', 'Cursed', 'Chosen', 'Destined', 'Fated', 'Marked',
+            'Rising', 'Falling', 'Soaring', 'Flying', 'Dancing', 'Singing', 'Roaring', 'Howling',
+            'Eternal', 'Immortal', 'Ancient', 'Primal', 'Cosmic', 'Stellar', 'Lunar', 'Solar'
+        ],
+        numbers: ['', '1', '2', '3', '7', '9', '13', '21', '69', '77', '88', '99', '108', '777', '888', '999', 'X', 'Z', 'Pro', 'Max']
     };
 
     function generateRandomUsername() {
-        const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
-        const suffix = uniqueWords.suffixes[Math.floor(Math.random() * uniqueWords.suffixes.length)];
-        const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
-        return prefix + suffix + number;
+        const style = Math.random();
+        let username = '';
+
+        if (style < 0.35) {
+            // Style 1: Prefix + Suffix + Number (35%)
+            const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const suffix = uniqueWords.suffixes[Math.floor(Math.random() * uniqueWords.suffixes.length)];
+            const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+            username = prefix + suffix + number;
+        } else if (style < 0.60) {
+            // Style 2: Prefix + Number (25%)
+            const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+            if (!number) {
+                username = prefix + (Math.floor(Math.random() * 999) + 100);
+            } else {
+                username = prefix + number;
+            }
+        } else if (style < 0.80) {
+            // Style 3: Prefix + Prefix + Number (20%)
+            const prefix1 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const prefix2 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            if (prefix1 === prefix2) {
+                const prefix3 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+                const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+                username = prefix1 + prefix3 + number;
+            } else {
+                const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+                username = prefix1 + prefix2 + number;
+            }
+        } else {
+            // Style 4: Consonant-Vowel pattern (20%)
+            const consonants = 'bcdfghjklmnpqrstvwxz';
+            const vowels = 'aeiou';
+            const pairs = 3 + Math.floor(Math.random() * 2);
+            for (let i = 0; i < pairs; i++) {
+                username += consonants[Math.floor(Math.random() * consonants.length)];
+                username += vowels[Math.floor(Math.random() * vowels.length)];
+            }
+            username = username.charAt(0).toUpperCase() + username.slice(1);
+            if (Math.random() > 0.3) {
+                const randomNum = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+                if (randomNum) {
+                    username += randomNum;
+                } else {
+                    username += Math.floor(Math.random() * 999) + 1;
+                }
+            }
+        }
+
+        // Giới hạn độ dài từ 2-15 kí tự
+        if (username.length < 2) {
+            username = username + Math.floor(Math.random() * 99) + 10;
+        }
+        if (username.length > 15) {
+            username = username.substring(0, 15);
+        }
+
+        return username;
     }
 
 
 
     // Random toàn bộ form (username, fullname, password, bank)
     function randomAllForm() {
-        // Random username
-        const username = generateRandomUsername();
+        console.log('🎲 randomAllForm() called');
+
+        // Random username - Đảm bảo không bắt đầu bằng số
+        let username = generateRandomUsername();
+        // Nếu bắt đầu bằng số, thêm chữ cái vào đầu
+        if (/^\d/.test(username)) {
+            const letters = 'abcdefghijklmnopqrstuvwxyz';
+            username = letters[Math.floor(Math.random() * letters.length)] + username;
+        }
         document.getElementById('autoUsername').value = username;
 
-        // Random fullname (Vietnamese names)
-        const firstNames = ['NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI'];
-        const middleNames = ['VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH'];
-        const lastNames = ['AN', 'BINH', 'CUONG', 'DUNG', 'HAI', 'HUNG', 'KHANH', 'LINH', 'MINH', 'NAM', 'PHONG', 'QUAN', 'TAM', 'TUAN', 'VINH'];
+        // Random fullname - Tên phổ thông Việt Nam 4 chữ (họ + tên đệm 1 + tên đệm 2 + tên)
+        // Họ phổ thông
+        const lastNames = [
+            'NGUYEN', 'TRAN', 'LE', 'PHAM', 'HOANG', 'PHAN', 'VU', 'VO', 'DANG', 'BUI',
+            'DINH', 'DUONG', 'TONG', 'NHAN', 'LUONG', 'TRINH', 'TRUONG', 'TIEU', 'TRAN', 'TRAN'
+        ];
 
-        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-        const middleName = middleNames[Math.floor(Math.random() * middleNames.length)];
+        // Tên đệm phổ thông (tên đệm 1)
+        const middleNames1 = [
+            'VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH', 'HUNG', 'KHANH',
+            'LINH', 'PHONG', 'TUAN', 'VINH', 'CUONG', 'TIEN', 'TRANG', 'HUONG', 'DUNG', 'HIEU'
+        ];
+
+        // Tên đệm phổ thông (tên đệm 2)
+        const middleNames2 = [
+            'VAN', 'THI', 'DUC', 'MINH', 'HOANG', 'QUANG', 'ANH', 'THANH', 'HUNG', 'KHANH',
+            'LINH', 'PHONG', 'TUAN', 'VINH', 'CUONG', 'TIEN', 'TRANG', 'HUONG', 'DUNG', 'HIEU'
+        ];
+
+        // Tên gọi phổ thông (1 chữ)
+        const firstNames = [
+            'MINH', 'TUAN', 'HUNG', 'KHANH', 'LINH', 'PHONG', 'VINH', 'CUONG', 'TIEN', 'TRANG',
+            'HUONG', 'DUNG', 'HIEU', 'LONG', 'HUY', 'DAM', 'QUY', 'NHUNG', 'VAN', 'AN',
+            'Y', 'THU', 'HA', 'LOC', 'PHUC', 'THO', 'TIEU', 'HUONG', 'MINH', 'NGUYET'
+        ];
+
+        // Chọn ngẫu nhiên
         const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
-        const fullname = `${firstName} ${middleName} ${lastName}`;
+        const middleName1 = middleNames1[Math.floor(Math.random() * middleNames1.length)];
+        const middleName2 = middleNames2[Math.floor(Math.random() * middleNames2.length)];
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+
+        // Format: Họ + Tên đệm 1 + Tên đệm 2 + Tên (4 chữ)
+        const fullname = `${lastName} ${middleName1} ${middleName2} ${firstName}`;
+        console.log('✅ Generated fullname:', fullname);
         document.getElementById('autoFullname').value = fullname;
 
         // Random password (8-12 characters, guaranteed mix of letters and numbers)
@@ -1299,6 +1441,126 @@
         });
 
         showToast('success', 'Random thành công', 'Đã random toàn bộ thông tin');
+    }
+
+    // Auto-fill form khi user click CHẠY (chỉ random username, password, withdraw password, chi nhánh)
+    function autoFillFormBeforeRun() {
+        console.log('🤖 Auto-filling form before run...');
+
+        // 1. Random username - Bắt đầu bằng chữ, khó trùng
+        const username = generateRandomUsernameHardToCollide();
+        document.getElementById('autoUsername').value = username;
+        console.log('✅ Generated username:', username);
+
+        // 2. Random password (8-12 characters)
+        const passwordLength = 8 + Math.floor(Math.random() * 5);
+        const letters = 'abcdefghijklmnopqrstuvwxyz';
+        const numbers = '0123456789';
+        let password = '';
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += letters[Math.floor(Math.random() * letters.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        password += numbers[Math.floor(Math.random() * numbers.length)];
+        const allChars = letters + numbers;
+        for (let i = 4; i < passwordLength; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+        password = password.split('').sort(() => Math.random() - 0.5).join('');
+        document.getElementById('autoPassword').value = password;
+        console.log('✅ Generated password:', password);
+
+        // 3. Set mật khẩu rút = "1"
+        document.getElementById('autoWithdrawPassword').value = '1';
+        console.log('✅ Set withdraw password: 1');
+
+        // 4. Random chi nhánh từ 64 tỉnh thành
+        const branches = [
+            'AN GIANG', 'BA RIA VUNG TAU', 'BAC GIANG', 'BAC KAN', 'BAC LIEU', 'BAC NINH',
+            'BEN TRE', 'BINH DINH', 'BINH DUONG', 'BINH PHUOC', 'BINH THUAN', 'CA MAU',
+            'CAN THO', 'CAO BANG', 'DA LAT', 'DA NANG', 'DAK LAK', 'DAK NONG', 'DIEN BIEN',
+            'DONG NAI', 'DONG THAP', 'GIA LAI', 'HA GIANG', 'HA NAM', 'HA NOI', 'HA TAY',
+            'HA TINH', 'HAI DUONG', 'HAI PHONG', 'HAU GIANG', 'HO CHI MINH', 'HOA BINH',
+            'HUNG YEN', 'KHANH HOA', 'KIEN GIANG', 'KON TUM', 'LAI CHAU', 'LAM DONG',
+            'LANG SON', 'LAO CAI', 'LONG AN', 'NAM DINH', 'NGHE AN', 'NINH BINH',
+            'NINH THUAN', 'PHU THO', 'PHU YEN', 'QUANG BINH', 'QUANG NAM', 'QUANG NGAI',
+            'QUANG NINH', 'QUANG TRI', 'SOCTRANG', 'SON LA', 'TAY NINH', 'THAI BINH',
+            'THAI NGUYEN', 'THANH HOA', 'THU DUC', 'TIEN GIANG', 'TON DUC THANG', 'TPHCM',
+            'TRA VINH', 'TUYÊN QUANG', 'VINH LONG', 'VINH PHUC', 'YEN BAI'
+        ];
+        const branch = branches[Math.floor(Math.random() * branches.length)];
+        document.getElementById('autoBankBranch').value = branch;
+        console.log('✅ Generated branch:', branch);
+    }
+
+    // Generate random username khó trùng với nickname độc đáo có ý nghĩa
+    function generateRandomUsernameHardToCollide() {
+        const style = Math.random();
+        let username = '';
+
+        if (style < 0.35) {
+            // Style 1: Prefix + Suffix + Number (35%) - VD: DragonBlade777, PhoenixStorm99
+            const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const suffix = uniqueWords.suffixes[Math.floor(Math.random() * uniqueWords.suffixes.length)];
+            const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+            username = prefix + suffix + number;
+        } else if (style < 0.60) {
+            // Style 2: Prefix + Number (25%) - VD: Dragon777, Phoenix99
+            const prefix = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+            // Nếu number rỗng, thêm số ngẫu nhiên
+            if (!number) {
+                username = prefix + (Math.floor(Math.random() * 999) + 100);
+            } else {
+                username = prefix + number;
+            }
+        } else if (style < 0.80) {
+            // Style 3: Prefix + Prefix + Number (20%) - VD: FireDragon88, IcePhoenix777
+            const prefix1 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            const prefix2 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+            // Đảm bảo 2 prefix khác nhau
+            if (prefix1 === prefix2) {
+                const prefix3 = uniqueWords.prefixes[Math.floor(Math.random() * uniqueWords.prefixes.length)];
+                const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+                username = prefix1 + prefix3 + number;
+            } else {
+                const number = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+                username = prefix1 + prefix2 + number;
+            }
+        } else {
+            // Style 4: Consonant-Vowel pattern (20%) - VD: Xaviro123, Keluna77
+            const consonants = 'bcdfghjklmnpqrstvwxz';
+            const vowels = 'aeiou';
+
+            // Tạo 3-4 cặp consonant-vowel để tạo tên dễ đọc
+            const pairs = 3 + Math.floor(Math.random() * 2);
+            for (let i = 0; i < pairs; i++) {
+                username += consonants[Math.floor(Math.random() * consonants.length)];
+                username += vowels[Math.floor(Math.random() * vowels.length)];
+            }
+
+            // Capitalize chữ cái đầu
+            username = username.charAt(0).toUpperCase() + username.slice(1);
+
+            // Thêm số ngẫu nhiên (70% chance)
+            if (Math.random() > 0.3) {
+                const randomNum = uniqueWords.numbers[Math.floor(Math.random() * uniqueWords.numbers.length)];
+                if (randomNum) {
+                    username += randomNum;
+                } else {
+                    username += Math.floor(Math.random() * 999) + 1;
+                }
+            }
+        }
+
+        // Giới hạn độ dài từ 2-15 kí tự
+        if (username.length < 2) {
+            username = username + Math.floor(Math.random() * 99) + 10;
+        }
+        if (username.length > 15) {
+            username = username.substring(0, 15);
+        }
+
+        return username;
     }
 
     // Run action based on current active tab
@@ -1408,6 +1670,44 @@
                 }
                 return;
             }
+
+            // Validate fullname và bankName trước khi auto-fill
+            const fullname = document.getElementById('autoFullname').value.trim();
+            const bankName = document.getElementById('autoBankName').value.trim();
+            const accountNumber = document.getElementById('autoAccountNumber').value.trim();
+
+            if (!fullname) {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập Họ và Tên');
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            if (!bankName) {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng chọn Ngân hàng');
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            if (!accountNumber) {
+                showToast('warning', 'Thiếu thông tin', 'Vui lòng nhập Số tài khoản');
+                if (btnRunAction) {
+                    btnRunAction.disabled = false;
+                    btnRunAction.style.opacity = '1';
+                    btnRunAction.style.cursor = 'pointer';
+                }
+                return;
+            }
+
+            // Auto-fill form trước khi lấy giá trị
+            autoFillFormBeforeRun();
 
             const config = {
                 username: document.getElementById('autoUsername').value.trim(),
@@ -1554,9 +1854,6 @@
                         showToast('success', 'Đã gửi', `Automation ${promoTypeLabel} đã được gửi tới server`, 5000);
                     }
 
-                    // Clear form after successful start
-                    clearAutoForm();
-
                     // Refresh results table immediately to show running status
                     loadResultsFromServer();
                 } else {
@@ -1614,11 +1911,6 @@
 
         const currentProfileId = profileManager.selectedProfileId;
 
-        // Sync profile status from Hidemium before running
-        console.log('🔄 Syncing profile status from Hidemium...');
-        await profileManager.loadAll();
-        await loadProfilesCarousel();
-
         // Check if already running
         if (profileManager.isRunning(currentProfileId)) {
             showToast('warning', 'Profile đang chạy', 'Profile này đang chạy automation, vui lòng chọn profile khác');
@@ -1636,10 +1928,8 @@
 
         profileManager.saveRunningProfiles();
 
-        // Update card UI immediately to show running status
+        // Update card UI immediately to show running status (lightweight update)
         updateProfileCardStatus(currentProfileId);
-
-        await loadProfilesCarousel();
 
         try {
             // Get execution mode settings with multiple fallbacks
@@ -1691,22 +1981,6 @@
             if (data.success) {
                 showToast('success', 'Đã bắt đầu', 'Automation đang chạy trong background', 5000);
 
-                // Clear form based on action
-                switch (action) {
-                    case 'registerOnly':
-                        clearRegisterForm();
-                        break;
-                    case 'loginOnly':
-                        clearLoginForm();
-                        break;
-                    case 'addBankOnly':
-                        clearBankForm();
-                        break;
-                    case 'checkPromoOnly':
-                        clearPromoForm();
-                        break;
-                }
-
                 return { success: true };
             } else {
                 throw new Error(data.error || 'Unknown error');
@@ -1721,7 +1995,6 @@
             // Update card UI immediately to remove running status
             updateProfileCardStatus(currentProfileId);
 
-            await loadProfilesCarousel();
             return { success: false };
         }
     }
@@ -1993,6 +2266,18 @@
     // ============================================
 
     let allProfilesData = [];
+    let carouselRefreshTimeout = null;
+
+    // Debounced carousel refresh to prevent excessive reloads
+    function scheduleCarouselRefresh(showNotification = false) {
+        if (carouselRefreshTimeout) {
+            clearTimeout(carouselRefreshTimeout);
+        }
+        carouselRefreshTimeout = setTimeout(() => {
+            loadProfilesCarousel(showNotification);
+            carouselRefreshTimeout = null;
+        }, 300); // Debounce 300ms
+    }
 
     async function loadProfilesCarousel(showNotification = false) {
         const result = await profileManager.loadAll();
@@ -2482,6 +2767,19 @@
     }
 
     // Refresh table display
+    let tableRefreshTimeout = null;
+
+    // Debounced table refresh to prevent excessive reloads
+    function scheduleTableRefresh() {
+        if (tableRefreshTimeout) {
+            clearTimeout(tableRefreshTimeout);
+        }
+        tableRefreshTimeout = setTimeout(() => {
+            refreshResultsTable();
+            tableRefreshTimeout = null;
+        }, 100); // Debounce 100ms
+    }
+
     function refreshResultsTable() {
         const tbody = document.getElementById('resultsTableBody');
         if (!tbody) return;
@@ -3262,11 +3560,12 @@
         showToast('info', 'Đang xóa...', 'Đang xóa tất cả kết quả...');
 
         try {
-            // Call API to delete all screenshots
+            // Call API to delete all screenshots for NOHU tool only
             // Use relative URL to automatically use current port
             const response = await fetch('/api/results/clear', {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ toolId: 'nohu-tool' })
             });
 
             const data = await response.json();
@@ -3361,7 +3660,7 @@
                             console.log('✅ Button re-enabled after server confirmed start');
                         }
 
-                        // Add as running result
+                        // Add as running result (but don't refresh table during running)
                         const sessionId = status.sessionId || 'running'; // Use 'running' as temp sessionId
                         const key = `${status.username}_${sessionId}`;
 
@@ -3379,7 +3678,8 @@
                                 lastTimestamp: status.timestamp || Date.now()
                             };
 
-                            refreshResultsTable();
+                            // Don't refresh table during running - only update data
+                            console.log(`📊 Added running entry for: ${key}`);
                         } else {
                             // Update message for existing running entry
                             // Always update if message exists (even if empty string)
@@ -3389,9 +3689,8 @@
                                 resultsData[key].status = 'running'; // Ensure status is marked as running
                                 resultsData[key].lastTimestamp = status.timestamp || Date.now();
                                 console.log(`📊 After update - resultsData[${key}].message = "${resultsData[key].message}"`);
-                                console.log(`📊 Calling refreshResultsTable() for key: ${key}`);
-                                refreshResultsTable();
                                 console.log(`📊 Updated running entry message: "${status.message}"`);
+                                // Don't refresh table during running - only update data
                             } else {
                                 console.log(`⚠️ Status has no message property for key: ${key}`);
                             }
@@ -3404,7 +3703,8 @@
                         if (resultsData[key] && resultsData[key].status === 'running') {
                             delete resultsData[key];
                             console.log(`🗑️ Removed running entry for completed automation: ${key}`);
-                            refreshResultsTable();
+                            // Refresh table only when completed/error
+                            scheduleTableRefresh();
                         }
 
                         // Clear running flag for profile when automation completes/errors

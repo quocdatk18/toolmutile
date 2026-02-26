@@ -1,0 +1,25 @@
+{
+  "username": "Ticira2",
+  "password": "98cd7pzk",
+  "withdrawPassword": "1",
+  "fullname": "CAO THI MINH CHAU YEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "QUANG BINH",
+    "accountNumber": "9686687660001122923",
+    "accountHolder": "CAO THI MINH CHAU YEN"
+  },
+  "registeredAt": "2026-02-26T09:47:25.833Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:47:25.833Z",
+  "bankVerified": false
+}

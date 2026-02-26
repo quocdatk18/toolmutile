@@ -1,0 +1,25 @@
+{
+  "username": "ZenOmega2",
+  "password": "t632sk0zzrg",
+  "withdrawPassword": "1",
+  "fullname": "CAO MINH CHAU YEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "NINH THUAN",
+    "accountNumber": "9686687660001123465",
+    "accountHolder": "CAO MINH CHAU YEN"
+  },
+  "registeredAt": "2026-02-26T12:30:45.656Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:30:45.656Z",
+  "bankVerified": true
+}

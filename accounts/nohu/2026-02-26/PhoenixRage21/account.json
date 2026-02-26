@@ -1,0 +1,25 @@
+{
+  "username": "PhoenixRage21",
+  "password": "gc10lx3rtktn",
+  "withdrawPassword": "1",
+  "fullname": "LE CONG DUC BAO THINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THAI BINH",
+    "accountNumber": "9686687660001122938",
+    "accountHolder": "LE CONG DUC BAO THINH"
+  },
+  "registeredAt": "2026-02-26T10:32:43.694Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T10:32:43.694Z",
+  "bankVerified": false
+}

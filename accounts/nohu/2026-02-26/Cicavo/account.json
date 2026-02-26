@@ -1,0 +1,25 @@
+{
+  "username": "Cicavo",
+  "password": "hyqs6u55",
+  "withdrawPassword": "1",
+  "fullname": "HUYNH GIA HAN MY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LONG AN",
+    "accountNumber": "9686687660001122150",
+    "accountHolder": "HUYNH GIA HAN MY"
+  },
+  "registeredAt": "2026-02-26T06:57:59.562Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:57:59.562Z",
+  "bankVerified": true
+}

@@ -1,0 +1,25 @@
+{
+  "username": "KrakenSlayerX",
+  "password": "cz1irjw030",
+  "withdrawPassword": "111222",
+  "fullname": "PHAN THI NGOC HANH",
+  "email": "3huz1@gmail.com",
+  "phone": "853260080",
+  "registeredAt": "2026-02-26T17:31:24.767Z",
+  "firstSite": "C168",
+  "sites": [
+    "SC881",
+    "F168",
+    "CM88",
+    "C168"
+  ],
+  "status": "active",
+  "category": "okvipOtp",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Bắc Ninh",
+    "accountNumber": "963012001211147",
+    "accountHolder": "PHAN THI NGOC HANH"
+  }
+}

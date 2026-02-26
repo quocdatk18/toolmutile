@@ -1,0 +1,25 @@
+{
+  "username": "WarriorChampion",
+  "password": "79ghys55",
+  "withdrawPassword": "1",
+  "fullname": "DOAN QUOC TRIET BAO ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HOA BINH",
+    "accountNumber": "9686687660001122256",
+    "accountHolder": "DOAN QUOC TRIET BAO ANH"
+  },
+  "registeredAt": "2026-02-26T09:00:52.722Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:00:52.722Z",
+  "bankVerified": false
+}

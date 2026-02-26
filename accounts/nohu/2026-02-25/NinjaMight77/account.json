@@ -1,0 +1,25 @@
+{
+  "username": "NinjaMight77",
+  "password": "q1aeo5wz",
+  "withdrawPassword": "1",
+  "fullname": "VU A MINH DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "KIEN GIANG",
+    "accountNumber": "9686687660001116534",
+    "accountHolder": "VU A MINH DAT"
+  },
+  "registeredAt": "2026-02-25T01:17:03.949Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T01:17:03.949Z",
+  "bankVerified": false
+}

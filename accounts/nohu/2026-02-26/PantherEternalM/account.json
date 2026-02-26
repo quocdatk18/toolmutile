@@ -1,0 +1,25 @@
+{
+  "username": "PantherEternalM",
+  "password": "7g4fe1n03tg",
+  "withdrawPassword": "1",
+  "fullname": "LY MINH NGOC NHI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH THUAN",
+    "accountNumber": "9686687660001122152",
+    "accountHolder": "LY MINH NGOC NHI"
+  },
+  "registeredAt": "2026-02-26T06:58:32.305Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:58:32.305Z",
+  "bankVerified": false
+}

@@ -1203,7 +1203,7 @@ function processUserFolder(username, userDir, toolId, results, toolFilter = null
     // Check if account exists in any date folder (for VIP categories)
     const vipCategoriesDir = path.join(__dirname, '../accounts/vip');
     if (fs.existsSync(vipCategoriesDir)) {
-        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
+        const vipCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip', 'okvipOtp', 'okvipotp'];
         for (const cat of vipCategories) {
             const catDir = path.join(vipCategoriesDir, cat);
             if (fs.existsSync(catDir)) {
@@ -1504,9 +1504,9 @@ app.get('/api/accounts/vip/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Try to find any VIP category file (okvip, accokvip, abcvip, jun88, 78win, jun88v2, 22vip)
+        // Try to find any VIP category file (okvip, accokvip, abcvip, jun88, 78win, jun88v2, 22vip, okvipOtp)
         // New structure: accounts/vip/{category}/{YYYY-MM-DD}/{username}/
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip'];
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip', 'okvipOtp', 'okvipotp'];
         let accountData = null;
 
         for (const category of validCategories) {
@@ -1599,13 +1599,14 @@ app.get('/api/accounts/vip/:category/:username', (req, res) => {
             return res.json({ success: false, error: 'VIP accounts folder not found' });
         }
 
-        // Validate category
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip', 'okvipOtp'];
-        if (!validCategories.includes(category.toLowerCase())) {
+        // Validate category (support both camelCase and lowercase)
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip', 'okvipOtp', 'okvipotp'];
+        const categoryLower = category.toLowerCase();
+        if (!validCategories.includes(categoryLower) && !validCategories.includes(category)) {
             return res.json({ success: false, error: 'Invalid category' });
         }
 
-        const categoryDir = path.join(vipDir, category.toLowerCase());
+        const categoryDir = path.join(vipDir, categoryLower);
         if (!fs.existsSync(categoryDir)) {
             return res.json({ success: false, error: `Category folder not found: ${category}` });
         }
@@ -1650,14 +1651,15 @@ app.post('/api/accounts/:category/:username', (req, res) => {
             return res.status(400).json({ success: false, error: 'Account data required' });
         }
 
-        // Validate category
-        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip', 'okvipOtp'];
-        if (!validCategories.includes(category.toLowerCase())) {
+        // Validate category (support both camelCase and lowercase)
+        const validCategories = ['okvip', 'accokvip', 'abcvip', 'jun88', '78win', 'jun88v2', '22vip', 'okvipOtp', 'okvipotp'];
+        const categoryLower = category.toLowerCase();
+        if (!validCategories.includes(categoryLower) && !validCategories.includes(category)) {
             return res.status(400).json({ success: false, error: 'Invalid category' });
         }
 
         const accountsDir = path.join(__dirname, '../accounts');
-        const vipCategoryDir = path.join(accountsDir, 'vip', category.toLowerCase());
+        const vipCategoryDir = path.join(accountsDir, 'vip', categoryLower);
 
         // Get today's date in YYYY-MM-DD format (using local timezone, not UTC)
         const today = new Date();

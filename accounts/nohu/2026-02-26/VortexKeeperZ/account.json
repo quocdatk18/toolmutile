@@ -1,0 +1,25 @@
+{
+  "username": "VortexKeeperZ",
+  "password": "nh4d3m1ikr6",
+  "withdrawPassword": "1",
+  "fullname": "HOANG CONG GIA BAO THIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "QUANG NGAI",
+    "accountNumber": "9686687660001122935",
+    "accountHolder": "HOANG CONG GIA BAO THIEN"
+  },
+  "registeredAt": "2026-02-26T10:30:51.306Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T10:30:51.306Z",
+  "bankVerified": false
+}

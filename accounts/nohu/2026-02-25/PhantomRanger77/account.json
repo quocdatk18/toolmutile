@@ -1,0 +1,25 @@
+{
+  "username": "PhantomRanger77",
+  "password": "27h6x7dr3",
+  "withdrawPassword": "1",
+  "fullname": "BUI HUU TRONG DUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC LIEU",
+    "accountNumber": "9686687660001117359",
+    "accountHolder": "BUI HUU TRONG DUC"
+  },
+  "registeredAt": "2026-02-25T05:10:00.615Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T05:10:00.615Z",
+  "bankVerified": false
+}

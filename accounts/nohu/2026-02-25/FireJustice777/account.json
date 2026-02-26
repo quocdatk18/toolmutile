@@ -1,0 +1,25 @@
+{
+  "username": "FireJustice777",
+  "password": "tx43j6nc4q65",
+  "withdrawPassword": "1",
+  "fullname": "VO CONG THANH LIEM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "GIA LAI",
+    "accountNumber": "9686687660001117271",
+    "accountHolder": "VO CONG THANH LIEM"
+  },
+  "registeredAt": "2026-02-25T04:33:02.347Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T04:33:02.347Z",
+  "bankVerified": false
+}

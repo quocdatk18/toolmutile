@@ -1,0 +1,245 @@
+/* ============================================
+   HAI2VIP TOOL - Specific Styles
+   Primary Color: Purple Gradient (#667eea)
+   ============================================ */
+
+/* Main Container */
+.hai2vip-tool-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    gap: 16px;
+}
+
+/* Header Banner */
+.hai2vip-tool-container .info-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 16px 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.2);
+    flex-shrink: 0;
+}
+
+.hai2vip-tool-container .info-banner h3 {
+    color: white;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.hai2vip-tool-container .info-banner p {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Focus Colors */
+.hai2vip-tool-container .form-grid input:focus,
+.hai2vip-tool-container .form-grid select:focus,
+.hai2vip-tool-container .full-width:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Site Card Hover */
+.hai2vip-tool-container .site-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+}
+
+.hai2vip-tool-container .site-card input[type="checkbox"] {
+    accent-color: #667eea;
+}
+
+/* Sites Grid - 7 columns for HAI2VIP */
+.hai2vip-tool-container .sites-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 1200px) {
+    .hai2vip-tool-container .sites-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .hai2vip-tool-container .sites-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Site Icons */
+.site-icon.site-28 { background: linear-gradient(135deg, #ff6b35, #ff8c42); }
+.site-icon.site-888 { background: linear-gradient(135deg, #cc0000, #ff0000); }
+.site-icon.site-tv { background: linear-gradient(135deg, #0066cc, #0088ff); }
+.site-icon.site-now { background: linear-gradient(135deg, #ff6600, #ff9933); }
+.site-icon.site-new { background: linear-gradient(135deg, #00aa00, #00ff00); color: #000; }
+.site-icon.site-678 { background: linear-gradient(135deg, #008866, #00aa88); color: #ffff00; }
+.site-icon.site-888p { background: linear-gradient(135deg, #0055cc, #0077ff); }
+
+/* Profile Carousel */
+.hai2vip-tool-container .profile-carousel-card:hover {
+    border-color: #667eea;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+}
+
+.hai2vip-tool-container .profile-carousel-card.selected {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #ebf4ff, #e0e7ff);
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+}
+
+.hai2vip-tool-container .profile-avatar {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.hai2vip-tool-container .selected-badge {
+    background: #667eea;
+}
+
+.hai2vip-tool-container .carousel-btn {
+    color: #667eea;
+}
+
+.hai2vip-tool-container .carousel-btn:hover {
+    border-color: #667eea;
+}
+
+/* Buttons */
+.hai2vip-tool-container .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.hai2vip-tool-container .btn-primary:hover {
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.hai2vip-tool-container .btn-start {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hai2vip-tool-container .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.hai2vip-tool-container .btn-icon {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.hai2vip-tool-container .btn-run-action {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.hai2vip-tool-container .btn-run-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* Results Table */
+.hai2vip-tool-container .results-table thead {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* Modal Tab */
+.hai2vip-tool-container .modal-tab:hover {
+    color: #667eea;
+}
+
+.hai2vip-tool-container .modal-tab.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* Tabs */
+.hai2vip-tool-container .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.hai2vip-tool-container .tab {
+    padding: 12px 24px;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: #718096;
+    transition: all 0.3s;
+}
+
+.hai2vip-tool-container .tab:hover {
+    background: #f7fafc;
+    color: #667eea;
+}
+
+.hai2vip-tool-container .tab.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+/* Screenshot Preview */
+.hai2vip-tool-container .screenshot-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.hai2vip-tool-container .screenshot-preview:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* Check Times Badge */
+.hai2vip-tool-container .check-times-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+}

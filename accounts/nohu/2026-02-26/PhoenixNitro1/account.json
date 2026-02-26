@@ -1,0 +1,25 @@
+{
+  "username": "PhoenixNitro1",
+  "password": "jwp53z7mi",
+  "withdrawPassword": "1",
+  "fullname": "HOANG GIA BAO LONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HOA BINH",
+    "accountNumber": "9686687660001122138",
+    "accountHolder": "HOANG GIA BAO LONG"
+  },
+  "registeredAt": "2026-02-26T06:49:42.980Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:49:42.980Z",
+  "bankVerified": false
+}

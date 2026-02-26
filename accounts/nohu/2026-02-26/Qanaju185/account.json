@@ -1,0 +1,25 @@
+{
+  "username": "Qanaju185",
+  "password": "0r427axdk",
+  "withdrawPassword": "1",
+  "fullname": "PHAN THI NGOC BAO CHAU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THU DUC",
+    "accountNumber": "9686687660001122927",
+    "accountHolder": "PHAN THI NGOC BAO CHAU"
+  },
+  "registeredAt": "2026-02-26T09:49:40.877Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:49:40.877Z",
+  "bankVerified": false
+}

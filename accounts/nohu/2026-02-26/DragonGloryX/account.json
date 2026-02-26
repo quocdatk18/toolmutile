@@ -1,0 +1,25 @@
+{
+  "username": "DragonGloryX",
+  "password": "k5luo4ky",
+  "withdrawPassword": "1",
+  "fullname": "DINH BAO NGOC MINH ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HOA BINH",
+    "accountNumber": "9686687660001122251",
+    "accountHolder": "DINH BAO NGOC MINH ANH"
+  },
+  "registeredAt": "2026-02-26T07:47:01.080Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:47:01.080Z",
+  "bankVerified": true
+}

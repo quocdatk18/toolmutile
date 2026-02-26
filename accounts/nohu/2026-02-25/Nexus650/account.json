@@ -1,0 +1,25 @@
+{
+  "username": "Nexus650",
+  "password": "21vyh8qf3z",
+  "withdrawPassword": "1",
+  "fullname": "LE QUOC BAO AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "PHU THO",
+    "accountNumber": "9686687660001119288",
+    "accountHolder": "LE QUOC BAO AN"
+  },
+  "registeredAt": "2026-02-25T15:46:55.433Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T15:46:55.433Z",
+  "bankVerified": false
+}

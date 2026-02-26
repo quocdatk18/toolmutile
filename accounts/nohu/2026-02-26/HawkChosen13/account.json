@@ -1,0 +1,25 @@
+{
+  "username": "HawkChosen13",
+  "password": "d158abier3c",
+  "withdrawPassword": "1",
+  "fullname": "VU BAO YEN LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DIEN BIEN",
+    "accountNumber": "9686687660001122154",
+    "accountHolder": "VU BAO YEN LINH"
+  },
+  "registeredAt": "2026-02-26T07:00:10.185Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:00:10.185Z",
+  "bankVerified": false
+}

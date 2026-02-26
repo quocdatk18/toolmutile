@@ -1,0 +1,25 @@
+{
+  "username": "AceWarrior1",
+  "password": "j9l7a9st",
+  "withdrawPassword": "1",
+  "fullname": "PHAM QUANG HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA GIANG",
+    "accountNumber": "9686687660001117498",
+    "accountHolder": "PHAM QUANG HUY"
+  },
+  "registeredAt": "2026-02-25T05:49:00.720Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T05:49:00.720Z",
+  "bankVerified": false
+}

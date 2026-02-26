@@ -1,0 +1,25 @@
+{
+  "username": "TitanForged21",
+  "password": "dkm9454p5",
+  "withdrawPassword": "1",
+  "fullname": "DO GIA KHANH HOANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "TPHCM",
+    "accountNumber": "963012001192800",
+    "accountHolder": "DO GIA KHANH HOANG"
+  },
+  "registeredAt": "2026-02-24T22:19:46.389Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:19:46.389Z",
+  "bankVerified": true
+}

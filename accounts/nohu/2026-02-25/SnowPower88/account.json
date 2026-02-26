@@ -1,0 +1,25 @@
+{
+  "username": "SnowPower88",
+  "password": "cco0n930q195",
+  "withdrawPassword": "1",
+  "fullname": "TRAN DINH A SON",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CA MAU",
+    "accountNumber": "9686687660001116525",
+    "accountHolder": "TRAN DINH A SON"
+  },
+  "registeredAt": "2026-02-25T01:13:42.988Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T01:13:42.988Z",
+  "bankVerified": false
+}

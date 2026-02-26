@@ -1,0 +1,25 @@
+{
+  "username": "MountainEagle21",
+  "password": "jd3i13hbe6",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN DINH CONG MINH THIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TRA VINH",
+    "accountNumber": "9686687660001122937",
+    "accountHolder": "NGUYEN DINH CONG MINH THIEN"
+  },
+  "registeredAt": "2026-02-26T10:31:25.620Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T10:31:25.620Z",
+  "bankVerified": false
+}

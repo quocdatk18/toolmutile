@@ -1,0 +1,25 @@
+{
+  "username": "PrimeCyber21",
+  "password": "uz8si3gv129i",
+  "withdrawPassword": "1",
+  "fullname": "TRAN BAO ANH KHOA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BA RIA VUNG TAU",
+    "accountNumber": "9686687660001122132",
+    "accountHolder": "TRAN BAO ANH KHOA"
+  },
+  "registeredAt": "2026-02-26T06:46:49.247Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:46:49.247Z",
+  "bankVerified": false
+}

@@ -1,0 +1,24 @@
+{
+  "username": "VoidRavenPro",
+  "password": "235lhvki",
+  "withdrawPassword": "111222",
+  "fullname": "HOANG CONG DUC THINH",
+  "email": "7hdg5z@gmail.com",
+  "phone": "813677924",
+  "registeredAt": "2026-02-26T17:19:24.222Z",
+  "firstSite": "CM88",
+  "sites": [
+    "SC881",
+    "CM88",
+    "C168"
+  ],
+  "status": "active",
+  "category": "okvipOtp",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Sóc Trăng",
+    "accountNumber": "963012001211145",
+    "accountHolder": "HOANG CONG DUC THINH"
+  }
+}

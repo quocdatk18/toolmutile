@@ -1,0 +1,25 @@
+{
+  "username": "Pezogi108",
+  "password": "3wq14ppt1",
+  "withdrawPassword": "1",
+  "fullname": "HOANG DUC ANH KHOA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BINH PHUOC",
+    "accountNumber": "963012001192802",
+    "accountHolder": "HOANG DUC ANH KHOA"
+  },
+  "registeredAt": "2026-02-24T22:20:22.519Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:20:22.519Z",
+  "bankVerified": true
+}

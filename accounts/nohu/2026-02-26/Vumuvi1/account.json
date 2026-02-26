@@ -1,0 +1,25 @@
+{
+  "username": "Vumuvi1",
+  "password": "tjt0dtcrw467",
+  "withdrawPassword": "1",
+  "fullname": "DOAN DINH HUU PHUOC KIET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TIEN GIANG",
+    "accountNumber": "9686687660001122930",
+    "accountHolder": "DOAN DINH HUU PHUOC KIET"
+  },
+  "registeredAt": "2026-02-26T09:50:19.888Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:50:19.888Z",
+  "bankVerified": false
+}

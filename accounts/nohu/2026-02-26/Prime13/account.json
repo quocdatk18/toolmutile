@@ -1,0 +1,25 @@
+{
+  "username": "Prime13",
+  "password": "y1yr2t098f",
+  "withdrawPassword": "1",
+  "fullname": "HOANG GIA KHANG BAO MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THU DUC",
+    "accountNumber": "9686687660001122254",
+    "accountHolder": "HOANG GIA KHANG BAO MINH"
+  },
+  "registeredAt": "2026-02-26T07:53:21.972Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:53:21.972Z",
+  "bankVerified": false
+}

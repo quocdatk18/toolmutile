@@ -1,0 +1,25 @@
+{
+  "username": "DarkFury13",
+  "password": "sswzjs5y3c",
+  "withdrawPassword": "1",
+  "fullname": "TRAN THI THANH TAM AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DONG NAI",
+    "accountNumber": "9686687660001118317",
+    "accountHolder": "TRAN THI THANH TAM AN"
+  },
+  "registeredAt": "2026-02-25T11:14:41.336Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T11:14:41.336Z",
+  "bankVerified": false
+}

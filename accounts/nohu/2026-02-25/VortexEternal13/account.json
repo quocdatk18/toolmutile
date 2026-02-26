@@ -1,0 +1,25 @@
+{
+  "username": "VortexEternal13",
+  "password": "l31x4i9crln",
+  "withdrawPassword": "1",
+  "fullname": "TRAN HA VAN KHOA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THAI BINH",
+    "accountNumber": "9686687660001116192",
+    "accountHolder": "TRAN HA VAN KHOA"
+  },
+  "registeredAt": "2026-02-24T22:51:18.885Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:51:18.885Z",
+  "bankVerified": false
+}

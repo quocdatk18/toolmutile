@@ -1,0 +1,25 @@
+{
+  "username": "Kivovupi21",
+  "password": "op9888coxq4",
+  "withdrawPassword": "1",
+  "fullname": "BUI GIA MINH TUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HUNG YEN",
+    "accountNumber": "9686687660001122143",
+    "accountHolder": "BUI GIA MINH TUAN"
+  },
+  "registeredAt": "2026-02-26T06:50:32.101Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:50:32.101Z",
+  "bankVerified": true
+}

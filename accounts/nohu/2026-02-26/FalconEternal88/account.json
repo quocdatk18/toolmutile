@@ -1,0 +1,25 @@
+{
+  "username": "FalconEternal88",
+  "password": "drpgyi9x152d",
+  "withdrawPassword": "1",
+  "fullname": "TRUONG CONG BAO MINH DUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BEN TRE",
+    "accountNumber": "9686687660001122929",
+    "accountHolder": "TRUONG CONG BAO MINH DUC"
+  },
+  "registeredAt": "2026-02-26T09:50:02.439Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:50:02.439Z",
+  "bankVerified": false
+}

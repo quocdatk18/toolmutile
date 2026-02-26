@@ -1,0 +1,25 @@
+{
+  "username": "Sky9",
+  "password": "9ydt92uytwkc",
+  "withdrawPassword": "1",
+  "fullname": "PHAM DINH QUANG THANH HIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAM DONG",
+    "accountNumber": "9686687660001117779",
+    "accountHolder": "PHAM DINH QUANG THANH HIEN"
+  },
+  "registeredAt": "2026-02-25T07:27:52.615Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T07:27:52.615Z",
+  "bankVerified": false
+}

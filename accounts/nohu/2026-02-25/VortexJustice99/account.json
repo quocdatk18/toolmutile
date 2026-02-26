@@ -1,0 +1,25 @@
+{
+  "username": "VortexJustice99",
+  "password": "ertw32972i7",
+  "withdrawPassword": "1",
+  "fullname": "HOANG DINH GIA SON",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DAK LAK",
+    "accountNumber": "9686687660001116200",
+    "accountHolder": "HOANG DINH GIA SON"
+  },
+  "registeredAt": "2026-02-24T22:57:17.255Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:57:17.255Z",
+  "bankVerified": false
+}

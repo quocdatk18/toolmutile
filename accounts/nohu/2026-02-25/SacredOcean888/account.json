@@ -1,0 +1,25 @@
+{
+  "username": "SacredOcean888",
+  "password": "nx79na59iq34",
+  "withdrawPassword": "1",
+  "fullname": "BUI A THANH DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THAI BINH",
+    "accountNumber": "9686687660001116197",
+    "accountHolder": "BUI A THANH DAT"
+  },
+  "registeredAt": "2026-02-24T22:54:51.184Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:54:51.184Z",
+  "bankVerified": false
+}

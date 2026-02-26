@@ -1,0 +1,25 @@
+{
+  "username": "HunterSolid999",
+  "password": "nan3eke6yg6j",
+  "withdrawPassword": "1",
+  "fullname": "DANG HUU PHUC LOC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "PHU THO",
+    "accountNumber": "9686687660001117278",
+    "accountHolder": "DANG HUU PHUC LOC"
+  },
+  "registeredAt": "2026-02-25T04:36:04.611Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T04:36:04.611Z",
+  "bankVerified": false
+}

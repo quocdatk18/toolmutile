@@ -1,0 +1,25 @@
+{
+  "username": "Hyper13",
+  "password": "cs6ipl6w16",
+  "withdrawPassword": "1",
+  "fullname": "NGO BAO NGOC HUYEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA TINH",
+    "accountNumber": "9686687660001122148",
+    "accountHolder": "NGO BAO NGOC HUYEN"
+  },
+  "registeredAt": "2026-02-26T06:55:37.413Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:55:37.413Z",
+  "bankVerified": false
+}

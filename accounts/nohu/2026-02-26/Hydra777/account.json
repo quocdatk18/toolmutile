@@ -1,0 +1,25 @@
+{
+  "username": "Hydra777",
+  "password": "vulfdwi5rw3",
+  "withdrawPassword": "1",
+  "fullname": "TRUONG MINH DUC GIA HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "KIEN GIANG",
+    "accountNumber": "9686687660001122255",
+    "accountHolder": "TRUONG MINH DUC GIA HUY"
+  },
+  "registeredAt": "2026-02-26T09:00:22.181Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:00:22.181Z",
+  "bankVerified": false
+}

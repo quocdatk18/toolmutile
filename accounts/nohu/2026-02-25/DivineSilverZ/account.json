@@ -1,0 +1,25 @@
+{
+  "username": "DivineSilverZ",
+  "password": "vchf7mzg59",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN HOANG GIA BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "VINH LONG",
+    "accountNumber": "9686687660001119293",
+    "accountHolder": "NGUYEN HOANG GIA BAO"
+  },
+  "registeredAt": "2026-02-25T15:49:25.273Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T15:49:25.273Z",
+  "bankVerified": false
+}

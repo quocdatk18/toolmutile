@@ -1,8 +1,8 @@
-﻿/**
- * VIP Tool Automation - 3 Categories (OKVIP, ABCVIP, JUN88, JUN88V2, AccOKVIP)
- * Luá»“ng chung: register â†’ addbank â†’ checkpromo
- * Form filling riÃªng cho tá»«ng category
- */
+/**
+* VIP Tool Automation - 3 Categories (OKVIP, ABCVIP, JUN88, JUN88V2, AccOKVIP)
+* Luồng chung: register → addbank → checkpromo
+* Form filling riêng cho từng category
+*/
 
 // Import fetch for Node.js (v18+)
 const fetch = global.fetch || require('node-fetch');
@@ -19,64 +19,64 @@ const CommonFormFiller = require('../common/form-filler');
 // Import CaptchaSolver for API fallback
 const CaptchaSolver = require('../nohu-tool/extension/captcha-solver.js');
 
-// 63 tá»‰nh thÃ nh Viá»‡t Nam
+// 63 tỉnh thành Việt Nam
 const VIETNAM_PROVINCES = [
-    'An Giang', 'BÃ  Rá»‹a - VÅ©ng TÃ u', 'Báº¯c Giang', 'Báº¯c Káº¡n', 'Báº¡c LiÃªu', 'Báº¯c Ninh',
-    'Báº¿n Tre', 'BÃ¬nh Äá»‹nh', 'BÃ¬nh DÆ°Æ¡ng', 'BÃ¬nh PhÆ°á»›c', 'BÃ¬nh Thuáº­n', 'CÃ  Mau',
-    'Cao Báº±ng', 'Äáº¯k Láº¯k', 'Äáº¯k NÃ´ng', 'Äiá»‡n BiÃªn', 'Äá»“ng Nai', 'Äá»“ng ThÃ¡p',
-    'Gia Lai', 'HÃ  Giang', 'HÃ  Nam', 'HÃ  Ná»™i', 'HÃ  TÄ©nh', 'Háº£i DÆ°Æ¡ng',
-    'Háº£i PhÃ²ng', 'Háº­u Giang', 'HÃ²a BÃ¬nh', 'HÆ°ng YÃªn', 'KhÃ¡nh HÃ²a', 'KiÃªn Giang',
-    'Kon Tum', 'Lai ChÃ¢u', 'LÃ¢m Äá»“ng', 'Láº¡ng SÆ¡n', 'LÃ o Cai', 'Long An',
-    'Nam Äá»‹nh', 'Nghá»‡ An', 'Ninh BÃ¬nh', 'Ninh Thuáº­n', 'PhÃº Thá»', 'PhÃº YÃªn',
-    'Quáº£ng BÃ¬nh', 'Quáº£ng Nam', 'Quáº£ng NgÃ£i', 'Quáº£ng Ninh', 'Quáº£ng Trá»‹', 'SÃ³c TrÄƒng',
-    'SÆ¡n La', 'TÃ¢y Ninh', 'ThÃ¡i BÃ¬nh', 'ThÃ¡i NguyÃªn', 'Thanh HÃ³a', 'Thá»«a ThiÃªn Huáº¿',
-    'Tiá»n Giang', 'TP. Há»“ ChÃ­ Minh', 'TrÃ  Vinh', 'TuyÃªn Quang', 'VÄ©nh Long', 'VÄ©nh PhÃºc',
-    'YÃªn BÃ¡i'
+    'An Giang', 'Bà Rịa - Vũng Tàu', 'Bắc Giang', 'Bắc Kạn', 'Bạc Liêu', 'Bắc Ninh',
+    'Bến Tre', 'Bình Định', 'Bình Dương', 'Bình Phước', 'Bình Thuận', 'Cà Mau',
+    'Cao Bằng', 'Đắk Lắk', 'Đắk Nông', 'Điện Biên', 'Đồng Nai', 'Đồng Tháp',
+    'Gia Lai', 'Hà Giang', 'Hà Nam', 'Hà Nội', 'Hà Tĩnh', 'Hải Dương',
+    'Hải Phòng', 'Hậu Giang', 'Hòa Bình', 'Hưng Yên', 'Khánh Hòa', 'Kiên Giang',
+    'Kon Tum', 'Lai Châu', 'Lâm Đồng', 'Lạng Sơn', 'Lào Cai', 'Long An',
+    'Nam Định', 'Nghệ An', 'Ninh Bình', 'Ninh Thuận', 'Phú Thọ', 'Phú Yên',
+    'Quảng Bình', 'Quảng Nam', 'Quảng Ngãi', 'Quảng Ninh', 'Quảng Trị', 'Sóc Trăng',
+    'Sơn La', 'Tây Ninh', 'Thái Bình', 'Thái Nguyên', 'Thanh Hóa', 'Thừa Thiên Huế',
+    'Tiền Giang', 'TP. Hồ Chí Minh', 'Trà Vinh', 'Tuyên Quang', 'Vĩnh Long', 'Vĩnh Phúc',
+    'Yên Bái'
 ];
 
 // JUN88V2 specific bank mapping (matches exact dropdown text)
 const JUN88V2_BANK_NAME_MAPPING = {
-    'Vietcombank': 'Vietcombank / NgÃ¢n hÃ ng Ngoáº¡i ThÆ°Æ¡ng',
+    'Vietcombank': 'Vietcombank / Ngân hàng Ngoại Thương',
     'Techcombank': 'Techcom Bank',
-    'BIDV': 'BIDV / NgÃ¢n hÃ ng TMCP Äáº§u tÆ° vÃ  PhÃ¡t triá»ƒn Viá»‡t Nam',
-    'VietinBank': 'VietinBank / NgÃ¢n hÃ ng CÃ´ng ThÆ°Æ¡ng',
-    'Agribank': 'Agribank / NgÃ¢n hÃ ng NÃ´ng nghiá»‡p',
-    'ACB': 'ACB / NgÃ¢n hÃ ng Ã ChÃ¢u',
-    'MB': 'MBBank / NgÃ¢n hÃ ng QuÃ¢n Äá»™i',
-    'MBBank': 'MBBank / NgÃ¢n hÃ ng QuÃ¢n Äá»™i',
-    'TPBank': 'TPBank / NgÃ¢n hÃ ng TiÃªn Phong',
-    'VPBank': 'VPBank / NgÃ¢n hÃ ng Viá»‡t Nam Thá»‹nh VÆ°á»£ng',
-    'Sacombank': 'Sacombank / NgÃ¢n hÃ ng SÃ i GÃ²n ThÆ°Æ¡ng TÃ­n',
+    'BIDV': 'BIDV / Ngân hàng TMCP Đầu tư và Phát triển Việt Nam',
+    'VietinBank': 'VietinBank / Ngân hàng Công Thương',
+    'Agribank': 'Agribank / Ngân hàng Nông nghiệp',
+    'ACB': 'ACB / Ngân hàng Á Châu',
+    'MB': 'MBBank / Ngân hàng Quân Đội',
+    'MBBank': 'MBBank / Ngân hàng Quân Đội',
+    'TPBank': 'TPBank / Ngân hàng Tiên Phong',
+    'VPBank': 'VPBank / Ngân hàng Việt Nam Thịnh Vượng',
+    'Sacombank': 'Sacombank / Ngân hàng Sài Gòn Thương Tín',
     'HDBank': 'HDBank',
-    'VIB': 'VIB / NgÃ¢n hÃ ng Quá»‘c Táº¿',
-    'SHB': 'SHB / NgÃ¢n hÃ ng SÃ i GÃ²n-HÃ  Ná»™i',
-    'Eximbank': 'Eximbank / NgÃ¢n hÃ ng Xuáº¥t Nháº­p Kháº©u',
-    'MSB': 'MSB / NgÃ¢n HÃ ng HÃ ng Háº£i',
-    'OCB': 'OCB / NgÃ¢n hÃ ng PhÆ°Æ¡ng ÄÃ´ng',
-    'SeABank': 'SeABank / NgÃ¢n hÃ ng ÄÃ´ng Nam Ã',
-    'NamABank': 'NamABank / NgÃ¢n hÃ ng Nam Ã',
-    'Nam A Bank': 'NamABank / NgÃ¢n hÃ ng Nam Ã',
-    'PVcomBank': 'PVcomBank / NgÃ¢n hÃ ng Äáº¡i ChÃºng',
-    'BacABank': 'BacABank / NgÃ¢n hÃ ng Báº¯c Ã',
-    'BacA Bank': 'BacABank / NgÃ¢n hÃ ng Báº¯c Ã',
-    'Viet Capital Bank': 'Viet Capital Bank / NgÃ¢n hÃ ng Báº£n Viá»‡t',
-    'VietCapital': 'Viet Capital Bank / NgÃ¢n hÃ ng Báº£n Viá»‡t',
-    'LPBank': 'LPBank / NgÃ¢n hÃ ng BÆ°u Ä‘iá»‡n LiÃªn Viá»‡t',
-    'LienVietPostBank': 'LPBank / NgÃ¢n hÃ ng BÆ°u Ä‘iá»‡n LiÃªn Viá»‡t',
-    'Kien Long Bank': 'Kien Long Bank /  KiÃªn Long Bank',
-    'KienLongBank': 'Kien Long Bank /  KiÃªn Long Bank',
+    'VIB': 'VIB / Ngân hàng Quốc Tế',
+    'SHB': 'SHB / Ngân hàng Sài Gòn-Hà Nội',
+    'Eximbank': 'Eximbank / Ngân hàng Xuất Nhập Khẩu',
+    'MSB': 'MSB / Ngân Hàng Hàng Hải',
+    'OCB': 'OCB / Ngân hàng Phương Đông',
+    'SeABank': 'SeABank / Ngân hàng Đông Nam Á',
+    'NamABank': 'NamABank / Ngân hàng Nam Á',
+    'Nam A Bank': 'NamABank / Ngân hàng Nam Á',
+    'PVcomBank': 'PVcomBank / Ngân hàng Đại Chúng',
+    'BacABank': 'BacABank / Ngân hàng Bắc Á',
+    'BacA Bank': 'BacABank / Ngân hàng Bắc Á',
+    'Viet Capital Bank': 'Viet Capital Bank / Ngân hàng Bản Việt',
+    'VietCapital': 'Viet Capital Bank / Ngân hàng Bản Việt',
+    'LPBank': 'LPBank / Ngân hàng Bưu điện Liên Việt',
+    'LienVietPostBank': 'LPBank / Ngân hàng Bưu điện Liên Việt',
+    'Kien Long Bank': 'Kien Long Bank /  Kiên Long Bank',
+    'KienLongBank': 'Kien Long Bank /  Kiên Long Bank',
     'GPBank': 'GPBank',
     'PG Bank': 'PG Bank / Petrolimex',
     'PGBank': 'PG Bank / Petrolimex',
-    'NCB': 'NCB / NgÃ¢n hÃ ng Quá»‘c DÃ¢n',
-    'SCB': 'SCB / NgÃ¢n hÃ ng SÃ i GÃ²n',
-    'VietABank': 'VietABank / NgÃ¢n hÃ ng Viá»‡t Ã',
-    'VietBank': 'VietBank / Viá»‡t Nam ThÆ°Æ¡ng TÃ­n',
-    'ABBank': 'ABBank / NgÃ¢n hÃ ng An BÃ¬nh',
-    'ABBANK': 'ABBank / NgÃ¢n hÃ ng An BÃ¬nh',
-    'CBBank': 'CBBank / NgÃ¢n hÃ ng XÃ¢y Dá»±ng',
-    'CBBANK': 'CBBank / NgÃ¢n hÃ ng XÃ¢y Dá»±ng',
-    'COOPBANK': 'COOPBANK - NgÃ¢n hÃ ng Há»£p tÃ¡c xÃ£ Viá»‡t Nam',
+    'NCB': 'NCB / Ngân hàng Quốc Dân',
+    'SCB': 'SCB / Ngân hàng Sài Gòn',
+    'VietABank': 'VietABank / Ngân hàng Việt Á',
+    'VietBank': 'VietBank / Việt Nam Thương Tín',
+    'ABBank': 'ABBank / Ngân hàng An Bình',
+    'ABBANK': 'ABBank / Ngân hàng An Bình',
+    'CBBank': 'CBBank / Ngân hàng Xây Dựng',
+    'CBBANK': 'CBBank / Ngân hàng Xây Dựng',
+    'COOPBANK': 'COOPBANK - Ngân hàng Hợp tác xã Việt Nam',
     'OceanBank': 'OceanBank',
     'Shinhan Bank': 'Shinhan Bank',
     'Shinhan': 'Shinhan Bank',
@@ -98,23 +98,23 @@ const JUN88V2_BANK_NAME_MAPPING = {
     'DBS': 'DBS',
     'BAOVIET Bank': 'BAOVIET Bank',
     'BAO VIET BANK': 'BAOVIET Bank',
-    'IBK': 'IBK / NgÃ¢n HÃ ng CÃ´ng Nghiá»‡p HÃ n Quá»‘c',
+    'IBK': 'IBK / Ngân Hàng Công Nghiệp Hàn Quốc',
     'NongHyup Bank': 'NongHyup Bank',
     'NongHyup': 'NongHyup Bank',
-    'VRB': 'VRB / NgÃ¢n hÃ ng Viá»‡t - Nga',
+    'VRB': 'VRB / Ngân hàng Việt - Nga',
     'IVB': 'IVB / Indovina Bank',
     'Indovina': 'IVB / Indovina Bank',
-    'SaigonBank': 'SaigonBank / SÃ i GÃ²n CÃ´ng ThÆ°Æ¡ng',
+    'SaigonBank': 'SaigonBank / Sài Gòn Công Thương',
     'Cake by VPBank': 'Cake by VPBank',
     'Cake': 'Cake by VPBank',
     'Liobank by OCB': 'Liobank by OCB',
     'Liobank': 'Liobank by OCB',
     'Timo by BVBank': 'Timo by BVBank',
     'Timo': 'Timo by BVBank',
-    'VBSP': 'VBSP / NgÃ¢n hÃ ng ChÃ­nh sÃ¡ch xÃ£ há»™i',
+    'VBSP': 'VBSP / Ngân hàng Chính sách xã hội',
     'Vikki by HDBank': 'Vikki by HDBank',
     'Vikki': 'Vikki by HDBank',
-    'MBV': 'MBV / NgÃ¢n hÃ ng Viá»‡t Nam Hiá»‡n Äáº¡i'
+    'MBV': 'MBV / Ngân hàng Việt Nam Hiện Đại'
 };
 
 class VIPAutomation {
@@ -122,7 +122,7 @@ class VIPAutomation {
         this.settings = settings;
         this.scripts = scripts; // { contentScript, captchaSolver, banksScript }
 
-        // Äá»‹nh nghÄ©a Ä‘uÃ´i path cho tá»«ng category
+        // Định nghĩa đuôi path cho từng category
         this.categoryPaths = {
             'okvip': {
                 withdrawPassword: '/Account/ChangeMoneyPassword',
@@ -133,7 +133,7 @@ class VIPAutomation {
                 bank: '/home/withdraw?active=0'
             },
             'accOkvip': {
-                // accOkvip chá»‰ cáº§n register, khÃ´ng cáº§n addBank/checkPromo
+                // accOkvip chỉ cần register, không cần addBank/checkPromo
                 withdrawPassword: '/Account/ChangeMoneyPassword',
                 bank: '/Financial?type=withdraw'
             },
@@ -142,15 +142,15 @@ class VIPAutomation {
                 bank: '/Financial?type=withdraw'
             },
             'jun88': {
-                withdrawPassword: '/Account/ChangeMoneyPassword', //  k cáº§n
+                withdrawPassword: '/Account/ChangeMoneyPassword', //  k cần
                 bank: '/account/withdrawaccounts/bankcards'
             },
             '78win': {
-                withdrawPassword: '/Account/ChangeMoneyPassword',//  k cáº§n
+                withdrawPassword: '/Account/ChangeMoneyPassword',//  k cần
                 bank: '/account/withdrawaccounts/bankcards'
             },
             'jun88v2': {
-                withdrawPassword: '/Account/ChangeMoneyPassword',//  k cáº§n
+                withdrawPassword: '/Account/ChangeMoneyPassword',//  k cần
                 bank: '/myaccount/bankdetails'
             },
             '22vip': {
@@ -161,19 +161,19 @@ class VIPAutomation {
     }
 
     /**
-     * Helper: Map bank name tá»« VietQR API sang dropdown option
+     * Helper: Map bank name từ VietQR API sang dropdown option
      */
     mapBankName(bankName, category = null) {
         if (!bankName) return '';
 
         // Only use mapping for JUN88V2
         if (category === 'jun88v2') {
-            // Thá»­ mapping trá»±c tiáº¿p
+            // Thử mapping trực tiếp
             if (JUN88V2_BANK_NAME_MAPPING[bankName]) {
                 return JUN88V2_BANK_NAME_MAPPING[bankName];
             }
 
-            // Thá»­ tÃ¬m kiáº¿m khÃ´ng phÃ¢n biá»‡t hoa thÆ°á»ng
+            // Thử tìm kiếm không phân biệt hoa thường
             const lowerInput = bankName.toLowerCase();
             for (const [key, value] of Object.entries(JUN88V2_BANK_NAME_MAPPING)) {
                 if (key.toLowerCase() === lowerInput) {
@@ -181,14 +181,14 @@ class VIPAutomation {
                 }
             }
 
-            // Thá»­ tÃ¬m kiáº¿m partial match
+            // Thử tìm kiếm partial match
             for (const [key, value] of Object.entries(JUN88V2_BANK_NAME_MAPPING)) {
                 if (key.toLowerCase().includes(lowerInput) || lowerInput.includes(key.toLowerCase())) {
                     return value;
                 }
             }
 
-            console.warn(`âš ï¸ No mapping found for bank: ${bankName}`);
+            console.warn(`⚠️ No mapping found for bank: ${bankName}`);
         }
 
         // For other categories, return bankName as-is (no mapping)
@@ -200,11 +200,11 @@ class VIPAutomation {
      * Logs all available banks for debugging
      */
     async selectBankFromDropdown(page, bankName, selector = '.mc-bank-item') {
-        console.log(`ðŸ¦ Selecting bank: ${bankName}`);
+        console.log(`🏦 Selecting bank: ${bankName}`);
 
         const result = await page.evaluate((bankNameToFind, itemSelector) => {
             const bankItems = document.querySelectorAll(itemSelector);
-            console.log(`ðŸ“‹ Found ${bankItems.length} bank items in dropdown`);
+            console.log(`📋 Found ${bankItems.length} bank items in dropdown`);
 
             // Log all available banks for debugging
             const availableBanks = [];
@@ -224,7 +224,7 @@ class VIPAutomation {
                     item.textContent?.trim().toUpperCase();
                 console.log(`  Comparing: "${itemText}" === "${bankNameToFind.toUpperCase()}"`);
                 if (itemText === bankNameToFind.toUpperCase()) {
-                    console.log(`âœ… Exact match found: ${itemText}`);
+                    console.log(`✅ Exact match found: ${itemText}`);
                     item.click();
                     found = true;
                     selectedBank = itemText;
@@ -239,7 +239,7 @@ class VIPAutomation {
                         item.textContent?.trim().toUpperCase();
                     console.log(`  Partial check: "${itemText}".includes("${bankNameToFind.toUpperCase()}")`);
                     if (itemText && itemText.includes(bankNameToFind.toUpperCase())) {
-                        console.log(`âœ… Partial match found: ${itemText}`);
+                        console.log(`✅ Partial match found: ${itemText}`);
                         item.click();
                         found = true;
                         selectedBank = itemText;
@@ -252,7 +252,7 @@ class VIPAutomation {
             if (!found && bankItems.length > 0) {
                 const firstBank = bankItems[0].querySelector('[class*="bank-name"]')?.textContent?.trim() ||
                     bankItems[0].textContent?.trim();
-                console.warn(`âš ï¸ Bank not found, selecting first option: ${firstBank}`);
+                console.warn(`⚠️ Bank not found, selecting first option: ${firstBank}`);
                 bankItems[0].click();
                 selectedBank = firstBank;
             }
@@ -268,27 +268,27 @@ class VIPAutomation {
     }
 
     /**
-     * Helper: Extract domain tá»« URL
+     * Helper: Extract domain từ URL
      */
     getDomain(url) {
         try {
             const urlObj = new URL(url);
             return `${urlObj.protocol}//${urlObj.hostname}`;
         } catch (error) {
-            console.error('âŒ Invalid URL:', url);
+            console.error('❌ Invalid URL:', url);
             return null;
         }
     }
 
     /**
-     * Helper: Calculate random delay (2-10s) - dÃ¹ng chung cho táº¥t cáº£ category
+     * Helper: Calculate random delay (2-10s) - dùng chung cho tất cả category
      */
     getRandomDelay(minMs = 2000, maxMs = 10000) {
         return Math.random() * (maxMs - minMs) + minMs;
     }
 
     /**
-     * Helper: Random chi nhÃ¡nh tá»« 63 tá»‰nh thÃ nh Viá»‡t Nam
+     * Helper: Random chi nhánh từ 63 tỉnh thành Việt Nam
      */
     getRandomProvince() {
         return VIETNAM_PROVINCES[Math.floor(Math.random() * VIETNAM_PROVINCES.length)];
@@ -312,25 +312,25 @@ class VIPAutomation {
                 })
             });
         } catch (err) {
-            console.warn('âš ï¸ Failed to send status update:', err.message);
+            console.warn('⚠️ Failed to send status update:', err.message);
         }
     }
 
     /**
-     * Inject required scripts vÃ o page (captcha-solver, content script)
+     * Inject required scripts vào page (captcha-solver, content script)
      */
     async injectScripts(page) {
         try {
-            console.log('ðŸ’‰ Injecting scripts...');
+            console.log('💉 Injecting scripts...');
 
             // Inject captcha-solver.js
             if (this.scripts && this.scripts.captchaSolver) {
-                console.log('ðŸ’‰ Injecting captcha-solver.js...');
+                console.log('💉 Injecting captcha-solver.js...');
                 await page.evaluate(this.scripts.captchaSolver);
             }
 
             // Inject Puppeteer API helper (bypass CORS)
-            console.log('ðŸ’‰ Injecting Puppeteer API helper...');
+            console.log('💉 Injecting Puppeteer API helper...');
             await page.evaluate(() => {
                 window.__puppeteerApiCall = async (endpoint, method = 'GET', body = null, apiKey) => {
                     const options = {
@@ -352,9 +352,9 @@ class VIPAutomation {
                 };
             });
 
-            console.log('âœ… Scripts injected successfully');
+            console.log('✅ Scripts injected successfully');
         } catch (error) {
-            console.error('âŒ Script injection error:', error.message);
+            console.error('❌ Script injection error:', error.message);
             throw error;
         }
     }
@@ -365,28 +365,28 @@ class VIPAutomation {
     async solveCaptchaViaAPI(base64Image, apiKey) {
         try {
             if (!apiKey) {
-                console.warn('âš ï¸ No API key for captcha solving');
+                console.warn('⚠️ No API key for captcha solving');
                 return null;
             }
 
             // Use 2Captcha API
             return await this.solveCaptchaVia2Captcha(base64Image, apiKey);
         } catch (error) {
-            console.error('âŒ Captcha API error:', error.message);
+            console.error('❌ Captcha API error:', error.message);
             return null;
         }
     }
 
     async solveCaptchaVia2Captcha(base64Image, apiKey) {
         try {
-            console.log('ðŸ” Äang giáº£i captcha qua API 2Captcha...');
-            console.log('ðŸ“Š Äá»™ dÃ i Base64:', base64Image?.length || 0);
+            console.log('🔐 Đang giải captcha qua API 2Captcha...');
+            console.log('📊 Độ dài Base64:', base64Image?.length || 0);
 
-            // Loáº¡i bá» tiá»n tá»‘ data:image
+            // Loại bỏ tiền tố data:image
             const cleanBase64 = base64Image.replace(/^data:image\/[a-z]+;base64,/, '');
 
-            // BÆ°á»›c 1: Gá»­i captcha lÃªn 2Captcha
-            console.log('ðŸ“¤ Gá»­i tá»›i API 2Captcha...');
+            // Bước 1: Gửi captcha lên 2Captcha
+            console.log('📤 Gửi tới API 2Captcha...');
             const submitResponse = await fetch('https://api.2captcha.com/createTask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -400,20 +400,20 @@ class VIPAutomation {
             });
 
             const submitData = await submitResponse.json();
-            console.log('ðŸ“¤ Pháº£n há»“i gá»­i:', submitData);
+            console.log('📤 Phản hồi gửi:', submitData);
 
-            // Kiá»ƒm tra lá»—i
+            // Kiểm tra lỗi
             if (submitData.errorId !== 0) {
-                console.error('âŒ Lá»—i gá»­i captcha:', submitData.errorDescription || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh');
+                console.error('❌ Lỗi gửi captcha:', submitData.errorDescription || 'Lỗi không xác định');
                 return null;
             }
 
-            // Xá»­ lÃ½ pháº£n há»“i thÃ nh cÃ´ng {errorId: 0, taskId: "xxx"}
+            // Xử lý phản hồi thành công {errorId: 0, taskId: "xxx"}
             if (submitData.taskId) {
                 const taskId = submitData.taskId;
-                console.log(`ðŸ“ Captcha Ä‘Ã£ gá»­i, Task ID: ${taskId}`);
+                console.log(`📝 Captcha đã gửi, Task ID: ${taskId}`);
 
-                // Kiá»ƒm tra káº¿t quáº£ (tá»‘i Ä‘a 60 giÃ¢y)
+                // Kiểm tra kết quả (tối đa 60 giây)
                 for (let i = 0; i < 60; i++) {
                     await new Promise(r => setTimeout(r, 2000));
 
@@ -428,33 +428,33 @@ class VIPAutomation {
                     const resultData = await resultResponse.json();
 
                     if (resultData.errorId === 0 && resultData.status === 'ready' && resultData.solution) {
-                        console.log(`âœ… Captcha Ä‘Ã£ giáº£i: ${resultData.solution.text}`);
+                        console.log(`✅ Captcha đã giải: ${resultData.solution.text}`);
                         return resultData.solution.text;
                     }
 
-                    // Status processing = chÆ°a sáºµn sÃ ng
+                    // Status processing = chưa sẵn sàng
                     if (resultData.status === 'processing') {
                         if (i % 10 === 0) {
-                            console.log(`â³ Chá» káº¿t quáº£ captcha (${i}s)...`);
+                            console.log(`⏳ Chờ kết quả captcha (${i}s)...`);
                         }
                         continue;
                     }
 
-                    // CÃ¡c status khÃ¡c lÃ  lá»—i
+                    // Các status khác là lỗi
                     if (resultData.errorId !== 0) {
-                        console.error('âŒ Lá»—i giáº£i captcha:', resultData.errorDescription || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh');
+                        console.error('❌ Lỗi giải captcha:', resultData.errorDescription || 'Lỗi không xác định');
                         return null;
                     }
                 }
 
-                console.error('âŒ Timeout giáº£i captcha');
+                console.error('❌ Timeout giải captcha');
                 return null;
             }
 
-            console.error('âŒ Äá»‹nh dáº¡ng pháº£n há»“i khÃ´ng xÃ¡c Ä‘á»‹nh:', submitData);
+            console.error('❌ Định dạng phản hồi không xác định:', submitData);
             return null;
         } catch (error) {
-            console.error('âŒ Lá»—i API 2Captcha:', error.message);
+            console.error('❌ Lỗi API 2Captcha:', error.message);
             return null;
         }
     }
@@ -465,11 +465,11 @@ class VIPAutomation {
     async getPhoneFromCodeSim(codeSimToken) {
         try {
             if (!codeSimToken) {
-                console.warn('âš ï¸ No CodeSim token provided');
+                console.warn('⚠️ No CodeSim token provided');
                 return null;
             }
 
-            console.log('ðŸ“± Requesting phone number from CodeSim API...');
+            console.log('📱 Requesting phone number from CodeSim API...');
 
             // Request phone number from CodeSim via backend API
             // Use full URL with localhost since this runs in Node.js backend
@@ -477,43 +477,43 @@ class VIPAutomation {
             const response = await fetch(url);
             const data = await response.json();
 
-            console.log('ðŸ“¤ CodeSim response:', JSON.stringify(data));
+            console.log('📤 CodeSim response:', JSON.stringify(data));
 
-            // Kiá»ƒm tra response
+            // Kiểm tra response
             if (!data.success || !data.phone) {
-                console.warn('âš ï¸ CodeSim: No phone number available');
+                console.warn('⚠️ CodeSim: No phone number available');
                 return null;
             }
 
             let phoneNumber = data.phone;
-            const otpId = data.otpId; // OTP ID Ä‘á»ƒ láº¥y OTP sau
-            const simId = data.simId; // SIM ID Ä‘á»ƒ há»§y sau
+            const otpId = data.otpId; // OTP ID để lấy OTP sau
+            const simId = data.simId; // SIM ID để hủy sau
 
-            // Kiá»ƒm tra sá»‘ Ä‘iá»‡n thoáº¡i há»£p lá»‡
+            // Kiểm tra số điện thoại hợp lệ
             if (!phoneNumber) {
-                console.warn('âš ï¸ CodeSim: No phone number in response');
+                console.warn('⚠️ CodeSim: No phone number in response');
                 return null;
             }
 
-            // Loáº¡i bá» sá»‘ "0" hoáº·c sá»‘ quÃ¡ ngáº¯n
+            // Loại bỏ số "0" hoặc số quá ngắn
             if (phoneNumber === '0') {
-                console.warn('âš ï¸ CodeSim: Invalid phone number: 0');
+                console.warn('⚠️ CodeSim: Invalid phone number: 0');
                 return null;
             }
 
-            // Náº¿u sá»‘ khÃ´ng cÃ³ sá»‘ 0 á»Ÿ Ä‘áº§u, thÃªm vÃ o
+            // Nếu số không có số 0 ở đầu, thêm vào
             if (!phoneNumber.startsWith('0')) {
                 phoneNumber = '0' + phoneNumber;
             }
 
-            // Kiá»ƒm tra Ä‘á»™ dÃ i
+            // Kiểm tra độ dài
             if (phoneNumber.length < 10) {
-                console.warn(`âš ï¸ CodeSim: Phone number too short: ${phoneNumber}`);
+                console.warn(`⚠️ CodeSim: Phone number too short: ${phoneNumber}`);
                 return null;
             }
 
-            console.log(`âœ… Got phone number from CodeSim: ${phoneNumber}`);
-            console.log(`ðŸ“ OTP ID: ${otpId}, SIM ID: ${simId}`);
+            console.log(`✅ Got phone number from CodeSim: ${phoneNumber}`);
+            console.log(`📝 OTP ID: ${otpId}, SIM ID: ${simId}`);
 
             return {
                 success: true,
@@ -524,7 +524,7 @@ class VIPAutomation {
                 service: 'codesim'
             };
         } catch (error) {
-            console.error('âŒ CodeSim API error:', error.message);
+            console.error('❌ CodeSim API error:', error.message);
             return null;
         }
     }
@@ -535,11 +535,11 @@ class VIPAutomation {
     async getOtpFromCodeSim(codeSimToken, otpId) {
         try {
             if (!codeSimToken || !otpId) {
-                console.warn('âš ï¸ CodeSim token or OTP ID missing');
+                console.warn('⚠️ CodeSim token or OTP ID missing');
                 return null;
             }
 
-            console.log('â³ Waiting for OTP from CodeSim...');
+            console.log('⏳ Waiting for OTP from CodeSim...');
 
             let otp = null;
             let attempts = 0;
@@ -553,21 +553,21 @@ class VIPAutomation {
                 const response = await fetch(url);
                 const data = await response.json();
 
-                console.log(`  ðŸ“¤ CodeSim OTP check (attempt ${attempts}):`, JSON.stringify(data));
+                console.log(`  📤 CodeSim OTP check (attempt ${attempts}):`, JSON.stringify(data));
 
                 if (data.success && data.code) {
                     otp = data.code;
-                    console.log(`âœ… OTP received: ${otp}`);
+                    console.log(`✅ OTP received: ${otp}`);
                     break;
                 }
 
                 if (attempts % 5 === 0) {
-                    console.log(`â³ Still waiting for OTP... (${attempts * 3}s)`);
+                    console.log(`⏳ Still waiting for OTP... (${attempts * 3}s)`);
                 }
             }
 
             if (!otp) {
-                console.warn('âš ï¸ OTP timeout after 90 seconds');
+                console.warn('⚠️ OTP timeout after 90 seconds');
                 return null;
             }
 
@@ -576,14 +576,14 @@ class VIPAutomation {
                 code: otp
             };
         } catch (error) {
-            console.error('âŒ CodeSim OTP error:', error.message);
+            console.error('❌ CodeSim OTP error:', error.message);
             return null;
         }
     }
 
     /**
-     * Get phone number from CodeSim API (khÃ´ng chá» OTP)
-     * Thá»­ láº§n lÆ°á»£t cÃ¡c serviceId cho Ä‘áº¿n khi thÃ nh cÃ´ng
+     * Get phone number from CodeSim API (không chờ OTP)
+     * Thử lần lượt các serviceId cho đến khi thành công
      */
 
 
@@ -593,20 +593,20 @@ class VIPAutomation {
     async solveTurnstileViaAPI(page, apiKey) {
         try {
             if (!apiKey) {
-                console.warn('âš ï¸ No API key for Turnstile solving');
+                console.warn('⚠️ No API key for Turnstile solving');
                 return null;
             }
 
-            console.log('ðŸ” Äang giáº£i Cloudflare Turnstile qua API 2Captcha...');
+            console.log('🔐 Đang giải Cloudflare Turnstile qua API 2Captcha...');
 
             // Wait for Turnstile widget to load (max 15 seconds - it loads dynamically)
             try {
                 await page.waitForSelector('.turnstile-container, [data-sitekey], [id*="turnstile"]', { timeout: 15000 }).catch(() => null);
-                console.log('âœ… Turnstile widget detected');
+                console.log('✅ Turnstile widget detected');
                 // Wait extra time for Turnstile to fully initialize
                 await new Promise(r => setTimeout(r, 2000));
             } catch (e) {
-                console.warn('âš ï¸ Turnstile widget not found after waiting');
+                console.warn('⚠️ Turnstile widget not found after waiting');
             }
 
             // Step 1: Get sitekey from page
@@ -676,7 +676,7 @@ class VIPAutomation {
             });
 
             if (!sitekey) {
-                console.warn('âš ï¸ Could not find Turnstile sitekey');
+                console.warn('⚠️ Could not find Turnstile sitekey');
                 // Log debug info
                 const debugInfo = await page.evaluate(() => {
                     const info = {
@@ -709,15 +709,15 @@ class VIPAutomation {
                     return info;
                 });
 
-                console.log('ðŸ“Š Debug Info:', debugInfo);
+                console.log('📊 Debug Info:', debugInfo);
                 return null;
             }
 
-            console.log(`ðŸ“ Found sitekey: ${sitekey}`);
+            console.log(`📝 Found sitekey: ${sitekey}`);
 
             // Get page URL
             const pageUrl = page.url();
-            console.log(`ðŸ“„ Page URL: ${pageUrl}`);
+            console.log(`📄 Page URL: ${pageUrl}`);
 
             // Step 2: Submit Turnstile task to 2Captcha
             const submitResponse = await fetch('https://api.2captcha.com/createTask', {
@@ -734,20 +734,20 @@ class VIPAutomation {
             });
 
             const submitData = await submitResponse.json();
-            console.log('ðŸ“¤ Pháº£n há»“i gá»­i Turnstile:', submitData);
+            console.log('📤 Phản hồi gửi Turnstile:', submitData);
 
-            // Kiá»ƒm tra lá»—i
+            // Kiểm tra lỗi
             if (submitData.errorId !== 0) {
-                console.error('âŒ Lá»—i gá»­i Turnstile:', submitData.errorDescription || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh');
+                console.error('❌ Lỗi gửi Turnstile:', submitData.errorDescription || 'Lỗi không xác định');
                 return null;
             }
 
-            // Xá»­ lÃ½ Ä‘á»‹nh dáº¡ng polling {errorId: 0, taskId: "xxx"}
+            // Xử lý định dạng polling {errorId: 0, taskId: "xxx"}
             if (submitData.taskId) {
                 const taskId = submitData.taskId;
-                console.log(`ðŸ“ Turnstile Ä‘Ã£ gá»­i, Task ID: ${taskId}`);
+                console.log(`📝 Turnstile đã gửi, Task ID: ${taskId}`);
 
-                // Kiá»ƒm tra káº¿t quáº£ (tá»‘i Ä‘a 60 giÃ¢y cho Turnstile)
+                // Kiểm tra kết quả (tối đa 60 giây cho Turnstile)
                 for (let i = 0; i < 60; i++) {
                     await new Promise(r => setTimeout(r, 2000));
 
@@ -762,23 +762,23 @@ class VIPAutomation {
                     const resultData = await resultResponse.json();
 
                     if (resultData.errorId === 0 && resultData.status === 'ready' && resultData.solution) {
-                        console.log(`âœ… Turnstile Ä‘Ã£ giáº£i`);
+                        console.log(`✅ Turnstile đã giải`);
                         return resultData.solution.token;
                     }
 
                     if (i % 10 === 0) {
-                        console.log(`â³ Chá» káº¿t quáº£ Turnstile (${i}s)...`);
+                        console.log(`⏳ Chờ kết quả Turnstile (${i}s)...`);
                     }
                 }
 
-                console.error('âŒ Timeout giáº£i Turnstile');
+                console.error('❌ Timeout giải Turnstile');
                 return null;
             }
 
-            console.error('âŒ Äá»‹nh dáº¡ng pháº£n há»“i khÃ´ng xÃ¡c Ä‘á»‹nh:', submitData);
+            console.error('❌ Định dạng phản hồi không xác định:', submitData);
             return null;
         } catch (error) {
-            console.error('âŒ Lá»—i API Turnstile 2Captcha:', error.message);
+            console.error('❌ Lỗi API Turnstile 2Captcha:', error.message);
             return null;
         }
     }
@@ -788,10 +788,10 @@ class VIPAutomation {
      */
     async solveCaptchaOnPage(page, apiKey) {
         try {
-            console.log('ðŸŽµ Starting auto-solve captcha...');
+            console.log('🎵 Starting auto-solve captcha...');
 
             if (!apiKey) {
-                console.warn('âš ï¸ No API key provided for captcha solving');
+                console.warn('⚠️ No API key provided for captcha solving');
                 return false;
             }
 
@@ -802,7 +802,7 @@ class VIPAutomation {
 
             while (!captchaImage && attempts < maxAttempts) {
                 attempts++;
-                console.log(`ðŸ” Looking for captcha image (attempt ${attempts}/${maxAttempts})...`);
+                console.log(`🔍 Looking for captcha image (attempt ${attempts}/${maxAttempts})...`);
 
                 try {
                     await page.waitForSelector('img#captcha, img[src^="data:image"], .codeImage', { timeout: 2000 }).catch(() => null);
@@ -811,7 +811,7 @@ class VIPAutomation {
                     captchaImage = await page.evaluate(() => {
                         // Log all images on page
                         const allImages = document.querySelectorAll('img');
-                        console.log(`ðŸ“Š Total images on page: ${allImages.length}`);
+                        console.log(`📊 Total images on page: ${allImages.length}`);
 
                         allImages.forEach((img, idx) => {
                             const src = img.src.substring(0, 100); // First 100 chars
@@ -821,7 +821,7 @@ class VIPAutomation {
                         // Try selectors in order
                         let img = document.querySelector('img#captcha');
                         if (img) {
-                            console.log('âœ… Found by id="captcha"');
+                            console.log('✅ Found by id="captcha"');
                             return img.src;
                         }
 
@@ -833,7 +833,7 @@ class VIPAutomation {
                             if (parent) {
                                 img = parent.querySelector('.codeImage');
                                 if (img) {
-                                    console.log('âœ… Found by #van-field-7-input parent .codeImage');
+                                    console.log('✅ Found by #van-field-7-input parent .codeImage');
                                     return img.src;
                                 }
                             }
@@ -841,7 +841,7 @@ class VIPAutomation {
 
                         img = document.querySelector('img[src^="data:image"]');
                         if (img) {
-                            console.log('âœ… Found by src^="data:image"');
+                            console.log('✅ Found by src^="data:image"');
                             return img.src;
                         }
 
@@ -849,7 +849,7 @@ class VIPAutomation {
                         const codeImages = document.querySelectorAll('.codeImage');
                         if (codeImages.length > 0) {
                             img = codeImages[codeImages.length - 1]; // Get last one
-                            console.log(`âœ… Found by class="codeImage" (${codeImages.length} total, using last)`);
+                            console.log(`✅ Found by class="codeImage" (${codeImages.length} total, using last)`);
                             return img.src;
                         }
 
@@ -858,7 +858,7 @@ class VIPAutomation {
                             const src = image.src;
                             // Look for images that are likely captcha (not too small, not too large)
                             if (src && (src.includes('captcha') || src.includes('code') || src.includes('verify'))) {
-                                console.log('âœ… Found by src pattern');
+                                console.log('✅ Found by src pattern');
                                 return src;
                             }
                         }
@@ -867,11 +867,11 @@ class VIPAutomation {
                     });
 
                     if (captchaImage) {
-                        console.log('ðŸ“¸ Found captcha image');
+                        console.log('📸 Found captcha image');
                         break;
                     }
                 } catch (e) {
-                    console.log(`âš ï¸ Attempt ${attempts} failed:`, e.message);
+                    console.log(`⚠️ Attempt ${attempts} failed:`, e.message);
                 }
 
                 if (!captchaImage && attempts < maxAttempts) {
@@ -880,17 +880,17 @@ class VIPAutomation {
             }
 
             if (!captchaImage) {
-                console.log('âš ï¸ No captcha image found after all attempts');
+                console.log('⚠️ No captcha image found after all attempts');
                 return false;
             }
 
-            console.log('ðŸ” Solving captcha with API...');
+            console.log('🔐 Solving captcha with API...');
 
             // Solve captcha via API (server-side)
             const captchaAnswer = await this.solveCaptchaViaAPI(captchaImage, apiKey);
 
             if (!captchaAnswer) {
-                console.error('âŒ Failed to solve captcha');
+                console.error('❌ Failed to solve captcha');
                 return false;
             }
 
@@ -900,7 +900,7 @@ class VIPAutomation {
                     'input[formcontrolname="checkCode"]',
                     '#van-field-7-input',  // AccOKVIP captcha field
                     'input[placeholder*="captcha"]',
-                    'input[placeholder*="xÃ¡c minh"]',
+                    'input[placeholder*="xác minh"]',
                     'input[placeholder*="verification"]',
                     'input[name="captcha"]',
                     'input[name="checkCode"]'
@@ -921,20 +921,20 @@ class VIPAutomation {
             }, captchaAnswer);
 
             if (filled.success) {
-                console.log('âœ… Captcha filled:', captchaAnswer, 'at', filled.selector);
+                console.log('✅ Captcha filled:', captchaAnswer, 'at', filled.selector);
                 return true;
             } else {
-                console.warn('âš ï¸ Could not find captcha input field');
+                console.warn('⚠️ Could not find captcha input field');
                 return false;
             }
         } catch (error) {
-            console.error('âŒ Captcha solve error:', error.message);
+            console.error('❌ Captcha solve error:', error.message);
             return false;
         }
     }
 
     /**
-     * Main automation flow - Luá»“ng chung cho táº¥t cáº£ categories
+     * Main automation flow - Luồng chung cho tất cả categories
      */
     async runVIPAutomation(browser, category, sites, profileData, mode = 'auto', executionMode = 'sequential', parallelCount = 3) {
         const results = [];
@@ -956,7 +956,7 @@ class VIPAutomation {
                     profileName: profileData.profileName,
                     startTime: Date.now()
                 });
-                console.log(`âœ… Tracking VIP running profile: ${profileData.profileId} (${profileData.username})`);
+                console.log(`✅ Tracking VIP running profile: ${profileData.profileId} (${profileData.username})`);
             }
 
             await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
@@ -966,43 +966,43 @@ class VIPAutomation {
                     profileId: profileData.profileId,
                     username: profileData.username,
                     status: 'running',
-                    category: category, // ðŸ”¥ Add category to status
-                    message: `ðŸš€ Báº¯t Ä‘áº§u cháº¡y ${sites.length} site(s) (${category.toUpperCase()})...`,
+                    category: category, // 🔥 Add category to status
+                    message: `🚀 Bắt đầu chạy ${sites.length} site(s) (${category.toUpperCase()})...`,
                     sites: sites.map(s => ({ name: s })),
                     timestamp: new Date().toISOString()
                 })
             });
-            console.log('ðŸ“¤ Sent running status to dashboard');
+            console.log('📤 Sent running status to dashboard');
         } catch (err) {
-            console.warn('âš ï¸ Failed to send running status:', err.message);
+            console.warn('⚠️ Failed to send running status:', err.message);
         }
 
-        // Táº¡o shared browser context cho checkPromo (náº¿u cáº§n)
+        // Tạo shared browser context cho checkPromo (nếu cần)
         // NOTE: Disabled shared context to avoid conflicts with other tools (Nohu, etc.)
         // Each site will use its own browser instance for checkPromo
         let sharedPromoContext = null;
         // if (mode === 'auto' || mode === 'promo') {
         //     try {
-        //         console.log(`ðŸªŸ Creating shared browser context for checkPromo...`);
+        //         console.log(`🪟 Creating shared browser context for checkPromo...`);
         //         sharedPromoContext = await browser.createBrowserContext();
-        //         console.log(`âœ… Shared browser context created`);
+        //         console.log(`✅ Shared browser context created`);
         //     } catch (error) {
-        //         console.warn(`âš ï¸ Failed to create shared context:`, error.message);
+        //         console.warn(`⚠️ Failed to create shared context:`, error.message);
         //     }
         // }
 
         // Process sites based on execution mode
         if (executionMode === 'parallel') {
-            console.log(`ðŸš€ Running ${sites.length} sites in PARALLEL (${parallelCount} at a time)...`);
+            console.log(`🚀 Running ${sites.length} sites in PARALLEL (${parallelCount} at a time)...`);
             await this.runSitesParallel(browser, category, sites, profileData, mode, sharedPromoContext, parallelCount, results);
         } else {
-            console.log(`ðŸ“‹ Running ${sites.length} sites SEQUENTIALLY...`);
+            console.log(`📋 Running ${sites.length} sites SEQUENTIALLY...`);
             await this.runSitesSequential(browser, category, sites, profileData, mode, sharedPromoContext, results);
         }
 
         // Keep shared context open for user to see results
         if (sharedPromoContext) {
-            console.log(`ðŸ“Œ Keeping shared browser context open for inspection`);
+            console.log(`📌 Keeping shared browser context open for inspection`);
         }
 
         // Send completed status to dashboard
@@ -1019,14 +1019,14 @@ class VIPAutomation {
                     username: profileData.username,
                     status: 'completed',
                     category: category,
-                    message: `âœ… HoÃ n thÃ nh: ${successCount}/${totalCount} site(s) thÃ nh cÃ´ng`,
+                    message: `✅ Hoàn thành: ${successCount}/${totalCount} site(s) thành công`,
                     results: results,
                     timestamp: new Date().toISOString()
                 })
             });
-            console.log('ðŸ“¤ Sent completed status to dashboard');
+            console.log('📤 Sent completed status to dashboard');
         } catch (err) {
-            console.warn('âš ï¸ Failed to send completed status:', err.message);
+            console.warn('⚠️ Failed to send completed status:', err.message);
         }
 
         return results;
@@ -1041,31 +1041,31 @@ class VIPAutomation {
             const siteConfig = categoryConfig.sites.find(s => s.name === siteName);
 
             if (!siteConfig) {
-                console.error(`âŒ Site not found: ${siteName}`);
+                console.error(`❌ Site not found: ${siteName}`);
                 continue;
             }
 
-            console.log(`\nðŸš€ Processing ${category.toUpperCase()} - ${siteName}`);
+            console.log(`\n🚀 Processing ${category.toUpperCase()} - ${siteName}`);
 
             try {
                 if (mode === 'auto') {
-                    // Luá»“ng tá»± Ä‘á»™ng: register â†’ addbank â†’ checkpromo (reuse same page)
+                    // Luồng tự động: register → addbank → checkpromo (reuse same page)
                     const registerResult = await this.registerStep(browser, category, siteConfig, profileData);
 
-                    // Skip addBank náº¿u register failed
+                    // Skip addBank nếu register failed
                     let addBankResult = { success: false, skipped: true, message: 'Skipped - register failed' };
-                    console.log(`ðŸ” Register result for ${siteName}:`, registerResult);
+                    console.log(`🔍 Register result for ${siteName}:`, registerResult);
                     if (!registerResult?.success) {
-                        console.log(`â­ï¸ Skipping addBank for ${siteName} (register failed)`);
+                        console.log(`⏭️ Skipping addBank for ${siteName} (register failed)`);
                     } else {
                         // Save account info after successful registration
-                        console.log(`ðŸ“ Attempting to save account info for ${siteName}...`);
+                        console.log(`📝 Attempting to save account info for ${siteName}...`);
                         try {
                             await this.saveAccountInfo(profileData, category, siteName, sites);
-                            console.log(`âœ… Account info saved successfully for ${siteName}`);
+                            console.log(`✅ Account info saved successfully for ${siteName}`);
                         } catch (err) {
-                            console.error(`âŒ Account save failed for ${siteName}:`, err.message);
-                            console.error(`ðŸ“ Stack:`, err.stack);
+                            console.error(`❌ Account save failed for ${siteName}:`, err.message);
+                            console.error(`📍 Stack:`, err.stack);
                         }
 
                         // Reuse page from registerResult
@@ -1073,22 +1073,22 @@ class VIPAutomation {
 
                         // Update account info with bank data if addBank succeeded
                         if (addBankResult?.success) {
-                            console.log(`ðŸ’¾ Updating account info with bank data for ${siteName}...`);
+                            console.log(`💾 Updating account info with bank data for ${siteName}...`);
                             try {
                                 const siteNames = Array.isArray(sites)
                                     ? (typeof sites[0] === 'string' ? sites : sites.map(s => s.name || s))
                                     : [];
                                 await this.saveAccountInfo(profileData, category, siteName, siteNames);
-                                console.log(`âœ… Account info updated with bank data`);
+                                console.log(`✅ Account info updated with bank data`);
                             } catch (err) {
-                                console.warn(`âš ï¸ Error updating account info:`, err.message);
+                                console.warn(`⚠️ Error updating account info:`, err.message);
                             }
                         }
                     }
 
                     // Skip checkPromo (all VIP use separate tab for checkPromo)
                     const checkPromoResult = { success: true, skipped: true, message: 'Skipped - use separate tab' };
-                    console.log(`â­ï¸ Skipping checkPromo for ${siteName} (use separate tab)`);
+                    console.log(`⏭️ Skipping checkPromo for ${siteName} (use separate tab)`);
 
                     // Build result object
                     const resultObj = {
@@ -1100,7 +1100,7 @@ class VIPAutomation {
 
                     results.push(resultObj);
                 } else if (mode === 'promo') {
-                    // Chá»‰ check promo
+                    // Chỉ check promo
                     const checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
                     results.push({
                         site: siteName,
@@ -1108,7 +1108,7 @@ class VIPAutomation {
                     });
                 }
             } catch (error) {
-                console.error(`âŒ Error processing ${siteName}:`, error.message);
+                console.error(`❌ Error processing ${siteName}:`, error.message);
                 results.push({
                     site: siteName,
                     error: error.message
@@ -1117,7 +1117,7 @@ class VIPAutomation {
 
             // Add delay between sites to reduce resource contention with other tools
             if (siteName !== sites[sites.length - 1]) {
-                console.log(`â³ Waiting 1 second before next site (to avoid Hidemium resource exhaustion)...`);
+                console.log(`⏳ Waiting 1 second before next site (to avoid Hidemium resource exhaustion)...`);
                 await new Promise(resolve => setTimeout(resolve, 1000));
             }
         }
@@ -1138,9 +1138,9 @@ class VIPAutomation {
 
                 // Only show batch number if parallel (parallelCount > 1)
                 if (parallelCount > 1) {
-                    console.log(`\nðŸ“¦ Processing batch ${Math.floor(i / parallelCount) + 1}: ${batch.join(', ')}`);
+                    console.log(`\n📦 Processing batch ${Math.floor(i / parallelCount) + 1}: ${batch.join(', ')}`);
                 } else {
-                    console.log(`\nðŸš€ Processing: ${batch.join(', ')}`);
+                    console.log(`\n🚀 Processing: ${batch.join(', ')}`);
                 }
 
                 // Run batch in parallel
@@ -1157,7 +1157,7 @@ class VIPAutomation {
 
                 // Add delay between batches to avoid overwhelming Hidemium (prevent connection issues with other tools)
                 if (i + parallelCount < sites.length) {
-                    console.log(`â³ Waiting 2 seconds before next batch (to avoid Hidemium resource exhaustion)...`);
+                    console.log(`⏳ Waiting 2 seconds before next batch (to avoid Hidemium resource exhaustion)...`);
                     await new Promise(resolve => setTimeout(resolve, 2000));
                 }
             }
@@ -1175,33 +1175,33 @@ class VIPAutomation {
         const siteConfig = categoryConfig.sites.find(s => s.name === siteName);
 
         if (!siteConfig) {
-            console.error(`âŒ Site not found: ${siteName}`);
+            console.error(`❌ Site not found: ${siteName}`);
             return { site: siteName, error: 'Site not found' };
         }
 
-        console.log(`\nðŸš€ Processing ${category.toUpperCase()} - ${siteName}`);
+        console.log(`\n🚀 Processing ${category.toUpperCase()} - ${siteName}`);
 
         try {
             if (mode === 'auto') {
-                // Luá»“ng tá»± Ä‘á»™ng: register â†’ addbank â†’ checkpromo (reuse same page)
+                // Luồng tự động: register → addbank → checkpromo (reuse same page)
                 const registerResult = await this.registerStep(browser, category, siteConfig, profileData);
 
-                // Skip addBank náº¿u register failed
+                // Skip addBank nếu register failed
                 let addBankResult = { success: false, skipped: true, message: 'Skipped - register failed' };
                 if (!registerResult?.success) {
-                    console.log(`â­ï¸ Skipping addBank for ${siteName} (register failed)`);
+                    console.log(`⏭️ Skipping addBank for ${siteName} (register failed)`);
                 } else {
                     // Save account info after successful registration
-                    console.log(`ðŸ“ Attempting to save account info for ${siteName}...`);
+                    console.log(`📝 Attempting to save account info for ${siteName}...`);
                     try {
                         // Convert sites array to site names if needed
                         const siteNames = Array.isArray(sites) && sites.length > 0
                             ? (typeof sites[0] === 'string' ? sites : sites.map(s => s.name || s))
                             : [];
                         await this.saveAccountInfo(profileData, category, siteName, siteNames);
-                        console.log(`âœ… Account info saved successfully for ${siteName}`);
+                        console.log(`✅ Account info saved successfully for ${siteName}`);
                     } catch (err) {
-                        console.error(`âŒ Account save failed for ${siteName}:`, err.message);
+                        console.error(`❌ Account save failed for ${siteName}:`, err.message);
                     }
 
                     // Reuse page from registerResult
@@ -1209,22 +1209,22 @@ class VIPAutomation {
 
                     // Update account info with bank data if addBank succeeded
                     if (addBankResult?.success) {
-                        console.log(`ðŸ’¾ Updating account info with bank data for ${siteName}...`);
+                        console.log(`💾 Updating account info with bank data for ${siteName}...`);
                         try {
                             const siteNames = Array.isArray(sites) && sites.length > 0
                                 ? (typeof sites[0] === 'string' ? sites : sites.map(s => s.name || s))
                                 : [];
                             await this.saveAccountInfo(profileData, category, siteName, siteNames);
-                            console.log(`âœ… Account info updated with bank data`);
+                            console.log(`✅ Account info updated with bank data`);
                         } catch (err) {
-                            console.warn(`âš ï¸ Error updating account info:`, err.message);
+                            console.warn(`⚠️ Error updating account info:`, err.message);
                         }
                     }
                 }
 
                 // Skip checkPromo (all VIP use separate tab for checkPromo)
                 const checkPromoResult = { success: true, skipped: true, message: 'Skipped - use separate tab' };
-                console.log(`â­ï¸ Skipping checkPromo for ${siteName} (use separate tab)`);
+                console.log(`⏭️ Skipping checkPromo for ${siteName} (use separate tab)`);
 
                 // Build result object
                 const resultObj = {
@@ -1236,7 +1236,7 @@ class VIPAutomation {
 
                 return resultObj;
             } else if (mode === 'promo') {
-                // Chá»‰ check promo
+                // Chỉ check promo
                 const checkPromoResult = await this.checkPromoStep(sharedPromoContext || browser, category, siteConfig, profileData);
                 return {
                     site: siteName,
@@ -1244,7 +1244,7 @@ class VIPAutomation {
                 };
             }
         } catch (error) {
-            console.error(`âŒ Error processing ${siteName}:`, error.message);
+            console.error(`❌ Error processing ${siteName}:`, error.message);
             return {
                 site: siteName,
                 error: error.message
@@ -1253,14 +1253,14 @@ class VIPAutomation {
     }
 
     /**
-     * BÆ°á»›c 1: Register
+     * Bước 1: Register
      */
     async registerStep(browser, category, siteConfig, profileData) {
         const page = await browser.newPage();
         // Register tab for rotation
         tabRotator.register(page, `Register-${siteConfig.name}`);
         try {
-            console.log(`ðŸ“ Register step for ${siteConfig.name}...`);
+            console.log(`📝 Register step for ${siteConfig.name}...`);
 
             await page.goto(siteConfig.registerUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
             await new Promise(r => setTimeout(r, 3000));
@@ -1271,16 +1271,16 @@ class VIPAutomation {
                 try {
                     await this.injectScripts(page);
                 } catch (injectError) {
-                    console.warn('âš ï¸ Script injection failed:', injectError.message);
+                    console.warn('⚠️ Script injection failed:', injectError.message);
                 }
             } else {
-                console.log(`â­ï¸ Skipping auto-captcha for ${category} (manual captcha required)`);
+                console.log(`⏭️ Skipping auto-captcha for ${category} (manual captcha required)`);
             }
 
-            // For JUN88V2: Wait for user to solve Turnstile, then click "ÄÄƒng KÃ½" button
+            // For JUN88V2: Wait for user to solve Turnstile, then click "Đăng Ký" button
             if (category === 'jun88v2') {
-                console.log('ðŸ” JUN88V2: Waiting for Turnstile to be solved...');
-                console.log('â³ Please solve the Cloudflare Turnstile captcha manually...');
+                console.log('🔐 JUN88V2: Waiting for Turnstile to be solved...');
+                console.log('⏳ Please solve the Cloudflare Turnstile captcha manually...');
 
                 // Wait for Turnstile to be solved (check if cf-turnstile-response has value)
                 let turnstileSolved = false;
@@ -1291,41 +1291,41 @@ class VIPAutomation {
                     });
 
                     if (hasToken) {
-                        console.log('âœ… Turnstile solved by user');
+                        console.log('✅ Turnstile solved by user');
                         turnstileSolved = true;
                         break;
                     }
 
                     await new Promise(r => setTimeout(r, 1000));
                     if (i % 10 === 0) {
-                        console.log(`â³ Waiting for Turnstile... (${i}s)`);
+                        console.log(`⏳ Waiting for Turnstile... (${i}s)`);
                     }
                 }
 
                 if (!turnstileSolved) {
-                    console.warn('âš ï¸ Turnstile not solved after 120 seconds');
+                    console.warn('⚠️ Turnstile not solved after 120 seconds');
                 }
 
                 // Wait extra time for Cloudflare to process token
-                console.log('â³ Waiting for Cloudflare to process token...');
+                console.log('⏳ Waiting for Cloudflare to process token...');
                 await new Promise(r => setTimeout(r, 3000));
 
                 // JUN88V2: Form is now ready, no need to click button anymore
-                console.log('âœ… Registration form ready, proceeding to fill form...');
+                console.log('✅ Registration form ready, proceeding to fill form...');
             }
 
-            // Gá»i form filler riÃªng cho category
+            // Gọi form filler riêng cho category
             await this.fillRegisterForm(page, category, profileData, siteConfig);
 
             // For AccOKVIP: Check if phone was successfully fetched from CodeSim (only if API mode)
             if (category === 'accOkvip' && profileData.simMode === 'api') {
                 // Check if we have a valid phone number
                 if (!profileData.codeSimRequestId) {
-                    console.error('âŒ AccOKVIP: Failed to get phone number from CodeSim API');
-                    console.error('âŒ CodeSim API returned: No available phone numbers');
+                    console.error('❌ AccOKVIP: Failed to get phone number from CodeSim API');
+                    console.error('❌ CodeSim API returned: No available phone numbers');
 
                     // Throw error to trigger catch block and proper error handling
-                    throw new Error('CodeSim API: Hiá»‡n khÃ´ng cÃ³ sáºµn sá»‘ Ä‘iá»‡n thoáº¡i phÃ¹ há»£p. Vui lÃ²ng thá»­ láº¡i sau!');
+                    throw new Error('CodeSim API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!');
                 }
             }
 
@@ -1333,11 +1333,11 @@ class VIPAutomation {
             if (category === 'okvipOtp' && profileData.simMode === 'api') {
                 // Check if we have a valid phone number
                 if (!profileData.codeSimRequestId) {
-                    console.error('âŒ OKVIP OTP: Failed to get phone number from CodeSim API');
-                    console.error('âŒ CodeSim API returned: No available phone numbers');
+                    console.error('❌ OKVIP OTP: Failed to get phone number from CodeSim API');
+                    console.error('❌ CodeSim API returned: No available phone numbers');
 
                     // Throw error to trigger catch block and proper error handling
-                    throw new Error('CodeSim API: Hiá»‡n khÃ´ng cÃ³ sáºµn sá»‘ Ä‘iá»‡n thoáº¡i phÃ¹ há»£p. Vui lÃ²ng thá»­ láº¡i sau!');
+                    throw new Error('CodeSim API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!');
                 }
             }
 
@@ -1348,65 +1348,65 @@ class VIPAutomation {
             try {
                 await this.injectScripts(page);
             } catch (injectError) {
-                console.warn('âš ï¸ Failed to inject scripts:', injectError.message);
+                console.warn('⚠️ Failed to inject scripts:', injectError.message);
             }
 
-            // Solve captcha náº¿u cÃ³ API key (TRÆ¯á»šC submit cho cÃ¡c category khÃ¡c)
+            // Solve captcha nếu có API key (TRƯỚC submit cho các category khác)
             // Skip captcha for JUN88, 78WIN, JUN88V2, 22VIP, AccOKVIP, OKVIP OTP (no captcha before submit)
             const shouldSolveCaptcha = !['jun88', '78win', 'jun88v2', '22vip', 'accOkvip', 'okvipOtp'].includes(category);
             const apiKey = this.settings?.captchaApiKey || process.env.CAPTCHA_API_KEY;
 
             if (apiKey && shouldSolveCaptcha) {
-                console.log('ðŸŽµ Attempting to solve captcha...');
+                console.log('🎵 Attempting to solve captcha...');
                 const captchaSolved = await this.solveCaptchaOnPage(page, apiKey);
                 if (!captchaSolved) {
-                    console.warn('âš ï¸ Captcha solve failed, continuing anyway...');
+                    console.warn('⚠️ Captcha solve failed, continuing anyway...');
                 }
                 // Use captchaDelay from profileData (from UI)
-                // Náº¿u user chá»n 0s thÃ¬ khÃ´ng delay, khÃ´ng fallback
+                // Nếu user chọn 0s thì không delay, không fallback
                 if (profileData?.captchaDelay !== undefined && profileData.captchaDelay > 0) {
-                    console.log(`â³ Waiting ${profileData.captchaDelay}ms after captcha solve...`);
+                    console.log(`⏳ Waiting ${profileData.captchaDelay}ms after captcha solve...`);
                     await new Promise(r => setTimeout(r, profileData.captchaDelay));
                 } else if (profileData?.captchaDelay === 0) {
-                    console.log('â­ï¸ No delay (0s selected)');
+                    console.log('⏭️ No delay (0s selected)');
                 } else {
-                    // Fallback to config náº¿u khÃ´ng cÃ³ captchaDelay tá»« UI
+                    // Fallback to config nếu không có captchaDelay từ UI
                     const delayConfig = this.settings?.delays?.afterCaptcha || { default: 3000, abcvip: 10000 };
                     const captchaDelay = category === 'abcvip' ? delayConfig.abcvip : delayConfig.default;
-                    console.log(`â³ Waiting ${captchaDelay}ms after captcha solve (from config)...`);
+                    console.log(`⏳ Waiting ${captchaDelay}ms after captcha solve (from config)...`);
                     await new Promise(r => setTimeout(r, captchaDelay));
                 }
             } else if (!shouldSolveCaptcha && category !== 'okvipOtp') {
-                console.log('â­ï¸ Skipping captcha for JUN88V2, 22VIP, AccOKVIP (no captcha before submit)');
+                console.log('⏭️ Skipping captcha for JUN88V2, 22VIP, AccOKVIP (no captcha before submit)');
             } else if (category === 'okvipOtp') {
-                console.log('â­ï¸ OKVIP OTP: Botion captcha will be solved AFTER submit button click');
+                console.log('⏭️ OKVIP OTP: Botion captcha will be solved AFTER submit button click');
             } else {
-                console.warn('âš ï¸ No captcha API key provided');
+                console.warn('⚠️ No captcha API key provided');
             }
 
             // Add delay before submit (all VIP categories, but NOT AccOKVIP and OKVIP OTP)
             if (!['accOkvip', 'okvipOtp'].includes(category)) {
                 // Use captchaDelay from profileData (from UI)
-                // Náº¿u user chá»n 0s thÃ¬ khÃ´ng delay, khÃ´ng fallback
+                // Nếu user chọn 0s thì không delay, không fallback
                 if (profileData?.captchaDelay !== undefined && profileData.captchaDelay > 0) {
-                    console.log(`â³ Using UI delay: ${Math.round(profileData.captchaDelay / 1000)}s before submit registration...`);
+                    console.log(`⏳ Using UI delay: ${Math.round(profileData.captchaDelay / 1000)}s before submit registration...`);
                     await new Promise(r => setTimeout(r, profileData.captchaDelay));
                 } else if (profileData?.captchaDelay === 0) {
-                    console.log('â­ï¸ No delay (0s selected), submitting immediately...');
+                    console.log('⏭️ No delay (0s selected), submitting immediately...');
                 } else {
-                    // Fallback to random delay from config náº¿u khÃ´ng cÃ³ captchaDelay tá»« UI
+                    // Fallback to random delay from config nếu không có captchaDelay từ UI
                     const delayConfig = this.settings?.delays?.beforeSubmit || { min: 2000, max: 5000 };
                     const delayBeforeSubmit = this.getRandomDelay(delayConfig.min, delayConfig.max);
-                    console.log(`â³ Using random delay: ${Math.round(delayBeforeSubmit / 1000)}s before submit registration (from config)...`);
+                    console.log(`⏳ Using random delay: ${Math.round(delayBeforeSubmit / 1000)}s before submit registration (from config)...`);
                     await new Promise(r => setTimeout(r, delayBeforeSubmit));
                 }
             } else {
                 // AccOKVIP & OKVIP OTP: no delay, submit immediately
-                console.log('â­ï¸ AccOKVIP/OKVIP OTP: No delay, submitting immediately...');
+                console.log('⏭️ AccOKVIP/OKVIP OTP: No delay, submitting immediately...');
             }
 
             // Submit form
-            console.log(`ðŸ“¤ Submitting registration form for ${siteConfig.name}...`);
+            console.log(`📤 Submitting registration form for ${siteConfig.name}...`);
 
             // Click submit button (like tool22vip does)
             await page.evaluate(() => {
@@ -1427,7 +1427,7 @@ class VIPAutomation {
                 if (!submitBtn) {
                     const buttons = document.querySelectorAll('button[type="button"]');
                     for (const btn of buttons) {
-                        if (btn.textContent.includes('ÄÄ‚NG KÃ') || btn.textContent.includes('OK')) {
+                        if (btn.textContent.includes('ĐĂNG KÝ') || btn.textContent.includes('OK')) {
                             submitBtn = btn;
                             break;
                         }
@@ -1498,12 +1498,12 @@ class VIPAutomation {
 
                         // Click 1st time
                         clickButton();
-                        console.log('ðŸ–±ï¸ Submit button clicked (1st time)');
+                        console.log('🖱️ Submit button clicked (1st time)');
 
                         // Click 2nd time after 500ms delay
                         setTimeout(() => {
                             clickButton();
-                            console.log('ðŸ–±ï¸ Submit button clicked (2nd time)');
+                            console.log('🖱️ Submit button clicked (2nd time)');
                         }, 500);
                     }, 3000);
                 }
@@ -1512,70 +1512,78 @@ class VIPAutomation {
             // Delay sau khi submit
             await new Promise(r => setTimeout(r, 5000));
 
-            // OKVIP OTP: Solve Botion slider captcha AFTER submit button click
+            // OKVIP OTP: Wait for user to solve Botion slider captcha manually
             if (category === 'okvipOtp') {
-                console.log('ðŸŽµ OKVIP OTP: Attempting to solve Botion slider captcha (AFTER submit)...');
+                console.log('OKVIP OTP: Waiting for user to solve Botion slider captcha manually...');
+                console.log('Please solve the Botion captcha manually on the page');
 
-                let botionSolved = false;
-                let botionAttempts = 0;
-                const maxBotionAttempts = 5;
+                let captchaSolved = false;
+                let waitAttempts = 0;
+                const maxWaitAttempts = 300; // Wait up to 5 minutes (300 * 1s)
 
-                while (!botionSolved && botionAttempts < maxBotionAttempts) {
-                    botionAttempts++;
-                    console.log(`\nðŸ”„ Botion solve attempt ${botionAttempts}/${maxBotionAttempts}`);
+                while (!captchaSolved && waitAttempts < maxWaitAttempts) {
+                    waitAttempts++;
+                    await new Promise(r => setTimeout(r, 1000));
 
-                    const solveResult = await this.solveBottionCaptcha(page, apiKey);
+                    // Check if registration was successful by looking for token/cookie
+                    const tokenInfo = await page.evaluate(() => {
+                        // Check for __cf_bm or gt_local_id cookie (success indicators)
+                        const cookies = document.cookie;
+                        const hasSuccessToken = cookies.includes('__cf_bm=') || cookies.includes('gt_local_id=');
 
-                    if (!solveResult) {
-                        console.error(`âŒ Botion solve attempt ${botionAttempts} failed`);
+                        // Also check localStorage for token
+                        const localStorageToken = localStorage.getItem('token') ||
+                            localStorage.getItem('auth_token') ||
+                            localStorage.getItem('access_token');
 
-                        if (botionAttempts < maxBotionAttempts) {
-                            console.log('ðŸ”„ Retrying Botion captcha...');
-                            await new Promise(r => setTimeout(r, 2000));
-                            continue;
-                        } else {
-                            console.error('âŒ OKVIP OTP: Botion captcha solve FAILED after all attempts');
-                            throw new Error('OKVIP OTP: Botion captcha solve failed - automation stopped');
-                        }
-                    }
-
-                    // Check if Botion captcha is still visible on page
-                    console.log('ðŸ” Checking if Botion captcha is still visible...');
-                    const captchaStillVisible = await page.evaluate(() => {
-                        // Check if botion elements still exist
+                        // Check if Botion captcha is still visible
                         const botionWindow = document.querySelector('[class*="botion_window"]');
                         const botionBox = document.querySelector('[class*="botion_box"]');
                         const sliderTrack = document.querySelector('[class*="botion_track"]');
+                        const captchaStillVisible = !!(botionWindow || botionBox || sliderTrack);
 
-                        return !!(botionWindow || botionBox || sliderTrack);
+                        return {
+                            hasSuccessToken,
+                            hasLocalStorageToken: !!localStorageToken,
+                            captchaStillVisible,
+                            cookies: cookies.substring(0, 100)
+                        };
                     });
 
-                    if (captchaStillVisible) {
-                        console.warn('âš ï¸ Botion captcha still visible on page - solve may have failed');
-
-                        if (botionAttempts < maxBotionAttempts) {
-                            console.log('ðŸ”„ Retrying Botion captcha...');
-                            await new Promise(r => setTimeout(r, 2000));
-                            continue;
-                        } else {
-                            console.error('âŒ Botion captcha still visible after all attempts');
-                            throw new Error('OKVIP OTP: Botion captcha still visible - automation stopped');
-                        }
+                    // If registration successful (token found), redirect immediately
+                    if (tokenInfo.hasSuccessToken || tokenInfo.hasLocalStorageToken) {
+                        console.log('Token found - registration successful! Redirecting...');
+                        console.log('Token info:', tokenInfo);
+                        captchaSolved = true;
+                        break;
                     }
 
-                    console.log('âœ… Botion captcha disappeared - solve successful!');
-                    botionSolved = true;
+                    // If captcha disappeared, registration successful
+                    if (!tokenInfo.captchaStillVisible) {
+                        console.log('Botion captcha disappeared - user solved it successfully!');
+                        captchaSolved = true;
+                        break;
+                    }
+
+                    if (waitAttempts % 30 === 0) {
+                        console.log(`Waiting for Botion captcha to be solved... (${Math.floor(waitAttempts / 60)} minutes)`);
+                    }
                 }
 
-                console.log('âœ… OKVIP OTP: Botion captcha solved successfully');
+                if (!captchaSolved) {
+                    console.error('Timeout waiting for Botion captcha to be solved');
+                    throw new Error('OKVIP OTP: Timeout waiting for manual Botion captcha solve');
+                }
+
+                console.log('OKVIP OTP: Botion captcha solved by user');
                 // Wait after Botion solve
-                console.log(`â³ Waiting 3s after Botion captcha solve...`);
+                console.log(`Waiting 3s after Botion captcha solve...`);
                 await new Promise(r => setTimeout(r, 3000));
             }
 
             // JUN88 & 78WIN: Solve captcha AFTER submit button click
             if (['jun88', '78win'].includes(category)) {
-                console.log(`ðŸŽµ ${category.toUpperCase()}: Attempting to solve captcha (AFTER submit)...`);
+                console.log(`🎵 ${category.toUpperCase()}: Attempting to solve captcha (AFTER submit)...`);
 
                 let captchaSolved = false;
                 let captchaAttempts = 0;
@@ -1583,35 +1591,35 @@ class VIPAutomation {
 
                 while (!captchaSolved && captchaAttempts < maxCaptchaAttempts) {
                     captchaAttempts++;
-                    console.log(`\nðŸ”„ Captcha solve attempt ${captchaAttempts}/${maxCaptchaAttempts}`);
+                    console.log(`\n🔄 Captcha solve attempt ${captchaAttempts}/${maxCaptchaAttempts}`);
 
                     const solveResult = await this.solveCaptchaOnPage(page, apiKey);
 
                     if (!solveResult) {
-                        console.error(`âŒ Captcha solve attempt ${captchaAttempts} failed`);
+                        console.error(`❌ Captcha solve attempt ${captchaAttempts} failed`);
 
                         if (captchaAttempts < maxCaptchaAttempts) {
-                            console.log('ðŸ”„ Retrying captcha...');
+                            console.log('🔄 Retrying captcha...');
                             await new Promise(r => setTimeout(r, 2000));
                             continue;
                         } else {
-                            console.error(`âŒ ${category.toUpperCase()}: Captcha solve FAILED after all attempts`);
+                            console.error(`❌ ${category.toUpperCase()}: Captcha solve FAILED after all attempts`);
                             throw new Error(`${category.toUpperCase()}: Captcha solve failed - automation stopped`);
                         }
                     }
 
-                    console.log(`âœ… ${category.toUpperCase()}: Captcha solved successfully`);
+                    console.log(`✅ ${category.toUpperCase()}: Captcha solved successfully`);
                     captchaSolved = true;
                 }
 
                 // Wait after captcha solve
-                console.log(`â³ Waiting 3s after captcha solve...`);
+                console.log(`⏳ Waiting 3s after captcha solve...`);
                 await new Promise(r => setTimeout(r, 3000));
             }
 
-            // For accOkvip: click "Gá»­i Ä‘i" button with retry logic for duplicate phone
+            // For accOkvip: click "Gửi đi" button with retry logic for duplicate phone
             if (category === 'accOkvip') {
-                console.log(`ðŸ–±ï¸ AccOKVIP: Clicking "Gá»­i Ä‘i" button to complete registration...`);
+                console.log(`🖱️ AccOKVIP: Clicking "Gửi đi" button to complete registration...`);
 
                 let registrationSuccess = false;
                 let retryCount = 0;
@@ -1621,60 +1629,60 @@ class VIPAutomation {
 
                 while (!registrationSuccess && retryCount < maxRetries) {
                     retryCount++;
-                    console.log(`ðŸ“ AccOKVIP registration attempt ${retryCount}/${maxRetries}`);
+                    console.log(`📝 AccOKVIP registration attempt ${retryCount}/${maxRetries}`);
 
                     try {
                         const sendClicked = await currentPage.evaluate(() => {
-                            // Find "Gá»­i Ä‘i" button by class
+                            // Find "Gửi đi" button by class
                             const sendBtn = document.querySelector('.send.sendStyle1');
                             if (sendBtn) {
                                 sendBtn.click();
-                                console.log('âœ… "Gá»­i Ä‘i" button clicked');
+                                console.log('✅ "Gửi đi" button clicked');
                                 return true;
                             }
 
                             // Fallback: find by text content in div
                             const divButtons = document.querySelectorAll('div[class*="send"]');
                             for (const btn of divButtons) {
-                                if (btn.textContent.includes('Gá»­i Ä‘i')) {
+                                if (btn.textContent.includes('Gửi đi')) {
                                     btn.click();
-                                    console.log('âœ… "Gá»­i Ä‘i" button clicked (by div text)');
+                                    console.log('✅ "Gửi đi" button clicked (by div text)');
                                     return true;
                                 }
                             }
 
-                            // Fallback 2: find any element with "Gá»­i Ä‘i" text
+                            // Fallback 2: find any element with "Gửi đi" text
                             const allElements = document.querySelectorAll('*');
                             for (const el of allElements) {
-                                if (el.textContent.trim() === 'Gá»­i Ä‘i' || (el.textContent.includes('Gá»­i Ä‘i') && el.offsetHeight > 0)) {
+                                if (el.textContent.trim() === 'Gửi đi' || (el.textContent.includes('Gửi đi') && el.offsetHeight > 0)) {
                                     el.click();
-                                    console.log('âœ… "Gá»­i Ä‘i" button clicked (by text search)');
+                                    console.log('✅ "Gửi đi" button clicked (by text search)');
                                     return true;
                                 }
                             }
 
-                            console.warn('âš ï¸ "Gá»­i Ä‘i" button not found');
+                            console.warn('⚠️ "Gửi đi" button not found');
                             return false;
                         });
 
                         if (!sendClicked) {
-                            console.warn('âš ï¸ Could not click "Gá»­i Ä‘i" button, but continuing with OTP retrieval...');
+                            console.warn('⚠️ Could not click "Gửi đi" button, but continuing with OTP retrieval...');
                         }
 
                         // Wait for button to load and response
                         await new Promise(r => setTimeout(r, 5000));
 
-                        // Check for error message (phone already registered) - chá»‰ detect error cá»¥ thá»ƒ
+                        // Check for error message (phone already registered) - chỉ detect error cụ thể
                         const errorDetected = await currentPage.evaluate(() => {
                             // Look for specific error messages about phone registration
                             const errorContainers = document.querySelectorAll('[class*="error"], [class*="alert"], [class*="message"], [class*="toast"], [class*="notify"]');
 
                             const phoneErrorKeywords = [
-                                'Ä‘Ã£ Ä‘Æ°á»£c Ä‘Äƒng kÃ­',
+                                'đã được đăng kí',
                                 'already registered',
-                                'sá»‘ Ä‘iá»‡n thoáº¡i',
+                                'số điện thoại',
                                 'phone',
-                                'Ä‘Ã£ tá»“n táº¡i',
+                                'đã tồn tại',
                                 'exist'
                             ];
 
@@ -1683,7 +1691,7 @@ class VIPAutomation {
                                 // Check if it's a phone-related error
                                 const hasPhoneKeyword = phoneErrorKeywords.some(keyword => text.includes(keyword));
                                 if (hasPhoneKeyword) {
-                                    console.log(`ðŸ”´ Phone error detected: ${container.textContent}`);
+                                    console.log(`🔴 Phone error detected: ${container.textContent}`);
                                     return true;
                                 }
                             }
@@ -1692,19 +1700,19 @@ class VIPAutomation {
                         });
 
                         if (errorDetected) {
-                            console.warn(`âš ï¸ Error detected: Phone might be already registered`);
+                            console.warn(`⚠️ Error detected: Phone might be already registered`);
 
                             if (retryCount < maxRetries && codeSimToken) {
-                                console.log(`ðŸ”„ Retrying with new phone number on current tab...`);
+                                console.log(`🔄 Retrying with new phone number on current tab...`);
 
-                                // Get new phone number (thá»­ serviceId 3 vÃ  21)
+                                // Get new phone number (thử serviceId 3 và 21)
                                 const newPhoneResult = await this.getPhoneFromCodeSim(codeSimToken);
                                 if (newPhoneResult && newPhoneResult.phoneNumber) {
                                     const newPhone = newPhoneResult.phoneNumber;
-                                    console.log(`âœ… Got new phone: ${newPhone}`);
+                                    console.log(`✅ Got new phone: ${newPhone}`);
 
                                     // Reload current page instead of opening new tab
-                                    console.log('ï¿½ Relnoading current tab with new phone number...');
+                                    console.log('� Relnoading current tab with new phone number...');
                                     const registerUrl = 'https://m.okvipau.com/register';
                                     await currentPage.goto(registerUrl, { waitUntil: 'networkidle2', timeout: 30000 });
 
@@ -1721,35 +1729,35 @@ class VIPAutomation {
                                         await this.solveCaptchaOnPage(currentPage, apiKey);
                                     }
 
-                                    // Click "BÆ°á»›c tiáº¿p theo"
+                                    // Click "Bước tiếp theo"
                                     await currentPage.evaluate(() => {
                                         const submitBtn = document.querySelector('button[type="submit"]');
                                         if (submitBtn) {
                                             submitBtn.click();
-                                            console.log('âœ… "BÆ°á»›c tiáº¿p theo" button clicked');
+                                            console.log('✅ "Bước tiếp theo" button clicked');
                                         }
                                     });
 
                                     await new Promise(r => setTimeout(r, 3000));
 
-                                    // Continue with "Gá»­i Ä‘i" on current page
+                                    // Continue with "Gửi đi" on current page
                                     continue;
                                 } else {
-                                    console.error('âŒ Failed to get new phone number');
+                                    console.error('❌ Failed to get new phone number');
                                     return { success: false, message: 'Failed to get new phone number after retry' };
                                 }
                             } else {
-                                console.error('âŒ Max retries reached or no CodeSim token');
+                                console.error('❌ Max retries reached or no CodeSim token');
                                 return { success: false, message: `Registration failed after ${retryCount} attempts` };
                             }
                         } else {
                             // No error detected, registration successful
-                            console.log(`âœ… AccOKVIP registration form submitted successfully`);
+                            console.log(`✅ AccOKVIP registration form submitted successfully`);
 
                             // Check if manual mode - if so, wait for user to submit OTP manually
                             if (profileData.simMode === 'manual') {
-                                console.log('âœï¸ Manual mode: Waiting for user to submit OTP manually...');
-                                console.log('ðŸ“Œ Keeping page open for manual OTP entry');
+                                console.log('✏️ Manual mode: Waiting for user to submit OTP manually...');
+                                console.log('📌 Keeping page open for manual OTP entry');
 
                                 // Wait for user to submit OTP (check for URL change or success message)
                                 let otpSubmitted = false;
@@ -1763,31 +1771,31 @@ class VIPAutomation {
                                     // Check if page URL changed (success redirect)
                                     const currentUrl = currentPage.url();
                                     if (!currentUrl.includes('register') && !currentUrl.includes('okvip')) {
-                                        console.log(`âœ… URL changed to: ${currentUrl} - OTP likely submitted successfully`);
+                                        console.log(`✅ URL changed to: ${currentUrl} - OTP likely submitted successfully`);
                                         otpSubmitted = true;
                                         break;
                                     }
 
                                     // Check for success message
                                     const successDetected = await currentPage.evaluate(() => {
-                                        const successKeywords = ['thÃ nh cÃ´ng', 'success', 'Ä‘Äƒng kÃ½ thÃ nh cÃ´ng', 'registration successful'];
+                                        const successKeywords = ['thành công', 'success', 'đăng ký thành công', 'registration successful'];
                                         const allText = document.body.innerText.toLowerCase();
                                         return successKeywords.some(keyword => allText.includes(keyword));
                                     });
 
                                     if (successDetected) {
-                                        console.log('âœ… Success message detected - OTP submitted successfully');
+                                        console.log('✅ Success message detected - OTP submitted successfully');
                                         otpSubmitted = true;
                                         break;
                                     }
 
                                     if (waitAttempts % 60 === 0) {
-                                        console.log(`â³ Waiting for OTP submission... (${Math.floor(waitAttempts / 60)} minutes)`);
+                                        console.log(`⏳ Waiting for OTP submission... (${Math.floor(waitAttempts / 60)} minutes)`);
                                     }
                                 }
 
                                 if (!otpSubmitted) {
-                                    console.warn('âš ï¸ Timeout waiting for OTP submission');
+                                    console.warn('⚠️ Timeout waiting for OTP submission');
                                     return { success: false, message: 'Timeout waiting for manual OTP submission' };
                                 }
 
@@ -1797,7 +1805,7 @@ class VIPAutomation {
 
                             // Now get OTP from CodeSim API and fill it (only for API mode)
                             if (profileData.codeSimRequestId && codeSimToken) {
-                                console.log('ðŸ“± Getting OTP from CodeSim API...');
+                                console.log('📱 Getting OTP from CodeSim API...');
 
                                 let otpReceived = false;
                                 let otpRetryCount = 0;
@@ -1805,14 +1813,14 @@ class VIPAutomation {
 
                                 while (!otpReceived && otpRetryCount < maxOtpRetries) {
                                     otpRetryCount++;
-                                    console.log(`â³ Waiting for OTP (attempt ${otpRetryCount}/${maxOtpRetries})...`);
+                                    console.log(`⏳ Waiting for OTP (attempt ${otpRetryCount}/${maxOtpRetries})...`);
 
                                     // Wait up to 120 seconds for OTP
                                     const otpResult = await this.getOtpFromCodeSim(codeSimToken, profileData.codeSimRequestId);
 
                                     if (otpResult && otpResult.code) {
                                         const otp = otpResult.code;
-                                        console.log(`âœ… Got OTP: ${otp}`);
+                                        console.log(`✅ Got OTP: ${otp}`);
                                         otpReceived = true;
 
                                         // Fill OTP into input field
@@ -1822,27 +1830,27 @@ class VIPAutomation {
                                                 otpField.value = otpCode;
                                                 otpField.dispatchEvent(new Event('input', { bubbles: true }));
                                                 otpField.dispatchEvent(new Event('change', { bubbles: true }));
-                                                console.log(`âœ… OTP filled: ${otpCode}`);
+                                                console.log(`✅ OTP filled: ${otpCode}`);
                                             } else {
-                                                console.warn('âš ï¸ OTP input field not found');
+                                                console.warn('⚠️ OTP input field not found');
                                             }
                                         }, otp);
 
-                                        // Wait a bit then click "ÄÄƒng kÃ½" button
+                                        // Wait a bit then click "Đăng ký" button
                                         await new Promise(r => setTimeout(r, 1000));
 
-                                        // Click "ÄÄƒng kÃ½" button
+                                        // Click "Đăng ký" button
                                         const registerClicked = await currentPage.evaluate(() => {
-                                            // Find button with "ÄÄƒng kÃ½" text
+                                            // Find button with "Đăng ký" text
                                             const buttons = document.querySelectorAll('button');
                                             for (const btn of buttons) {
-                                                if (btn.textContent.includes('ÄÄƒng kÃ½')) {
+                                                if (btn.textContent.includes('Đăng ký')) {
                                                     btn.click();
-                                                    console.log('âœ… "ÄÄƒng kÃ½" button clicked');
+                                                    console.log('✅ "Đăng ký" button clicked');
                                                     return true;
                                                 }
                                             }
-                                            console.warn('âš ï¸ "ÄÄƒng kÃ½" button not found');
+                                            console.warn('⚠️ "Đăng ký" button not found');
                                             return false;
                                         });
 
@@ -1850,32 +1858,32 @@ class VIPAutomation {
                                             await new Promise(r => setTimeout(r, 3000));
                                         }
                                     } else {
-                                        console.warn(`âš ï¸ No OTP received (attempt ${otpRetryCount}/${maxOtpRetries})`);
+                                        console.warn(`⚠️ No OTP received (attempt ${otpRetryCount}/${maxOtpRetries})`);
 
                                         if (otpRetryCount < maxOtpRetries) {
-                                            console.log(`ðŸ”„ Retrying "Gá»­i Ä‘i" button...`);
+                                            console.log(`🔄 Retrying "Gửi đi" button...`);
 
-                                            // Click "Gá»­i Ä‘i" button again
+                                            // Click "Gửi đi" button again
                                             await currentPage.evaluate(() => {
                                                 const sendBtn = document.querySelector('.send.sendStyle1');
                                                 if (sendBtn) {
                                                     sendBtn.click();
-                                                    console.log('âœ… "Gá»­i Ä‘i" button clicked again');
+                                                    console.log('✅ "Gửi đi" button clicked again');
                                                 }
                                             });
 
                                             await new Promise(r => setTimeout(r, 3000));
                                         } else {
-                                            console.error('âŒ Max OTP retries reached, need to restart with new phone');
+                                            console.error('❌ Max OTP retries reached, need to restart with new phone');
 
-                                            // Get new phone number (thá»­ serviceId 3 vÃ  21)
+                                            // Get new phone number (thử serviceId 3 và 21)
                                             const newPhoneResult = await this.getPhoneFromCodeSim(codeSimToken);
                                             if (newPhoneResult && newPhoneResult.phoneNumber) {
                                                 const newPhone = newPhoneResult.phoneNumber;
-                                                console.log(`âœ… Got new phone: ${newPhone}`);
+                                                console.log(`✅ Got new phone: ${newPhone}`);
 
                                                 // Open new tab with same user/pass/email but new phone
-                                                console.log('ðŸ“‚ Opening new tab with new phone number...');
+                                                console.log('📂 Opening new tab with new phone number...');
                                                 const newPage = await currentPage.browser().newPage();
 
                                                 // Copy user agent and other settings
@@ -1898,23 +1906,23 @@ class VIPAutomation {
                                                     await this.solveCaptchaOnPage(newPage, apiKey);
                                                 }
 
-                                                // Click "BÆ°á»›c tiáº¿p theo"
+                                                // Click "Bước tiếp theo"
                                                 await newPage.evaluate(() => {
                                                     const submitBtn = document.querySelector('button[type="submit"]');
                                                     if (submitBtn) {
                                                         submitBtn.click();
-                                                        console.log('âœ… "BÆ°á»›c tiáº¿p theo" button clicked on new tab');
+                                                        console.log('✅ "Bước tiếp theo" button clicked on new tab');
                                                     }
                                                 });
 
                                                 await new Promise(r => setTimeout(r, 3000));
 
-                                                // Click "Gá»­i Ä‘i" on new page
+                                                // Click "Gửi đi" on new page
                                                 await newPage.evaluate(() => {
                                                     const sendBtn = document.querySelector('.send.sendStyle1');
                                                     if (sendBtn) {
                                                         sendBtn.click();
-                                                        console.log('âœ… "Gá»­i Ä‘i" button clicked on new tab');
+                                                        console.log('✅ "Gửi đi" button clicked on new tab');
                                                     }
                                                 });
 
@@ -1923,7 +1931,7 @@ class VIPAutomation {
                                                 otpRetryCount = 0; // Reset counter for new attempt
                                                 continue;
                                             } else {
-                                                console.error('âŒ Failed to get new phone number');
+                                                console.error('❌ Failed to get new phone number');
                                                 return { success: false, message: 'Failed to get OTP and new phone number' };
                                             }
                                         }
@@ -1934,26 +1942,26 @@ class VIPAutomation {
                                     return { success: false, message: 'Failed to receive OTP after all retries' };
                                 }
                             } else {
-                                console.warn('âš ï¸ No CodeSim request ID or token for OTP retrieval');
+                                console.warn('⚠️ No CodeSim request ID or token for OTP retrieval');
                             }
 
-                            console.log(`âœ… AccOKVIP registration completed successfully`);
+                            console.log(`✅ AccOKVIP registration completed successfully`);
                             registrationSuccess = true;
 
                             // Save account info after successful registration (including OTP submission)
                             try {
-                                console.log(`ðŸ“ Saving AccOKVIP account info...`);
+                                console.log(`📝 Saving AccOKVIP account info...`);
                                 const siteNames = siteConfig && siteConfig.name ? [siteConfig.name] : [];
                                 await this.saveAccountInfo(profileData, 'accOkvip', siteConfig?.name || 'AccOKVIP', siteNames);
-                                console.log(`âœ… Account info saved successfully`);
+                                console.log(`✅ Account info saved successfully`);
                             } catch (err) {
-                                console.warn(`âš ï¸ Failed to save account info: ${err.message}`);
+                                console.warn(`⚠️ Failed to save account info: ${err.message}`);
                             }
 
                             return { success: true, message: 'AccOKVIP registration completed' };
                         }
                     } catch (error) {
-                        console.warn('âš ï¸ Error during registration:', error.message);
+                        console.warn('⚠️ Error during registration:', error.message);
                         if (retryCount >= maxRetries) {
                             return { success: false, message: `Registration failed after ${retryCount} attempts: ${error.message}` };
                         }
@@ -1966,37 +1974,37 @@ class VIPAutomation {
             }
 
             // Wait for token/redirect (smart wait like nohu-tool)
-            // Skip for AccOKVIP and OKVIP OTP (Ä‘Ã£ xá»­ lÃ½ riÃªng á»Ÿ trÃªn)
+            // Skip for AccOKVIP and OKVIP OTP (đã xử lý riêng ở trên)
             if (category === 'accOkvip' || category === 'okvipOtp') {
-                console.log(`â­ï¸ ${category.toUpperCase()}: Waiting for token from form submission...`);
+                console.log(`⏭️ ${category.toUpperCase()}: Waiting for token from form submission...`);
 
-                // Chá» token tá»« form submit (token lÃ  dáº¥u hiá»‡u Ä‘Äƒng kÃ½ thÃ nh cÃ´ng)
+                // Chờ token từ form submit (token là dấu hiệu đăng ký thành công)
                 let hasToken = false;
                 let waitAttempts = 0;
-                const maxWaitAttempts = 30; // 30 * 1s = 30 giÃ¢y
+                const maxWaitAttempts = 30; // 30 * 1s = 30 giây
 
                 while (!hasToken && waitAttempts < maxWaitAttempts) {
                     waitAttempts++;
                     await new Promise(r => setTimeout(r, 1000));
 
                     const tokenInfo = await page.evaluate(() => {
-                        // Kiá»ƒm tra token trong localStorage
+                        // Kiểm tra token trong localStorage
                         const localStorageToken = localStorage.getItem('token') ||
                             localStorage.getItem('auth_token') ||
                             localStorage.getItem('access_token');
 
-                        // Kiá»ƒm tra token trong sessionStorage
+                        // Kiểm tra token trong sessionStorage
                         const sessionStorageToken = sessionStorage.getItem('token') ||
                             sessionStorage.getItem('auth_token') ||
                             sessionStorage.getItem('access_token');
 
-                        // Kiá»ƒm tra token trong cookies
+                        // Kiểm tra token trong cookies
                         const cookies = document.cookie;
                         const cookieToken = cookies.includes('token') ||
                             cookies.includes('auth') ||
                             cookies.includes('session');
 
-                        // Kiá»ƒm tra URL cÃ³ chá»©a token khÃ´ng
+                        // Kiểm tra URL có chứa token không
                         const urlToken = window.location.href.includes('token=') ||
                             window.location.href.includes('auth=');
 
@@ -2010,26 +2018,26 @@ class VIPAutomation {
                     });
 
                     if (tokenInfo.hasAnyToken) {
-                        console.log(`âœ… Token found:`, tokenInfo);
+                        console.log(`✅ Token found:`, tokenInfo);
                         hasToken = true;
                         break;
                     }
 
                     if (waitAttempts % 5 === 0) {
-                        console.log(`â³ Waiting for token... (${waitAttempts}s)`);
+                        console.log(`⏳ Waiting for token... (${waitAttempts}s)`);
                     }
                 }
 
                 if (!hasToken) {
-                    console.error(`âŒ No token received after ${maxWaitAttempts}s - registration may have failed`);
+                    console.error(`❌ No token received after ${maxWaitAttempts}s - registration may have failed`);
                     return { success: false, message: `${category.toUpperCase()}: No token received - registration failed` };
                 }
 
-                console.log(`âœ… Token received - registration successful`);
+                console.log(`✅ Token received - registration successful`);
                 return { success: true, message: `${category.toUpperCase()} registration completed with token`, page };
             }
 
-            console.log(`â³ Waiting for token/redirect...`);
+            console.log(`⏳ Waiting for token/redirect...`);
             let hasToken = false;
             let waitAttempts = 0;
 
@@ -2040,11 +2048,11 @@ class VIPAutomation {
             const maxWaitAttempts = Math.ceil(maxWaitTime / checkInterval);
 
             if (isManualCaptcha) {
-                console.log(`ðŸ“ Manual captcha mode: Waiting up to 120s for user to solve captcha...`);
+                console.log(`📝 Manual captcha mode: Waiting up to 120s for user to solve captcha...`);
             }
 
             let initialUrl = await page.evaluate(() => window.location.href);
-            console.log(`ðŸ“ Initial URL: ${initialUrl}`);
+            console.log(`📍 Initial URL: ${initialUrl}`);
 
             while (waitAttempts < maxWaitAttempts) {
                 waitAttempts++;
@@ -2068,48 +2076,48 @@ class VIPAutomation {
                     const urlChanged = status.currentUrl !== initialUrl;
 
                     if (hasToken) {
-                        console.log(`âœ… Token found after ${waitAttempts * checkInterval}ms`);
+                        console.log(`✅ Token found after ${waitAttempts * checkInterval}ms`);
                         break;
                     }
 
                     if (urlChanged) {
-                        console.log(`âœ… URL changed (redirect successful): ${status.currentUrl}`);
+                        console.log(`✅ URL changed (redirect successful): ${status.currentUrl}`);
                         hasToken = true; // Assume success if URL changed
                         break;
                     }
 
                     if (isManualCaptcha) {
-                        console.log(`â³ [${waitAttempts}/${maxWaitAttempts}] Waiting for manual captcha (${Math.round(waitAttempts * checkInterval / 1000)}s)...`);
+                        console.log(`⏳ [${waitAttempts}/${maxWaitAttempts}] Waiting for manual captcha (${Math.round(waitAttempts * checkInterval / 1000)}s)...`);
                     } else {
-                        console.log(`â³ [${waitAttempts}/${maxWaitAttempts}] No token/redirect yet, waiting...`);
+                        console.log(`⏳ [${waitAttempts}/${maxWaitAttempts}] No token/redirect yet, waiting...`);
                     }
                     await new Promise(resolve => setTimeout(resolve, checkInterval));
                 } catch (e) {
-                    console.log(`âš ï¸ Token check failed (attempt ${waitAttempts}):`, e.message);
+                    console.log(`⚠️ Token check failed (attempt ${waitAttempts}):`, e.message);
                     await new Promise(resolve => setTimeout(resolve, checkInterval));
                 }
             }
 
             if (!hasToken) {
-                console.error(`âŒ Token not found and no redirect after ${maxWaitAttempts * checkInterval}ms - Register FAILED`);
+                console.error(`❌ Token not found and no redirect after ${maxWaitAttempts * checkInterval}ms - Register FAILED`);
                 return { success: false, error: 'Token not found and no redirect after registration' };
             }
 
             // Token found - no need to wait for navigation, can proceed immediately
-            console.log(`âœ… Token acquired, register successful`);
+            console.log(`✅ Token acquired, register successful`);
 
             // For jun88, 78win, jun88v2: wait delay then redirect to addbank page
             if (isManualCaptcha) {
                 // Add random delay 2-5s before redirect to bank (like OKVIP)
                 const delayBeforeBank = this.getRandomDelay(2000, 5000); // 2-5s
-                console.log(`â³ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to addbank...`);
+                console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to addbank...`);
                 await new Promise(r => setTimeout(r, delayBeforeBank));
 
-                console.log(`ðŸ”„ Redirecting to addbank page for ${category}...`);
+                console.log(`🔄 Redirecting to addbank page for ${category}...`);
                 const domain = this.getDomain(siteConfig.registerUrl);
                 const bankPath = this.categoryPaths[category]?.bank || '/Financial?type=withdraw';
                 const bankUrl = domain + bankPath;
-                console.log(`ðŸ“ Navigating to: ${bankUrl}`);
+                console.log(`📍 Navigating to: ${bankUrl}`);
                 await page.goto(bankUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
                 await new Promise(r => setTimeout(r, 3000));
             }
@@ -2124,17 +2132,17 @@ class VIPAutomation {
                         profileId: profileData.profileId,
                         username: profileData.username,
                         status: 'running',
-                        message: `âœ… ÄÄƒng kÃ½ thÃ nh cÃ´ng - Chuyá»ƒn sang thÃªm bank...`,
+                        message: `✅ Đăng ký thành công - Chuyển sang thêm bank...`,
                         timestamp: new Date().toISOString()
                     })
                 });
             } catch (err) {
-                console.warn('âš ï¸ Failed to send register status:', err.message);
+                console.warn('⚠️ Failed to send register status:', err.message);
             }
 
             return { success: true, message: 'Register completed successfully', page };
         } catch (error) {
-            console.error(`âŒ Register Error:`, error.message);
+            console.error(`❌ Register Error:`, error.message);
 
             // Send error status to dashboard
             try {
@@ -2146,12 +2154,12 @@ class VIPAutomation {
                         profileId: profileData.profileId,
                         username: profileData.username,
                         status: 'error',
-                        message: `âŒ ÄÄƒng kÃ½ tháº¥t báº¡i: ${error.message}`,
+                        message: `❌ Đăng ký thất bại: ${error.message}`,
                         timestamp: new Date().toISOString()
                     })
                 });
             } catch (err) {
-                console.warn('âš ï¸ Failed to send error status:', err.message);
+                console.warn('⚠️ Failed to send error status:', err.message);
             }
 
             return { success: false, error: error.message };
@@ -2160,7 +2168,7 @@ class VIPAutomation {
     }
 
     /**
-     * BÆ°á»›c 2: Add Bank (riÃªng cho tá»«ng category)
+     * Bước 2: Add Bank (riêng cho từng category)
      */
     async addBankStep(browser, category, siteConfig, profileData, existingPage = null) {
         if (category === 'okvip') {
@@ -2182,25 +2190,25 @@ class VIPAutomation {
     }
 
     /**
-     * OKVIP Add Bank: redirect â†’ submit máº­t kháº©u rÃºt â†’ redirect â†’ submit bank
+     * OKVIP Add Bank: redirect → submit mật khẩu rút → redirect → submit bank
      */
     async addBankOKVIP(browser, siteConfig, profileData, existingPage = null) {
         const page = existingPage || await browser.newPage();
         try {
-            console.log(`ðŸ¦ Add Bank step for ${siteConfig.name} (OKVIP)...`);
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (OKVIP)...`);
 
             const domain = this.getDomain(siteConfig.registerUrl);
             if (!domain) throw new Error('Invalid domain');
 
             const paths = this.categoryPaths.okvip;
 
-            // BÆ°á»›c 1: VÃ o trang submit máº­t kháº©u rÃºt
+            // Bước 1: Vào trang submit mật khẩu rút
             const withdrawPasswordUrl = domain + paths.withdrawPassword;
-            console.log(`  â†’ Withdraw Password: ${withdrawPasswordUrl}`);
+            console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
 
             // Add random delay 2-10s before redirect
             const delayBeforeWithdraw = this.getRandomDelay(2000, 5000); // 2-10s
-            console.log(`â³ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
             await new Promise(r => setTimeout(r, delayBeforeWithdraw));
 
             await page.goto(withdrawPasswordUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -2208,9 +2216,9 @@ class VIPAutomation {
             // Wait for form fields to appear
             try {
                 await page.waitForSelector('input[formcontrolname="newPassword"]', { timeout: 5000 });
-                console.log('âœ… Withdraw password form loaded');
+                console.log('✅ Withdraw password form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Withdraw password form not found, continuing anyway...');
+                console.warn('⚠️ Withdraw password form not found, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
@@ -2240,21 +2248,21 @@ class VIPAutomation {
 
             // Wait for page to load (instead of waitForNavigation which can be interrupted in parallel)
             try {
-                await page.waitForSelector('._addAccountInputBtn_1bihm_45, [class*="addAccount"], button:contains("ThÃªm")', { timeout: 10000 }).catch(() => {
-                    console.log('âš ï¸ Bank page selector not found, continuing anyway...');
+                await page.waitForSelector('._addAccountInputBtn_1bihm_45, [class*="addAccount"], button:contains("Thêm")', { timeout: 10000 }).catch(() => {
+                    console.log('⚠️ Bank page selector not found, continuing anyway...');
                 });
             } catch (e) {
-                console.log('âš ï¸ Timeout waiting for bank page');
+                console.log('⚠️ Timeout waiting for bank page');
             }
             await new Promise(r => setTimeout(r, 1000));
 
-            // BÆ°á»›c 2: VÃ o trang submit bank
+            // Bước 2: Vào trang submit bank
             const bankUrl = domain + paths.bank;
-            console.log(`  â†’ Bank: ${bankUrl}`);
+            console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
             const delayBeforeBank = this.getRandomDelay(2000, 5000); // 2-10s
-            console.log(`â³ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
             await page.goto(bankUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -2262,15 +2270,15 @@ class VIPAutomation {
             // Wait for bank form fields to appear
             try {
                 await page.waitForSelector('mat-select[formcontrolname="bankName"], input[formcontrolname="account"]', { timeout: 5000 });
-                console.log('âœ… Bank form loaded');
+                console.log('✅ Bank form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Bank form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
             // Fill bank form (formcontrolname + mat-select)
             await page.evaluate((data) => {
-                // Click mat-select Ä‘á»ƒ má»Ÿ dropdown
+                // Click mat-select để mở dropdown
                 const bankSelect = document.querySelector('mat-select[formcontrolname="bankName"]');
                 if (bankSelect) {
                     bankSelect.click();
@@ -2281,7 +2289,7 @@ class VIPAutomation {
 
             // Select bank option (with mapping)
             const mappedBankName = this.mapBankName(profileData.bankName);
-            console.log(`ðŸ¦ Looking for bank: ${profileData.bankName} â†’ ${mappedBankName}`);
+            console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
 
             await page.evaluate((bankName) => {
                 const options = document.querySelectorAll('mat-option');
@@ -2294,17 +2302,17 @@ class VIPAutomation {
                 };
 
                 const normalizedSearchName = normalizeBankName(bankName);
-                console.log(`🔍 Normalized search name: ${normalizedSearchName}`);
+                console.log(`?? Normalized search name: ${normalizedSearchName}`);
 
                 // Try exact match first
                 for (const option of options) {
                     const optionText = option.textContent?.trim();
                     const normalizedOptionText = normalizeBankName(optionText);
 
-                    console.log(`  Checking option: "${optionText}" → "${normalizedOptionText}"`);
+                    console.log(`  Checking option: "${optionText}" ? "${normalizedOptionText}"`);
 
                     if (normalizedOptionText === normalizedSearchName) {
-                        console.log(`✅ Found exact match: ${optionText}`);
+                        console.log(`? Found exact match: ${optionText}`);
                         option.click();
                         found = true;
                         break;
@@ -2318,7 +2326,7 @@ class VIPAutomation {
                         const normalizedOptionText = normalizeBankName(optionText);
 
                         if (normalizedOptionText.includes(normalizedSearchName)) {
-                            console.log(`✅ Found partial match: ${optionText}`);
+                            console.log(`? Found partial match: ${optionText}`);
                             option.click();
                             found = true;
                             break;
@@ -2327,7 +2335,7 @@ class VIPAutomation {
                 }
 
                 if (!found && options.length > 0) {
-                    console.warn(`âš ï¸ Bank not found, selecting first option`);
+                    console.warn(`⚠️ Bank not found, selecting first option`);
                     options[0].click();
                 }
             }, mappedBankName);
@@ -2356,7 +2364,7 @@ class VIPAutomation {
             }, profileData, city);
 
             // Submit form
-            console.log(`ðŸ“¤ Submitting bank form for ${siteConfig.name}...`);
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
             await page.evaluate(() => {
                 const submitBtn = document.querySelector('button[type="submit"]');
                 if (submitBtn && !submitBtn.disabled) {
@@ -2365,20 +2373,20 @@ class VIPAutomation {
             });
 
             // Wait for navigation after bank submission
-            console.log(`â³ Waiting for navigation after bank submission...`);
+            console.log(`⏳ Waiting for navigation after bank submission...`);
             let pageReloaded = false;
             try {
                 await page.waitForNavigation({ timeout: 15000 });
                 pageReloaded = true;
-                console.log('âœ… Page reloaded after bank submission');
+                console.log('✅ Page reloaded after bank submission');
             } catch (e) {
-                console.log('âš ï¸ No navigation after add bank');
+                console.log('⚠️ No navigation after add bank');
             }
 
             // Check if bank was added successfully by verifying displayed values
             await new Promise(r => setTimeout(r, 3000));
             const result = await page.evaluate((reloaded) => {
-                const successKeywords = ['thÃ nh cÃ´ng', 'success', 'added', 'completed'];
+                const successKeywords = ['thành công', 'success', 'added', 'completed'];
                 const pageText = document.body.innerText.toLowerCase();
 
                 if (reloaded) {
@@ -2392,12 +2400,12 @@ class VIPAutomation {
                 return { success: false, message: 'Could not verify bank addition' };
             }, pageReloaded);
 
-            console.log(`âœ… Bank result:`, result);
+            console.log(`✅ Bank result:`, result);
 
             // Send status update to dashboard
             try {
                 const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
-                const statusMsg = result.success ? 'âœ… ThÃªm bank thÃ nh cÃ´ng' : `âŒ ThÃªm bank tháº¥t báº¡i: ${result.message}`;
+                const statusMsg = result.success ? '✅ Thêm bank thành công' : `❌ Thêm bank thất bại: ${result.message}`;
                 await fetch(`http://localhost:${dashboardPort}/api/automation/status`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -2410,7 +2418,7 @@ class VIPAutomation {
                     })
                 });
             } catch (err) {
-                console.warn('âš ï¸ Failed to send addbank status:', err.message);
+                console.warn('⚠️ Failed to send addbank status:', err.message);
             }
 
             // Mark tab as completed in rotator
@@ -2420,7 +2428,7 @@ class VIPAutomation {
 
             return result;
         } catch (error) {
-            console.error(`âŒ OKVIP Add Bank Error:`, error.message);
+            console.error(`❌ OKVIP Add Bank Error:`, error.message);
 
             // Send error status to dashboard
             try {
@@ -2432,12 +2440,12 @@ class VIPAutomation {
                         profileId: profileData.profileId,
                         username: profileData.username,
                         status: 'error',
-                        message: `âŒ ThÃªm bank tháº¥t báº¡i: ${error.message}`,
+                        message: `❌ Thêm bank thất bại: ${error.message}`,
                         timestamp: new Date().toISOString()
                     })
                 });
             } catch (err) {
-                console.warn('âš ï¸ Failed to send error status:', err.message);
+                console.warn('⚠️ Failed to send error status:', err.message);
             }
 
             return { success: false, error: error.message };
@@ -2446,13 +2454,13 @@ class VIPAutomation {
     }
 
     /**
-     * OKVIP OTP Add Bank: redirect â†’ submit máº­t kháº©u rÃºt â†’ redirect â†’ submit bank
-     * Giá»‘ng 22VIP
+     * OKVIP OTP Add Bank: redirect → submit mật khẩu rút → redirect → submit bank
+     * Giống 22VIP
      */
     async addBankOKVIPOtp(browser, siteConfig, profileData, existingPage = null) {
         const page = existingPage || await browser.newPage();
         try {
-            console.log(`ðŸ¦ Add Bank step for ${siteConfig.name} (OKVIP OTP)...`);
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (OKVIP OTP)...`);
 
             const domain = this.getDomain(siteConfig.registerUrl);
             if (!domain) throw new Error('Invalid domain');
@@ -2471,7 +2479,7 @@ class VIPAutomation {
                     return await page.evaluate(fn, ...args);
                 } catch (err) {
                     if (err.message.includes('closed') || err.message.includes('Target page') || err.message.includes('Session')) {
-                        console.warn('âš ï¸ Page connection lost, stopping execution');
+                        console.warn('⚠️ Page connection lost, stopping execution');
                         throw new Error('Page connection lost');
                     }
                     throw err;
@@ -2487,77 +2495,32 @@ class VIPAutomation {
                     return await page.waitForSelector(selector, options);
                 } catch (err) {
                     if (err.message.includes('closed') || err.message.includes('Target page') || err.message.includes('Session')) {
-                        console.warn('âš ï¸ Page connection lost, stopping execution');
+                        console.warn('⚠️ Page connection lost, stopping execution');
                         throw new Error('Page connection lost');
                     }
                     throw err;
                 }
             };
 
-            // BÆ°á»›c 1: VÃ o trang chÃ­nh rá»“i click nÃºt "RÃºt tiá»n" Ä‘á»ƒ vÃ o trang submit máº­t kháº©u rÃºt
-            const homeUrl = domain + '/home';
-            console.log(`  â†’ Home: ${homeUrl}`);
+            // Bước 1: Redirect trực tiếp tới trang submit mật khẩu rút (giống 22VIP)
+            const withdrawPasswordUrl = domain + paths.withdrawPassword;
+            console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
 
-            // Add random delay 1-2s before redirect (reduced from 2-5s)
-            const delayBeforeHome = this.getRandomDelay(1000, 2000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeHome / 1000)}s before redirect to home...`);
-            await new Promise(r => setTimeout(r, delayBeforeHome));
+            // Add random delay 2-5s before redirect
+            const delayBeforeWithdraw = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
+            await new Promise(r => setTimeout(r, delayBeforeWithdraw));
 
-            await page.goto(homeUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+            await page.goto(withdrawPasswordUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
             await new Promise(r => setTimeout(r, 1000));
-
-            // Step 1: Click tab "TÃ i Khoáº£n"
-            console.log('ðŸ” Clicking  "TÃ i Khoáº£n" tab...');
-            await page.evaluate(() => {
-                const accountTab = Array.from(document.querySelectorAll('div[role="tab"]')).find(el =>
-                    el.textContent.includes('TÃ i Khoáº£n')
-                );
-
-                if (accountTab) {
-                    accountTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    try {
-                        accountTab.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
-                        accountTab.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
-                    } catch (e) { }
-                    accountTab.click();
-                    console.log('âœ… Clicked "TÃ i Khoáº£n" tab');
-                } else {
-                    console.warn('âš ï¸ "TÃ i Khoáº£n" tab not found');
-                }
-            });
-
-            await new Promise(r => setTimeout(r, 2000));
-
-            // Step 2: Click nÃºt "RÃºt tiá»n" Ä‘á»ƒ vÃ o trang withdraw password
-            console.log('ðŸ’° Clicking "RÃºt tiá»n" button...');
-            await page.evaluate(() => {
-                // Try multiple selectors for withdraw button
-                let withdrawBtn = Array.from(document.querySelectorAll('div._navItem_sh3m6_51, button, div[role="button"], a')).find(el =>
-                    el.textContent.includes('RÃºt tiá»n') || el.textContent.includes('RÃºt Tiá»n') || el.textContent.includes('Withdraw')
-                );
-
-                if (withdrawBtn) {
-                    withdrawBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    try {
-                        withdrawBtn.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
-                        withdrawBtn.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
-                    } catch (e) { }
-                    withdrawBtn.click();
-                    console.log('âœ… Clicked "RÃºt tiá»n" button');
-                } else {
-                    console.warn('âš ï¸ "RÃºt tiá»n" button not found');
-                }
-            });
-
-            await new Promise(r => setTimeout(r, 3000));
 
             // Wait for form fields to appear
             try {
                 await page.waitForSelector('ul.ui-password-input__security, input[data-input-name="password"]', { timeout: 5000 });
-                console.log('âœ… Withdraw password form loaded');
+                console.log('✅ Withdraw password form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Withdraw password form not found, continuing anyway...');
+                console.warn('⚠️ Withdraw password form not found, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
@@ -2588,7 +2551,7 @@ class VIPAutomation {
                     try {
                         // Check if page is still valid
                         if (!page || page.isClosed?.()) {
-                            console.warn('âš ï¸ Page is closed, stopping keyboard input');
+                            console.warn('⚠️ Page is closed, stopping keyboard input');
                             throw new Error('Page is closed');
                         }
 
@@ -2652,7 +2615,7 @@ class VIPAutomation {
                             new Promise((_, reject) => setTimeout(() => reject(new Error('Digit click timeout')), 5000))
                         ]);
                     } catch (e) {
-                        console.warn(`âš ï¸ Failed to click digit ${digit}:`, e.message);
+                        console.warn(`⚠️ Failed to click digit ${digit}:`, e.message);
                         throw e;
                     }
 
@@ -2661,14 +2624,14 @@ class VIPAutomation {
             };
 
             // Click first password
-            console.log('ðŸ” Entering first password...');
+            console.log('🔐 Entering first password...');
             await clickDigitsOnKeyboard(password);
 
-            console.log('â³ Waiting for keyboard to reset...');
+            console.log('⏳ Waiting for keyboard to reset...');
             await new Promise(r => setTimeout(r, 500));
 
             // Click confirm password
-            console.log('ðŸ” Entering confirm password...');
+            console.log('🔐 Entering confirm password...');
             await clickDigitsOnKeyboard(password);
 
             await new Promise(r => setTimeout(r, 1000));
@@ -2681,7 +2644,7 @@ class VIPAutomation {
                     const lastInput = passwordInputs[passwordInputs.length - 1];
                     lastInput.dispatchEvent(new Event('blur', { bubbles: true }));
                     lastInput.dispatchEvent(new Event('change', { bubbles: true }));
-                    console.log('âœ… Triggered blur/change events on password input');
+                    console.log('✅ Triggered blur/change events on password input');
                 }
             });
 
@@ -2691,8 +2654,8 @@ class VIPAutomation {
             const submitResult = await page.evaluate(() => {
                 const submitBtn = document.querySelector('button[type="button"]') || document.querySelector('button[type="submit"]');
                 if (submitBtn) {
-                    console.log(`ðŸ“ Submit button text: "${submitBtn.textContent.trim()}"`);
-                    console.log(`ðŸ“ Submit button visible: ${submitBtn.offsetParent !== null}`);
+                    console.log(`📍 Submit button text: "${submitBtn.textContent.trim()}"`);
+                    console.log(`📍 Submit button visible: ${submitBtn.offsetParent !== null}`);
 
                     submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -2729,67 +2692,78 @@ class VIPAutomation {
 
                     // Regular click
                     submitBtn.click();
-                    console.log('âœ… Submit button clicked');
+                    console.log('✅ Submit button clicked');
                     return true;
                 }
                 return false;
             });
 
             if (!submitResult) {
-                console.warn('âš ï¸ Submit button not found');
+                console.warn('⚠️ Submit button not found');
             }
 
-            console.log('â³ Waiting for withdraw password to be processed...');
+            console.log('⏳ Waiting for withdraw password to be processed...');
             await new Promise(r => setTimeout(r, 5000));
 
-            console.log('âœ… Withdraw password submitted');
+            console.log('✅ Withdraw password submitted');
 
             await new Promise(r => setTimeout(r, 1000));
 
-            // BÆ°á»›c 2: Trang sáº½ tá»± chuyá»ƒn tá»›i trang bank, chá»‰ cáº§n chá» vÃ  click "ThÃªm tÃ i khoáº£n Ä‘á»ƒ rÃºt tiá»n"
-            console.log('â³ Waiting for page to redirect to bank page...');
-            await new Promise(r => setTimeout(r, 3000));
+            // Bước 2: Redirect trực tiếp tới trang bank (giống 22VIP)
+            const bankUrl = domain + paths.bank;
+            console.log(`  → Bank: ${bankUrl}`);
 
-            // Step 2: Click input "ThÃªm tÃ i khoáº£n Ä‘á»ƒ rÃºt tiá»n"
-            console.log('ðŸ¦ Clicking input "ThÃªm tÃ i khoáº£n Ä‘á»ƒ rÃºt tiá»n"...');
+            // Add random delay 2-5s before redirect to bank
+            const delayBeforeBank = this.getRandomDelay(2000, 5000);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
+            await new Promise(r => setTimeout(r, delayBeforeBank));
+
+            await page.goto(bankUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+            // Wait for page to load
+            await new Promise(r => setTimeout(r, 2000));
+
+            // Step 1: Click "Thêm Tài Khoản" button
+            console.log('🏦 Clicking "Thêm Tài Khoản" button...');
             await page.evaluate(() => {
-                const input = document.querySelector('input[placeholder="ThÃªm tÃ i khoáº£n Ä‘á»ƒ rÃºt tiá»n"]');
-                if (input) {
-                    input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    input.focus();
-                    input.click();
-                    console.log('âœ… Clicked input');
+                // Find by class or text
+                let addBtn = document.querySelector('div._addAccountInputBtn_1bihm_45');
+                if (!addBtn) {
+                    addBtn = Array.from(document.querySelectorAll('div, button')).find(el =>
+                        el.textContent.includes('Thêm Tài Khoản')
+                    );
+                }
+                if (addBtn) {
+                    addBtn.click();
                 }
             });
 
             await new Promise(r => setTimeout(r, 1500));
 
-            // Step 3: Click "TÃ i khoáº£n ngÃ¢n hÃ ng" option (id="addAccountClick")
-            console.log('ðŸ¦ Clicking "TÃ i khoáº£n ngÃ¢n hÃ ng" option...');
+            // Step 2: Click "Tài khoản ngân hàng" option
+            console.log('🏦 Clicking "Tài khoản ngân hàng" option...');
             await page.evaluate(() => {
-                const bankOption = document.getElementById('addAccountClick');
+                // Find by id or text
+                let bankOption = document.getElementById('addAccountClick');
+                if (!bankOption) {
+                    bankOption = Array.from(document.querySelectorAll('div, button')).find(el =>
+                        el.textContent.includes('Tài khoản ngân hàng')
+                    );
+                }
                 if (bankOption) {
-                    bankOption.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    try {
-                        bankOption.dispatchEvent(new TouchEvent('touchstart', { bubbles: true }));
-                        bankOption.dispatchEvent(new TouchEvent('touchend', { bubbles: true }));
-                    } catch (e) { }
                     bankOption.click();
-                    console.log('âœ… Clicked "TÃ i khoáº£n ngÃ¢n hÃ ng"');
                 }
             });
 
-            await new Promise(r => setTimeout(r, 3000));
-
-            // Step 4: Re-enter withdraw password
-            console.log('ðŸ” Re-entering withdraw password for bank confirmation...');
+            await new Promise(r => setTimeout(r, 3000)); // Increased delay to wait for popup
+            console.log('🔐 Re-entering withdraw password for bank confirmation...');
 
             let passwordEntered = false;
             for (let attempt = 0; attempt < 3; attempt++) {
                 try {
                     console.log(`  Attempt ${attempt + 1}/3 to find password input...`);
                     await page.waitForSelector('ul.ui-password-input__security', { timeout: 10000 });
-                    console.log('âœ… Password input appeared');
+                    console.log('✅ Password input appeared');
 
                     await page.evaluate(() => {
                         const firstBox = document.querySelector('ul.ui-password-input__security li.ui-password-input__item');
@@ -2804,9 +2778,9 @@ class VIPAutomation {
 
                     try {
                         await clickDigitsOnKeyboard(password);
-                        console.log('âœ… Password digits entered');
+                        console.log('✅ Password digits entered');
                     } catch (digitError) {
-                        console.warn('âš ï¸ Error entering password digits:', digitError.message);
+                        console.warn('⚠️ Error entering password digits:', digitError.message);
                         throw digitError;
                     }
 
@@ -2819,7 +2793,7 @@ class VIPAutomation {
                             const lastInput = passwordInputs[passwordInputs.length - 1];
                             lastInput.dispatchEvent(new Event('blur', { bubbles: true }));
                             lastInput.dispatchEvent(new Event('change', { bubbles: true }));
-                            console.log('âœ… Triggered blur/change events on password input');
+                            console.log('✅ Triggered blur/change events on password input');
                         }
                     });
 
@@ -2828,7 +2802,7 @@ class VIPAutomation {
                     const submitResult = await page.evaluate(() => {
                         const submitBtn = document.querySelector('button[type="button"]') || document.querySelector('button[type="submit"]');
                         if (submitBtn) {
-                            console.log(`ðŸ“ Submit button text: "${submitBtn.textContent.trim()}"`);
+                            console.log(`📍 Submit button text: "${submitBtn.textContent.trim()}"`);
 
                             submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -2864,22 +2838,22 @@ class VIPAutomation {
                             }
 
                             submitBtn.click();
-                            console.log('âœ… Submit button clicked');
+                            console.log('✅ Submit button clicked');
                             return true;
                         }
                         return false;
                     });
 
                     if (!submitResult) {
-                        console.warn('âš ï¸ Submit button not found');
+                        console.warn('⚠️ Submit button not found');
                         throw new Error('Submit button not found');
                     }
 
                     passwordEntered = true;
-                    console.log('âœ… Password re-entry completed');
+                    console.log('✅ Password re-entry completed');
                     break;
                 } catch (e) {
-                    console.warn(`  âš ï¸ Attempt ${attempt + 1} failed:`, e.message);
+                    console.warn(`  ⚠️ Attempt ${attempt + 1} failed:`, e.message);
                     if (attempt < 2) {
                         console.log(`  Retrying in 2s...`);
                         await new Promise(r => setTimeout(r, 2000));
@@ -2888,23 +2862,23 @@ class VIPAutomation {
             }
 
             if (!passwordEntered) {
-                console.warn('âš ï¸ Password re-entry failed after 3 attempts, continuing anyway...');
+                console.warn('⚠️ Password re-entry failed after 3 attempts, continuing anyway...');
             }
 
-            // Click "Tiáº¿p Theo" button to proceed to bank form
+            // Click "Tiếp Theo" button to proceed to bank form
             if (passwordEntered) {
-                console.log('ðŸ”˜ Clicking "Tiáº¿p Theo" button in password modal...');
+                console.log('🔘 Clicking "Tiếp Theo" button in password modal...');
                 try {
                     const clickResult = await page.evaluate(() => {
                         const nextBtn = Array.from(document.querySelectorAll('button')).find(btn =>
-                            btn.textContent.includes('Tiáº¿p Theo')
+                            btn.textContent.includes('Tiếp Theo')
                         );
                         if (nextBtn) {
                             const rect = nextBtn.getBoundingClientRect();
-                            console.log(`ðŸ“ Found "Tiáº¿p Theo" button at: x=${Math.round(rect.x)}, y=${Math.round(rect.y)}, width=${Math.round(rect.width)}, height=${Math.round(rect.height)}`);
-                            console.log(`ðŸ“ Button text: "${nextBtn.textContent.trim()}"`);
-                            console.log(`ðŸ“ Button class: "${nextBtn.className}"`);
-                            console.log(`ðŸ“ Button parent: "${nextBtn.parentElement?.className}"`);
+                            console.log(`📍 Found "Tiếp Theo" button at: x=${Math.round(rect.x)}, y=${Math.round(rect.y)}, width=${Math.round(rect.width)}, height=${Math.round(rect.height)}`);
+                            console.log(`📍 Button text: "${nextBtn.textContent.trim()}"`);
+                            console.log(`📍 Button class: "${nextBtn.className}"`);
+                            console.log(`📍 Button parent: "${nextBtn.parentElement?.className}"`);
 
                             nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
@@ -2940,29 +2914,29 @@ class VIPAutomation {
                             }
 
                             nextBtn.click();
-                            return { success: true, message: 'Tiáº¿p Theo button clicked' };
+                            return { success: true, message: 'Tiếp Theo button clicked' };
                         }
-                        return { success: false, message: 'Tiáº¿p Theo button not found' };
+                        return { success: false, message: 'Tiếp Theo button not found' };
                     });
-                    console.log(`ðŸ”˜ Click result: ${JSON.stringify(clickResult)}`);
+                    console.log(`🔘 Click result: ${JSON.stringify(clickResult)}`);
 
                     // Wait for modal to close and form to be submitted
-                    console.log('â³ Waiting for password modal to close and form to be submitted...');
+                    console.log('⏳ Waiting for password modal to close and form to be submitted...');
                     await new Promise(r => setTimeout(r, 5000));
                 } catch (e) {
-                    console.warn('âš ï¸ Failed to click Tiáº¿p Theo button:', e.message);
+                    console.warn('⚠️ Failed to click Tiếp Theo button:', e.message);
                 }
             }
 
             // Wait for bank form fields to appear
             try {
-                await page.waitForSelector('input[placeholder="Vui lÃ²ng nháº­p sá»‘ tÃ i khoáº£n ngÃ¢n hÃ ng"]', { timeout: 5000 });
-                console.log('âœ… Bank form loaded');
+                await page.waitForSelector('input[placeholder="Vui lòng nhập số tài khoản ngân hàng"]', { timeout: 5000 });
+                console.log('✅ Bank form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Bank form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
                 // Log current URL to see if we're on the right page
                 const currentUrl = page.url();
-                console.log(`ðŸ“ Current URL: ${currentUrl}`);
+                console.log(`📍 Current URL: ${currentUrl}`);
 
                 // Log page content for debugging
                 const pageContent = await page.evaluate(() => {
@@ -2972,13 +2946,13 @@ class VIPAutomation {
                         bodyText: document.body.innerText.substring(0, 500)
                     };
                 });
-                console.log(`ðŸ“„ Page info:`, pageContent);
+                console.log(`📄 Page info:`, pageContent);
             }
             await new Promise(r => setTimeout(r, 1500));
 
             // Fill bank form - account number
             await page.evaluate((data) => {
-                const accountInput = document.querySelector('input[placeholder="Vui lÃ²ng nháº­p sá»‘ tÃ i khoáº£n ngÃ¢n hÃ ng"]');
+                const accountInput = document.querySelector('input[placeholder="Vui lòng nhập số tài khoản ngân hàng"]');
 
                 if (accountInput) {
                     accountInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2994,16 +2968,16 @@ class VIPAutomation {
                     accountInput.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
                     accountInput.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
 
-                    console.log(`âœ… Filled account number: ${data.accountNumber}`);
+                    console.log(`✅ Filled account number: ${data.accountNumber}`);
                 }
             }, profileData);
 
             await new Promise(r => setTimeout(r, 1500));
 
             // Find and click bank dropdown
-            console.log('ðŸ¦ Selecting bank...');
+            console.log('🏦 Selecting bank...');
             await page.evaluate((data) => {
-                const bankDropdown = document.querySelector('input[type="search"][placeholder="Chá»n ngÃ¢n hÃ ng phÃ¡t hÃ nh"]');
+                const bankDropdown = document.querySelector('input[type="search"][placeholder="Chọn ngân hàng phát hành"]');
 
                 if (bankDropdown) {
                     bankDropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -3070,7 +3044,7 @@ class VIPAutomation {
                                     } catch (e) { }
 
                                     bankOption.click();
-                                    console.log(`âœ… Selected bank: ${bankOption.textContent.trim()}`);
+                                    console.log(`✅ Selected bank: ${bankOption.textContent.trim()}`);
                                 }, 300);
                             }
                         }, 500);
@@ -3083,7 +3057,7 @@ class VIPAutomation {
             // Fill account holder name if needed
             await page.evaluate((data) => {
                 const nameField = document.querySelector('input[data-input-name="accountName"]') ||
-                    document.querySelector('input[placeholder*="chá»§ tÃ i khoáº£n"]');
+                    document.querySelector('input[placeholder*="chủ tài khoản"]');
 
                 if (nameField) {
                     nameField.value = data.fullname.toUpperCase();
@@ -3092,14 +3066,14 @@ class VIPAutomation {
                 }
             }, profileData);
 
-            // Submit form - click "XÃ¡c Nháº­n" button
-            console.log(`ðŸ“¤ Submitting bank form for ${siteConfig.name}...`);
+            // Submit form - click "Xác Nhận" button
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
             await page.evaluate(() => {
                 let submitBtn = document.getElementById('bindWithdrawAccountNextClick');
 
                 if (!submitBtn) {
                     submitBtn = Array.from(document.querySelectorAll('button')).find(btn =>
-                        btn.textContent.includes('XÃ¡c Nháº­n')
+                        btn.textContent.includes('Xác Nhận')
                     );
                 }
 
@@ -3113,22 +3087,22 @@ class VIPAutomation {
                 }
             });
 
-            console.log(`â³ Waiting for page to load after bank submission...`);
+            console.log(`⏳ Waiting for page to load after bank submission...`);
             let pageReloaded = false;
             try {
-                await page.waitForSelector('._addAccountInputBtn_1bihm_45, [class*="addAccount"], button:contains("ThÃªm"), ._navItem_1odty_45', { timeout: 10000 }).catch(() => {
-                    console.log('âš ï¸ Page selector not found after bank submission');
+                await page.waitForSelector('._addAccountInputBtn_1bihm_45, [class*="addAccount"], button:contains("Thêm"), ._navItem_1odty_45', { timeout: 10000 }).catch(() => {
+                    console.log('⚠️ Page selector not found after bank submission');
                 });
                 pageReloaded = true;
-                console.log('âœ… Page loaded after bank submission');
+                console.log('✅ Page loaded after bank submission');
             } catch (e) {
-                console.log('âš ï¸ Timeout waiting for page after bank submission');
+                console.log('⚠️ Timeout waiting for page after bank submission');
             }
             await new Promise(r => setTimeout(r, 1500));
 
             await new Promise(r => setTimeout(r, 3000));
             const result = await page.evaluate((expectedData, reloaded) => {
-                const successKeywords = ['thÃ nh cÃ´ng', 'success', 'added', 'completed'];
+                const successKeywords = ['thành công', 'success', 'added', 'completed'];
                 const pageText = document.body.innerText.toLowerCase();
 
                 if (reloaded || successKeywords.some(keyword => pageText.includes(keyword))) {
@@ -3144,10 +3118,136 @@ class VIPAutomation {
                 };
             }, profileData, pageReloaded);
 
-            console.log(`âœ… OKVIP OTP Add Bank Result:`, result);
+            console.log(`✅ OKVIP OTP Add Bank Result:`, result);
+
+            // Bước 3: Set birthday (ngày sinh)
+            if (result.success) {
+                console.log('📅 Setting birthday...');
+                try {
+                    // Redirect to settings page
+                    const settingsUrl = domain + '/home/setting';
+                    console.log(`  → Settings: ${settingsUrl}`);
+
+                    const delayBeforeSettings = this.getRandomDelay(2000, 5000);
+                    console.log(`⏳ Waiting ${Math.round(delayBeforeSettings / 1000)}s before redirect to settings...`);
+                    await new Promise(r => setTimeout(r, delayBeforeSettings));
+
+                    await page.goto(settingsUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
+                    await new Promise(r => setTimeout(r, 2000));
+
+                    // Click birthday input to open picker
+                    console.log('📅 Clicking birthday input...');
+                    await page.evaluate(() => {
+                        const birthdayInput = document.querySelector('input[data-input-name="birthday"]');
+                        if (birthdayInput) {
+                            birthdayInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                            // Click parent section directly to open picker
+                            const parentSection = birthdayInput.closest('section.lobby-form-item--birthday');
+                            if (parentSection) {
+                                parentSection.click();
+                                console.log('✅ Birthday section clicked');
+                            }
+                        }
+                    });
+
+                    await new Promise(r => setTimeout(r, 1500));
+
+                    // Generate random birthday (age >= 18)
+                    const today = new Date();
+                    const minYear = today.getFullYear() - 80; // Max age 80
+                    const maxYear = today.getFullYear() - 18; // Min age 18
+                    const randomYear = Math.floor(Math.random() * (maxYear - minYear + 1)) + minYear;
+                    const randomMonth = Math.floor(Math.random() * 12) + 1;
+                    const randomDay = Math.floor(Math.random() * 28) + 1; // Use 1-28 to avoid invalid dates
+
+                    console.log(`📅 Generated birthday: ${String(randomDay).padStart(2, '0')}/${String(randomMonth).padStart(2, '0')}/${randomYear}`);
+
+                    // Select day, month, year using picker
+                    await page.evaluate((day, month, year) => {
+                        // Find all picker columns
+                        const columns = document.querySelectorAll('.ui-picker-column');
+                        if (columns.length >= 3) {
+                            // Helper function to select item in column
+                            const selectItemInColumn = (column, targetText) => {
+                                const items = column.querySelectorAll('.ui-picker-column__item');
+                                let targetItem = null;
+
+                                for (const item of items) {
+                                    if (item.textContent.trim() === targetText) {
+                                        targetItem = item;
+                                        break;
+                                    }
+                                }
+
+                                if (targetItem) {
+                                    // Scroll to item
+                                    const wrapper = column.querySelector('.ui-picker-column__wrapper');
+                                    if (wrapper) {
+                                        const itemHeight = 38.0435; // From HTML
+                                        const itemIndex = Array.from(items).indexOf(targetItem);
+                                        const scrollDistance = itemIndex * itemHeight - itemHeight * 2; // Center it
+                                        wrapper.style.transform = `translate3d(0px, ${-scrollDistance}px, 0px)`;
+                                    }
+
+                                    // Click item
+                                    targetItem.click();
+                                    console.log(`✅ Selected: ${targetText}`);
+                                    return true;
+                                }
+                                return false;
+                            };
+
+                            // Day column (first)
+                            selectItemInColumn(columns[0], String(day).padStart(2, '0'));
+
+                            // Month column (second)
+                            selectItemInColumn(columns[1], String(month).padStart(2, '0'));
+
+                            // Year column (third)
+                            selectItemInColumn(columns[2], String(year));
+                        }
+                    }, randomDay, randomMonth, randomYear);
+
+                    await new Promise(r => setTimeout(r, 1000));
+
+                    // Click confirm button in picker
+                    console.log('📅 Clicking picker confirm button...');
+                    await page.evaluate(() => {
+                        const confirmBtn = document.querySelector('.ui-picker-toolbar__confirm');
+                        if (confirmBtn) {
+                            confirmBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            confirmBtn.click();
+                            console.log('✅ Picker confirm button clicked');
+                        }
+                    });
+
+                    await new Promise(r => setTimeout(r, 1500));
+
+                    // Click final confirm button
+                    console.log('📅 Clicking final confirm button...');
+                    await page.evaluate(() => {
+                        const finalBtn = Array.from(document.querySelectorAll('button')).find(btn =>
+                            btn.textContent.includes('XÁC NHẬN') || btn.textContent.includes('Xác Nhận')
+                        );
+                        if (finalBtn) {
+                            finalBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            finalBtn.click();
+                            console.log('✅ Final confirm button clicked');
+                        }
+                    });
+
+                    await new Promise(r => setTimeout(r, 2000));
+                    console.log('✅ Birthday set successfully');
+                } catch (birthdayError) {
+                    console.warn('⚠️ Error setting birthday:', birthdayError.message);
+                    // Don't throw error, just warn
+                }
+            }
+
             return result;
         } catch (error) {
-            console.error(`âŒ OKVIP OTP Add Bank Error:`, error.message);
+            console.error(`❌ OKVIP OTP Add Bank Error:`, error.message);
             return { success: false, error: error.message };
         }
     }
@@ -3158,20 +3258,20 @@ class VIPAutomation {
     async addBankABCVIP(browser, siteConfig, profileData, existingPage = null) {
         const page = existingPage || await browser.newPage();
         try {
-            console.log(`ðŸ¦ Add Bank step for ${siteConfig.name} (ABCVIP)...`);
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (ABCVIP)...`);
 
             const domain = this.getDomain(siteConfig.registerUrl);
             if (!domain) throw new Error('Invalid domain');
 
             const paths = this.categoryPaths.abcvip;
 
-            // BÆ°á»›c 1: VÃ o trang submit máº­t kháº©u rÃºt
+            // Bước 1: Vào trang submit mật khẩu rút
             const withdrawPasswordUrl = domain + paths.withdrawPassword;
-            console.log(`  â†’ Withdraw Password: ${withdrawPasswordUrl}`);
+            console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
 
             // Add random delay 2-10s before redirect
             const delayBeforeWithdraw = this.getRandomDelay(2000, 5000); // 2-10s
-            console.log(`â³ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
             await new Promise(r => setTimeout(r, delayBeforeWithdraw));
 
             await page.goto(withdrawPasswordUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -3179,9 +3279,9 @@ class VIPAutomation {
             // Wait for form fields to appear
             try {
                 await page.waitForSelector('input[formcontrolname="newPassword"]', { timeout: 5000 });
-                console.log('âœ… Withdraw password form loaded');
+                console.log('✅ Withdraw password form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Withdraw password form not found, continuing anyway...');
+                console.warn('⚠️ Withdraw password form not found, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
@@ -3210,16 +3310,16 @@ class VIPAutomation {
             });
 
             await page.waitForNavigation({ timeout: 15000 }).catch(() => {
-                console.log('âš ï¸ No navigation after withdraw password');
+                console.log('⚠️ No navigation after withdraw password');
             });
 
-            // BÆ°á»›c 2: VÃ o trang submit bank (ABCVIP)
+            // Bước 2: Vào trang submit bank (ABCVIP)
             const bankUrl = domain + paths.bank;
-            console.log(`  â†’ Bank: ${bankUrl}`);
+            console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
             const delayBeforeBank = this.getRandomDelay(2000, 5000); // 2-10s
-            console.log(`â³ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
             await page.goto(bankUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -3227,15 +3327,15 @@ class VIPAutomation {
             // Wait for bank form fields to appear
             try {
                 await page.waitForSelector('mat-select[formcontrolname="bankName"], input[formcontrolname="account"]', { timeout: 5000 });
-                console.log('âœ… Bank form loaded');
+                console.log('✅ Bank form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Bank form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
             // Fill bank form (formcontrolname + mat-select)
             await page.evaluate((data) => {
-                // Click mat-select Ä‘á»ƒ má»Ÿ dropdown
+                // Click mat-select để mở dropdown
                 const bankSelect = document.querySelector('mat-select[formcontrolname="bankName"]');
                 if (bankSelect) {
                     bankSelect.click();
@@ -3246,7 +3346,7 @@ class VIPAutomation {
 
             // Select bank option (with mapping)
             const mappedBankName = this.mapBankName(profileData.bankName);
-            console.log(`ðŸ¦ Looking for bank: ${profileData.bankName} â†’ ${mappedBankName}`);
+            console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
 
             await page.evaluate((bankName) => {
                 const options = document.querySelectorAll('mat-option');
@@ -3259,17 +3359,17 @@ class VIPAutomation {
                 };
 
                 const normalizedSearchName = normalizeBankName(bankName);
-                console.log(`🔍 Normalized search name: ${normalizedSearchName}`);
+                console.log(`?? Normalized search name: ${normalizedSearchName}`);
 
                 // Try exact match first
                 for (const option of options) {
                     const optionText = option.textContent?.trim();
                     const normalizedOptionText = normalizeBankName(optionText);
 
-                    console.log(`  Checking option: "${optionText}" → "${normalizedOptionText}"`);
+                    console.log(`  Checking option: "${optionText}" ? "${normalizedOptionText}"`);
 
                     if (normalizedOptionText === normalizedSearchName) {
-                        console.log(`✅ Found exact match: ${optionText}`);
+                        console.log(`? Found exact match: ${optionText}`);
                         option.click();
                         found = true;
                         break;
@@ -3283,7 +3383,7 @@ class VIPAutomation {
                         const normalizedOptionText = normalizeBankName(optionText);
 
                         if (normalizedOptionText.includes(normalizedSearchName)) {
-                            console.log(`✅ Found partial match: ${optionText}`);
+                            console.log(`? Found partial match: ${optionText}`);
                             option.click();
                             found = true;
                             break;
@@ -3292,7 +3392,7 @@ class VIPAutomation {
                 }
 
                 if (!found && options.length > 0) {
-                    console.warn(`âš ï¸ Bank not found, selecting first option`);
+                    console.warn(`⚠️ Bank not found, selecting first option`);
                     options[0].click();
                 }
             }, mappedBankName);
@@ -3321,7 +3421,7 @@ class VIPAutomation {
             }, profileData, city);
 
             // Submit form
-            console.log(`ðŸ“¤ Submitting bank form for ${siteConfig.name}...`);
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
             await page.evaluate(() => {
                 const submitBtn = document.querySelector('button[type="submit"]');
                 if (submitBtn && !submitBtn.disabled) {
@@ -3330,20 +3430,20 @@ class VIPAutomation {
             });
 
             // Wait for navigation after bank submission
-            console.log(`â³ Waiting for navigation after bank submission...`);
+            console.log(`⏳ Waiting for navigation after bank submission...`);
             let pageReloaded = false;
             try {
                 await page.waitForNavigation({ timeout: 15000 });
                 pageReloaded = true;
-                console.log('âœ… Page reloaded after bank submission');
+                console.log('✅ Page reloaded after bank submission');
             } catch (e) {
-                console.log('âš ï¸ No navigation after add bank');
+                console.log('⚠️ No navigation after add bank');
             }
 
             // Check if bank was added successfully by verifying displayed values
             await new Promise(r => setTimeout(r, 3000));
             const result = await page.evaluate((reloaded) => {
-                const successKeywords = ['thÃ nh cÃ´ng', 'success', 'added', 'completed'];
+                const successKeywords = ['thành công', 'success', 'added', 'completed'];
                 const pageText = document.body.innerText.toLowerCase();
 
                 if (reloaded) {
@@ -3357,7 +3457,7 @@ class VIPAutomation {
                 return { success: false, message: 'Could not verify bank addition' };
             }, pageReloaded);
 
-            console.log(`âœ… Bank result:`, result);
+            console.log(`✅ Bank result:`, result);
 
             // Mark tab as completed in rotator
             if (result.success) {
@@ -3366,7 +3466,7 @@ class VIPAutomation {
 
             return result;
         } catch (error) {
-            console.error(`âŒ ABCVIP Add Bank Error:`, error.message);
+            console.error(`❌ ABCVIP Add Bank Error:`, error.message);
 
             // Mark tab as completed even on error
             tabRotator.complete(page);
@@ -3381,7 +3481,7 @@ class VIPAutomation {
      */
     async fill78WINRegisterForm(page, profileData) {
         try {
-            console.log('ðŸ¤– 78WIN Form - Anti-bot mode enabled');
+            console.log('🤖 78WIN Form - Anti-bot mode enabled');
             const filler = new CommonFormFiller();
 
             // Wait for form to be interactive
@@ -3403,8 +3503,8 @@ class VIPAutomation {
                 { selector: 'input[type="tel"]', value: phone, label: 'mobile' }
             ];
 
-            console.log(`ðŸ” DEBUG: profileData.email = "${profileData.email}"`);
-            console.log(`ðŸ” DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
+            console.log(`🔍 DEBUG: profileData.email = "${profileData.email}"`);
+            console.log(`🔍 DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
 
             await filler.fillMultipleFields(page, fields, {
                 charDelay: 150,
@@ -3413,7 +3513,7 @@ class VIPAutomation {
             });
 
             // Handle agree checkbox - skip if already checked
-            console.log('âœ… Checking agree checkbox...');
+            console.log('✅ Checking agree checkbox...');
             try {
                 const isChecked = await page.evaluate(() => {
                     const checkbox = document.querySelector('input[id="agree"]');
@@ -3429,10 +3529,10 @@ class VIPAutomation {
                         await new Promise(r => setTimeout(r, 500));
                     }
                 } else {
-                    console.log('âœ… Agree checkbox already checked');
+                    console.log('✅ Agree checkbox already checked');
                 }
             } catch (error) {
-                console.warn('âš ï¸ Could not interact with agree checkbox:', error.message);
+                console.warn('⚠️ Could not interact with agree checkbox:', error.message);
             }
 
             // Trigger change events for all fields (React compatibility)
@@ -3455,9 +3555,9 @@ class VIPAutomation {
                 });
             });
 
-            console.log('âœ… 78WIN form filled successfully');
+            console.log('✅ 78WIN form filled successfully');
         } catch (error) {
-            console.error('âŒ Error filling 78WIN form:', error.message);
+            console.error('❌ Error filling 78WIN form:', error.message);
             throw error;
         }
     }
@@ -3468,14 +3568,14 @@ class VIPAutomation {
      */
     async fillJUN88V2RegisterForm(page, profileData) {
         try {
-            console.log('ðŸ¤– JUN88V2 Form - Anti-bot mode enabled');
+            console.log('🤖 JUN88V2 Form - Anti-bot mode enabled');
             const filler = new CommonFormFiller();
 
             // Wait for form to be interactive
             await filler.waitForForm(page, 'input[id="fullname"]', 10000);
 
             // For JUN88V2: Wait for Turnstile to auto-verify (it usually verifies within 1-3 seconds)
-            console.log('â³ Waiting for Turnstile to auto-verify...');
+            console.log('⏳ Waiting for Turnstile to auto-verify...');
             let turnstileVerified = false;
             for (let i = 0; i < 10; i++) {
                 const verified = await page.evaluate(() => {
@@ -3484,7 +3584,7 @@ class VIPAutomation {
                 });
 
                 if (verified) {
-                    console.log('âœ… Turnstile auto-verified');
+                    console.log('✅ Turnstile auto-verified');
                     turnstileVerified = true;
                     break;
                 }
@@ -3493,7 +3593,7 @@ class VIPAutomation {
             }
 
             if (!turnstileVerified) {
-                console.warn('âš ï¸ Turnstile not auto-verified, proceeding anyway...');
+                console.warn('⚠️ Turnstile not auto-verified, proceeding anyway...');
             }
 
             // Wait a bit more for page to settle
@@ -3503,7 +3603,7 @@ class VIPAutomation {
             await filler.simulateHumanInteraction(page);
 
             // Skip clicking, go directly to filling form
-            console.log('ðŸ“ Preparing to fill form fields...');
+            console.log('📝 Preparing to fill form fields...');
 
             // Prepare phone (remove leading 0)
             let phone = profileData.phone || '';
@@ -3521,18 +3621,18 @@ class VIPAutomation {
                 { selector: 'input[pattern="[0-9]*"]', value: phone, label: 'mobile' }
             ];
 
-            console.log(`ðŸ” DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
+            console.log(`🔍 DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
 
             try {
-                console.log('ðŸ“ Starting to fill form fields...');
+                console.log('📝 Starting to fill form fields...');
                 await filler.fillMultipleFields(page, fields, {
                     charDelay: 150,
                     beforeFocus: 500,
                     afterField: 1200
                 });
-                console.log('âœ… Form fields filled');
+                console.log('✅ Form fields filled');
             } catch (e) {
-                console.error('âŒ Error filling form fields:', e.message);
+                console.error('❌ Error filling form fields:', e.message);
                 throw e;
             }
 
@@ -3556,9 +3656,9 @@ class VIPAutomation {
                 });
             });
 
-            console.log('âœ… JUN88V2 form filled successfully');
+            console.log('✅ JUN88V2 form filled successfully');
         } catch (error) {
-            console.error('âŒ Error filling JUN88V2 form:', error.message);
+            console.error('❌ Error filling JUN88V2 form:', error.message);
             throw error;
         }
     }
@@ -3569,7 +3669,7 @@ class VIPAutomation {
      */
     async fill22VIPRegisterForm(page, profileData) {
         try {
-            console.log('ðŸ¤– 22VIP/888P Form - Filling...');
+            console.log('🤖 22VIP/888P Form - Filling...');
 
             // Check if form is already visible (don't wait if it is)
             const formExists = await page.evaluate(() => {
@@ -3581,12 +3681,12 @@ class VIPAutomation {
                 // Wait for form to load (reduced timeout to 10s)
                 try {
                     await page.waitForSelector('input[data-input-name="account"]', { timeout: 10000 });
-                    console.log('âœ… 22VIP/888P form loaded');
+                    console.log('✅ 22VIP/888P form loaded');
                 } catch (e) {
-                    console.warn('âš ï¸ Form selector timeout, trying to fill anyway...');
+                    console.warn('⚠️ Form selector timeout, trying to fill anyway...');
                 }
             } else {
-                console.log('âœ… 22VIP/888P form already visible');
+                console.log('✅ 22VIP/888P form already visible');
             }
 
             // Fill account (username/phone)
@@ -3677,11 +3777,11 @@ class VIPAutomation {
             // Add delay between fill and next step
             await new Promise(r => setTimeout(r, 500));
 
-            console.log(`âœ… Filled account: ${profileData.username}`);
-            console.log(`âœ… Filled password`);
-            console.log(`âœ… Filled confirm password`);
+            console.log(`✅ Filled account: ${profileData.username}`);
+            console.log(`✅ Filled password`);
+            console.log(`✅ Filled confirm password`);
             const fullname = (profileData.fullname || profileData.username).toUpperCase();
-            console.log(`âœ… Filled full name: ${fullname}`);
+            console.log(`✅ Filled full name: ${fullname}`);
 
             // Trigger change events
             await page.evaluate(() => {
@@ -3693,34 +3793,34 @@ class VIPAutomation {
                 });
             });
 
-            console.log('âœ… 22VIP/888P form filled successfully');
+            console.log('✅ 22VIP/888P form filled successfully');
         } catch (error) {
-            console.error('âŒ Error filling 22VIP/888P form:', error.message);
+            console.error('❌ Error filling 22VIP/888P form:', error.message);
             throw error;
         }
     }
 
     /**
-     * JUN88 Add Bank: Click bank field â†’ select bank â†’ fill account & password â†’ submit
+     * JUN88 Add Bank: Click bank field → select bank → fill account & password → submit
      */
     async addBankJUN88(browser, siteConfig, profileData, existingPage = null) {
         const page = existingPage || await browser.newPage();
         try {
-            console.log(`ðŸ¦ Add Bank step for ${siteConfig.name} (JUN88)...`);
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (JUN88)...`);
 
             // Add random delay before starting
             const delayBeforeAddBank = this.getRandomDelay(2000, 5000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
             await new Promise(r => setTimeout(r, delayBeforeAddBank));
 
-            // Step 1: Click "ThÃªm ngÃ¢n hÃ ng +" button to show form
-            console.log(`ðŸ” Looking for "ThÃªm ngÃ¢n hÃ ng +" button...`);
+            // Step 1: Click "Thêm ngân hàng +" button to show form
+            console.log(`🔍 Looking for "Thêm ngân hàng +" button...`);
             const addBankButtonClicked = await page.evaluate(() => {
                 // Try multiple selectors for the add bank button
                 const selectors = [
                     'button.nrc-button',
                     'button[title=""]',
-                    'button:contains("ThÃªm ngÃ¢n hÃ ng")',
+                    'button:contains("Thêm ngân hàng")',
                     'button'
                 ];
 
@@ -3729,7 +3829,7 @@ class VIPAutomation {
                 // Try exact text match first
                 const buttons = document.querySelectorAll('button');
                 for (const btn of buttons) {
-                    if (btn.textContent.includes('ThÃªm ngÃ¢n hÃ ng')) {
+                    if (btn.textContent.includes('Thêm ngân hàng')) {
                         addBankBtn = btn;
                         break;
                     }
@@ -3745,9 +3845,9 @@ class VIPAutomation {
             });
 
             if (!addBankButtonClicked) {
-                console.warn('âš ï¸ "ThÃªm ngÃ¢n hÃ ng +" button not found, trying alternative...');
+                console.warn('⚠️ "Thêm ngân hàng +" button not found, trying alternative...');
             } else {
-                console.log('âœ… Clicked "ThÃªm ngÃ¢n hÃ ng +" button');
+                console.log('✅ Clicked "Thêm ngân hàng +" button');
             }
 
             // Wait for form to appear
@@ -3756,14 +3856,14 @@ class VIPAutomation {
             // Step 2: Wait for bank form to load
             try {
                 await page.waitForSelector('input[id="bankid"]', { timeout: 5000 });
-                console.log('âœ… Bank form loaded');
+                console.log('✅ Bank form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Bank form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
             // Step 3: Click bank field to open dropdown
-            console.log(`ðŸ¦ Opening bank dropdown...`);
+            console.log(`🏦 Opening bank dropdown...`);
             await page.evaluate(() => {
                 const bankField = document.querySelector('input[id="bankid"]');
                 if (bankField) {
@@ -3780,18 +3880,18 @@ class VIPAutomation {
             await new Promise(r => setTimeout(r, 1500));
 
             // Fill account number and password - use slow typing like register form
-            console.log(`ðŸ“ Filling account and password...`);
+            console.log(`📝 Filling account and password...`);
 
             // Field 1: Account number
             try {
-                console.log(`ðŸ’³ Filling account number: ${profileData.accountNumber}`);
+                console.log(`💳 Filling account number: ${profileData.accountNumber}`);
                 await page.focus('input[id="bankaccount"]');
                 await new Promise(r => setTimeout(r, 300));
                 await page.type('input[id="bankaccount"]', profileData.accountNumber, { delay: 100 });
                 await new Promise(r => setTimeout(r, 800));
-                console.log(`âœ… Account number filled`);
+                console.log(`✅ Account number filled`);
             } catch (error) {
-                console.warn(`âš ï¸ Error filling account number:`, error.message);
+                console.warn(`⚠️ Error filling account number:`, error.message);
                 // Fallback: use evaluate
                 await page.evaluate((accountNumber) => {
                     const accountField = document.querySelector('input[id="bankaccount"]');
@@ -3806,14 +3906,14 @@ class VIPAutomation {
 
             // Field 2: Password
             try {
-                console.log(`ðŸ” Filling password...`);
+                console.log(`🔐 Filling password...`);
                 await page.focus('input[id="password"]');
                 await new Promise(r => setTimeout(r, 300));
                 await page.type('input[id="password"]', profileData.password, { delay: 100 });
                 await new Promise(r => setTimeout(r, 800));
-                console.log(`âœ… Password filled`);
+                console.log(`✅ Password filled`);
             } catch (error) {
-                console.warn(`âš ï¸ Error filling password:`, error.message);
+                console.warn(`⚠️ Error filling password:`, error.message);
                 // Fallback: use evaluate
                 await page.evaluate((password) => {
                     const passwordField = document.querySelector('input[id="password"]');
@@ -3829,11 +3929,11 @@ class VIPAutomation {
             await new Promise(r => setTimeout(r, 1500));
 
             // Submit form - find OK button
-            console.log(`ðŸ“¤ Submitting bank form for ${siteConfig.name}...`);
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
 
             // Add delay before submit
             const delayBeforeSubmit = this.getRandomDelay(2000, 5000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
             await new Promise(r => setTimeout(r, delayBeforeSubmit));
 
             const submitSuccess = await page.evaluate(() => {
@@ -3874,13 +3974,13 @@ class VIPAutomation {
             });
 
             if (!submitSuccess) {
-                console.warn('âš ï¸ Submit button not found');
+                console.warn('⚠️ Submit button not found');
             } else {
-                console.log('âœ… Submit button clicked');
+                console.log('✅ Submit button clicked');
             }
 
             // Wait for response
-            console.log(`â³ Waiting for bank submission response...`);
+            console.log(`⏳ Waiting for bank submission response...`);
             await new Promise(r => setTimeout(r, 3000));
 
             // Check if successful
@@ -3889,7 +3989,7 @@ class VIPAutomation {
                 const errorMsg = document.querySelector('.error-msg');
                 const successMsg = document.querySelector('.success-msg');
 
-                if (errorMsg && errorMsg.textContent.includes('Báº¯t buá»™c')) {
+                if (errorMsg && errorMsg.textContent.includes('Bắt buộc')) {
                     return { success: false, message: 'Form validation error' };
                 }
 
@@ -3901,7 +4001,7 @@ class VIPAutomation {
                 return { success: true, message: 'Bank submission completed' };
             });
 
-            console.log(`âœ… Bank result:`, result);
+            console.log(`✅ Bank result:`, result);
 
             // Mark tab as completed in rotator
             if (result.success) {
@@ -3910,7 +4010,7 @@ class VIPAutomation {
 
             return result;
         } catch (error) {
-            console.error(`âŒ JUN88 Add Bank Error:`, error.message);
+            console.error(`❌ JUN88 Add Bank Error:`, error.message);
 
             // Mark tab as completed even on error
             tabRotator.complete(page);
@@ -3924,22 +4024,22 @@ class VIPAutomation {
      */
     async addBank78WIN(browser, siteConfig, profileData, existingPage = null) {
         try {
-            console.log(`ðŸ¦ Add Bank step for ${siteConfig.name} (78WIN)...`);
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (78WIN)...`);
 
             // Add random delay before starting
             const delayBeforeAddBank = this.getRandomDelay(2000, 5000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
             await new Promise(r => setTimeout(r, delayBeforeAddBank));
 
-            // Step 1: Click "ThÃªm ngÃ¢n hÃ ng +" button to show form
-            console.log(`ðŸ” Looking for "ThÃªm ngÃ¢n hÃ ng +" button...`);
+            // Step 1: Click "Thêm ngân hàng +" button to show form
+            console.log(`🔍 Looking for "Thêm ngân hàng +" button...`);
             const addBankButtonClicked = await page.evaluate(() => {
                 const buttons = document.querySelectorAll('button');
                 let addBankBtn = null;
 
-                // Find button with text "ThÃªm ngÃ¢n hÃ ng"
+                // Find button with text "Thêm ngân hàng"
                 for (const btn of buttons) {
-                    if (btn.textContent.includes('ThÃªm ngÃ¢n hÃ ng')) {
+                    if (btn.textContent.includes('Thêm ngân hàng')) {
                         addBankBtn = btn;
                         break;
                     }
@@ -3953,9 +4053,9 @@ class VIPAutomation {
             });
 
             if (!addBankButtonClicked) {
-                console.warn('âš ï¸ "ThÃªm ngÃ¢n hÃ ng +" button not found');
+                console.warn('⚠️ "Thêm ngân hàng +" button not found');
             } else {
-                console.log('âœ… Clicked "ThÃªm ngÃ¢n hÃ ng +" button');
+                console.log('✅ Clicked "Thêm ngân hàng +" button');
             }
 
             // Wait for form to appear
@@ -3964,14 +4064,14 @@ class VIPAutomation {
             // Step 2: Wait for bank form to load
             try {
                 await page.waitForSelector('input[id="bankid"]', { timeout: 5000 });
-                console.log('âœ… Bank form loaded');
+                console.log('✅ Bank form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Bank form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
             // Step 3: Click bank field to open dropdown
-            console.log(`ðŸ¦ Opening bank dropdown...`);
+            console.log(`🏦 Opening bank dropdown...`);
             await page.evaluate(() => {
                 const bankField = document.querySelector('input[id="bankid"]');
                 if (bankField) {
@@ -3988,18 +4088,18 @@ class VIPAutomation {
             await new Promise(r => setTimeout(r, 1500));
 
             // Step 5: Fill account number and password - use slow typing
-            console.log(`ðŸ“ Filling account and password...`);
+            console.log(`📝 Filling account and password...`);
 
             // Field 1: Account number
             try {
-                console.log(`ðŸ’³ Filling account number: ${profileData.accountNumber}`);
+                console.log(`💳 Filling account number: ${profileData.accountNumber}`);
                 await page.focus('input[id="bankaccount"]');
                 await new Promise(r => setTimeout(r, 300));
                 await page.type('input[id="bankaccount"]', profileData.accountNumber, { delay: 100 });
                 await new Promise(r => setTimeout(r, 800));
-                console.log(`âœ… Account number filled`);
+                console.log(`✅ Account number filled`);
             } catch (error) {
-                console.warn(`âš ï¸ Error filling account number:`, error.message);
+                console.warn(`⚠️ Error filling account number:`, error.message);
                 // Fallback: use evaluate
                 await page.evaluate((accountNumber) => {
                     const accountField = document.querySelector('input[id="bankaccount"]');
@@ -4014,14 +4114,14 @@ class VIPAutomation {
 
             // Field 2: Password
             try {
-                console.log(`ðŸ” Filling password...`);
+                console.log(`🔐 Filling password...`);
                 await page.focus('input[id="password"]');
                 await new Promise(r => setTimeout(r, 300));
                 await page.type('input[id="password"]', profileData.password, { delay: 100 });
                 await new Promise(r => setTimeout(r, 800));
-                console.log(`âœ… Password filled`);
+                console.log(`✅ Password filled`);
             } catch (error) {
-                console.warn(`âš ï¸ Error filling password:`, error.message);
+                console.warn(`⚠️ Error filling password:`, error.message);
                 // Fallback: use evaluate
                 await page.evaluate((password) => {
                     const passwordField = document.querySelector('input[id="password"]');
@@ -4037,11 +4137,11 @@ class VIPAutomation {
             await new Promise(r => setTimeout(r, 1500));
 
             // Step 6: Submit form - find OK button
-            console.log(`ðŸ“¤ Submitting bank form for ${siteConfig.name}...`);
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
 
             // Add delay before submit
             const delayBeforeSubmit = this.getRandomDelay(2000, 5000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
             await new Promise(r => setTimeout(r, delayBeforeSubmit));
 
             const submitSuccess = await page.evaluate(() => {
@@ -4082,13 +4182,13 @@ class VIPAutomation {
             });
 
             if (!submitSuccess) {
-                console.warn('âš ï¸ Submit button not found');
+                console.warn('⚠️ Submit button not found');
             } else {
-                console.log('âœ… Submit button clicked');
+                console.log('✅ Submit button clicked');
             }
 
             // Wait for response
-            console.log(`â³ Waiting for bank submission response...`);
+            console.log(`⏳ Waiting for bank submission response...`);
             await new Promise(r => setTimeout(r, 3000));
 
             // Check if successful
@@ -4097,7 +4197,7 @@ class VIPAutomation {
                 const errorMsg = document.querySelector('.error-msg');
                 const successMsg = document.querySelector('.success-msg');
 
-                if (errorMsg && errorMsg.textContent.includes('Báº¯t buá»™c')) {
+                if (errorMsg && errorMsg.textContent.includes('Bắt buộc')) {
                     return { success: false, message: 'Form validation error' };
                 }
 
@@ -4109,7 +4209,7 @@ class VIPAutomation {
                 return { success: true, message: 'Bank submission completed' };
             });
 
-            console.log(`âœ… Bank result:`, result);
+            console.log(`✅ Bank result:`, result);
 
             // Mark tab as completed in rotator
             if (result.success) {
@@ -4118,7 +4218,7 @@ class VIPAutomation {
 
             return result;
         } catch (error) {
-            console.error(`âŒ 78WIN Add Bank Error:`, error.message);
+            console.error(`❌ 78WIN Add Bank Error:`, error.message);
 
             // Mark tab as completed even on error
             tabRotator.complete(page);
@@ -4133,15 +4233,15 @@ class VIPAutomation {
     async addBankJUN88V2(browser, siteConfig, profileData, existingPage = null) {
         const page = existingPage || await browser.newPage();
         try {
-            console.log(`ðŸ¦ Add Bank step for ${siteConfig.name} (JUN88V2)...`);
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (JUN88V2)...`);
 
             // Add random delay before starting
             const delayBeforeAddBank = this.getRandomDelay(2000, 5000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeAddBank / 1000)}s before add bank...`);
             await new Promise(r => setTimeout(r, delayBeforeAddBank));
 
-            // Step 1: Click "ThÃªm tÃ i khoáº£n ngÃ¢n hÃ ng" button to show form
-            console.log(`ðŸ” Looking for "ThÃªm tÃ i khoáº£n ngÃ¢n hÃ ng" button...`);
+            // Step 1: Click "Thêm tài khoản ngân hàng" button to show form
+            console.log(`🔍 Looking for "Thêm tài khoản ngân hàng" button...`);
             const addBankButtonClicked = await page.evaluate(() => {
                 // Try specific selector first
                 let addBankBtn = document.querySelector('button.standard-add-form-button');
@@ -4150,7 +4250,7 @@ class VIPAutomation {
                 if (!addBankBtn) {
                     const buttons = document.querySelectorAll('button');
                     for (const btn of buttons) {
-                        if (btn.textContent.includes('ThÃªm') && btn.textContent.includes('ngÃ¢n hÃ ng')) {
+                        if (btn.textContent.includes('Thêm') && btn.textContent.includes('ngân hàng')) {
                             addBankBtn = btn;
                             break;
                         }
@@ -4165,9 +4265,9 @@ class VIPAutomation {
             });
 
             if (!addBankButtonClicked) {
-                console.warn('âš ï¸ "ThÃªm tÃ i khoáº£n ngÃ¢n hÃ ng" button not found');
+                console.warn('⚠️ "Thêm tài khoản ngân hàng" button not found');
             } else {
-                console.log('âœ… Clicked "ThÃªm tÃ i khoáº£n ngÃ¢n hÃ ng" button');
+                console.log('✅ Clicked "Thêm tài khoản ngân hàng" button');
             }
 
             // Wait for form to appear
@@ -4176,45 +4276,45 @@ class VIPAutomation {
             // Step 2: Wait for dropdown to be ready
             try {
                 await page.waitForSelector('div.standard-select', { timeout: 5000 });
-                console.log('âœ… Bank dropdown field ready');
+                console.log('✅ Bank dropdown field ready');
             } catch (e) {
-                console.warn('âš ï¸ Bank dropdown field not found');
+                console.warn('⚠️ Bank dropdown field not found');
             }
 
             // Step 3: Click bank field to open dropdown
-            console.log(`ðŸ¦ Opening bank dropdown...`);
+            console.log(`🏦 Opening bank dropdown...`);
             const dropdownOpened = await page.evaluate(() => {
                 // JUN88V2: Find the modal first, then click the div.standard-select inside it
                 const modal = document.querySelector('div.standard-popup-modal-body');
-                console.log(`ðŸ” Modal found:`, modal ? 'YES' : 'NO');
+                console.log(`🔍 Modal found:`, modal ? 'YES' : 'NO');
 
                 if (!modal) {
-                    console.warn('âš ï¸ Modal not found');
+                    console.warn('⚠️ Modal not found');
                     return false;
                 }
 
                 const bankSelect = modal.querySelector('div.standard-select');
 
-                console.log(`ðŸ” Bank select found:`, bankSelect ? 'YES' : 'NO');
+                console.log(`🔍 Bank select found:`, bankSelect ? 'YES' : 'NO');
 
                 if (bankSelect) {
-                    console.log(`ï¿½  Bank select text:`, bankSelect.textContent.substring(0, 50));
-                    console.log(`ðŸ“ Bank select position:`, {
+                    console.log(`�  Bank select text:`, bankSelect.textContent.substring(0, 50));
+                    console.log(`📍 Bank select position:`, {
                         top: bankSelect.offsetTop,
                         left: bankSelect.offsetLeft,
                         width: bankSelect.offsetWidth,
                         height: bankSelect.offsetHeight
                     });
-                    console.log(`ðŸ“ Bank select visible:`, bankSelect.offsetParent !== null);
-                    console.log(`ðŸ“ Bank select display:`, window.getComputedStyle(bankSelect).display);
+                    console.log(`📍 Bank select visible:`, bankSelect.offsetParent !== null);
+                    console.log(`📍 Bank select display:`, window.getComputedStyle(bankSelect).display);
 
                     bankSelect.click();
-                    console.log(`âœ… Clicked bank select`);
+                    console.log(`✅ Clicked bank select`);
 
                     // Check if dropdown appeared
                     setTimeout(() => {
                         const dropdown = document.querySelector('ul.dropdown-list-ul');
-                        console.log(`ðŸ” Dropdown appeared after click:`, dropdown ? 'YES' : 'NO');
+                        console.log(`🔍 Dropdown appeared after click:`, dropdown ? 'YES' : 'NO');
                     }, 500);
 
                     return true;
@@ -4223,28 +4323,28 @@ class VIPAutomation {
             });
 
             if (!dropdownOpened) {
-                console.warn('âš ï¸ Could not click bank dropdown');
+                console.warn('⚠️ Could not click bank dropdown');
             }
 
             await new Promise(r => setTimeout(r, 2000));
 
             // Step 4: Select bank from dropdown
             const mappedBankName = this.mapBankName(profileData.bankName, 'jun88v2');
-            console.log(`ðŸ¦ Looking for bank: ${profileData.bankName} â†’ ${mappedBankName}`);
+            console.log(`🏦 Looking for bank: ${profileData.bankName} → ${mappedBankName}`);
 
             const bankSelected = await page.evaluate((bankName) => {
                 // JUN88V2 uses li items in dropdown-list-ul
                 const bankItems = document.querySelectorAll('ul.dropdown-list-ul li');
-                console.log(`ðŸ“‹ Found ${bankItems.length} bank items in dropdown`);
+                console.log(`📋 Found ${bankItems.length} bank items in dropdown`);
 
                 // Debug: log all available banks
                 if (bankItems.length === 0) {
-                    console.warn(`âš ï¸ No bank items found with selector 'ul.dropdown-list-ul li'`);
+                    console.warn(`⚠️ No bank items found with selector 'ul.dropdown-list-ul li'`);
                     return false;
                 }
 
                 // Log all available banks for debugging
-                console.log(`ðŸ“‹ Available banks:`);
+                console.log(`📋 Available banks:`);
                 bankItems.forEach((item, idx) => {
                     console.log(`  [${idx}] ${item.textContent.trim()}`);
                 });
@@ -4255,7 +4355,7 @@ class VIPAutomation {
                 for (const item of bankItems) {
                     const itemText = item.textContent.trim();
                     if (itemText === bankName) {
-                        console.log(`âœ… Exact match found: ${itemText}`);
+                        console.log(`✅ Exact match found: ${itemText}`);
                         item.click();
                         found = true;
                         break;
@@ -4271,7 +4371,7 @@ class VIPAutomation {
 
                         console.log(`  Checking code: "${bankCode}" vs "${searchName}"`);
                         if (bankCode === searchName) {
-                            console.log(`âœ… Code match found: ${itemText}`);
+                            console.log(`✅ Code match found: ${itemText}`);
                             item.click();
                             found = true;
                             break;
@@ -4284,7 +4384,7 @@ class VIPAutomation {
                     for (const item of bankItems) {
                         const itemText = item.textContent.trim();
                         if (itemText.toUpperCase().includes(bankName.toUpperCase())) {
-                            console.log(`âœ… Partial match found: ${itemText}`);
+                            console.log(`✅ Partial match found: ${itemText}`);
                             item.click();
                             found = true;
                             break;
@@ -4293,7 +4393,7 @@ class VIPAutomation {
                 }
 
                 if (!found && bankItems.length > 0) {
-                    console.warn(`âš ï¸ Bank not found, selecting first option`);
+                    console.warn(`⚠️ Bank not found, selecting first option`);
                     bankItems[0].click();
                     return true;
                 }
@@ -4302,24 +4402,24 @@ class VIPAutomation {
             }, mappedBankName);
 
             if (!bankSelected) {
-                console.warn('âš ï¸ Bank selection may have failed');
+                console.warn('⚠️ Bank selection may have failed');
             }
 
             await new Promise(r => setTimeout(r, 2000));
 
             // Step 5: Fill account number - use slow typing
-            console.log(`ðŸ“ Filling account number...`);
+            console.log(`📝 Filling account number...`);
 
             // Field 1: Account number
             try {
-                console.log(`ðŸ’³ Filling account number: ${profileData.accountNumber}`);
+                console.log(`💳 Filling account number: ${profileData.accountNumber}`);
                 await page.focus('input[id="accountNumber"]');
                 await new Promise(r => setTimeout(r, 300));
                 await page.type('input[id="accountNumber"]', profileData.accountNumber, { delay: 100 });
                 await new Promise(r => setTimeout(r, 800));
-                console.log(`âœ… Account number filled`);
+                console.log(`✅ Account number filled`);
             } catch (error) {
-                console.warn(`âš ï¸ Error filling account number:`, error.message);
+                console.warn(`⚠️ Error filling account number:`, error.message);
                 // Fallback: use evaluate
                 await page.evaluate((accountNumber) => {
                     const accountField = document.querySelector('input[id="accountNumber"]');
@@ -4335,11 +4435,11 @@ class VIPAutomation {
             await new Promise(r => setTimeout(r, 1500));
 
             // Step 6: Submit form - find submit button
-            console.log(`ðŸ“¤ Submitting bank form for ${siteConfig.name}...`);
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
 
             // Add delay before submit
             const delayBeforeSubmit = this.getRandomDelay(2000, 5000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeSubmit / 1000)}s before submit...`);
             await new Promise(r => setTimeout(r, delayBeforeSubmit));
 
             const submitSuccess = await page.evaluate(() => {
@@ -4347,17 +4447,17 @@ class VIPAutomation {
                 let submitBtn = document.querySelector('button#add-bank-btn');
 
                 if (!submitBtn) {
-                    console.warn('âš ï¸ button#add-bank-btn not found, trying alternative selectors...');
+                    console.warn('⚠️ button#add-bank-btn not found, trying alternative selectors...');
                     // Fallback: find by class
                     submitBtn = document.querySelector('button.standard-submit-form-button');
                 }
 
                 if (!submitBtn) {
-                    console.warn('âš ï¸ button.standard-submit-form-button not found');
+                    console.warn('⚠️ button.standard-submit-form-button not found');
                     return false;
                 }
 
-                console.log(`âœ… Found submit button: ${submitBtn.id || submitBtn.className}`);
+                console.log(`✅ Found submit button: ${submitBtn.id || submitBtn.className}`);
 
                 // Scroll button into view
                 submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -4376,13 +4476,13 @@ class VIPAutomation {
             });
 
             if (!submitSuccess) {
-                console.warn('âš ï¸ Submit button not found');
+                console.warn('⚠️ Submit button not found');
             } else {
-                console.log('âœ… Submit button clicked');
+                console.log('✅ Submit button clicked');
             }
 
             // Wait for response
-            console.log(`â³ Waiting for bank submission response...`);
+            console.log(`⏳ Waiting for bank submission response...`);
             await new Promise(r => setTimeout(r, 3000));
 
             // Check if successful
@@ -4391,7 +4491,7 @@ class VIPAutomation {
                 const errorMsg = document.querySelector('.error-msg');
                 const successMsg = document.querySelector('.success-msg');
 
-                if (errorMsg && errorMsg.textContent.includes('Báº¯t buá»™c')) {
+                if (errorMsg && errorMsg.textContent.includes('Bắt buộc')) {
                     return { success: false, message: 'Form validation error' };
                 }
 
@@ -4403,7 +4503,7 @@ class VIPAutomation {
                 return { success: true, message: 'Bank submission completed' };
             });
 
-            console.log(`âœ… Bank result:`, result);
+            console.log(`✅ Bank result:`, result);
 
             // Mark tab as completed in rotator
             if (result.success) {
@@ -4412,7 +4512,7 @@ class VIPAutomation {
 
             return result;
         } catch (error) {
-            console.error(`âŒ JUN88V2 Add Bank Error:`, error.message);
+            console.error(`❌ JUN88V2 Add Bank Error:`, error.message);
 
             // Mark tab as completed even on error
             tabRotator.complete(page);
@@ -4422,26 +4522,26 @@ class VIPAutomation {
     }
 
     /**
-     * 22VIP Add Bank: redirect â†’ submit máº­t kháº©u rÃºt â†’ redirect â†’ submit bank
-     * Giá»‘ng OKVIP
+     * 22VIP Add Bank: redirect → submit mật khẩu rút → redirect → submit bank
+     * Giống OKVIP
      */
     async addBank22VIP(browser, siteConfig, profileData, existingPage = null) {
         const page = existingPage || await browser.newPage();
         try {
-            console.log(`ðŸ¦ Add Bank step for ${siteConfig.name} (22VIP)...`);
+            console.log(`🏦 Add Bank step for ${siteConfig.name} (22VIP)...`);
 
             const domain = this.getDomain(siteConfig.registerUrl);
             if (!domain) throw new Error('Invalid domain');
 
             const paths = this.categoryPaths['22vip'];
 
-            // BÆ°á»›c 1: VÃ o trang submit máº­t kháº©u rÃºt
+            // Bước 1: Vào trang submit mật khẩu rút
             const withdrawPasswordUrl = domain + paths.withdrawPassword;
-            console.log(`  â†’ Withdraw Password: ${withdrawPasswordUrl}`);
+            console.log(`  → Withdraw Password: ${withdrawPasswordUrl}`);
 
             // Add random delay 2-10s before redirect
             const delayBeforeWithdraw = this.getRandomDelay(2000, 5000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeWithdraw / 1000)}s before redirect to withdraw password...`);
             await new Promise(r => setTimeout(r, delayBeforeWithdraw));
 
             await page.goto(withdrawPasswordUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -4449,9 +4549,9 @@ class VIPAutomation {
             // Wait for form fields to appear
             try {
                 await page.waitForSelector('ul.ui-password-input__security, input[data-input-name="password"]', { timeout: 5000 });
-                console.log('âœ… Withdraw password form loaded');
+                console.log('✅ Withdraw password form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Withdraw password form not found, continuing anyway...');
+                console.warn('⚠️ Withdraw password form not found, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
@@ -4472,12 +4572,12 @@ class VIPAutomation {
 
             // Helper: Set password value directly (no character-by-character input)
             const setPasswordValue = async (pwd) => {
-                console.log(`ðŸ” Setting password directly (${pwd.length} characters)...`);
+                console.log(`🔐 Setting password directly (${pwd.length} characters)...`);
                 await page.evaluate((password) => {
                     // Find password input field
                     const passwordInput = document.querySelector('input[type="password"]') ||
                         document.querySelector('input[data-input-name="password"]') ||
-                        document.querySelector('input[placeholder*="máº­t kháº©u"]') ||
+                        document.querySelector('input[placeholder*="mật khẩu"]') ||
                         document.querySelector('input[placeholder*="password"]');
 
                     if (passwordInput) {
@@ -4489,26 +4589,26 @@ class VIPAutomation {
                         passwordInput.dispatchEvent(new Event('change', { bubbles: true }));
                         passwordInput.dispatchEvent(new Event('blur', { bubbles: true }));
 
-                        console.log('âœ… Password set directly');
+                        console.log('✅ Password set directly');
                         return true;
                     }
 
-                    console.warn('âš ï¸ Password input not found');
+                    console.warn('⚠️ Password input not found');
                     return false;
                 }, pwd);
             };
 
             // Click first password
-            console.log('ðŸ” Entering first password...');
+            console.log('🔐 Entering first password...');
             await clickDigitsOnKeyboard(password);
 
             // Wait for keyboard to reset (minimal delay - just let UI update)
-            console.log('â³ Waiting for keyboard to reset...');
+            console.log('⏳ Waiting for keyboard to reset...');
             await new Promise(r => setTimeout(r, 500));
 
             // Page automatically focuses on confirm password field
             // Click confirm password
-            console.log('ðŸ” Entering confirm password...');
+            console.log('🔐 Entering confirm password...');
             await clickDigitsOnKeyboard(password);
 
             await new Promise(r => setTimeout(r, 1000));
@@ -4520,20 +4620,20 @@ class VIPAutomation {
             });
 
             // Wait for form to process (simple approach - just wait for page to settle)
-            console.log('â³ Waiting for withdraw password to be processed...');
+            console.log('⏳ Waiting for withdraw password to be processed...');
             await new Promise(r => setTimeout(r, 3000)); // Wait for form processing
 
-            console.log('âœ… Withdraw password submitted');
+            console.log('✅ Withdraw password submitted');
 
             await new Promise(r => setTimeout(r, 1000));
 
-            // BÆ°á»›c 2: VÃ o trang submit bank
+            // Bước 2: Vào trang submit bank
             const bankUrl = domain + paths.bank;
-            console.log(`  â†’ Bank: ${bankUrl}`);
+            console.log(`  → Bank: ${bankUrl}`);
 
             // Add random delay 2-10s before redirect to bank
             const delayBeforeBank = this.getRandomDelay(2000, 5000);
-            console.log(`â³ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
+            console.log(`⏳ Waiting ${Math.round(delayBeforeBank / 1000)}s before redirect to bank...`);
             await new Promise(r => setTimeout(r, delayBeforeBank));
 
             await page.goto(bankUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -4541,14 +4641,14 @@ class VIPAutomation {
             // Wait for page to load
             await new Promise(r => setTimeout(r, 2000));
 
-            // Step 1: Click "ThÃªm TÃ i Khoáº£n" button
-            console.log('ðŸ¦ Clicking "ThÃªm TÃ i Khoáº£n" button...');
+            // Step 1: Click "Thêm Tài Khoản" button
+            console.log('🏦 Clicking "Thêm Tài Khoản" button...');
             await page.evaluate(() => {
                 // Find by class or text
                 let addBtn = document.querySelector('div._addAccountInputBtn_1bihm_45');
                 if (!addBtn) {
                     addBtn = Array.from(document.querySelectorAll('div, button')).find(el =>
-                        el.textContent.includes('ThÃªm TÃ i Khoáº£n')
+                        el.textContent.includes('Thêm Tài Khoản')
                     );
                 }
                 if (addBtn) {
@@ -4558,14 +4658,14 @@ class VIPAutomation {
 
             await new Promise(r => setTimeout(r, 1500));
 
-            // Step 2: Click "TÃ i khoáº£n ngÃ¢n hÃ ng" option
-            console.log('ðŸ¦ Clicking "TÃ i khoáº£n ngÃ¢n hÃ ng" option...');
+            // Step 2: Click "Tài khoản ngân hàng" option
+            console.log('🏦 Clicking "Tài khoản ngân hàng" option...');
             await page.evaluate(() => {
                 // Find by id or text
                 let bankOption = document.getElementById('addAccountClick');
                 if (!bankOption) {
                     bankOption = Array.from(document.querySelectorAll('div, button')).find(el =>
-                        el.textContent.includes('TÃ i khoáº£n ngÃ¢n hÃ ng')
+                        el.textContent.includes('Tài khoản ngân hàng')
                     );
                 }
                 if (bankOption) {
@@ -4577,7 +4677,7 @@ class VIPAutomation {
 
 
             // Step 3: Re-enter withdraw password (password popup appears after clicking bank option)
-            console.log('ðŸ” Re-entering withdraw password for bank confirmation...');
+            console.log('🔐 Re-entering withdraw password for bank confirmation...');
 
             // Check if password input appears (with retry)
             let passwordEntered = false;
@@ -4585,7 +4685,7 @@ class VIPAutomation {
                 try {
                     console.log(`  Attempt ${attempt + 1}/3 to find password input...`);
                     await page.waitForSelector('ul.ui-password-input__security', { timeout: 10000 });
-                    console.log('âœ… Password input appeared');
+                    console.log('✅ Password input appeared');
 
                     // Click on password input to show keyboard
                     await page.evaluate(() => {
@@ -4602,9 +4702,9 @@ class VIPAutomation {
                     // Re-enter password using same keyboard click method
                     try {
                         await clickDigitsOnKeyboard(password);
-                        console.log('âœ… Password digits entered');
+                        console.log('✅ Password digits entered');
                     } catch (digitError) {
-                        console.warn('âš ï¸ Error entering password digits:', digitError.message);
+                        console.warn('⚠️ Error entering password digits:', digitError.message);
                         throw digitError;
                     }
 
@@ -4621,15 +4721,15 @@ class VIPAutomation {
                     });
 
                     if (!submitResult) {
-                        console.warn('âš ï¸ Submit button not found');
+                        console.warn('⚠️ Submit button not found');
                         throw new Error('Submit button not found');
                     }
 
                     passwordEntered = true;
-                    console.log('âœ… Password re-entry completed');
+                    console.log('✅ Password re-entry completed');
                     break;
                 } catch (e) {
-                    console.warn(`  âš ï¸ Attempt ${attempt + 1} failed:`, e.message);
+                    console.warn(`  ⚠️ Attempt ${attempt + 1} failed:`, e.message);
                     if (attempt < 2) {
                         console.log(`  Retrying in 2s...`);
                         await new Promise(r => setTimeout(r, 2000));
@@ -4638,16 +4738,16 @@ class VIPAutomation {
             }
 
             if (!passwordEntered) {
-                console.warn('âš ï¸ Password re-entry failed after 3 attempts, continuing anyway...');
+                console.warn('⚠️ Password re-entry failed after 3 attempts, continuing anyway...');
             }
 
-            // Click "Tiáº¿p Theo" button to proceed to bank form (if password was entered)
+            // Click "Tiếp Theo" button to proceed to bank form (if password was entered)
             if (passwordEntered) {
-                console.log('ðŸ”˜ Clicking "Tiáº¿p Theo" button...');
+                console.log('🔘 Clicking "Tiếp Theo" button...');
                 try {
                     await page.evaluate(() => {
                         const nextBtn = Array.from(document.querySelectorAll('button')).find(btn =>
-                            btn.textContent.includes('Tiáº¿p Theo')
+                            btn.textContent.includes('Tiếp Theo')
                         );
                         if (nextBtn) {
                             nextBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -4660,23 +4760,23 @@ class VIPAutomation {
                     });
                     await new Promise(r => setTimeout(r, 2000));
                 } catch (e) {
-                    console.warn('âš ï¸ Failed to click Tiáº¿p Theo button:', e.message);
+                    console.warn('⚠️ Failed to click Tiếp Theo button:', e.message);
                 }
             }
 
             // Wait for bank form fields to appear
             try {
-                await page.waitForSelector('input[placeholder="Vui lÃ²ng nháº­p sá»‘ tÃ i khoáº£n ngÃ¢n hÃ ng"]', { timeout: 5000 });
-                console.log('âœ… Bank form loaded');
+                await page.waitForSelector('input[placeholder="Vui lòng nhập số tài khoản ngân hàng"]', { timeout: 5000 });
+                console.log('✅ Bank form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Bank form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Bank form not fully loaded, continuing anyway...');
             }
             await new Promise(r => setTimeout(r, 1500));
 
             // Fill bank form - account number and bank selection (like hai2vip)
             await page.evaluate((data) => {
                 // Find account number input
-                const accountInput = document.querySelector('input[placeholder="Vui lÃ²ng nháº­p sá»‘ tÃ i khoáº£n ngÃ¢n hÃ ng"]');
+                const accountInput = document.querySelector('input[placeholder="Vui lòng nhập số tài khoản ngân hàng"]');
 
                 if (accountInput) {
                     accountInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -4694,17 +4794,17 @@ class VIPAutomation {
                     accountInput.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true }));
                     accountInput.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true }));
 
-                    console.log(`âœ… Filled account number: ${data.accountNumber}`);
+                    console.log(`✅ Filled account number: ${data.accountNumber}`);
                 }
             }, profileData);
 
             await new Promise(r => setTimeout(r, 1500));
 
             // Find and click bank dropdown
-            console.log('ðŸ¦ Selecting bank...');
+            console.log('🏦 Selecting bank...');
             await page.evaluate((data) => {
                 // Find bank dropdown input
-                const bankDropdown = document.querySelector('input[type="search"][placeholder="Chá»n ngÃ¢n hÃ ng phÃ¡t hÃ nh"]');
+                const bankDropdown = document.querySelector('input[type="search"][placeholder="Chọn ngân hàng phát hành"]');
 
                 if (bankDropdown) {
                     bankDropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -4774,7 +4874,7 @@ class VIPAutomation {
                                     } catch (e) { }
 
                                     bankOption.click();
-                                    console.log(`âœ… Selected bank: ${bankOption.textContent.trim()}`);
+                                    console.log(`✅ Selected bank: ${bankOption.textContent.trim()}`);
                                 }, 300);
                             }
                         }, 500);
@@ -4787,7 +4887,7 @@ class VIPAutomation {
             // Fill account holder name if needed
             await page.evaluate((data) => {
                 const nameField = document.querySelector('input[data-input-name="accountName"]') ||
-                    document.querySelector('input[placeholder*="chá»§ tÃ i khoáº£n"]');
+                    document.querySelector('input[placeholder*="chủ tài khoản"]');
 
                 if (nameField) {
                     nameField.value = data.fullname.toUpperCase();
@@ -4796,16 +4896,16 @@ class VIPAutomation {
                 }
             }, profileData);
 
-            // Submit form - click "XÃ¡c Nháº­n" button
-            console.log(`ðŸ“¤ Submitting bank form for ${siteConfig.name}...`);
+            // Submit form - click "Xác Nhận" button
+            console.log(`📤 Submitting bank form for ${siteConfig.name}...`);
             await page.evaluate(() => {
                 // Find by id first (most reliable)
                 let submitBtn = document.getElementById('bindWithdrawAccountNextClick');
 
-                // Fallback to button with "XÃ¡c Nháº­n" text
+                // Fallback to button with "Xác Nhận" text
                 if (!submitBtn) {
                     submitBtn = Array.from(document.querySelectorAll('button')).find(btn =>
-                        btn.textContent.includes('XÃ¡c Nháº­n')
+                        btn.textContent.includes('Xác Nhận')
                     );
                 }
 
@@ -4820,17 +4920,17 @@ class VIPAutomation {
             });
 
             // Wait for page to load after bank submission (instead of waitForNavigation which can be interrupted)
-            console.log(`â³ Waiting for page to load after bank submission...`);
+            console.log(`⏳ Waiting for page to load after bank submission...`);
             let pageReloaded = false;
             try {
                 // Wait for page to show success or reload
-                await page.waitForSelector('._addAccountInputBtn_1bihm_45, [class*="addAccount"], button:contains("ThÃªm"), ._navItem_1odty_45', { timeout: 10000 }).catch(() => {
-                    console.log('âš ï¸ Page selector not found after bank submission');
+                await page.waitForSelector('._addAccountInputBtn_1bihm_45, [class*="addAccount"], button:contains("Thêm"), ._navItem_1odty_45', { timeout: 10000 }).catch(() => {
+                    console.log('⚠️ Page selector not found after bank submission');
                 });
                 pageReloaded = true;
-                console.log('âœ… Page loaded after bank submission');
+                console.log('✅ Page loaded after bank submission');
             } catch (e) {
-                console.log('âš ï¸ Timeout waiting for page after bank submission');
+                console.log('⚠️ Timeout waiting for page after bank submission');
             }
             await new Promise(r => setTimeout(r, 1500));
 
@@ -4838,7 +4938,7 @@ class VIPAutomation {
             await new Promise(r => setTimeout(r, 3000));
             const result = await page.evaluate((expectedData, reloaded) => {
                 // For 22VIP, just check if page reloaded or if we can see success message
-                const successKeywords = ['thÃ nh cÃ´ng', 'success', 'added', 'completed'];
+                const successKeywords = ['thành công', 'success', 'added', 'completed'];
                 const pageText = document.body.innerText.toLowerCase();
 
                 if (reloaded || successKeywords.some(keyword => pageText.includes(keyword))) {
@@ -4854,16 +4954,16 @@ class VIPAutomation {
                 };
             }, profileData, pageReloaded);
 
-            console.log(`âœ… 22VIP Add Bank Result:`, result);
+            console.log(`✅ 22VIP Add Bank Result:`, result);
             return result;
         } catch (error) {
-            console.error(`âŒ 22VIP Add Bank Error:`, error.message);
+            console.error(`❌ 22VIP Add Bank Error:`, error.message);
             return { success: false, error: error.message };
         }
     }
 
     /**
-     * BÆ°á»›c 3: Check Promo (riÃªng cho tá»«ng category)
+     * Bước 3: Check Promo (riêng cho từng category)
      */
     async checkPromoStep(browser, category, siteConfig, profileData = {}) {
         if (category === 'okvip') {
@@ -4880,14 +4980,14 @@ class VIPAutomation {
 
     /**
      * OKVIP Check Promo
-     * Logic: Fill username â†’ Select promo â†’ Solve captcha â†’ Click xÃ¡c nháº­n
+     * Logic: Fill username → Select promo → Solve captcha → Click xác nhận
      */
     async checkPromoOKVIP(browser, siteConfig, profileData = {}) {
         const page = await browser.newPage();
         // Register tab for rotation
         tabRotator.register(page, `CheckPromo-${siteConfig.name}`);
         try {
-            console.log(`ðŸŽ Check Promo step for ${siteConfig.name} (OKVIP)...`);
+            console.log(`🎁 Check Promo step for ${siteConfig.name} (OKVIP)...`);
 
             // 1. Navigate to promo URL
             await page.goto(siteConfig.checkPromoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -4896,24 +4996,24 @@ class VIPAutomation {
             // Wait for form fields to appear
             try {
                 await page.waitForSelector('#account', { timeout: 15000 });
-                console.log('âœ… Check Promo form loaded');
+                console.log('✅ Check Promo form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Check Promo form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Check Promo form not fully loaded, continuing anyway...');
             }
 
             // Inject captcha-solver script
             try {
                 if (this.scripts?.captchaSolver) {
                     await page.evaluate(this.scripts.captchaSolver);
-                    console.log('ðŸ’‰ Captcha solver injected');
+                    console.log('💉 Captcha solver injected');
                 }
             } catch (injectError) {
-                console.warn('âš ï¸ Failed to inject captcha solver:', injectError.message);
+                console.warn('⚠️ Failed to inject captcha solver:', injectError.message);
             }
 
             // 2. Fill username only
             const username = profileData?.username || '';
-            console.log(`ðŸ“ Filling username: ${username}...`);
+            console.log(`📝 Filling username: ${username}...`);
             await page.evaluate((usernameValue) => {
                 const input = document.querySelector('#account');
                 if (input) {
@@ -4923,27 +5023,27 @@ class VIPAutomation {
                 }
             }, username);
 
-            console.log(`âœ… Username filled successfully`);
-            console.log('ðŸ“Œ Keeping checkpromo page open for manual completion');
+            console.log(`✅ Username filled successfully`);
+            console.log('📌 Keeping checkpromo page open for manual completion');
 
             return { success: true, message: 'Username filled - manual completion required' };
 
         } catch (error) {
-            console.error(`âŒ OKVIP Check Promo Error:`, error.message);
+            console.error(`❌ OKVIP Check Promo Error:`, error.message);
             return { success: false, error: error.message };
         }
     }
 
     /**
      * OKVIP OTP Check Promo
-     * Logic: Fill username â†’ Click submit
+     * Logic: Fill username → Click submit
      */
     async checkPromoOKVIPOtp(browser, siteConfig, profileData = {}) {
         const page = await browser.newPage();
         // Register tab for rotation
         tabRotator.register(page, `CheckPromo-${siteConfig.name}`);
         try {
-            console.log(`ðŸŽ Check Promo step for ${siteConfig.name} (OKVIP OTP)...`);
+            console.log(`🎁 Check Promo step for ${siteConfig.name} (OKVIP OTP)...`);
 
             // 1. Navigate to promo URL
             await page.goto(siteConfig.checkPromoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -4952,14 +5052,14 @@ class VIPAutomation {
             // Wait for form fields to appear
             try {
                 await page.waitForSelector('input[data-input-name="account"]', { timeout: 15000 });
-                console.log('âœ… Check Promo form loaded');
+                console.log('✅ Check Promo form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Check Promo form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Check Promo form not fully loaded, continuing anyway...');
             }
 
             // 2. Fill username
             const username = profileData?.username || '';
-            console.log(`ðŸ“ Filling username: ${username}...`);
+            console.log(`📝 Filling username: ${username}...`);
             await page.evaluate((usernameValue) => {
                 const input = document.querySelector('input[data-input-name="account"]');
                 if (input) {
@@ -4969,47 +5069,47 @@ class VIPAutomation {
                 }
             }, username);
 
-            console.log(`âœ… Username filled successfully`);
+            console.log(`✅ Username filled successfully`);
 
             // 3. Click submit button
             await new Promise(r => setTimeout(r, 1500));
             const submitClicked = await page.evaluate(() => {
                 const submitBtn = document.querySelector('button[type="submit"]') ||
                     document.querySelector('button.ui-button--primary') ||
-                    document.querySelector('button:contains("Nháº­n")');
+                    document.querySelector('button:contains("Nhận")');
 
                 if (submitBtn) {
                     submitBtn.click();
-                    console.log('âœ… Submit button clicked');
+                    console.log('✅ Submit button clicked');
                     return true;
                 }
                 return false;
             });
 
             if (!submitClicked) {
-                console.warn('âš ï¸ Submit button not found, but continuing...');
+                console.warn('⚠️ Submit button not found, but continuing...');
             }
 
-            console.log('ðŸ“Œ Keeping checkpromo page open for manual completion');
+            console.log('📌 Keeping checkpromo page open for manual completion');
 
             return { success: true, message: 'Promo form submitted' };
 
         } catch (error) {
-            console.error(`âŒ OKVIP OTP Check Promo Error:`, error.message);
+            console.error(`❌ OKVIP OTP Check Promo Error:`, error.message);
             return { success: false, error: error.message };
         }
     }
 
     /**
      * ABCVIP Check Promo
-     * Logic: Fill username â†’ Click submit (no captcha)
+     * Logic: Fill username → Click submit (no captcha)
      */
     async checkPromoABCVIP(browser, siteConfig, profileData = {}) {
         const page = await browser.newPage();
         // Register tab for rotation
         tabRotator.register(page, `CheckPromo-${siteConfig.name}`);
         try {
-            console.log(`ðŸŽ Check Promo step for ${siteConfig.name} (ABCVIP)...`);
+            console.log(`🎁 Check Promo step for ${siteConfig.name} (ABCVIP)...`);
 
             // 1. Navigate to promo URL
             await page.goto(siteConfig.checkPromoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -5018,14 +5118,14 @@ class VIPAutomation {
             // Wait for form fields to appear
             try {
                 await page.waitForSelector('#userName', { timeout: 15000 });
-                console.log('âœ… Check Promo form loaded');
+                console.log('✅ Check Promo form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Check Promo form not fully loaded, continuing anyway...');
+                console.warn('⚠️ Check Promo form not fully loaded, continuing anyway...');
             }
 
             // 2. Fill username only
             const username = profileData?.username || '';
-            console.log(`ðŸ“ Filling username: ${username}...`);
+            console.log(`📝 Filling username: ${username}...`);
             await page.evaluate((usernameValue) => {
                 const input = document.querySelector('#userName');
                 if (input) {
@@ -5035,13 +5135,13 @@ class VIPAutomation {
                 }
             }, username);
 
-            console.log(`âœ… Username filled successfully`);
-            console.log('ðŸ“Œ Keeping checkpromo page open for manual completion');
+            console.log(`✅ Username filled successfully`);
+            console.log('📌 Keeping checkpromo page open for manual completion');
 
             return { success: true, message: 'Username filled - manual completion required' };
 
         } catch (error) {
-            console.error(`âŒ ABCVIP Check Promo Error:`, error.message);
+            console.error(`❌ ABCVIP Check Promo Error:`, error.message);
             return { success: false, error: error.message };
         }
     }
@@ -5053,14 +5153,14 @@ class VIPAutomation {
     async checkPromoJUN88(browser, siteConfig, profileData = {}) {
         const page = await browser.newPage();
         try {
-            console.log(`ðŸŽ Check Promo step for ${siteConfig.name} (JUN88)...`);
+            console.log(`🎁 Check Promo step for ${siteConfig.name} (JUN88)...`);
 
             await page.goto(siteConfig.checkPromoUrl, { waitUntil: 'domcontentloaded', timeout: 30000 });
             await new Promise(r => setTimeout(r, 3000));
 
             // Fill username only
             const username = profileData?.username || '';
-            console.log(`ðŸ“ Filling username: ${username}...`);
+            console.log(`📝 Filling username: ${username}...`);
             await page.evaluate((usernameValue) => {
                 // Try common username field selectors
                 let input = document.querySelector('input[name="username"]');
@@ -5075,18 +5175,18 @@ class VIPAutomation {
                 }
             }, username);
 
-            console.log(`âœ… Username filled successfully`);
-            console.log('ðŸ“Œ Keeping checkpromo page open for manual completion');
+            console.log(`✅ Username filled successfully`);
+            console.log('📌 Keeping checkpromo page open for manual completion');
 
             return { success: true, message: 'Username filled - manual completion required' };
         } catch (error) {
-            console.error(`âŒ JUN88 Check Promo Error:`, error.message);
+            console.error(`❌ JUN88 Check Promo Error:`, error.message);
             return { success: false, error: error.message };
         }
     }
 
     /**
-     * Fill Register Form - riÃªng cho tá»«ng category
+     * Fill Register Form - riêng cho từng category
      */
     async fillRegisterForm(page, category, profileData, siteConfig) {
         if (category === 'okvip') {
@@ -5116,9 +5216,9 @@ class VIPAutomation {
         // Wait for form fields to appear
         try {
             await page.waitForSelector('input[formcontrolname="account"]', { timeout: 15000 });
-            console.log('âœ… Register form loaded');
+            console.log('✅ Register form loaded');
         } catch (e) {
-            console.warn('âš ï¸ Register form not fully loaded, continuing anyway...');
+            console.warn('⚠️ Register form not fully loaded, continuing anyway...');
         }
         await new Promise(r => setTimeout(r, 1500));
 
@@ -5157,25 +5257,25 @@ class VIPAutomation {
      * OKVIP OTP Register Form
      * Selectors: data-input-name (Vue form)
      * Form: account, userpass, phone, realName
-     * Phone: Láº¥y tá»« CodeSim API náº¿u simMode = 'api'
+     * Phone: Lấy từ CodeSim API nếu simMode = 'api'
      */
     async fillOKVIPOtpRegisterForm(page, profileData) {
         try {
-            console.log('ðŸ¤– OKVIP OTP Form - Filling...');
+            console.log('🤖 OKVIP OTP Form - Filling...');
 
             // Wait for form to load
             try {
                 await page.waitForSelector('input[data-input-name="account"]', { timeout: 15000 });
-                console.log('âœ… OKVIP OTP register form loaded');
+                console.log('✅ OKVIP OTP register form loaded');
             } catch (e) {
-                console.warn('âš ï¸ Form selector timeout, trying to fill anyway...');
+                console.warn('⚠️ Form selector timeout, trying to fill anyway...');
             }
 
             await new Promise(r => setTimeout(r, 1500));
 
-            // Náº¿u simMode = 'api', láº¥y sá»‘ tá»« CodeSim (báº¯t buá»™c)
+            // Nếu simMode = 'api', lấy số từ CodeSim (bắt buộc)
             if (profileData.simMode === 'api') {
-                console.log('ðŸ“± OKVIP OTP: Fetching phone number from CodeSim API...');
+                console.log('📱 OKVIP OTP: Fetching phone number from CodeSim API...');
                 const codeSimToken = this.settings?.codeSimToken || process.env.CODESIM_TOKEN;
 
                 if (!codeSimToken) {
@@ -5186,37 +5286,37 @@ class VIPAutomation {
                 if (phoneResult && phoneResult.phoneNumber) {
                     let phone = phoneResult.phoneNumber;
 
-                    // Bá» sá»‘ 0 Ä‘áº§u náº¿u cÃ³ (form chá»‰ nháº­n 9 sá»‘)
+                    // Bỏ số 0 đầu nếu có (form chỉ nhận 9 số)
                     if (phone.startsWith('0')) {
                         phone = phone.substring(1);
-                        console.log(`âœ… Removed leading 0: ${phoneResult.phoneNumber} â†’ ${phone}`);
+                        console.log(`✅ Removed leading 0: ${phoneResult.phoneNumber} → ${phone}`);
                     }
 
                     profileData.phone = phone;
                     profileData.codeSimOtpId = phoneResult.otpId;
                     profileData.codeSimSimId = phoneResult.simId;
                     profileData.codeSimRequestId = phoneResult.otpId; // Use otpId as requestId for OTP retrieval
-                    console.log(`âœ… Got phone from CodeSim: ${phone} (9 digits)`);
+                    console.log(`✅ Got phone from CodeSim: ${phone} (9 digits)`);
                 } else {
                     // CodeSim API failed - throw error
-                    const errorMsg = 'CodeSim API: Hiá»‡n khÃ´ng cÃ³ sáºµn sá»‘ Ä‘iá»‡n thoáº¡i phÃ¹ há»£p. Vui lÃ²ng thá»­ láº¡i sau!';
-                    console.error('âŒ ' + errorMsg);
+                    const errorMsg = 'CodeSim API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!';
+                    console.error('❌ ' + errorMsg);
                     throw new Error(errorMsg);
                 }
             } else {
-                // Manual mode - kiá»ƒm tra sá»‘ cÃ³ Ä‘Æ°á»£c cung cáº¥p khÃ´ng
+                // Manual mode - kiểm tra số có được cung cấp không
                 if (!profileData.phone) {
-                    throw new Error('Vui lÃ²ng nháº­p sá»‘ Ä‘iá»‡n thoáº¡i!');
+                    throw new Error('Vui lòng nhập số điện thoại!');
                 }
 
-                // Bá» sá»‘ 0 Ä‘áº§u náº¿u cÃ³ (form chá»‰ nháº­n 9 sá»‘)
+                // Bỏ số 0 đầu nếu có (form chỉ nhận 9 số)
                 let phone = profileData.phone;
                 if (phone.startsWith('0')) {
                     phone = phone.substring(1);
-                    console.log(`âœ… Removed leading 0 from manual phone: ${profileData.phone} â†’ ${phone}`);
+                    console.log(`✅ Removed leading 0 from manual phone: ${profileData.phone} → ${phone}`);
                 }
                 profileData.phone = phone;
-                console.log(`âœï¸ Using manual phone: ${phone} (9 digits)`);
+                console.log(`✏️ Using manual phone: ${phone} (9 digits)`);
             }
 
             // Fill form fields
@@ -5235,7 +5335,7 @@ class VIPAutomation {
                     accountInput.dispatchEvent(new Event('input', { bubbles: true }));
                     accountInput.dispatchEvent(new Event('change', { bubbles: true }));
                     accountInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                    console.log('âœ… Account filled:', data.username);
+                    console.log('✅ Account filled:', data.username);
                 }
 
                 // Fill password
@@ -5246,7 +5346,7 @@ class VIPAutomation {
                     passInput.dispatchEvent(new Event('input', { bubbles: true }));
                     passInput.dispatchEvent(new Event('change', { bubbles: true }));
                     passInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                    console.log('âœ… Password filled');
+                    console.log('✅ Password filled');
                 }
 
                 // Fill phone
@@ -5257,7 +5357,7 @@ class VIPAutomation {
                     phoneInput.dispatchEvent(new Event('input', { bubbles: true }));
                     phoneInput.dispatchEvent(new Event('change', { bubbles: true }));
                     phoneInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                    console.log('âœ… Phone filled:', data.phone);
+                    console.log('✅ Phone filled:', data.phone);
                 }
 
                 // Fill full name
@@ -5268,13 +5368,13 @@ class VIPAutomation {
                     nameInput.dispatchEvent(new Event('input', { bubbles: true }));
                     nameInput.dispatchEvent(new Event('change', { bubbles: true }));
                     nameInput.dispatchEvent(new Event('blur', { bubbles: true }));
-                    console.log('âœ… Full name filled:', data.fullname);
+                    console.log('✅ Full name filled:', data.fullname);
                 }
             }, profileData);
 
-            console.log('âœ… OKVIP OTP form filled successfully');
+            console.log('✅ OKVIP OTP form filled successfully');
         } catch (error) {
-            console.error('âŒ Error filling OKVIP OTP form:', error.message);
+            console.error('❌ Error filling OKVIP OTP form:', error.message);
             throw error;
         }
     }
@@ -5337,25 +5437,25 @@ class VIPAutomation {
                     {
                         name: 'SC881',
                         registerUrl: 'https://m.sc881.com./home/register',
-                        checkPromoUrl: 'https://m.sc881.com./home/event/detail?current=1&template=1&eventId=1'
+                        checkPromoUrl: 'https://khuyenmai-sc88.pages.dev//?promo_id=SC68K'
                     },
                     {
                         name: 'Fly88',
                         registerUrl: 'https://fly88h.com/home/register',
-                        checkPromoUrl: 'https://m.sc881.com./home/event/detail?current=1&template=1&eventId=1'
+                        checkPromoUrl: 'https://fly88code.net/?promo_id=FLY58'
                     },
                     {
                         name: 'F168',
                         registerUrl: 'https://f1686s.com/home/register',
-                        checkPromoUrl: 'https://m.sc881.com./home/event/detail?current=1&template=1&eventId=1'
+                        checkPromoUrl: 'https://sukien.xyz/?promo_id=FN68K'
                     }, {
                         name: 'CM88',
                         registerUrl: 'https://cm88.com/home/register',
-                        checkPromoUrl: 'https://m.sc881.com./home/event/detail?current=1&template=1&eventId=1'
+                        checkPromoUrl: 'https://khuyenmaicm88.com/?promo_id=CM58K'
                     }, {
                         name: 'C168',
                         registerUrl: 'https://c168b.vip/home/register',
-                        checkPromoUrl: 'https://m.sc881.com./home/event/detail?current=1&template=1&eventId=1'
+                        checkPromoUrl: 'https://khuyen-mai-c168.pages.dev/?promo_id=C68K'
                     }
                 ]
             },
@@ -5480,18 +5580,18 @@ class VIPAutomation {
         const config = categoryConfigs[category];
         if (!config) return null;
 
-        // Load custom sites tá»« file
+        // Load custom sites từ file
         try {
             const customSitesFile = path.join(__dirname, '..', '..', 'config', 'vip-custom-sites.json');
             if (fs.existsSync(customSitesFile)) {
                 const customSitesData = JSON.parse(fs.readFileSync(customSitesFile, 'utf8'));
                 const customSites = customSitesData[category] || [];
-                // Merge custom sites vá»›i built-in sites
+                // Merge custom sites với built-in sites
                 config.sites = [...config.sites, ...customSites];
-                console.log(`âœ… Loaded ${customSites.length} custom sites for ${category}`);
+                console.log(`✅ Loaded ${customSites.length} custom sites for ${category}`);
             }
         } catch (error) {
-            console.warn(`âš ï¸ Could not load custom sites for ${category}:`, error.message);
+            console.warn(`⚠️ Could not load custom sites for ${category}:`, error.message);
         }
 
         return config;
@@ -5506,47 +5606,47 @@ class VIPAutomation {
         // Wait for form fields to appear
         try {
             await page.waitForSelector('#van-field-1-input', { timeout: 15000 });
-            console.log('âœ… AccOKVIP register form loaded');
+            console.log('✅ AccOKVIP register form loaded');
         } catch (e) {
-            console.warn('âš ï¸ AccOKVIP register form not fully loaded, continuing anyway...');
+            console.warn('⚠️ AccOKVIP register form not fully loaded, continuing anyway...');
         }
         await new Promise(r => setTimeout(r, 1500));
 
         // Step 1: Get phone number from CodeSim API (Service ID 3) - only if simMode is 'api'
         const simMode = profileData.simMode || 'api'; // Default to 'api'
-        console.log(`ðŸ“± SIM Mode: ${simMode === 'api' ? 'API SIM' : 'Manual Phone'}`);
+        console.log(`📱 SIM Mode: ${simMode === 'api' ? 'API SIM' : 'Manual Phone'}`);
 
         let phoneNumber = profileData.phone; // Fallback to provided phone
         let CodeSimSuccess = false;
         let CodeSimErrorMessage = null;
 
         if (simMode === 'api') {
-            console.log('ðŸ“± Getting phone number from CodeSim API...');
+            console.log('📱 Getting phone number from CodeSim API...');
             const codeSimToken = this.settings?.codeSimToken || process.env.CodeSim_TOKEN;
 
             if (codeSimToken) {
-                const CodeSimResult = await this.getPhoneFromCodeSim(codeSimToken); // Thá»­ serviceId 3 vÃ  21
+                const CodeSimResult = await this.getPhoneFromCodeSim(codeSimToken); // Thử serviceId 3 và 21
                 if (CodeSimResult && CodeSimResult.phoneNumber) {
                     phoneNumber = CodeSimResult.phoneNumber;
-                    console.log(`âœ… Got phone from CodeSim: ${phoneNumber}`);
+                    console.log(`✅ Got phone from CodeSim: ${phoneNumber}`);
                     // Store for later use (OTP retrieval)
                     profileData.codeSimRequestId = CodeSimResult.requestId;
                     CodeSimSuccess = true;
                 } else {
                     // CodeSim API failed - this means no available phone numbers
-                    CodeSimErrorMessage = 'CodeSim API: Hiá»‡n khÃ´ng cÃ³ sáºµn sá»‘ Ä‘iá»‡n thoáº¡i phÃ¹ há»£p. Vui lÃ²ng thá»­ láº¡i sau!';
-                    console.error('âŒ ' + CodeSimErrorMessage);
+                    CodeSimErrorMessage = 'CodeSim API: Hiện không có sẵn số điện thoại phù hợp. Vui lòng thử lại sau!';
+                    console.error('❌ ' + CodeSimErrorMessage);
                     // Store error message in profileData for later use in result
                     profileData.CodeSimError = CodeSimErrorMessage;
                     throw new Error(CodeSimErrorMessage);
                 }
             } else {
-                console.warn('âš ï¸ No CodeSim token, using provided phone');
+                console.warn('⚠️ No CodeSim token, using provided phone');
             }
         } else {
-            console.log('âœï¸ Using manual phone from form');
+            console.log('✏️ Using manual phone from form');
             if (!phoneNumber) {
-                throw new Error('Vui lÃ²ng nháº­p sá»‘ Ä‘iá»‡n thoáº¡i!');
+                throw new Error('Vui lòng nhập số điện thoại!');
             }
         }
 
@@ -5558,7 +5658,7 @@ class VIPAutomation {
                 usernameField.value = data.username;
                 usernameField.dispatchEvent(new Event('input', { bubbles: true }));
                 usernameField.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log(`âœ… Username filled: ${data.username}`);
+                console.log(`✅ Username filled: ${data.username}`);
             }
 
             // Fill password
@@ -5567,7 +5667,7 @@ class VIPAutomation {
                 passwordField.value = data.password;
                 passwordField.dispatchEvent(new Event('input', { bubbles: true }));
                 passwordField.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log(`âœ… Password filled`);
+                console.log(`✅ Password filled`);
             }
 
             // Fill confirm password
@@ -5576,7 +5676,7 @@ class VIPAutomation {
                 confirmPasswordField.value = data.password;
                 confirmPasswordField.dispatchEvent(new Event('input', { bubbles: true }));
                 confirmPasswordField.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log(`âœ… Confirm password filled`);
+                console.log(`✅ Confirm password filled`);
             }
 
             // Fill phone (from CodeSim API)
@@ -5585,7 +5685,7 @@ class VIPAutomation {
                 phoneField.value = data.phoneNumber;
                 phoneField.dispatchEvent(new Event('input', { bubbles: true }));
                 phoneField.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log(`âœ… Phone filled: ${data.phoneNumber}`);
+                console.log(`✅ Phone filled: ${data.phoneNumber}`);
             }
 
             // Fill email
@@ -5594,18 +5694,18 @@ class VIPAutomation {
                 emailField.value = data.email;
                 emailField.dispatchEvent(new Event('input', { bubbles: true }));
                 emailField.dispatchEvent(new Event('change', { bubbles: true }));
-                console.log(`âœ… Email filled: ${data.email}`);
+                console.log(`✅ Email filled: ${data.email}`);
             }
 
             // Check agree checkbox
             const checkbox = document.querySelector('.van-checkbox');
             if (checkbox) {
                 checkbox.click();
-                console.log(`âœ… Agree checkbox checked`);
+                console.log(`✅ Agree checkbox checked`);
             }
         }, { ...profileData, phoneNumber });
 
-        console.log('âœ… AccOKVIP form filled successfully');
+        console.log('✅ AccOKVIP form filled successfully');
     }
 
     /**
@@ -5615,9 +5715,9 @@ class VIPAutomation {
         // Wait for form fields to appear
         try {
             await page.waitForSelector('input[formcontrolname="account"]', { timeout: 15000 });
-            console.log('âœ… ABCVIP Register form loaded');
+            console.log('✅ ABCVIP Register form loaded');
         } catch (e) {
-            console.warn('âš ï¸ ABCVIP Register form not fully loaded, continuing anyway...');
+            console.warn('⚠️ ABCVIP Register form not fully loaded, continuing anyway...');
         }
         await new Promise(r => setTimeout(r, 1500));
 
@@ -5658,7 +5758,7 @@ class VIPAutomation {
      */
     async fillJUN88RegisterForm(page, profileData) {
         try {
-            console.log('ðŸ¤– JUN88 Form - Anti-bot mode enabled');
+            console.log('🤖 JUN88 Form - Anti-bot mode enabled');
             const filler = new CommonFormFiller();
 
             // Wait for form to be interactive
@@ -5680,8 +5780,8 @@ class VIPAutomation {
                 { selector: 'input[type="tel"]', value: phone, label: 'mobile' }
             ];
 
-            console.log(`ðŸ” DEBUG: profileData.email = "${profileData.email}"`);
-            console.log(`ðŸ” DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
+            console.log(`🔍 DEBUG: profileData.email = "${profileData.email}"`);
+            console.log(`🔍 DEBUG: fields to fill:`, fields.map(f => ({ label: f.label, value: f.value })));
 
             await filler.fillMultipleFields(page, fields, {
                 charDelay: 150,
@@ -5690,7 +5790,7 @@ class VIPAutomation {
             });
 
             // Handle agree checkbox - skip if already checked
-            console.log('âœ… Checking agree checkbox...');
+            console.log('✅ Checking agree checkbox...');
             try {
                 const isChecked = await page.evaluate(() => {
                     const checkbox = document.querySelector('input[id="agree"]');
@@ -5706,10 +5806,10 @@ class VIPAutomation {
                         await new Promise(r => setTimeout(r, 500));
                     }
                 } else {
-                    console.log('âœ… Agree checkbox already checked');
+                    console.log('✅ Agree checkbox already checked');
                 }
             } catch (error) {
-                console.warn('âš ï¸ Could not interact with agree checkbox:', error.message);
+                console.warn('⚠️ Could not interact with agree checkbox:', error.message);
             }
 
             // Trigger change events for all fields (React compatibility)
@@ -5733,16 +5833,16 @@ class VIPAutomation {
                 });
             });
 
-            console.log('âœ… JUN88 form filled successfully');
+            console.log('✅ JUN88 form filled successfully');
         } catch (error) {
-            console.error('âŒ Error filling JUN88 form:', error.message);
+            console.error('❌ Error filling JUN88 form:', error.message);
             throw error;
         }
     }
 
     /**
      * Auto-detect category from site URL
-     * PhÃ¡t hiá»‡n category dá»±a trÃªn domain cá»§a site
+     * Phát hiện category dựa trên domain của site
      */
     autoDetectCategory(siteUrl) {
         try {
@@ -5766,12 +5866,12 @@ class VIPAutomation {
                 return 'abcvip';
             }
 
-            // JUN88 sites (Form 1 - cÃ³ email)
+            // JUN88 sites (Form 1 - có email)
             if (domain.includes('jun88') || domain.includes('jun-88')) {
                 return 'jun88';
             }
 
-            // 78WIN sites (Form 2 - khÃ´ng email)
+            // 78WIN sites (Form 2 - không email)
             if (domain.includes('78win') || domain.includes('78-win')) {
                 return '78win';
             }
@@ -5787,22 +5887,22 @@ class VIPAutomation {
                 return '22vip';
             }
 
-            console.warn(`âš ï¸ Could not auto-detect category for: ${domain}`);
+            console.warn(`⚠️ Could not auto-detect category for: ${domain}`);
             return 'okvip'; // Default to OKVIP
         } catch (error) {
-            console.error('âŒ Error auto-detecting category:', error.message);
+            console.error('❌ Error auto-detecting category:', error.message);
             return 'okvip'; // Default to OKVIP
         }
     }
 
     /**
      * Save account info after successful registration
-     * LÆ°u thÃ´ng tin tÃ i khoáº£n vÃ o dashboard API
+     * Lưu thông tin tài khoản vào dashboard API
      */
     async saveAccountInfo(profileData, category, siteName, allSites = []) {
         try {
-            console.log(`    ðŸ’¾ Saving ${category.toUpperCase()} account info via API...`);
-            console.log(`    ðŸ“‹ profileData:`, { username: profileData.username, password: profileData.password ? '***' : 'N/A', email: profileData.email });
+            console.log(`    💾 Saving ${category.toUpperCase()} account info via API...`);
+            console.log(`    📋 profileData:`, { username: profileData.username, password: profileData.password ? '***' : 'N/A', email: profileData.email });
 
             // Prepare account info
             const accountInfo = {
@@ -5822,22 +5922,22 @@ class VIPAutomation {
                 tool: 'vip-tool'
             };
 
-            // Chá»‰ thÃªm bank info náº¿u khÃ´ng pháº£i AccOKVIP (AccOKVIP khÃ´ng cáº§n ngÃ¢n hÃ ng)
+            // Chỉ thêm bank info nếu không phải AccOKVIP (AccOKVIP không cần ngân hàng)
             if (category !== 'accOkvip') {
                 accountInfo.bank = {
                     name: profileData.bankName || '',
-                    branch: profileData.bankBranch || 'ThÃ nh phá»‘ Há»“ ChÃ­ Minh',
+                    branch: profileData.bankBranch || 'Thành phố Hồ Chí Minh',
                     accountNumber: profileData.accountNumber || '',
                     accountHolder: profileData.fullname || ''
                 };
             }
 
-            console.log(`    ðŸ“¦ accountInfo to send:`, { username: accountInfo.username, password: accountInfo.password ? '***' : 'N/A' });
+            console.log(`    📦 accountInfo to send:`, { username: accountInfo.username, password: accountInfo.password ? '***' : 'N/A' });
 
             // Get dashboard port (dynamic)
             const dashboardPort = process.env.DASHBOARD_PORT || global.DASHBOARD_PORT || 3000;
             const apiUrl = `http://localhost:${dashboardPort}/api/accounts/${category}/${profileData.username}`;
-            console.log(`    ðŸ“ API URL: ${apiUrl}`);
+            console.log(`    📍 API URL: ${apiUrl}`);
 
             // Call API to save account info
             const response = await fetch(apiUrl, {
@@ -5850,26 +5950,26 @@ class VIPAutomation {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                console.error(`    âŒ API Error Response:`, errorText);
+                console.error(`    ❌ API Error Response:`, errorText);
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
 
             const result = await response.json();
-            console.log(`    âœ… Account info saved via API:`, result.message);
+            console.log(`    ✅ Account info saved via API:`, result.message);
 
         } catch (error) {
-            console.error(`    âŒ Error saving account info:`, error.message);
+            console.error(`    ❌ Error saving account info:`, error.message);
             throw error;
         }
     }
 
     /**
      * Solve Geetest V4 or Botion captcha via 2Captcha API
-     * Há»— trá»£ cáº£ Geetest V4 vÃ  Botion slide puzzle
+     * Hỗ trợ cả Geetest V4 và Botion slide puzzle
      */
     async solveGeetestV4ViaAutoCaptcha(page, apiKey) {
         try {
-            console.log('ðŸ” Detecting captcha type...');
+            console.log('🔐 Detecting captcha type...');
 
             // Step 1: Detect captcha type
             const captchaType = await page.evaluate(() => {
@@ -5886,10 +5986,10 @@ class VIPAutomation {
                 return null;
             });
 
-            console.log(`ðŸ“‹ Detected captcha type: ${captchaType}`);
+            console.log(`📋 Detected captcha type: ${captchaType}`);
 
             if (!captchaType) {
-                console.warn('âš ï¸ Could not detect captcha type on page');
+                console.warn('⚠️ Could not detect captcha type on page');
                 return null;
             }
 
@@ -5905,7 +6005,7 @@ class VIPAutomation {
 
             return null;
         } catch (error) {
-            console.error('âŒ Captcha solve error:', error.message);
+            console.error('❌ Captcha solve error:', error.message);
             return null;
         }
     }
@@ -5915,14 +6015,14 @@ class VIPAutomation {
      */
     async solveBottionCaptcha(page, apiKey) {
         try {
-            console.log('ðŸ” Solving Botion captcha via DOM analysis + drag simulation...');
+            console.log('🔐 Solving Botion captcha via DOM analysis + drag simulation...');
 
             const maxAttempts = 3;
             let attempt = 0;
 
             while (attempt < maxAttempts) {
                 attempt++;
-                console.log(`\nðŸ”„ Attempt ${attempt}/${maxAttempts}`);
+                console.log(`\n🔄 Attempt ${attempt}/${maxAttempts}`);
 
                 // Step 1: Wait for Botion captcha to render and get puzzle piece position
                 let puzzleInfo = null;
@@ -6013,7 +6113,7 @@ class VIPAutomation {
 
                         // Check if elements are visible (width/height > 0)
                         if (windowRect.width === 0 || windowRect.height === 0) {
-                            console.warn('âš ï¸ Captcha elements not visible yet');
+                            console.warn('⚠️ Captcha elements not visible yet');
                             return null;
                         }
 
@@ -6039,14 +6139,14 @@ class VIPAutomation {
 
                     if (!puzzleInfo) {
                         if (waitAttempts % 5 === 0) {
-                            console.log(`â³ Waiting for Botion captcha to render (${waitAttempts}s)...`);
+                            console.log(`⏳ Waiting for Botion captcha to render (${waitAttempts}s)...`);
                         }
                         await new Promise(r => setTimeout(r, 1000));
                     }
                 }
 
                 if (!puzzleInfo) {
-                    console.warn('âš ï¸ Botion captcha element not found, using full screenshot fallback');
+                    console.warn('⚠️ Botion captcha element not found, using full screenshot fallback');
 
                     // Fallback: Use full screenshot
                     const fullScreenshot = await page.screenshot();
@@ -6055,11 +6155,11 @@ class VIPAutomation {
                     return await this.submitBottionCaptchaToAPI(base64Image, apiKey);
                 }
 
-                console.log(`ðŸ“ Puzzle piece info:`, puzzleInfo);
+                console.log(`📍 Puzzle piece info:`, puzzleInfo);
 
                 // Check if captcha elements are visible
                 if (puzzleInfo.windowWidth <= 0 || puzzleInfo.windowHeight <= 0) {
-                    console.warn('âš ï¸ Captcha window has invalid dimensions, waiting more...');
+                    console.warn('⚠️ Captcha window has invalid dimensions, waiting more...');
                     await new Promise(r => setTimeout(r, 1000));
                     continue; // Retry
                 }
@@ -6075,61 +6175,61 @@ class VIPAutomation {
                 });
 
                 const base64Image = captchaScreenshot.toString('base64');
-                console.log(`ðŸ“¸ Screenshot size: ${base64Image.length} bytes`);
+                console.log(`📸 Screenshot size: ${base64Image.length} bytes`);
 
                 // Step 3: Analyze the screenshot to find gap position
                 const captchaResult = await this.submitBottionCaptchaToAPI(base64Image, apiKey, puzzleInfo);
 
                 if (!captchaResult || !captchaResult.success) {
-                    console.error('âŒ Failed to analyze captcha');
+                    console.error('❌ Failed to analyze captcha');
                     return null;
                 }
 
                 // Step 4: Simulate drag to move the puzzle piece
-                console.log(`ðŸŽ¯ Simulating drag to ${captchaResult.solution}%...`);
+                console.log(`🎯 Simulating drag to ${captchaResult.solution}%...`);
                 const dragResult = await this.simulateBottionDrag(page, captchaResult.solution, puzzleInfo);
 
                 if (!dragResult) {
-                    console.error('âŒ Failed to simulate drag');
+                    console.error('❌ Failed to simulate drag');
                     return null;
                 }
 
                 // Step 5: Wait for captcha verification
-                console.log('â³ Waiting for captcha verification...');
+                console.log('⏳ Waiting for captcha verification...');
                 await new Promise(r => setTimeout(r, 2000)); // Wait 2s for verification
 
                 // Step 6: Check if captcha was solved correctly
                 const verifyResult = await this.checkBottionResult(page);
 
                 if (verifyResult.success) {
-                    console.log('âœ… Captcha solved successfully!');
+                    console.log('✅ Captcha solved successfully!');
                     return captchaResult;
                 }
 
                 // Captcha failed - check if we should retry
                 if (verifyResult.failed) {
-                    console.warn(`âš ï¸ Captcha failed: ${verifyResult.message}`);
+                    console.warn(`⚠️ Captcha failed: ${verifyResult.message}`);
 
                     if (attempt < maxAttempts) {
-                        console.log(`ðŸ”„ Refreshing captcha and retrying...`);
+                        console.log(`🔄 Refreshing captcha and retrying...`);
                         await this.refreshBottionCaptcha(page);
                         await new Promise(r => setTimeout(r, 1500)); // Wait before retry
                         continue; // Try again
                     } else {
-                        console.error('âŒ Max attempts reached');
+                        console.error('❌ Max attempts reached');
                         return null;
                     }
                 }
 
                 // Unknown state - return result anyway
-                console.log('âš ï¸ Captcha state unknown, returning result');
+                console.log('⚠️ Captcha state unknown, returning result');
                 return captchaResult;
             }
 
-            console.error('âŒ Failed to solve captcha after all attempts');
+            console.error('❌ Failed to solve captcha after all attempts');
             return null;
         } catch (error) {
-            console.error('âŒ Botion captcha solve error:', error.message);
+            console.error('❌ Botion captcha solve error:', error.message);
             return null;
         }
     }
@@ -6140,7 +6240,7 @@ class VIPAutomation {
     async checkBottionResult(page) {
         try {
             const result = await page.evaluate(() => {
-                // BÆ°á»›c 1: Kiá»ƒm tra message tá»« server
+                // Bước 1: Kiểm tra message từ server
                 let resultTips = document.querySelector('[class*="botion_result_tips"]');
                 if (!resultTips) {
                     resultTips = document.querySelector('[class*="result_tips"]');
@@ -6151,20 +6251,20 @@ class VIPAutomation {
 
                 if (resultTips && resultTips.textContent) {
                     const text = resultTips.textContent.toLowerCase().trim();
-                    console.log(`ðŸ“Š Result tips: ${text}`);
+                    console.log(`📊 Result tips: ${text}`);
 
-                    // Kiá»ƒm tra success message
-                    if (text.includes('thÃ nh cÃ´ng') || text.includes('success') || text.includes('verified')) {
+                    // Kiểm tra success message
+                    if (text.includes('thành công') || text.includes('success') || text.includes('verified')) {
                         return { success: true, message: text };
                     }
 
-                    // Kiá»ƒm tra failure message
-                    if (text.includes('vui lÃ²ng thá»­ láº¡i') || text.includes('thá»­ láº¡i') || text.includes('failed') || text.includes('error')) {
+                    // Kiểm tra failure message
+                    if (text.includes('vui lòng thử lại') || text.includes('thử lại') || text.includes('failed') || text.includes('error')) {
                         return { failed: true, message: text };
                     }
                 }
 
-                // BÆ°á»›c 2: Kiá»ƒm tra xem captcha box cÃ³ biáº¿n máº¥t khÃ´ng (dáº¥u hiá»‡u success)
+                // Bước 2: Kiểm tra xem captcha box có biến mất không (dấu hiệu success)
                 let botionBox = document.querySelector('[class*="botion_box"]');
                 if (!botionBox) {
                     botionBox = document.querySelector('[class*="captcha"]');
@@ -6173,21 +6273,21 @@ class VIPAutomation {
                     botionBox = document.querySelector('[class*="box"]');
                 }
 
-                // Náº¿u captcha box biáº¿n máº¥t hoáº·c áº©n, cÃ³ thá»ƒ lÃ  success
+                // Nếu captcha box biến mất hoặc ẩn, có thể là success
                 if (!botionBox || botionBox.style.display === 'none' || botionBox.offsetHeight === 0) {
-                    console.log('ðŸ“Š Captcha box disappeared - likely success');
+                    console.log('📊 Captcha box disappeared - likely success');
                     return { success: true, message: 'Captcha disappeared' };
                 }
 
-                // BÆ°á»›c 3: Kiá»ƒm tra xem form cÃ³ Ä‘Æ°á»£c submit khÃ´ng (kiá»ƒm tra URL hoáº·c form state)
-                // Náº¿u URL thay Ä‘á»•i hoáº·c form biáº¿n máº¥t, captcha Ä‘Ã£ Ä‘Æ°á»£c giáº£i
+                // Bước 3: Kiểm tra xem form có được submit không (kiểm tra URL hoặc form state)
+                // Nếu URL thay đổi hoặc form biến mất, captcha đã được giải
                 const formElement = document.querySelector('form');
                 if (!formElement || formElement.style.display === 'none') {
-                    console.log('ðŸ“Š Form disappeared - likely success');
+                    console.log('📊 Form disappeared - likely success');
                     return { success: true, message: 'Form disappeared' };
                 }
 
-                // BÆ°á»›c 4: Kiá»ƒm tra retry button (nhÆ°ng khÃ´ng dÃ¹ng lÃ m dáº¥u hiá»‡u fail duy nháº¥t)
+                // Bước 4: Kiểm tra retry button (nhưng không dùng làm dấu hiệu fail duy nhất)
                 let retryBtn = document.querySelector('[class*="botion_refresh"]');
                 if (!retryBtn) {
                     retryBtn = document.querySelector('[class*="refresh"]');
@@ -6196,22 +6296,22 @@ class VIPAutomation {
                     retryBtn = document.querySelector('[class*="retry"]');
                 }
 
-                // Náº¿u retry button áº©n, cÃ³ thá»ƒ lÃ  success
+                // Nếu retry button ẩn, có thể là success
                 if (!retryBtn || retryBtn.style.display === 'none' || retryBtn.offsetHeight === 0) {
-                    console.log('ðŸ“Š Retry button hidden - likely success');
+                    console.log('📊 Retry button hidden - likely success');
                     return { success: true, message: 'Retry button hidden' };
                 }
 
-                // Náº¿u retry button hiá»ƒn thá»‹ nhÆ°ng khÃ´ng cÃ³ error message, cÃ³ thá»ƒ váº«n lÃ  success
-                // (retry button cÃ³ thá»ƒ hiá»ƒn thá»‹ nhÆ°ng khÃ´ng active)
-                console.log('ðŸ“Š Retry button visible but no error message - assuming success');
+                // Nếu retry button hiển thị nhưng không có error message, có thể vẫn là success
+                // (retry button có thể hiển thị nhưng không active)
+                console.log('📊 Retry button visible but no error message - assuming success');
                 return { success: true, message: 'Assuming success (no error message)' };
             });
 
-            console.log('ðŸ“Š Botion result check:', result);
+            console.log('📊 Botion result check:', result);
             return result;
         } catch (error) {
-            console.error('âŒ Result check error:', error.message);
+            console.error('❌ Result check error:', error.message);
             return { unknown: true, message: error.message };
         }
     }
@@ -6221,7 +6321,7 @@ class VIPAutomation {
      */
     async refreshBottionCaptcha(page) {
         try {
-            console.log('ðŸ”„ Clicking refresh button...');
+            console.log('🔄 Clicking refresh button...');
 
             const refreshed = await page.evaluate(() => {
                 // Find refresh button - try multiple selectors
@@ -6234,13 +6334,13 @@ class VIPAutomation {
                 }
 
                 if (!refreshBtn) {
-                    console.warn('âš ï¸ Refresh button not found');
+                    console.warn('⚠️ Refresh button not found');
                     return false;
                 }
 
                 // Click refresh button
                 refreshBtn.click();
-                console.log('âœ… Refresh button clicked');
+                console.log('✅ Refresh button clicked');
                 return true;
             });
 
@@ -6252,20 +6352,20 @@ class VIPAutomation {
 
             return false;
         } catch (error) {
-            console.error('âŒ Refresh error:', error.message);
+            console.error('❌ Refresh error:', error.message);
             return false;
         }
     }
 
     /**
      * Simulate drag movement for Botion slider using transform + events
-     * KÃ©o nÃºt (botion_btn) tá»« trÃ¡i sang pháº£i Ä‘á»ƒ di chuyá»ƒn máº£nh ghÃ©p vÃ o gap
+     * Kéo nút (botion_btn) từ trái sang phải để di chuyển mảnh ghép vào gap
      */
     async simulateBottionDrag(page, percentage, puzzleInfo) {
         try {
-            console.log(`ðŸŽ¯ KÃ©o nÃºt Ä‘áº¿n ${percentage}%...`);
+            console.log(`🎯 Kéo nút đến ${percentage}%...`);
 
-            // BÆ°á»›c 1: Láº¥y thÃ´ng tin nÃºt kÃ©o vÃ  thanh track
+            // Bước 1: Lấy thông tin nút kéo và thanh track
             const elementInfo = await page.evaluate(() => {
                 // Find slider button - try multiple selectors
                 let slider = document.querySelector('[class*="botion_btn"]');
@@ -6293,7 +6393,7 @@ class VIPAutomation {
                 const puzzleSlice = document.querySelector('[class*="botion_slice"]');
 
                 if (!slider || !track) {
-                    console.warn('âš ï¸ KhÃ´ng tÃ¬m tháº¥y nÃºt kÃ©o Botion');
+                    console.warn('⚠️ Không tìm thấy nút kéo Botion');
                     return null;
                 }
 
@@ -6313,25 +6413,25 @@ class VIPAutomation {
             });
 
             if (!elementInfo) {
-                console.error('âŒ KhÃ´ng thá»ƒ láº¥y thÃ´ng tin nÃºt kÃ©o');
+                console.error('❌ Không thể lấy thông tin nút kéo');
                 return null;
             }
 
-            console.log(`ï¿½ Vá»‹ tr Ã­ nÃºt: (${elementInfo.sliderX}, ${elementInfo.sliderY})`);
-            console.log(`ðŸ“ Thanh track: (${elementInfo.trackX}, ${elementInfo.trackY}), Chiá»u rá»™ng: ${elementInfo.trackWidth}`);
-            console.log(`ðŸ“ NÃºt báº¯t Ä‘áº§u táº¡i: ${elementInfo.sliderLeft}px`);
+            console.log(`� Vị tr í nút: (${elementInfo.sliderX}, ${elementInfo.sliderY})`);
+            console.log(`📏 Thanh track: (${elementInfo.trackX}, ${elementInfo.trackY}), Chiều rộng: ${elementInfo.trackWidth}`);
+            console.log(`📍 Nút bắt đầu tại: ${elementInfo.sliderLeft}px`);
 
-            // BÆ°á»›c 2: TÃ­nh vá»‹ trÃ­ Ä‘Ã­ch
-            // KÃ©o nÃºt Ä‘áº¿n vá»‹ trÃ­ tÆ°Æ¡ng á»©ng vá»›i percentage
-            // QUAN TRá»ŒNG: TÃ­nh tá»« Ä‘áº§u track (trackX), khÃ´ng pháº£i tá»« vá»‹ trÃ­ hiá»‡n táº¡i cá»§a nÃºt
+            // Bước 2: Tính vị trí đích
+            // Kéo nút đến vị trí tương ứng với percentage
+            // QUAN TRỌNG: Tính từ đầu track (trackX), không phải từ vị trí hiện tại của nút
             const dragDistance = (elementInfo.trackWidth * percentage) / 100;
             const targetX = elementInfo.trackX + dragDistance;
 
-            console.log(`ðŸŽ¯ Khoáº£ng cÃ¡ch kÃ©o: ${dragDistance}px (${percentage}%)`);
-            console.log(`ðŸŽ¯ Vá»‹ trÃ­ Ä‘Ã­ch: ${targetX}px`);
-            console.log(`ðŸ“ Tá»« trackX (${elementInfo.trackX}px) + dragDistance (${dragDistance}px) = ${targetX}px`);
+            console.log(`🎯 Khoảng cách kéo: ${dragDistance}px (${percentage}%)`);
+            console.log(`🎯 Vị trí đích: ${targetX}px`);
+            console.log(`📍 Từ trackX (${elementInfo.trackX}px) + dragDistance (${dragDistance}px) = ${targetX}px`);
 
-            // BÆ°á»›c 3: Dispatch pointerdown vÃ  mousedown
+            // Bước 3: Dispatch pointerdown và mousedown
             await page.evaluate((startX, startY) => {
                 // Find slider - try multiple selectors
                 let slider = document.querySelector('[class*="botion_btn"]');
@@ -6383,16 +6483,16 @@ class VIPAutomation {
                 slider.dispatchEvent(mouseDownEvent);
                 track.dispatchEvent(mouseDownEvent);
 
-                console.log('ðŸ–±ï¸ Nháº¥n chuá»™t xuá»‘ng');
+                console.log('🖱️ Nhấn chuột xuống');
             }, elementInfo.sliderX, elementInfo.sliderY);
 
-            // BÆ°á»›c 4: KÃ©o mÆ°á»£t mÃ  vá»›i Ä‘á»™ trá»… giá»¯a cÃ¡c bÆ°á»›c (nhÆ° ngÆ°á»i tháº­t kÃ©o)
-            // Tá»•ng thá»i gian kÃ©o: ~1.5-2 giÃ¢y
+            // Bước 4: Kéo mượt mà với độ trễ giữa các bước (như người thật kéo)
+            // Tổng thời gian kéo: ~1.5-2 giây
             const steps = 50;
-            const delayPerStep = 30; // 30ms giá»¯a má»—i bÆ°á»›c = 1.5 giÃ¢y tá»•ng
+            const delayPerStep = 30; // 30ms giữa mỗi bước = 1.5 giây tổng
 
             for (let step = 1; step <= steps; step++) {
-                // TÃ­nh vá»‹ trÃ­ hiá»‡n táº¡i dá»±a trÃªn percentage
+                // Tính vị trí hiện tại dựa trên percentage
                 const currentPercentage = (percentage * step) / steps;
                 const currentDragDistance = (elementInfo.trackWidth * currentPercentage) / 100;
                 const currentX = elementInfo.trackX + currentDragDistance;
@@ -6462,11 +6562,11 @@ class VIPAutomation {
                     track.dispatchEvent(inputEvent);
                 }, currentX, currentY, elementInfo.trackWidth);
 
-                // Chá» trÆ°á»›c bÆ°á»›c tiáº¿p theo (táº¡o kÃ©o mÆ°á»£t nhÆ° ngÆ°á»i tháº­t)
+                // Chờ trước bước tiếp theo (tạo kéo mượt như người thật)
                 await new Promise(r => setTimeout(r, delayPerStep));
             }
 
-            // BÆ°á»›c 5: Dispatch pointerup vÃ  mouseup
+            // Bước 5: Dispatch pointerup và mouseup
             await page.evaluate((endX, endY) => {
                 // Find slider - try multiple selectors
                 let slider = document.querySelector('[class*="botion_btn"]');
@@ -6519,13 +6619,13 @@ class VIPAutomation {
                 slider.dispatchEvent(mouseUpEvent);
                 track.dispatchEvent(mouseUpEvent);
 
-                console.log('ðŸ–±ï¸ Tháº£ chuá»™t');
+                console.log('🖱️ Thả chuột');
             }, targetX, elementInfo.sliderY);
 
-            console.log('âœ… HoÃ n thÃ nh kÃ©o');
+            console.log('✅ Hoàn thành kéo');
             return { success: true, percentage: percentage };
         } catch (error) {
-            console.error('âŒ Lá»—i kÃ©o:', error.message);
+            console.error('❌ Lỗi kéo:', error.message);
             return null;
         }
     }
@@ -6538,23 +6638,23 @@ class VIPAutomation {
      */
     async submitBottionCaptchaToAPI(base64Image, apiKey, puzzleInfo = null) {
         try {
-            // Thá»­ dÃ¹ng local image matching trÆ°á»›c (chÃ­nh xÃ¡c hÆ¡n)
-            console.log('ðŸ” Solving Botion captcha via local image matching (primary)...');
+            // Thử dùng local image matching trước (chính xác hơn)
+            console.log('🔐 Solving Botion captcha via local image matching (primary)...');
             const localResult = await this.solveBottionViaImageMatching(base64Image, puzzleInfo);
 
             if (localResult && localResult.success) {
-                console.log('âœ… Local image matching thÃ nh cÃ´ng:', localResult.solution);
+                console.log('✅ Local image matching thành công:', localResult.solution);
                 return localResult;
             }
 
-            // Náº¿u local matching tháº¥t báº¡i, thá»­ 2Captcha
-            console.log('âš ï¸ Local image matching tháº¥t báº¡i, thá»­ 2Captcha...');
-            console.log('ðŸ“¤ Gá»­i Botion captcha tá»›i 2Captcha API...');
+            // Nếu local matching thất bại, thử 2Captcha
+            console.log('⚠️ Local image matching thất bại, thử 2Captcha...');
+            console.log('📤 Gửi Botion captcha tới 2Captcha API...');
 
-            // Loáº¡i bá» tiá»n tá»‘ data:image náº¿u cÃ³
+            // Loại bỏ tiền tố data:image nếu có
             const cleanBase64 = base64Image.replace(/^data:image\/[a-z]+;base64,/, '');
 
-            // Gá»­i tá»›i 2Captcha
+            // Gửi tới 2Captcha
             const submitResponse = await fetch('https://api.2captcha.com/createTask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -6570,20 +6670,20 @@ class VIPAutomation {
             });
 
             const submitData = await submitResponse.json();
-            console.log('ðŸ“¤ Pháº£n há»“i gá»­i:', submitData);
+            console.log('📤 Phản hồi gửi:', submitData);
 
-            // Kiá»ƒm tra lá»—i
+            // Kiểm tra lỗi
             if (submitData.errorId !== 0) {
-                console.error('âŒ Lá»—i gá»­i Botion captcha:', submitData.errorDescription || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh');
+                console.error('❌ Lỗi gửi Botion captcha:', submitData.errorDescription || 'Lỗi không xác định');
                 return localResult; // Return local result if available
             }
 
-            // Xá»­ lÃ½ pháº£n há»“i thÃ nh cÃ´ng {errorId: 0, taskId: "xxx"}
+            // Xử lý phản hồi thành công {errorId: 0, taskId: "xxx"}
             if (submitData.taskId) {
                 const taskId = submitData.taskId;
-                console.log(`ðŸ“ Botion captcha Ä‘Ã£ gá»­i, Task ID: ${taskId}`);
+                console.log(`📝 Botion captcha đã gửi, Task ID: ${taskId}`);
 
-                // Kiá»ƒm tra káº¿t quáº£ (tá»‘i Ä‘a 60 giÃ¢y)
+                // Kiểm tra kết quả (tối đa 60 giây)
                 for (let i = 0; i < 60; i++) {
                     await new Promise(r => setTimeout(r, 2000));
 
@@ -6599,7 +6699,7 @@ class VIPAutomation {
 
                     if (resultData.errorId === 0 && resultData.status === 'ready' && resultData.solution) {
                         const solutionText = resultData.solution.text;
-                        console.log(`âœ… 2Captcha tráº£ vá»: ${solutionText}`);
+                        console.log(`✅ 2Captcha trả về: ${solutionText}`);
 
                         // Parse the solution - should be a percentage (0-100)
                         let percentage = null;
@@ -6613,28 +6713,28 @@ class VIPAutomation {
                             if (value >= 0 && value <= 100) {
                                 // Valid percentage
                                 percentage = value;
-                                console.log(`âœ… Giáº£i phÃ¡p há»£p lá»‡: ${percentage}%`);
+                                console.log(`✅ Giải pháp hợp lệ: ${percentage}%`);
                             } else if (value > 100 && value <= 500 && puzzleInfo && puzzleInfo.trackWidth) {
                                 // Heuristic: if value is between 100-500, might be pixel position
                                 // Only convert if it's reasonable (not too large)
                                 percentage = (value / puzzleInfo.trackWidth) * 100;
-                                console.log(`ðŸ“ Chuyá»ƒn Ä‘á»•i pixel ${value}px â†’ ${percentage.toFixed(1)}%`);
+                                console.log(`📍 Chuyển đổi pixel ${value}px → ${percentage.toFixed(1)}%`);
 
                                 // Validate converted percentage - if still > 100, it's invalid
                                 if (percentage > 100) {
-                                    console.warn(`âš ï¸ Chuyá»ƒn Ä‘á»•i vÆ°á»£t quÃ¡ 100% (${percentage.toFixed(1)}%), giÃ¡ trá»‹ khÃ´ng há»£p lá»‡`);
+                                    console.warn(`⚠️ Chuyển đổi vượt quá 100% (${percentage.toFixed(1)}%), giá trị không hợp lệ`);
                                     percentage = null;
                                 }
                             } else {
                                 // Invalid value - use fallback
-                                console.warn(`âš ï¸ GiÃ¡ trá»‹ khÃ´ng há»£p lá»‡: ${value} (trackWidth: ${puzzleInfo?.trackWidth}), dÃ¹ng fallback`);
+                                console.warn(`⚠️ Giá trị không hợp lệ: ${value} (trackWidth: ${puzzleInfo?.trackWidth}), dùng fallback`);
                                 percentage = null;
                             }
                         }
 
                         // If we got a valid percentage, return it
                         if (percentage !== null) {
-                            console.log(`ðŸ“ KÃ©o tá»›i: ${percentage.toFixed(1)}%`);
+                            console.log(`📍 Kéo tới: ${percentage.toFixed(1)}%`);
                             return {
                                 success: true,
                                 solution: Math.round(percentage),
@@ -6642,36 +6742,36 @@ class VIPAutomation {
                             };
                         } else {
                             // Invalid solution - use local result if available
-                            console.warn('âš ï¸ KhÃ´ng thá»ƒ phÃ¢n tÃ­ch giáº£i phÃ¡p 2Captcha, dÃ¹ng local result');
+                            console.warn('⚠️ Không thể phân tích giải pháp 2Captcha, dùng local result');
                             return localResult;
                         }
                     }
 
-                    // Status processing = chÆ°a sáºµn sÃ ng
+                    // Status processing = chưa sẵn sàng
                     if (resultData.status === 'processing') {
                         if (i % 10 === 0) {
-                            console.log(`â³ Chá» káº¿t quáº£ Botion (${i}s)...`);
+                            console.log(`⏳ Chờ kết quả Botion (${i}s)...`);
                         }
                         continue;
                     }
 
-                    // CÃ¡c status khÃ¡c lÃ  lá»—i
+                    // Các status khác là lỗi
                     if (resultData.errorId !== 0) {
-                        console.error('âŒ Lá»—i giáº£i Botion:', resultData.errorDescription || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh');
+                        console.error('❌ Lỗi giải Botion:', resultData.errorDescription || 'Lỗi không xác định');
                         break;
                     }
                 }
 
-                console.error('âŒ Timeout giáº£i Botion qua 2Captcha');
+                console.error('❌ Timeout giải Botion qua 2Captcha');
                 return localResult; // Return local result if available
             }
 
-            console.error('âŒ Äá»‹nh dáº¡ng pháº£n há»“i khÃ´ng xÃ¡c Ä‘á»‹nh:', submitData);
+            console.error('❌ Định dạng phản hồi không xác định:', submitData);
             return localResult; // Return local result if available
         } catch (error) {
-            console.error('âŒ Botion captcha error:', error.message);
+            console.error('❌ Botion captcha error:', error.message);
             // Try local matching as fallback
-            console.log('ðŸ”„ Fallback: DÃ¹ng local image matching...');
+            console.log('🔄 Fallback: Dùng local image matching...');
             const localResult = await this.solveBottionViaImageMatching(base64Image, puzzleInfo);
             return localResult;
         }
@@ -6682,7 +6782,7 @@ class VIPAutomation {
      */
     async solveBottionViaImageMatching(base64Image, puzzleInfo = null) {
         try {
-            console.log('ðŸ” Solving Botion captcha via local image matching...');
+            console.log('🔐 Solving Botion captcha via local image matching...');
 
             // Convert base64 to buffer
             const imageBuffer = Buffer.from(base64Image.replace(/^data:image\/[a-z]+;base64,/, ''), 'base64');
@@ -6695,17 +6795,17 @@ class VIPAutomation {
                 const sharp = require('sharp');
                 matchResult = await this.analyzeBottionWithTemplateMatching(imageBuffer, sharp, puzzleInfo);
             } catch (e) {
-                console.warn('âš ï¸ Sharp not available, trying basic analysis...');
+                console.warn('⚠️ Sharp not available, trying basic analysis...');
                 // Fallback to basic pixel analysis
                 matchResult = await this.analyzeBottionBasic(imageBuffer, puzzleInfo);
             }
 
             if (!matchResult || matchResult.percentage === null) {
-                console.warn('âš ï¸ Could not determine slider position');
+                console.warn('⚠️ Could not determine slider position');
                 return null;
             }
 
-            console.log(`âœ… Botion captcha analyzed: ${matchResult.percentage}%`);
+            console.log(`✅ Botion captcha analyzed: ${matchResult.percentage}%`);
             return {
                 success: true,
                 solution: matchResult.percentage.toString(),
@@ -6713,7 +6813,7 @@ class VIPAutomation {
                 service: 'local-matching'
             };
         } catch (error) {
-            console.error('âŒ Image matching error:', error.message);
+            console.error('❌ Image matching error:', error.message);
             return null;
         }
     }
@@ -6726,7 +6826,7 @@ class VIPAutomation {
         try {
             // Get image metadata
             const metadata = await sharp(imageBuffer).metadata();
-            console.log(`ðŸ“Š KÃ­ch thÆ°á»›c áº£nh: ${metadata.width}x${metadata.height}`);
+            console.log(`📊 Kích thước ảnh: ${metadata.width}x${metadata.height}`);
 
             // Extract image data
             const { data, info } = await sharp(imageBuffer)
@@ -6737,15 +6837,15 @@ class VIPAutomation {
             const height = metadata.height;
             const channels = info.channels;
 
-            // BÆ°á»›c 1: PhÃ¢n tÃ­ch Ä‘á»™ sÃ¡ng theo cá»™t Ä‘á»ƒ tÃ¬m gap
-            console.log('ðŸ” PhÃ¢n tÃ­ch áº£nh Ä‘á»ƒ tÃ¬m vá»‹ trÃ­ gap...');
+            // Bước 1: Phân tích độ sáng theo cột để tìm gap
+            console.log('🔍 Phân tích ảnh để tìm vị trí gap...');
             let brightnessByColumn = [];
 
             for (let x = 0; x < width; x++) {
                 let totalBrightness = 0;
                 let pixelCount = 0;
 
-                // Láº¥y máº«u tá»« giá»¯a áº£nh (nÆ¡i cÃ³ máº£nh ghÃ©p)
+                // Lấy mẫu từ giữa ảnh (nơi có mảnh ghép)
                 const startY = Math.floor(height * 0.15);
                 const endY = Math.floor(height * 0.85);
 
@@ -6770,37 +6870,37 @@ class VIPAutomation {
                 });
             }
 
-            // BÆ°á»›c 2: TÃ­nh trung bÃ¬nh Ä‘á»™ sÃ¡ng trÆ°á»›c
+            // Bước 2: Tính trung bình độ sáng trước
             let totalBrightnessSum = 0;
             for (let i = 0; i < width; i++) {
                 totalBrightnessSum += brightnessByColumn[i].brightness;
             }
             const avgBrightnessValue = totalBrightnessSum / width;
 
-            console.log(`ðŸ“Š Äá»™ sÃ¡ng trung bÃ¬nh: ${avgBrightnessValue.toFixed(0)}`);
+            console.log(`📊 Độ sáng trung bình: ${avgBrightnessValue.toFixed(0)}`);
 
-            // BÆ°á»›c 3: TÃ¬m gap (khoáº£ng trá»‘ng - vÃ¹ng tá»‘i hÆ¡n trung bÃ¬nh Ã­t nháº¥t 30 Ä‘iá»ƒm)
-            console.log('ðŸ” TÃ¬m gap (khoáº£ng trá»‘ng Ä‘en)...');
+            // Bước 3: Tìm gap (khoảng trống - vùng tối hơn trung bình ít nhất 30 điểm)
+            console.log('🔍 Tìm gap (khoảng trống đen)...');
             let gapX = 0;
             let minBrightness = 255;
             const darknessThreshold = avgBrightnessValue - 30;
 
-            console.log(`ðŸ“Š Threshold tá»‘i: ${darknessThreshold.toFixed(0)}`);
+            console.log(`📊 Threshold tối: ${darknessThreshold.toFixed(0)}`);
 
-            // QuÃ©t toÃ n bá»™ chiá»u rá»™ng Ä‘á»ƒ tÃ¬m vÃ¹ng tá»‘i nháº¥t nhÆ°ng váº«n tá»‘i hÆ¡n threshold
+            // Quét toàn bộ chiều rộng để tìm vùng tối nhất nhưng vẫn tối hơn threshold
             for (let i = 0; i < width; i++) {
                 const brightness = brightnessByColumn[i].brightness;
 
-                // Chá»‰ xÃ©t cÃ¡c cá»™t tá»‘i hÆ¡n threshold
+                // Chỉ xét các cột tối hơn threshold
                 if (brightness < darknessThreshold && brightness < minBrightness) {
                     minBrightness = brightness;
                     gapX = i;
                 }
             }
 
-            // Náº¿u khÃ´ng tÃ¬m tháº¥y vÃ¹ng tá»‘i hÆ¡n threshold, tÃ¬m vÃ¹ng tá»‘i nháº¥t
+            // Nếu không tìm thấy vùng tối hơn threshold, tìm vùng tối nhất
             if (minBrightness === 255) {
-                console.log('âš ï¸ KhÃ´ng tÃ¬m tháº¥y vÃ¹ng tá»‘i hÆ¡n threshold, tÃ¬m vÃ¹ng tá»‘i nháº¥t...');
+                console.log('⚠️ Không tìm thấy vùng tối hơn threshold, tìm vùng tối nhất...');
                 minBrightness = 255;
                 for (let i = 0; i < width; i++) {
                     if (brightnessByColumn[i].brightness < minBrightness) {
@@ -6810,33 +6910,33 @@ class VIPAutomation {
                 }
             }
 
-            console.log(`ðŸ“ Gap tÃ¬m tháº¥y táº¡i: ${gapX}px (Ä‘á»™ sÃ¡ng: ${minBrightness.toFixed(0)})`);
-            console.log(`ðŸ“Š Äá»™ sÃ¡ng gap: ${minBrightness.toFixed(0)}`);
-            console.log(`ðŸ“Š ChÃªnh lá»‡ch: ${(avgBrightnessValue - minBrightness).toFixed(0)}`);
+            console.log(`📍 Gap tìm thấy tại: ${gapX}px (độ sáng: ${minBrightness.toFixed(0)})`);
+            console.log(`📊 Độ sáng gap: ${minBrightness.toFixed(0)}`);
+            console.log(`📊 Chênh lệch: ${(avgBrightnessValue - minBrightness).toFixed(0)}`);
 
-            // BÆ°á»›c 4: TÃ­nh % cáº§n kÃ©o nÃºt dá»±a trÃªn vá»‹ trÃ­ gap
-            // QUAN TRá»ŒNG: Pháº§n cáº§n kÃ©o (máº£nh ghÃ©p) cÃ¡ch bÃªn trÃ¡i áº£nh 1 khoáº£ng
-            // Cáº§n trá»« Ä‘i khoáº£ng cÃ¡ch nÃ y Ä‘á»ƒ tÃ­nh khoáº£ng cÃ¡ch kÃ©o thá»±c táº¿
+            // Bước 4: Tính % cần kéo nút dựa trên vị trí gap
+            // QUAN TRỌNG: Phần cần kéo (mảnh ghép) cách bên trái ảnh 1 khoảng
+            // Cần trừ đi khoảng cách này để tính khoảng cách kéo thực tế
 
-            // Æ¯á»›c lÆ°á»£ng offset tá»« bÃªn trÃ¡i áº£nh Ä‘áº¿n pháº§n cáº§n kÃ©o
-            // Dá»±a vÃ o hÃ¬nh áº£nh, pháº§n cáº§n kÃ©o cÃ¡ch bÃªn trÃ¡i khoáº£ng 10% chiá»u rá»™ng
+            // Ước lượng offset từ bên trái ảnh đến phần cần kéo
+            // Dựa vào hình ảnh, phần cần kéo cách bên trái khoảng 10% chiều rộng
             const puzzleLeftOffset = Math.round(width * 0.10);
 
-            // Khoáº£ng cÃ¡ch kÃ©o thá»±c táº¿ = vá»‹ trÃ­ gap - offset tá»« bÃªn trÃ¡i
+            // Khoảng cách kéo thực tế = vị trí gap - offset từ bên trái
             const actualDragDistance = Math.max(0, gapX - puzzleLeftOffset);
 
-            // TÃ­nh % dá»±a trÃªn khoáº£ng cÃ¡ch kÃ©o thá»±c táº¿
+            // Tính % dựa trên khoảng cách kéo thực tế
             const percentage = Math.round((actualDragDistance / width) * 100);
 
-            console.log(`ðŸ“Š Offset tá»« bÃªn trÃ¡i: ${puzzleLeftOffset}px (10% cá»§a ${width}px)`);
-            console.log(`ðŸ“Š Vá»‹ trÃ­ gap: ${gapX}px`);
-            console.log(`ðŸ“Š Khoáº£ng cÃ¡ch kÃ©o thá»±c táº¿: ${actualDragDistance}px`);
-            console.log(`ðŸ“Š Percentage: ${actualDragDistance}px / ${width}px = ${percentage}%`);
+            console.log(`📊 Offset từ bên trái: ${puzzleLeftOffset}px (10% của ${width}px)`);
+            console.log(`📊 Vị trí gap: ${gapX}px`);
+            console.log(`📊 Khoảng cách kéo thực tế: ${actualDragDistance}px`);
+            console.log(`📊 Percentage: ${actualDragDistance}px / ${width}px = ${percentage}%`);
 
-            // Clamp vÃ o khoáº£ng há»£p lÃ½ (5-95%)
+            // Clamp vào khoảng hợp lý (5-95%)
             const clampedPercentage = Math.max(5, Math.min(95, percentage));
             if (clampedPercentage !== percentage) {
-                console.log(`ðŸ“Š Äiá»u chá»‰nh: ${percentage}% â†’ ${clampedPercentage}%`);
+                console.log(`📊 Điều chỉnh: ${percentage}% → ${clampedPercentage}%`);
             }
 
             return {
@@ -6851,7 +6951,7 @@ class VIPAutomation {
                 confidence: avgBrightnessValue - minBrightness
             };
         } catch (error) {
-            console.error('âŒ Lá»—i phÃ¢n tÃ­ch template:', error.message);
+            console.error('❌ Lỗi phân tích template:', error.message);
             return null;
         }
     }
@@ -6917,7 +7017,7 @@ class VIPAutomation {
         try {
             // Get image metadata
             const metadata = await sharp(imageBuffer).metadata();
-            console.log(`ðŸ“Š Image size: ${metadata.width}x${metadata.height}`);
+            console.log(`📊 Image size: ${metadata.width}x${metadata.height}`);
 
             // Extract image data
             const { data, info } = await sharp(imageBuffer)
@@ -6988,8 +7088,8 @@ class VIPAutomation {
             // Add some margin for accuracy
             const percentage = Math.round((sliderX / width) * 100);
 
-            console.log(`ðŸ“ Slider detected at: ${sliderX}px (${percentage}%)`);
-            console.log(`ðŸ“Š Contrast level: ${maxContrast.toFixed(2)}`);
+            console.log(`📍 Slider detected at: ${sliderX}px (${percentage}%)`);
+            console.log(`📊 Contrast level: ${maxContrast.toFixed(2)}`);
 
             return {
                 percentage: Math.max(0, Math.min(100, percentage)),
@@ -6998,7 +7098,7 @@ class VIPAutomation {
                 contrast: maxContrast
             };
         } catch (error) {
-            console.error('âŒ Sharp analysis error:', error.message);
+            console.error('❌ Sharp analysis error:', error.message);
             return null;
         }
     }
@@ -7009,17 +7109,17 @@ class VIPAutomation {
      */
     async analyzeBottionBasic(imageBuffer, puzzleInfo = null) {
         try {
-            console.log('ðŸ“Š Using basic brightness analysis');
+            console.log('📊 Using basic brightness analysis');
 
             // Parse PNG header to get dimensions
             if (imageBuffer.length < 24) {
-                console.warn('âš ï¸ Image too small');
+                console.warn('⚠️ Image too small');
                 return null;
             }
 
             // Check PNG signature
             if (imageBuffer[0] !== 0x89 || imageBuffer[1] !== 0x50) {
-                console.warn('âš ï¸ Not a valid PNG image');
+                console.warn('⚠️ Not a valid PNG image');
                 return null;
             }
 
@@ -7027,17 +7127,17 @@ class VIPAutomation {
             const width = imageBuffer.readUInt32BE(16);
             const height = imageBuffer.readUInt32BE(20);
 
-            console.log(`ðŸ“Š Image dimensions: ${width}x${height}`);
+            console.log(`📊 Image dimensions: ${width}x${height}`);
 
-            // BÆ°á»›c 1: PhÃ¢n tÃ­ch Ä‘á»™ sÃ¡ng theo cá»™t
+            // Bước 1: Phân tích độ sáng theo cột
             let brightnessByColumn = [];
-            const sampleHeight = Math.floor(height * 0.6); // Láº¥y máº«u 60% giá»¯a
+            const sampleHeight = Math.floor(height * 0.6); // Lấy mẫu 60% giữa
 
             for (let x = 0; x < width; x++) {
                 let totalBrightness = 0;
                 let pixelCount = 0;
 
-                // Láº¥y máº«u má»—i 4 hÃ ng Ä‘á»ƒ tÄƒng tá»‘c Ä‘á»™
+                // Lấy mẫu mỗi 4 hàng để tăng tốc độ
                 for (let y = Math.floor(height * 0.15); y < Math.floor(height * 0.85); y += 4) {
                     const pixelIndex = (y * width + x) * 4;
 
@@ -7059,25 +7159,25 @@ class VIPAutomation {
                 });
             }
 
-            // BÆ°á»›c 2: TÃ­nh trung bÃ¬nh Ä‘á»™ sÃ¡ng
+            // Bước 2: Tính trung bình độ sáng
             let totalBrightnessSum = 0;
             for (let i = 0; i < width; i++) {
                 totalBrightnessSum += brightnessByColumn[i].brightness;
             }
             const avgBrightnessValue = totalBrightnessSum / width;
 
-            console.log(`ðŸ“Š Äá»™ sÃ¡ng trung bÃ¬nh: ${avgBrightnessValue.toFixed(0)}`);
+            console.log(`📊 Độ sáng trung bình: ${avgBrightnessValue.toFixed(0)}`);
 
-            // BÆ°á»›c 3: TÃ¬m gap báº±ng cÃ¡ch phÃ¢n tÃ­ch Ä‘á»™ sÃ¡ng
-            // Gap lÃ  vÃ¹ng tá»‘i nháº¥t trong áº£nh (vÃ¹ng thiáº¿u máº£nh ghÃ©p)
-            console.log('ðŸ” TÃ¬m gap (khoáº£ng trá»‘ng Ä‘en)...');
+            // Bước 3: Tìm gap bằng cách phân tích độ sáng
+            // Gap là vùng tối nhất trong ảnh (vùng thiếu mảnh ghép)
+            console.log('🔍 Tìm gap (khoảng trống đen)...');
 
-            // TÃ¬m vÃ¹ng tá»‘i nháº¥t (gap)
+            // Tìm vùng tối nhất (gap)
             let gapX = 0;
             let minBrightness = 255;
             let gapWidth = 0;
 
-            // QuÃ©t toÃ n bá»™ chiá»u rá»™ng Ä‘á»ƒ tÃ¬m vÃ¹ng tá»‘i nháº¥t
+            // Quét toàn bộ chiều rộng để tìm vùng tối nhất
             for (let i = 0; i < width; i++) {
                 if (brightnessByColumn[i].brightness < minBrightness) {
                     minBrightness = brightnessByColumn[i].brightness;
@@ -7085,12 +7185,12 @@ class VIPAutomation {
                 }
             }
 
-            // TÃ¬m chiá»u rá»™ng cá»§a gap (vÃ¹ng tá»‘i liÃªn tá»¥c)
-            const gapThreshold = minBrightness + 30; // Gap thÆ°á»ng cÃ³ Ä‘á»™ sÃ¡ng tÆ°Æ¡ng Ä‘á»‘i Ä‘á»“ng nháº¥t
+            // Tìm chiều rộng của gap (vùng tối liên tục)
+            const gapThreshold = minBrightness + 30; // Gap thường có độ sáng tương đối đồng nhất
             let gapStart = gapX;
             let gapEnd = gapX;
 
-            // TÃ¬m báº¯t Ä‘áº§u gap
+            // Tìm bắt đầu gap
             for (let i = gapX; i >= 0; i--) {
                 if (brightnessByColumn[i].brightness < gapThreshold) {
                     gapStart = i;
@@ -7099,7 +7199,7 @@ class VIPAutomation {
                 }
             }
 
-            // TÃ¬m káº¿t thÃºc gap
+            // Tìm kết thúc gap
             for (let i = gapX; i < width; i++) {
                 if (brightnessByColumn[i].brightness < gapThreshold) {
                     gapEnd = i;
@@ -7111,17 +7211,17 @@ class VIPAutomation {
             gapWidth = gapEnd - gapStart + 1;
             const gapCenter = Math.floor((gapStart + gapEnd) / 2);
 
-            console.log(`ðŸ“ Gap tÃ¬m tháº¥y tá»«: ${gapStart}px Ä‘áº¿n ${gapEnd}px (chiá»u rá»™ng: ${gapWidth}px)`);
-            console.log(`ðŸ“Š TÃ¢m gap: ${gapCenter}px (Ä‘á»™ sÃ¡ng: ${minBrightness.toFixed(0)})`);
-            console.log(`ðŸ“Š ChÃªnh lá»‡ch: ${(avgBrightnessValue - minBrightness).toFixed(0)}`);
+            console.log(`📍 Gap tìm thấy từ: ${gapStart}px đến ${gapEnd}px (chiều rộng: ${gapWidth}px)`);
+            console.log(`📊 Tâm gap: ${gapCenter}px (độ sáng: ${minBrightness.toFixed(0)})`);
+            console.log(`📊 Chênh lệch: ${(avgBrightnessValue - minBrightness).toFixed(0)}`);
 
-            // BÆ°á»›c 4: TÃ¬m máº£nh cáº§n kÃ©o (vÃ¹ng sÃ¡ng á»Ÿ bÃªn trÃ¡i)
-            console.log('ðŸ” TÃ¬m máº£nh cáº§n kÃ©o (vÃ¹ng sÃ¡ng bÃªn trÃ¡i)...');
+            // Bước 4: Tìm mảnh cần kéo (vùng sáng ở bên trái)
+            console.log('🔍 Tìm mảnh cần kéo (vùng sáng bên trái)...');
             let puzzleX = 0;
             let maxBrightness = 0;
             let puzzleWidth = 0;
 
-            // QuÃ©t bÃªn trÃ¡i 40% Ä‘á»ƒ tÃ¬m máº£nh cáº§n kÃ©o
+            // Quét bên trái 40% để tìm mảnh cần kéo
             const puzzleScanEnd = Math.floor(width * 0.4);
             for (let i = 0; i < puzzleScanEnd; i++) {
                 if (brightnessByColumn[i].brightness > maxBrightness) {
@@ -7130,12 +7230,12 @@ class VIPAutomation {
                 }
             }
 
-            // TÃ¬m chiá»u rá»™ng cá»§a máº£nh cáº§n kÃ©o
+            // Tìm chiều rộng của mảnh cần kéo
             const puzzleThreshold = maxBrightness - 30;
             let puzzleStart = puzzleX;
             let puzzleEnd = puzzleX;
 
-            // TÃ¬m báº¯t Ä‘áº§u máº£nh
+            // Tìm bắt đầu mảnh
             for (let i = puzzleX; i >= 0; i--) {
                 if (brightnessByColumn[i].brightness > puzzleThreshold) {
                     puzzleStart = i;
@@ -7144,7 +7244,7 @@ class VIPAutomation {
                 }
             }
 
-            // TÃ¬m káº¿t thÃºc máº£nh
+            // Tìm kết thúc mảnh
             for (let i = puzzleX; i < puzzleScanEnd; i++) {
                 if (brightnessByColumn[i].brightness > puzzleThreshold) {
                     puzzleEnd = i;
@@ -7156,25 +7256,25 @@ class VIPAutomation {
             puzzleWidth = puzzleEnd - puzzleStart + 1;
             const puzzleCenter = Math.floor((puzzleStart + puzzleEnd) / 2);
 
-            console.log(`ðŸ“ Máº£nh cáº§n kÃ©o tá»«: ${puzzleStart}px Ä‘áº¿n ${puzzleEnd}px (chiá»u rá»™ng: ${puzzleWidth}px)`);
-            console.log(`ðŸ“Š TÃ¢m máº£nh: ${puzzleCenter}px (Ä‘á»™ sÃ¡ng: ${maxBrightness.toFixed(0)})`);
+            console.log(`📍 Mảnh cần kéo từ: ${puzzleStart}px đến ${puzzleEnd}px (chiều rộng: ${puzzleWidth}px)`);
+            console.log(`📊 Tâm mảnh: ${puzzleCenter}px (độ sáng: ${maxBrightness.toFixed(0)})`);
 
-            // BÆ°á»›c 5: TÃ­nh khoáº£ng cÃ¡ch cáº§n kÃ©o
-            // Khoáº£ng cÃ¡ch = tÃ¢m gap - tÃ¢m máº£nh cáº§n kÃ©o
+            // Bước 5: Tính khoảng cách cần kéo
+            // Khoảng cách = tâm gap - tâm mảnh cần kéo
             const dragDistance = Math.max(0, gapCenter - puzzleCenter);
 
-            // TÃ­nh % dá»±a trÃªn khoáº£ng cÃ¡ch kÃ©o thá»±c táº¿
+            // Tính % dựa trên khoảng cách kéo thực tế
             const percentage = Math.round((dragDistance / width) * 100);
 
-            console.log(`ðŸ“Š TÃ¢m máº£nh cáº§n kÃ©o: ${puzzleCenter}px`);
-            console.log(`ðŸ“Š TÃ¢m gap: ${gapCenter}px`);
-            console.log(`ðŸ“Š Khoáº£ng cÃ¡ch cáº§n kÃ©o: ${dragDistance}px`);
-            console.log(`ðŸ“Š Percentage: ${dragDistance}px / ${width}px = ${percentage}%`);
+            console.log(`📊 Tâm mảnh cần kéo: ${puzzleCenter}px`);
+            console.log(`📊 Tâm gap: ${gapCenter}px`);
+            console.log(`📊 Khoảng cách cần kéo: ${dragDistance}px`);
+            console.log(`📊 Percentage: ${dragDistance}px / ${width}px = ${percentage}%`);
 
-            // Clamp vÃ o khoáº£ng há»£p lÃ½ (5-95%)
+            // Clamp vào khoảng hợp lý (5-95%)
             const clampedPercentage = Math.max(5, Math.min(95, percentage));
             if (clampedPercentage !== percentage) {
-                console.log(`ðŸ“Š Äiá»u chá»‰nh: ${percentage}% â†’ ${clampedPercentage}%`);
+                console.log(`📊 Điều chỉnh: ${percentage}% → ${clampedPercentage}%`);
             }
 
             return {
@@ -7195,7 +7295,7 @@ class VIPAutomation {
                 avgBrightness: avgBrightnessValue
             };
         } catch (error) {
-            console.error('âŒ Basic analysis error:', error.message);
+            console.error('❌ Basic analysis error:', error.message);
             return null;
         }
     }
@@ -7205,17 +7305,17 @@ class VIPAutomation {
      */
     async solveGeetestV4Captcha(page, apiKey) {
         try {
-            console.log('ðŸ” Äang giáº£i Geetest V4 qua API 2Captcha...');
+            console.log('🔐 Đang giải Geetest V4 qua API 2Captcha...');
 
-            // Step 1: Get Geetest V4 parameters tá»« page
+            // Step 1: Get Geetest V4 parameters từ page
             const geetestParams = await page.evaluate(() => {
-                // TÃ¬m script chá»©a Geetest config
+                // Tìm script chứa Geetest config
                 const scripts = document.querySelectorAll('script');
                 let geetestData = null;
 
                 for (const script of scripts) {
                     if (script.textContent && (script.textContent.includes('geetest') || script.textContent.includes('gt4'))) {
-                        // Thá»­ extract tá»« script content
+                        // Thử extract từ script content
                         const match = script.textContent.match(/gt4\.initGeetest4\s*\(\s*({[\s\S]*?})\s*,/);
                         if (match) {
                             try {
@@ -7228,12 +7328,12 @@ class VIPAutomation {
                     }
                 }
 
-                // Fallback: TÃ¬m tá»« window object
+                // Fallback: Tìm từ window object
                 if (!geetestData && window.geetest_data) {
                     geetestData = window.geetest_data;
                 }
 
-                // Fallback: TÃ¬m tá»« data attributes
+                // Fallback: Tìm từ data attributes
                 if (!geetestData) {
                     const geetestContainer = document.querySelector('[data-gt4], [class*="geetest"], [id*="geetest"]');
                     if (geetestContainer) {
@@ -7248,14 +7348,14 @@ class VIPAutomation {
             });
 
             if (!geetestParams) {
-                console.warn('âš ï¸ KhÃ´ng tÃ¬m tháº¥y tham sá»‘ Geetest V4 trÃªn trang');
+                console.warn('⚠️ Không tìm thấy tham số Geetest V4 trên trang');
                 return null;
             }
 
-            console.log('ðŸ“‹ Tham sá»‘ Geetest V4:', geetestParams);
+            console.log('📋 Tham số Geetest V4:', geetestParams);
 
             // Step 2: Submit Geetest V4 task to 2Captcha
-            console.log('ðŸ“¤ Gá»­i Geetest V4 tá»›i API 2Captcha...');
+            console.log('📤 Gửi Geetest V4 tới API 2Captcha...');
             const submitResponse = await fetch('https://api.2captcha.com/createTask', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -7273,24 +7373,24 @@ class VIPAutomation {
             });
 
             const submitData = await submitResponse.json();
-            console.log('ðŸ“¤ Pháº£n há»“i gá»­i:', submitData);
+            console.log('📤 Phản hồi gửi:', submitData);
 
-            // Kiá»ƒm tra lá»—i
+            // Kiểm tra lỗi
             if (submitData.errorId !== 0) {
-                console.error('âŒ Lá»—i gá»­i Geetest V4:', submitData.errorDescription || 'Lá»—i khÃ´ng xÃ¡c Ä‘á»‹nh');
+                console.error('❌ Lỗi gửi Geetest V4:', submitData.errorDescription || 'Lỗi không xác định');
                 return null;
             }
 
             // Get task ID
             const taskId = submitData.taskId;
             if (!taskId) {
-                console.error('âŒ KhÃ´ng cÃ³ Task ID Ä‘Æ°á»£c tráº£ vá»');
+                console.error('❌ Không có Task ID được trả về');
                 return null;
             }
 
-            console.log(`ðŸ“ Geetest V4 Ä‘Ã£ gá»­i, Task ID: ${taskId}`);
+            console.log(`📝 Geetest V4 đã gửi, Task ID: ${taskId}`);
 
-            // Step 3: Poll for result (tá»‘i Ä‘a 60 giÃ¢y cho Geetest)
+            // Step 3: Poll for result (tối đa 60 giây cho Geetest)
             for (let i = 0; i < 60; i++) {
                 await new Promise(r => setTimeout(r, 2000));
 
@@ -7305,7 +7405,7 @@ class VIPAutomation {
                 const resultData = await resultResponse.json();
 
                 if (resultData.errorId === 0 && resultData.status === 'ready' && resultData.solution) {
-                    console.log(`âœ… Geetest V4 Ä‘Ã£ giáº£i`);
+                    console.log(`✅ Geetest V4 đã giải`);
 
                     return {
                         success: true,
@@ -7318,14 +7418,14 @@ class VIPAutomation {
                 }
 
                 if (i % 10 === 0) {
-                    console.log(`â³ Chá» káº¿t quáº£ Geetest V4 (${i}s)...`);
+                    console.log(`⏳ Chờ kết quả Geetest V4 (${i}s)...`);
                 }
             }
 
-            console.error('âŒ Timeout giáº£i Geetest V4');
+            console.error('❌ Timeout giải Geetest V4');
             return null;
         } catch (error) {
-            console.error('âŒ Geetest V4 solve error:', error.message);
+            console.error('❌ Geetest V4 solve error:', error.message);
             return null;
         }
     }

@@ -1,0 +1,25 @@
+{
+  "username": "GriffinFlash77",
+  "password": "1rp910n8j0ms",
+  "withdrawPassword": "1",
+  "fullname": "LY THI GIA HAN THUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "GIA LAI",
+    "accountNumber": "9686687660001122921",
+    "accountHolder": "LY THI GIA HAN THUC"
+  },
+  "registeredAt": "2026-02-26T09:47:11.650Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:47:11.650Z",
+  "bankVerified": true
+}

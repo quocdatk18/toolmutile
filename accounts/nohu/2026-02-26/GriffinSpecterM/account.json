@@ -1,0 +1,25 @@
+{
+  "username": "GriffinSpecterM",
+  "password": "17ipprm768rw",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN CONG MINH THIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SON LA",
+    "accountNumber": "9686687660001123452",
+    "accountHolder": "NGUYEN CONG MINH THIEN"
+  },
+  "registeredAt": "2026-02-26T12:27:35.607Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:27:35.607Z",
+  "bankVerified": false
+}

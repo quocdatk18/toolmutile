@@ -1,0 +1,25 @@
+{
+  "username": "BearZ",
+  "password": "2t977a2rail",
+  "withdrawPassword": "1",
+  "fullname": "VO MINH GIA KHANH LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH THUAN",
+    "accountNumber": "9686687660001118082",
+    "accountHolder": "VO MINH GIA KHANH LINH"
+  },
+  "registeredAt": "2026-02-25T09:15:58.922Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T09:15:58.922Z",
+  "bankVerified": false
+}

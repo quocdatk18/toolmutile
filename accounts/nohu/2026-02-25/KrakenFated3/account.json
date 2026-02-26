@@ -1,0 +1,25 @@
+{
+  "username": "KrakenFated3",
+  "password": "1w34czd2x816",
+  "withdrawPassword": "1",
+  "fullname": "DANG QUOC ANH TUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "QUANG NGAI",
+    "accountNumber": "963012001192797",
+    "accountHolder": "DANG QUOC ANH TUAN"
+  },
+  "registeredAt": "2026-02-24T22:19:10.657Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:19:10.657Z",
+  "bankVerified": false
+}

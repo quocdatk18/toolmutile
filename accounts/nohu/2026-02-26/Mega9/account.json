@@ -1,0 +1,25 @@
+{
+  "username": "Mega9",
+  "password": "nhi7v51n",
+  "withdrawPassword": "1",
+  "fullname": "PHAM DINH QUANG HUY KHANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HO CHI MINH",
+    "accountNumber": "9686687660001122936",
+    "accountHolder": "PHAM DINH QUANG HUY KHANG"
+  },
+  "registeredAt": "2026-02-26T10:31:06.704Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T10:31:06.704Z",
+  "bankVerified": false
+}

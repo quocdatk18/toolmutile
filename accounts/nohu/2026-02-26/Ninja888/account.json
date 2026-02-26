@@ -1,0 +1,25 @@
+{
+  "username": "Ninja888",
+  "password": "v54bqom5jo",
+  "withdrawPassword": "1",
+  "fullname": "MAI THI NGOC HANH TRANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC LIEU",
+    "accountNumber": "9686687660001122920",
+    "accountHolder": "MAI THI NGOC HANH TRANG"
+  },
+  "registeredAt": "2026-02-26T09:44:20.812Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:44:20.812Z",
+  "bankVerified": false
+}

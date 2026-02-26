@@ -1,0 +1,25 @@
+{
+  "username": "ChampionBreaker",
+  "password": "7s7dz0he7pw6",
+  "withdrawPassword": "1",
+  "fullname": "HUYNH THI BAO NGOC ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LANG SON",
+    "accountNumber": "9686687660001122924",
+    "accountHolder": "HUYNH THI BAO NGOC ANH"
+  },
+  "registeredAt": "2026-02-26T09:47:39.784Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:47:39.784Z",
+  "bankVerified": false
+}

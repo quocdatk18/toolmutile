@@ -1,0 +1,25 @@
+{
+  "username": "SilverBlaze999",
+  "password": "e2o5woniyko1",
+  "withdrawPassword": "1",
+  "fullname": "DO MINH HOANG PHUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH PHUOC",
+    "accountNumber": "9686687660001115833",
+    "accountHolder": "DO MINH HOANG PHUC"
+  },
+  "registeredAt": "2026-02-24T18:35:53.479Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:35:53.479Z",
+  "bankVerified": false
+}

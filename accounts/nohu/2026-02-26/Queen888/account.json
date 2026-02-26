@@ -1,0 +1,25 @@
+{
+  "username": "Queen888",
+  "password": "dqy7k6ae2l",
+  "withdrawPassword": "1",
+  "fullname": "DANG QUANG HUY DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DA LAT",
+    "accountNumber": "963012001205837",
+    "accountHolder": "DANG QUANG HUY DAT"
+  },
+  "registeredAt": "2026-02-26T06:50:10.515Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:50:10.515Z",
+  "bankVerified": false
+}

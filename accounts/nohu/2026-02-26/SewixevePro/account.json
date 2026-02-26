@@ -1,0 +1,25 @@
+{
+  "username": "SewixevePro",
+  "password": "mem757rpi",
+  "withdrawPassword": "1",
+  "fullname": "LE MINH DUC THINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DONG NAI",
+    "accountNumber": "9686687660001122135",
+    "accountHolder": "LE MINH DUC THINH"
+  },
+  "registeredAt": "2026-02-26T06:49:16.158Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:49:16.158Z",
+  "bankVerified": true
+}

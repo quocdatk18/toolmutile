@@ -1,0 +1,25 @@
+{
+  "username": "AngelSaviorMax",
+  "password": "u7e5lbx0zydm",
+  "withdrawPassword": "1",
+  "fullname": "HUYNH BAO NGOC ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CA MAU",
+    "accountNumber": "9686687660001123464",
+    "accountHolder": "HUYNH BAO NGOC ANH"
+  },
+  "registeredAt": "2026-02-26T12:30:31.545Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:30:31.545Z",
+  "bankVerified": false
+}

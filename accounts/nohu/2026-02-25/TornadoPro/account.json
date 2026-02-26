@@ -1,0 +1,25 @@
+{
+  "username": "TornadoPro",
+  "password": "rgy8k9im8",
+  "withdrawPassword": "1",
+  "fullname": "TRAN QUOC MINH KHANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "DIEN BIEN",
+    "accountNumber": "963012001192793",
+    "accountHolder": "TRAN QUOC MINH KHANG"
+  },
+  "registeredAt": "2026-02-24T22:16:55.393Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:16:55.393Z",
+  "bankVerified": true
+}

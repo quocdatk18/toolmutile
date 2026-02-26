@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Swipe Carousel - NOHU Screenshots</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .test-container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .test-header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-header h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .test-header p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .test-instructions {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #1e40af;
+        }
+
+        .test-instructions strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e3a8a;
+        }
+
+        .test-instructions ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .modal-content-fullscreen {
+            background: white;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            color: #2d3748;
+            font-size: 18px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #2d3748;
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #modalScreenshotsGrid {
+            width: 100%;
+            height: 100%;
+        }
+
+        .screenshot-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f7fafc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .screenshot-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .demo-info {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #92400e;
+        }
+
+        .demo-info strong {
+            color: #78350f;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🎰 Test Swipe Carousel</h1>
+            <p>Kiểm tra hiệu ứng vuốt trái/phải cho ảnh chụp kết quả NOHU Tool</p>
+
+            <div class="test-instructions">
+                <strong>📋 Hướng dẫn sử dụng:</strong>
+                <ul>
+                    <li><strong>Vuốt từ trên xuống:</strong> Dùng chuột kéo hoặc vuốt trên mobile để xem ảnh tiếp theo
+                    </li>
+                    <li><strong>Nút điều hướng:</strong> Click ▲ ▼ để chuyển ảnh</li>
+                    <li><strong>Bàn phím:</strong> Dùng ↑ ↓ để điều hướng</li>
+                    <li><strong>Bộ đếm:</strong> Hiển thị vị trí ảnh hiện tại (ví dụ: 1 / 7)</li>
+                </ul>
+            </div>
+
+            <div class="demo-info">
+                <strong>💡 Tính năng:</strong>
+                <ul style="margin-top: 8px; margin-left: 20px;">
+                    <li>✅ Vuốt mượt mà với animation</li>
+                    <li>✅ Hỗ trợ chuột, touch, và bàn phím</li>
+                    <li>✅ Nút điều hướng thông minh (disable ở đầu/cuối)</li>
+                    <li>✅ Hiển thị số thứ tự ảnh</li>
+                    <li>✅ Responsive trên mobile</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="modal-content-fullscreen">
+            <div class="modal-header">
+                <h3 id="modalTitle">📷 Kết Quả</h3>
+                <button class="modal-close" onclick="alert('Close button clicked')">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="modalScreenshotsGrid">
+                    <!-- Screenshots will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="tools-ui/shared/shared.js"></script>
+    <script>
+        // Generate demo screenshots
+        function generateDemoScreenshots() {
+            const sites = ['3388code-store', 'go88code-store', 'nohucode-shop', '789pcode-store', 'mmoocode-shop', '88vcode-com'];
+            const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe', '#43e97b'];
+
+            let html = '';
+            sites.forEach((site, index) => {
+                html += `
+                    <div class="screenshot-item">
+                        <div style="
+                            width: 100%;
+                            height: 100%;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background: linear-gradient(135deg, ${colors[index]}, ${colors[(index + 1) % colors.length]});
+                            flex-direction: column;
+                            color: white;
+                            font-size: 48px;
+                            font-weight: bold;
+                            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                        ">
+                            <div style="font-size: 64px; margin-bottom: 20px;">📸</div>
+                            <div>${site}</div>
+                            <div style="font-size: 24px; margin-top: 20px; opacity: 0.8;">${index + 1} / ${sites.length}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('modalScreenshotsGrid').innerHTML = html;
+
+            // Initialize swipe carousel
+            setTimeout(() => {
+                initSwipeCarousel();
+            }, 100);
+        }
+
+        // Load demo on page load
+        window.addEventListener('load', generateDemoScreenshots);
+    </script>
+</body>
+
+</html>

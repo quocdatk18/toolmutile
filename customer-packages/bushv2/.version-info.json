@@ -1,0 +1,9 @@
+{
+  "customer": "bushv2",
+  "version": "3.0.0",
+  "createdAt": "2026-02-26T11:45:31.131Z",
+  "buildType": "customer-package",
+  "secretKey": "SECRET_bushv2_96034_97824",
+  "machineId": null,
+  "obfuscated": true
+}

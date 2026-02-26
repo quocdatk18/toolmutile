@@ -1,0 +1,25 @@
+{
+  "username": "CycloneFalling2",
+  "password": "he8j95fof",
+  "withdrawPassword": "1",
+  "fullname": "TRAN GIA BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TUYÊN QUANG",
+    "accountNumber": "9686687660001117495",
+    "accountHolder": "TRAN GIA BAO"
+  },
+  "registeredAt": "2026-02-25T05:48:30.007Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T05:48:30.007Z",
+  "bankVerified": false
+}

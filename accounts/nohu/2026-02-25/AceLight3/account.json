@@ -1,0 +1,25 @@
+{
+  "username": "AceLight3",
+  "password": "mtkm3pt4",
+  "withdrawPassword": "1",
+  "fullname": "VO THANH CONG HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "PHU THO",
+    "accountNumber": "963012001192796",
+    "accountHolder": "VO THANH CONG HUY"
+  },
+  "registeredAt": "2026-02-24T22:18:47.680Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:18:47.680Z",
+  "bankVerified": false
+}

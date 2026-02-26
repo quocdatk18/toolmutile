@@ -1,0 +1,25 @@
+{
+  "username": "HurricaneSuper7",
+  "password": "4k7e76rz",
+  "withdrawPassword": "1",
+  "fullname": "PHAM VAN HUU KIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DIEN BIEN",
+    "accountNumber": "9686687660001116194",
+    "accountHolder": "PHAM VAN HUU KIEN"
+  },
+  "registeredAt": "2026-02-24T22:51:47.841Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:51:47.841Z",
+  "bankVerified": false
+}

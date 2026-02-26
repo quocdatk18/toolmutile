@@ -1,0 +1,25 @@
+{
+  "username": "CobraAce77",
+  "password": "7tld34os6nmq",
+  "withdrawPassword": "1",
+  "fullname": "HOANG DUC ANH KHOA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAU GIANG",
+    "accountNumber": "9686687660001115835",
+    "accountHolder": "HOANG DUC ANH KHOA"
+  },
+  "registeredAt": "2026-02-24T18:31:29.624Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:31:29.624Z",
+  "bankVerified": false
+}

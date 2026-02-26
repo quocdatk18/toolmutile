@@ -16,6 +16,9 @@ class LicenseManager {
         // Mỗi bản gửi khách nên có secret key khác nhau
         // Ví dụ: 'SECRET_CUSTOMER_001', 'SECRET_CUSTOMER_002', v.v.
         this.secretKey = 'SECRET_BushXyz_50810_71820'; // Thay đổi secret này
+
+        // Auto-cleanup expired license on startup
+        this.autoCleanupExpired();
     }
 
     /**
@@ -71,9 +74,11 @@ class LicenseManager {
     }
 
     /**
-     * Tạo license key mới
+     * Tạo license key mới (compact format)
+     * Format: Compact base64 + short signature
+     * Ví dụ: eyJ1IjoiY3VzdG9tZXIiLCJtIjoibWFjaGluZWlkIiwiZSI6MTczNDg4NzY0MH0.a1b2c3d4
      * @param {Object} options - { expiryDays, machineId, username, allowedTools }
-     * @returns {string} License key
+     * @returns {string} License key (compact)
      */
     generateKey(options = {}) {
         const {
@@ -83,31 +88,36 @@ class LicenseManager {
             allowedTools = ['nohu-tool'] // Mặc định chỉ cho phép NOHU tool
         } = options;
 
-        const now = Date.now();
-        const expiry = expiryDays === -1 ? -1 : now + (expiryDays * 24 * 60 * 60 * 1000);
+        const now = Math.floor(Date.now() / 1000); // Unix timestamp in seconds
+        const expiry = expiryDays === -1 ? -1 : now + (expiryDays * 24 * 60 * 60);
 
-        const data = {
-            username,
-            machineId,
-            expiry,
-            created: now,
-            allowedTools // Danh sách tools được phép sử dụng
+        // Compact license data - minimal field names
+        const licenseData = {
+            u: username,
+            m: machineId,
+            e: expiry,
+            t: allowedTools && allowedTools.length > 0 ? allowedTools : ['nohu-tool'] // Store all allowed tools as array
         };
 
-        const dataString = JSON.stringify(data);
-        const signature = crypto
-            .createHmac('sha256', this.secretKey)
-            .update(dataString)
-            .digest('hex');
+        const dataString = JSON.stringify(licenseData);
 
-        // Format: BASE64(data).SIGNATURE
-        const key = Buffer.from(dataString).toString('base64') + '.' + signature;
+        // Create signature and use only first 16 chars (128-bit) for compactness
+        const fullSignature = crypto.createHmac('sha256', this.secretKey).update(dataString).digest('hex');
+        const shortSignature = fullSignature.substring(0, 16);
 
-        return key;
+        // Use URL-safe base64 encoding (replace +/ with -_)
+        const base64Data = Buffer.from(dataString).toString('base64')
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
+
+        const licenseKey = base64Data + '.' + shortSignature;
+
+        return licenseKey;
     }
 
     /**
-     * Validate license key
+     * Validate license key (compact format)
      * @param {string} key - License key
      * @returns {Object} { valid, message, data }
      */
@@ -117,6 +127,34 @@ class LicenseManager {
                 return { valid: false, message: 'Định dạng key không hợp lệ' };
             }
 
+            // Try new compact format first (BASE64.SIGNATURE)
+            if (key.includes('.')) {
+                const parts = key.split('.');
+                if (parts.length === 2) {
+                    return this._validateKeyCompact(key);
+                }
+            }
+
+            // Fallback: try old V1 format
+            if (key.startsWith('V1:')) {
+                return this._validateKeyLegacyV1(key);
+            }
+
+            return { valid: false, message: 'Định dạng key không hợp lệ' };
+
+        } catch (error) {
+            return {
+                valid: false,
+                message: 'Định dạng key không hợp lệ: ' + error.message
+            };
+        }
+    }
+
+    /**
+     * Validate compact format key (BASE64.SIGNATURE)
+     */
+    _validateKeyCompact(key) {
+        try {
             const parts = key.split('.');
             if (parts.length !== 2) {
                 return { valid: false, message: 'Định dạng key không hợp lệ' };
@@ -124,49 +162,49 @@ class LicenseManager {
 
             const [dataBase64, signature] = parts;
 
+            // Decode base64 (handle URL-safe encoding)
+            const urlSafeData = dataBase64
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');
+
+            // Add padding if needed
+            const padding = (4 - (urlSafeData.length % 4)) % 4;
+            const paddedData = urlSafeData + '='.repeat(padding);
+
+            const dataString = Buffer.from(paddedData, 'base64').toString('utf8');
+            const data = JSON.parse(dataString);
+
             // Verify signature
-            const dataString = Buffer.from(dataBase64, 'base64').toString('utf8');
             const expectedSignature = crypto
                 .createHmac('sha256', this.secretKey)
                 .update(dataString)
-                .digest('hex');
+                .digest('hex')
+                .substring(0, 16);
 
             if (signature !== expectedSignature) {
                 return { valid: false, message: 'Key không hợp lệ - Đã bị chỉnh sửa' };
             }
 
-            const data = JSON.parse(dataString);
+            // Check expiry (data.e is in seconds)
+            const expiryMs = data.e === -1 ? -1 : data.e * 1000;
+            const now = Date.now();
 
-            // Check expiry
-            if (data.expiry !== -1 && Date.now() > data.expiry) {
-                const expiryDate = new Date(data.expiry).toLocaleDateString('vi-VN');
+            if (expiryMs !== -1 && now > expiryMs) {
+                const expiryDate = new Date(expiryMs).toLocaleDateString('vi-VN');
                 return {
                     valid: false,
                     message: `Bản quyền đã hết hạn vào ngày ${expiryDate}`,
-                    data
+                    data: { expiry: expiryMs }
                 };
-            }
-
-            // Check machine binding
-            if (data.machineId) {
-                const currentMachineId = this.getMachineId();
-                if (data.machineId !== currentMachineId) {
-                    return {
-                        valid: false,
-                        message: 'Bản quyền này chỉ hoạt động trên máy tính khác',
-                        data
-                    };
-                }
             }
 
             // Calculate remaining time
             let remainingDays = -1;
             let remainingTime = null;
-            if (data.expiry !== -1) {
-                const msRemaining = data.expiry - Date.now();
+            if (expiryMs !== -1) {
+                const msRemaining = expiryMs - now;
                 remainingDays = Math.ceil(msRemaining / (24 * 60 * 60 * 1000));
 
-                // Calculate detailed time for display
                 const days = Math.floor(msRemaining / (24 * 60 * 60 * 1000));
                 const hours = Math.floor((msRemaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
                 const minutes = Math.floor((msRemaining % (60 * 60 * 1000)) / (60 * 1000));
@@ -179,10 +217,96 @@ class LicenseManager {
                 valid: true,
                 message: 'Bản quyền hợp lệ',
                 data: {
-                    ...data,
+                    username: data.u,
+                    machineId: data.m,
+                    expiry: expiryMs,
+                    created: now,
                     remainingDays,
                     remainingTime,
-                    isLifetime: data.expiry === -1
+                    isLifetime: expiryMs === -1,
+                    allowedTools: Array.isArray(data.t) ? data.t : (data.t ? [data.t] : ['nohu-tool'])
+                }
+            };
+
+        } catch (error) {
+            return {
+                valid: false,
+                message: 'Định dạng key không hợp lệ: ' + error.message
+            };
+        }
+    }
+
+    /**
+     * Validate legacy V1 format (V1:EXPIRY:MACHINE:TOOLS:SIGNATURE)
+     */
+    _validateKeyLegacyV1(key) {
+        try {
+            const parts = key.split(':');
+            if (parts.length !== 5 || parts[0] !== 'V1') {
+                return { valid: false, message: 'Định dạng key không hợp lệ' };
+            }
+
+            const [version, expiryStr, machineHash, toolByteStr, signature] = parts;
+
+            // Verify signature
+            const dataString = `${version}:${expiryStr}:${machineHash}:${toolByteStr}`;
+            const expectedSignature = crypto
+                .createHmac('sha256', this.secretKey)
+                .update(dataString)
+                .digest('hex')
+                .substring(0, 8);
+
+            if (signature !== expectedSignature) {
+                return { valid: false, message: 'Key không hợp lệ - Đã bị chỉnh sửa' };
+            }
+
+            const expiry = parseInt(expiryStr) * 1000; // Convert back to milliseconds
+            const now = Date.now();
+
+            // Check expiry
+            if (expiry !== -1000 && now > expiry) {
+                const expiryDate = new Date(expiry).toLocaleDateString('vi-VN');
+                return {
+                    valid: false,
+                    message: `Bản quyền đã hết hạn vào ngày ${expiryDate}`,
+                    data: { expiry }
+                };
+            }
+
+            // Decode tools from bitmask
+            const toolMap = { 1: 'nohu-tool', 2: 'vip-tool', 4: 'sms-tool' };
+            const toolBits = parseInt(toolByteStr, 16);
+            const allowedTools = [];
+            for (const [bit, tool] of Object.entries(toolMap)) {
+                if (toolBits & parseInt(bit)) allowedTools.push(tool);
+            }
+
+            // Calculate remaining time
+            let remainingDays = -1;
+            let remainingTime = null;
+            if (expiry !== -1000) {
+                const msRemaining = expiry - now;
+                remainingDays = Math.ceil(msRemaining / (24 * 60 * 60 * 1000));
+
+                const days = Math.floor(msRemaining / (24 * 60 * 60 * 1000));
+                const hours = Math.floor((msRemaining % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+                const minutes = Math.floor((msRemaining % (60 * 60 * 1000)) / (60 * 1000));
+                const seconds = Math.floor((msRemaining % (60 * 1000)) / 1000);
+
+                remainingTime = { days, hours, minutes, seconds, total: msRemaining };
+            }
+
+            return {
+                valid: true,
+                message: 'Bản quyền hợp lệ',
+                data: {
+                    machineId: machineHash !== '00000000' ? machineHash : null,
+                    expiry,
+                    created: now,
+                    remainingDays,
+                    remainingTime,
+                    isLifetime: expiry === -1000,
+                    allowedTools: allowedTools.length > 0 ? allowedTools : ['nohu-tool']
                 }
             };
 
@@ -253,7 +377,30 @@ class LicenseManager {
     }
 
     /**
+     * Auto-cleanup expired license on startup
+     * Runs once when license manager is initialized
+     */
+    autoCleanupExpired() {
+        try {
+            const key = this.loadLicense();
+            if (!key) return;
+
+            const validation = this.validateKey(key);
+
+            // If license is expired, remove it
+            if (!validation.valid && validation.message && validation.message.includes('hết hạn')) {
+                console.log('🧹 Auto-cleanup: Removing expired license...');
+                this.removeLicense();
+                console.log('✅ Expired license removed');
+            }
+        } catch (error) {
+            console.warn('⚠️ Auto-cleanup error:', error.message);
+        }
+    }
+
+    /**
      * Kiểm tra license hiện tại
+     * Tự động xóa key nếu hết hạn
      */
     checkLicense() {
         // Bypass license check for admin/master version
@@ -283,7 +430,21 @@ class LicenseManager {
             };
         }
 
-        return this.validateKey(key);
+        const validation = this.validateKey(key);
+
+        // Auto-delete expired license
+        if (!validation.valid && validation.message && validation.message.includes('hết hạn')) {
+            console.log('⏰ License expired - Auto-removing...');
+            this.removeLicense();
+            return {
+                valid: false,
+                message: 'Bản quyền đã hết hạn. Vui lòng kích hoạt bản quyền mới.',
+                needActivation: true,
+                expired: true
+            };
+        }
+
+        return validation;
     }
 
     /**

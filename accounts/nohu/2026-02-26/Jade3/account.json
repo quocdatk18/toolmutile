@@ -1,0 +1,25 @@
+{
+  "username": "Jade3",
+  "password": "73f0vualq7wc",
+  "withdrawPassword": "1",
+  "fullname": "DINH THI GIA HANH NGHI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH PHUOC",
+    "accountNumber": "9686687660001122925",
+    "accountHolder": "DINH THI GIA HANH NGHI"
+  },
+  "registeredAt": "2026-02-26T09:48:03.362Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:48:03.362Z",
+  "bankVerified": false
+}

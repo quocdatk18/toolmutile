@@ -1,0 +1,25 @@
+{
+  "username": "Pixel69",
+  "password": "uejfnuw136",
+  "withdrawPassword": "1",
+  "fullname": "CAO MINH THU GIA TRANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HUNG YEN",
+    "accountNumber": "9686687660001122249",
+    "accountHolder": "CAO MINH THU GIA TRANG"
+  },
+  "registeredAt": "2026-02-26T07:44:55.798Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:44:55.798Z",
+  "bankVerified": false
+}

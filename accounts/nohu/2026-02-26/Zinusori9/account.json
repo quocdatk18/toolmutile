@@ -1,0 +1,25 @@
+{
+  "username": "Zinusori9",
+  "password": "yrl1fex56",
+  "withdrawPassword": "1",
+  "fullname": "PHAN GIA LINH BAO ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TUYÊN QUANG",
+    "accountNumber": "9686687660001122253",
+    "accountHolder": "PHAN GIA LINH BAO ANH"
+  },
+  "registeredAt": "2026-02-26T07:53:12.038Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:53:12.038Z",
+  "bankVerified": false
+}

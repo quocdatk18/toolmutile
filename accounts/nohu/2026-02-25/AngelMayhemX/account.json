@@ -1,0 +1,25 @@
+{
+  "username": "AngelMayhemX",
+  "password": "0rtrx76f",
+  "withdrawPassword": "1",
+  "fullname": "TRAN HUU THANH TRONG NGHIA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CAO BANG",
+    "accountNumber": "9686687660001117776",
+    "accountHolder": "TRAN HUU THANH TRONG NGHIA"
+  },
+  "registeredAt": "2026-02-25T07:27:18.749Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T07:27:18.749Z",
+  "bankVerified": false
+}

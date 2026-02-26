@@ -1,0 +1,25 @@
+{
+  "username": "ImmortalSwiftMa",
+  "password": "jik99cet",
+  "withdrawPassword": "1",
+  "fullname": "TRAN MINH THANH BAO CHAU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAM DONG",
+    "accountNumber": "9686687660001118079",
+    "accountHolder": "TRAN MINH THANH BAO CHAU"
+  },
+  "registeredAt": "2026-02-25T09:13:09.853Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T09:13:09.853Z",
+  "bankVerified": false
+}

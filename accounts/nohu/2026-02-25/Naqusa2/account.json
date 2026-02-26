@@ -1,0 +1,21 @@
+{
+  "username": "Naqusa2",
+  "password": "38onbs6k",
+  "withdrawPassword": "1",
+  "fullname": "HOANG BAO NHI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "QUANG NGAI",
+    "accountNumber": "9686687660001117504",
+    "accountHolder": "HOANG BAO NHI"
+  },
+  "registeredAt": "2026-02-25T05:50:52.642Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    "Pkwin"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

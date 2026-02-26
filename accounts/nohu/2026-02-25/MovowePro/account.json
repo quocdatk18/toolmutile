@@ -1,0 +1,25 @@
+{
+  "username": "MovowePro",
+  "password": "d54f8xte4",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN A THANH SON",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAM DONG",
+    "accountNumber": "9686687660001116190",
+    "accountHolder": "NGUYEN A THANH SON"
+  },
+  "registeredAt": "2026-02-24T22:51:09.250Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:51:09.250Z",
+  "bankVerified": false
+}

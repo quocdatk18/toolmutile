@@ -1,0 +1,25 @@
+{
+  "username": "LordOcean69",
+  "password": "700j9nvb",
+  "withdrawPassword": "1",
+  "fullname": "DANG HUU QUOC BAO THINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAM DONG",
+    "accountNumber": "9686687660001122933",
+    "accountHolder": "DANG HUU QUOC BAO THINH"
+  },
+  "registeredAt": "2026-02-26T09:51:16.766Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:51:16.766Z",
+  "bankVerified": true
+}

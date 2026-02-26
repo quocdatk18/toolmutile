@@ -1,0 +1,25 @@
+{
+  "username": "InfernoCyberPro",
+  "password": "v66gjntc",
+  "withdrawPassword": "1",
+  "fullname": "BUI ANH TUAN KIET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SOCTRANG",
+    "accountNumber": "9686687660001115832",
+    "accountHolder": "BUI ANH TUAN KIET"
+  },
+  "registeredAt": "2026-02-24T18:30:58.557Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:30:58.557Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "NovaBorn2",
+  "password": "a2cqvjlw70",
+  "withdrawPassword": "1",
+  "fullname": "DANG MINH KIET GIA LONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SOCTRANG",
+    "accountNumber": "9686687660001122258",
+    "accountHolder": "DANG MINH KIET GIA LONG"
+  },
+  "registeredAt": "2026-02-26T09:01:29.399Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:01:29.399Z",
+  "bankVerified": false
+}

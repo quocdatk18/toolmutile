@@ -1,0 +1,25 @@
+{
+  "username": "PlatinumMind2",
+  "password": "ifnw0i6ubwc",
+  "withdrawPassword": "1",
+  "fullname": "BUI MINH NHAT NAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "QUANG TRI",
+    "accountNumber": "963012001192799",
+    "accountHolder": "BUI MINH NHAT NAM"
+  },
+  "registeredAt": "2026-02-24T22:19:31.311Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:19:31.311Z",
+  "bankVerified": false
+}

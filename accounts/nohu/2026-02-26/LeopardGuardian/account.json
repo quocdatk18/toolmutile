@@ -1,0 +1,25 @@
+{
+  "username": "LeopardGuardian",
+  "password": "ows557g2pdr",
+  "withdrawPassword": "1",
+  "fullname": "PHAM QUOC HUY KHANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC KAN",
+    "accountNumber": "9686687660001122134",
+    "accountHolder": "PHAM QUOC HUY KHANG"
+  },
+  "registeredAt": "2026-02-26T06:48:36.701Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:48:36.701Z",
+  "bankVerified": false
+}

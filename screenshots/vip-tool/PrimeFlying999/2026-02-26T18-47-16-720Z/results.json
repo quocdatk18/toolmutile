@@ -1,0 +1,36 @@
+[
+  {
+    "site": "F8BET",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame 'D7A9D88419A604AFFAC7FACB70C788D6'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "SHBET",
+    "register": {
+      "success": false,
+      "error": "Attempted to use detached Frame '22DA182AECE1C86CD7421AABB32C4DDC'."
+    },
+    "addBank": {
+      "success": false,
+      "skipped": true,
+      "message": "Skipped - register failed"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  }
+]

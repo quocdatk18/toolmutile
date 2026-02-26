@@ -1,0 +1,25 @@
+{
+  "username": "SuperLord13",
+  "password": "3pnn3t5pz8",
+  "withdrawPassword": "1",
+  "fullname": "PHAM DUC MINH QUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH PHUOC",
+    "accountNumber": "9686687660001115827",
+    "accountHolder": "PHAM DUC MINH QUAN"
+  },
+  "registeredAt": "2026-02-24T18:29:31.340Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:29:31.340Z",
+  "bankVerified": false
+}

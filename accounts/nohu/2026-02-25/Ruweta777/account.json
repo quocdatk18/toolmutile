@@ -1,0 +1,25 @@
+{
+  "username": "Ruweta777",
+  "password": "x6txipvhn0g",
+  "withdrawPassword": "1",
+  "fullname": "DO VAN GIA HAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DONG THAP",
+    "accountNumber": "9686687660001116198",
+    "accountHolder": "DO VAN GIA HAO"
+  },
+  "registeredAt": "2026-02-24T22:58:17.099Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:58:17.099Z",
+  "bankVerified": false
+}

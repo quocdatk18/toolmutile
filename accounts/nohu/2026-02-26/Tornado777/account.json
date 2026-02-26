@@ -1,0 +1,25 @@
+{
+  "username": "Tornado777",
+  "password": "zdfgkphs53r",
+  "withdrawPassword": "1",
+  "fullname": "LAM BAO TRAM GIA ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH PHUOC",
+    "accountNumber": "9686687660001122221",
+    "accountHolder": "LAM BAO TRAM GIA ANH"
+  },
+  "registeredAt": "2026-02-26T07:40:52.153Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:40:52.153Z",
+  "bankVerified": false
+}

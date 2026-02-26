@@ -1,0 +1,25 @@
+{
+  "username": "UnicornLightnin",
+  "password": "a762osymk7w",
+  "withdrawPassword": "1",
+  "fullname": "BUI BA GIA KHANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "VINH PHUC",
+    "accountNumber": "9686687660001117272",
+    "accountHolder": "BUI BA GIA KHANH"
+  },
+  "registeredAt": "2026-02-25T04:34:04.135Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T04:34:04.135Z",
+  "bankVerified": true
+}

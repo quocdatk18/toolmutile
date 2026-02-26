@@ -1,0 +1,25 @@
+{
+  "username": "KrakenCosmic99",
+  "password": "426qol4u",
+  "withdrawPassword": "1",
+  "fullname": "TRAN QUOC ANH DUC HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "VINH LONG",
+    "accountNumber": "9686687660001122217",
+    "accountHolder": "TRAN QUOC ANH DUC HUY"
+  },
+  "registeredAt": "2026-02-26T07:27:31.604Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:27:31.604Z",
+  "bankVerified": false
+}

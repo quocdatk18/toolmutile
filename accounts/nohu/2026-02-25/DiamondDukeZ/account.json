@@ -1,0 +1,25 @@
+{
+  "username": "DiamondDukeZ",
+  "password": "56hi0hfl0",
+  "withdrawPassword": "1",
+  "fullname": "DOAN MINH QUAN ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "PHU THO",
+    "accountNumber": "9686687660001119299",
+    "accountHolder": "DOAN MINH QUAN ANH"
+  },
+  "registeredAt": "2026-02-25T15:54:09.557Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T15:54:09.557Z",
+  "bankVerified": false
+}

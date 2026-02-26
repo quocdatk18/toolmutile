@@ -1,0 +1,25 @@
+{
+  "username": "SogabileMax",
+  "password": "t8v36wbuem7c",
+  "withdrawPassword": "1",
+  "fullname": "TRUONG BAO KIET LAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DAK NONG",
+    "accountNumber": "9686687660001122146",
+    "accountHolder": "TRUONG BAO KIET LAM"
+  },
+  "registeredAt": "2026-02-26T06:52:08.684Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:52:08.684Z",
+  "bankVerified": true
+}

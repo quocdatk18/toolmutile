@@ -1,0 +1,25 @@
+{
+  "username": "PhoenixWraith21",
+  "password": "e18ck4d06a0",
+  "withdrawPassword": "1",
+  "fullname": "LE CONG MINH TRI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA TAY",
+    "accountNumber": "9686687660001117353",
+    "accountHolder": "LE CONG MINH TRI"
+  },
+  "registeredAt": "2026-02-25T05:04:06.154Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T05:04:06.154Z",
+  "bankVerified": false
+}

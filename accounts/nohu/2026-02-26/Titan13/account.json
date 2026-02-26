@@ -1,0 +1,25 @@
+{
+  "username": "Titan13",
+  "password": "e3cq1lpyvs",
+  "withdrawPassword": "1",
+  "fullname": "DINH GIA HANH NGHI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SON LA",
+    "accountNumber": "9686687660001123463",
+    "accountHolder": "DINH GIA HANH NGHI"
+  },
+  "registeredAt": "2026-02-26T12:29:19.390Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:29:19.390Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "AlphaApexX",
+  "password": "hsw790mouw4",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN DUC MINH GIA BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SON LA",
+    "accountNumber": "9686687660001117775",
+    "accountHolder": "NGUYEN DUC MINH GIA BAO"
+  },
+  "registeredAt": "2026-02-25T07:26:58.916Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T07:26:58.916Z",
+  "bankVerified": false
+}

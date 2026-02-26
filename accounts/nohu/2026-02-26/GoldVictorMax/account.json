@@ -1,0 +1,25 @@
+{
+  "username": "GoldVictorMax",
+  "password": "98xiq2j0i5",
+  "withdrawPassword": "1",
+  "fullname": "NGO MINH TAM ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BEN TRE",
+    "accountNumber": "9686687660001123461",
+    "accountHolder": "NGO MINH TAM ANH"
+  },
+  "registeredAt": "2026-02-26T12:29:02.818Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:29:02.818Z",
+  "bankVerified": false
+}

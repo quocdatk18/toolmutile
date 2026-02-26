@@ -1,0 +1,25 @@
+{
+  "username": "InfernoBold2",
+  "password": "mcvi490a",
+  "withdrawPassword": "1",
+  "fullname": "DANG A QUANG KHA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "YEN BAI",
+    "accountNumber": "9686687660001116531",
+    "accountHolder": "DANG A QUANG KHA"
+  },
+  "registeredAt": "2026-02-25T01:13:56.233Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T01:13:56.233Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "EagleStellarZ",
+  "password": "c0xa0wjdi",
+  "withdrawPassword": "1",
+  "fullname": "DO CONG GIA BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SOCTRANG",
+    "accountNumber": "9686687660001117360",
+    "accountHolder": "DO CONG GIA BAO"
+  },
+  "registeredAt": "2026-02-25T05:10:35.793Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T05:10:35.793Z",
+  "bankVerified": true
+}

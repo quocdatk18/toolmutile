@@ -1,0 +1,24 @@
+{
+  "username": "FluxRage9",
+  "password": "0p7fho2r0376",
+  "withdrawPassword": "111222",
+  "fullname": "nguyen quoc dat",
+  "email": "t533z@gmail.com",
+  "phone": "0993942278",
+  "registeredAt": "2026-02-26T13:59:52.832Z",
+  "firstSite": "MB66",
+  "sites": [
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Sơn La",
+    "accountNumber": "340714072",
+    "accountHolder": "nguyen quoc dat"
+  }
+}

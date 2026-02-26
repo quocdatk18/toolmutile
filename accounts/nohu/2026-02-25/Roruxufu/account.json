@@ -1,0 +1,25 @@
+{
+  "username": "Roruxufu",
+  "password": "xp94n66t4hkk",
+  "withdrawPassword": "1",
+  "fullname": "HOANG GIA A NHAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH DINH",
+    "accountNumber": "9686687660001116535",
+    "accountHolder": "HOANG GIA A NHAT"
+  },
+  "registeredAt": "2026-02-25T01:17:18.777Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T01:17:18.777Z",
+  "bankVerified": false
+}

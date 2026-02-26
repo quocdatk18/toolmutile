@@ -1,0 +1,25 @@
+{
+  "username": "EarthSamurai13",
+  "password": "4s3x9ck1",
+  "withdrawPassword": "1",
+  "fullname": "CHAU GIA BAO VY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH PHUOC",
+    "accountNumber": "9686687660001122133",
+    "accountHolder": "CHAU GIA BAO VY"
+  },
+  "registeredAt": "2026-02-26T06:47:00.207Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:47:00.207Z",
+  "bankVerified": false
+}

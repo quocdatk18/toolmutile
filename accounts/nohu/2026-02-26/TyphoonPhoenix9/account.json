@@ -1,0 +1,25 @@
+{
+  "username": "TyphoonPhoenix9",
+  "password": "6i0y9gkf",
+  "withdrawPassword": "1",
+  "fullname": "PHAM QUOC HUY KHANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SOCTRANG",
+    "accountNumber": "9686687660001123457",
+    "accountHolder": "PHAM QUOC HUY KHANG"
+  },
+  "registeredAt": "2026-02-26T12:28:17.539Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:28:17.539Z",
+  "bankVerified": false
+}

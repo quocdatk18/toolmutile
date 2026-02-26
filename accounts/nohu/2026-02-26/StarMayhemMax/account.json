@@ -1,0 +1,25 @@
+{
+  "username": "StarMayhemMax",
+  "password": "290wp3ugmq",
+  "withdrawPassword": "1",
+  "fullname": "CHAU MINH YEN GIA VY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "KIEN GIANG",
+    "accountNumber": "9686687660001122220",
+    "accountHolder": "CHAU MINH YEN GIA VY"
+  },
+  "registeredAt": "2026-02-26T07:30:13.250Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:30:13.250Z",
+  "bankVerified": true
+}

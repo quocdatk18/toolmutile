@@ -1,0 +1,25 @@
+{
+  "username": "Wurudo3",
+  "password": "z753ymm9ik",
+  "withdrawPassword": "1",
+  "fullname": "TRAN HUU DUC THIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TIEN GIANG",
+    "accountNumber": "9686687660001117268",
+    "accountHolder": "TRAN HUU DUC THIEN"
+  },
+  "registeredAt": "2026-02-25T04:31:57.878Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T04:31:57.878Z",
+  "bankVerified": false
+}

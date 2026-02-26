@@ -1,0 +1,43 @@
+{
+  "username": "BronzeSnowMax",
+  "password": "cxtvt66un48",
+  "withdrawPassword": "1",
+  "fullname": "TRAN GIA MINH KHANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC NINH",
+    "accountNumber": "9686687660001115823",
+    "accountHolder": "TRAN GIA MINH KHANG"
+  },
+  "registeredAt": "2026-02-24T18:23:10.018Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    },
+    {
+      "name": "33WIN"
+    },
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:23:10.018Z",
+  "bankVerified": false
+}

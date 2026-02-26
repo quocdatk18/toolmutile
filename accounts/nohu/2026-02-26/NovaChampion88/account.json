@@ -1,0 +1,25 @@
+{
+  "username": "NovaChampion88",
+  "password": "ix09oqhio",
+  "withdrawPassword": "1",
+  "fullname": "MAI GIA HAN BAO NHI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA TINH",
+    "accountNumber": "9686687660001122248",
+    "accountHolder": "MAI GIA HAN BAO NHI"
+  },
+  "registeredAt": "2026-02-26T07:44:41.080Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:44:41.080Z",
+  "bankVerified": true
+}

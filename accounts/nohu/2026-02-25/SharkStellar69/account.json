@@ -1,0 +1,25 @@
+{
+  "username": "SharkStellar69",
+  "password": "zn8krs96nt",
+  "withdrawPassword": "1",
+  "fullname": "BUI GIA A SON",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BA RIA VUNG TAU",
+    "accountNumber": "9686687660001116532",
+    "accountHolder": "BUI GIA A SON"
+  },
+  "registeredAt": "2026-02-25T01:16:08.150Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T01:16:08.150Z",
+  "bankVerified": false
+}

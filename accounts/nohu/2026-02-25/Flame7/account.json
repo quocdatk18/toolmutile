@@ -1,0 +1,25 @@
+{
+  "username": "Flame7",
+  "password": "p2r9ibgy777",
+  "withdrawPassword": "1",
+  "fullname": "DANG QUANG MINH TRI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DONG THAP",
+    "accountNumber": "9686687660001119297",
+    "accountHolder": "DANG QUANG MINH TRI"
+  },
+  "registeredAt": "2026-02-25T15:52:41.282Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T15:52:41.282Z",
+  "bankVerified": true
+}

@@ -1,0 +1,25 @@
+{
+  "username": "SkyNitro3",
+  "password": "6ndhuj9akg2s",
+  "withdrawPassword": "1",
+  "fullname": "BUI THI KIM THANH TRUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THAI BINH",
+    "accountNumber": "9686687660001118324",
+    "accountHolder": "BUI THI KIM THANH TRUC"
+  },
+  "registeredAt": "2026-02-25T11:20:29.504Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T11:20:29.504Z",
+  "bankVerified": false
+}

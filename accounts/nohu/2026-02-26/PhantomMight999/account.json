@@ -1,0 +1,37 @@
+{
+  "username": "PhantomMight999",
+  "password": "55b51gnd7bhe",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN VAN TRONG NGHIA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MBBank",
+    "branch": "TIEN GIANG",
+    "accountNumber": "04434512000",
+    "accountHolder": "NGUYEN VAN TRONG NGHIA"
+  },
+  "registeredAt": "2026-02-26T16:09:57.190Z",
+  "firstSite": "NOHU",
+  "sites": [
+    {
+      "name": "Go99"
+    },
+    {
+      "name": "NOHU"
+    },
+    {
+      "name": "TT88"
+    },
+    {
+      "name": "MMOO"
+    },
+    {
+      "name": "789P"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T16:09:57.190Z",
+  "bankVerified": false
+}

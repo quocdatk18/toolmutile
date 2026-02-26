@@ -1,0 +1,25 @@
+{
+  "username": "JaguarSpecterX",
+  "password": "4cfn85uusn8",
+  "withdrawPassword": "1",
+  "fullname": "CAO BAO TRAM ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DAK NONG",
+    "accountNumber": "9686687660001122151",
+    "accountHolder": "CAO BAO TRAM ANH"
+  },
+  "registeredAt": "2026-02-26T06:58:12.756Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:58:12.756Z",
+  "bankVerified": false
+}

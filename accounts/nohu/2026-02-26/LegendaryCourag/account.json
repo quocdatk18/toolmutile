@@ -1,0 +1,25 @@
+{
+  "username": "LegendaryCourag",
+  "password": "9jsfwta44p",
+  "withdrawPassword": "1",
+  "fullname": "BUI GIA HUY QUANG MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HUNG YEN",
+    "accountNumber": "9686687660001122257",
+    "accountHolder": "BUI GIA HUY QUANG MINH"
+  },
+  "registeredAt": "2026-02-26T09:01:11.633Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:01:11.633Z",
+  "bankVerified": false
+}

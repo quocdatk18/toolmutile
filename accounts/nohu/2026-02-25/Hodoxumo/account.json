@@ -1,0 +1,25 @@
+{
+  "username": "Hodoxumo",
+  "password": "wyp1zkbe8f",
+  "withdrawPassword": "1",
+  "fullname": "LE DINH BAO KHA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAU GIANG",
+    "accountNumber": "9686687660001116193",
+    "accountHolder": "LE DINH BAO KHA"
+  },
+  "registeredAt": "2026-02-24T22:51:26.619Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:51:26.619Z",
+  "bankVerified": false
+}

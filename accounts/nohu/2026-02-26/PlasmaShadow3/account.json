@@ -1,0 +1,25 @@
+{
+  "username": "PlasmaShadow3",
+  "password": "4627vobx",
+  "withdrawPassword": "1",
+  "fullname": "VO QUOC BAO ANH TUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BEN TRE",
+    "accountNumber": "9686687660001122259",
+    "accountHolder": "VO QUOC BAO ANH TUAN"
+  },
+  "registeredAt": "2026-02-26T09:02:55.017Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:02:55.017Z",
+  "bankVerified": false
+}

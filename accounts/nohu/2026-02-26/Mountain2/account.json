@@ -1,0 +1,25 @@
+{
+  "username": "Mountain2",
+  "password": "3xdsv9l5o6",
+  "withdrawPassword": "1",
+  "fullname": "HOANG GIA BAO DUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC GIANG",
+    "accountNumber": "9686687660001123458",
+    "accountHolder": "HOANG GIA BAO DUC"
+  },
+  "registeredAt": "2026-02-26T12:29:46.738Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:29:46.738Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "Moganaka7",
+  "password": "2ruqq6iv",
+  "withdrawPassword": "1",
+  "fullname": "VO DINH MINH TRIET HUU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAI CHAU",
+    "accountNumber": "9686687660001122934",
+    "accountHolder": "VO DINH MINH TRIET HUU"
+  },
+  "registeredAt": "2026-02-26T10:30:33.996Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T10:30:33.996Z",
+  "bankVerified": false
+}

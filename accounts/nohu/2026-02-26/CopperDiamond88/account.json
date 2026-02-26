@@ -1,0 +1,25 @@
+{
+  "username": "CopperDiamond88",
+  "password": "j5ske87g3v",
+  "withdrawPassword": "1",
+  "fullname": "VU MINH NGOC GIA LINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "QUANG NGAI",
+    "accountNumber": "9686687660001122228",
+    "accountHolder": "VU MINH NGOC GIA LINH"
+  },
+  "registeredAt": "2026-02-26T07:43:54.033Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:43:54.033Z",
+  "bankVerified": false
+}

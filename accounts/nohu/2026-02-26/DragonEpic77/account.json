@@ -1,0 +1,25 @@
+{
+  "username": "DragonEpic77",
+  "password": "7a0e9zzysot",
+  "withdrawPassword": "1",
+  "fullname": "VU THI BAO ANH TAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "PHU YEN",
+    "accountNumber": "9686687660001122919",
+    "accountHolder": "VU THI BAO ANH TAM"
+  },
+  "registeredAt": "2026-02-26T09:43:37.943Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:43:37.943Z",
+  "bankVerified": true
+}

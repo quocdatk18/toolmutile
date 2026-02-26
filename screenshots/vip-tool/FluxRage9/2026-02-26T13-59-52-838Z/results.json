@@ -1,0 +1,62 @@
+[
+  {
+    "site": "SHBET",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "NEW88",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  },
+  {
+    "site": "MB66",
+    "register": {
+      "success": true,
+      "message": "Register completed successfully",
+      "page": {
+        "_isDragging": false,
+        "_timeoutSettings": {}
+      }
+    },
+    "addBank": {
+      "success": true,
+      "message": "Page reloaded - bank added successfully"
+    },
+    "checkPromo": {
+      "success": true,
+      "skipped": true,
+      "message": "Skipped - use separate tab"
+    }
+  }
+]

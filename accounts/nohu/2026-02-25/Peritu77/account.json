@@ -1,0 +1,25 @@
+{
+  "username": "Peritu77",
+  "password": "539lf2d7bkv2",
+  "withdrawPassword": "1",
+  "fullname": "DANG THI THANH BICH NGOC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HUNG YEN",
+    "accountNumber": "9686687660001118323",
+    "accountHolder": "DANG THI THANH BICH NGOC"
+  },
+  "registeredAt": "2026-02-25T11:18:59.827Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T11:18:59.827Z",
+  "bankVerified": false
+}

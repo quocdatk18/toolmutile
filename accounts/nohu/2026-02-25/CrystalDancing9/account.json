@@ -1,0 +1,25 @@
+{
+  "username": "CrystalDancing9",
+  "password": "0isfxs8zlo",
+  "withdrawPassword": "1",
+  "fullname": "DO MINH CHAU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BEN TRE",
+    "accountNumber": "9686687660001117502",
+    "accountHolder": "DO MINH CHAU"
+  },
+  "registeredAt": "2026-02-25T05:51:51.789Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T05:51:51.789Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "LordSolid77",
+  "password": "t7lrpq8r6w7",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN VAN TRONG NGHIA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "NAM DINH",
+    "accountNumber": "9686687660001117351",
+    "accountHolder": "NGUYEN VAN TRONG NGHIA"
+  },
+  "registeredAt": "2026-02-25T05:01:52.704Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T05:01:52.704Z",
+  "bankVerified": false
+}

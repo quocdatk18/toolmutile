@@ -1,0 +1,25 @@
+{
+  "username": "Rowoviza9",
+  "password": "ded21o0f",
+  "withdrawPassword": "1",
+  "fullname": "DANG HUU GIA PHAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CAN THO",
+    "accountNumber": "9686687660001116196",
+    "accountHolder": "DANG HUU GIA PHAT"
+  },
+  "registeredAt": "2026-02-24T22:54:50.840Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:54:50.840Z",
+  "bankVerified": false
+}

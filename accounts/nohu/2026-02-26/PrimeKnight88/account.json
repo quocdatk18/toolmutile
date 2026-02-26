@@ -1,0 +1,25 @@
+{
+  "username": "PrimeKnight88",
+  "password": "1pm8rec6v",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN GIA BAO MINH KHANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH PHUOC",
+    "accountNumber": "9686687660001122216",
+    "accountHolder": "NGUYEN GIA BAO MINH KHANG"
+  },
+  "registeredAt": "2026-02-26T07:23:13.771Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:23:13.771Z",
+  "bankVerified": false
+}

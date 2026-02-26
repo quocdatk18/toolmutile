@@ -1,0 +1,14 @@
+{
+  "profileName": "qdat12dc (6)",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "okvipOtp",
+  "sites": [
+    "SC881",
+    "CM88",
+    "C168"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2026-02-26T17:19:24.240Z"
+}

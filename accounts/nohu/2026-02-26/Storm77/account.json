@@ -1,0 +1,25 @@
+{
+  "username": "Storm77",
+  "password": "7wbpcbv4",
+  "withdrawPassword": "1",
+  "fullname": "DINH MINH CHAU ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "NINH BINH",
+    "accountNumber": "9686687660001122149",
+    "accountHolder": "DINH MINH CHAU ANH"
+  },
+  "registeredAt": "2026-02-26T06:56:06.663Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:56:06.663Z",
+  "bankVerified": false
+}

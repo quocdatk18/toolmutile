@@ -1,0 +1,25 @@
+{
+  "username": "TornadoValor108",
+  "password": "yj5le2coq",
+  "withdrawPassword": "1",
+  "fullname": "PHAM THANH NGOC BAO NHI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAI PHONG",
+    "accountNumber": "9686687660001118081",
+    "accountHolder": "PHAM THANH NGOC BAO NHI"
+  },
+  "registeredAt": "2026-02-25T09:15:31.613Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T09:15:31.613Z",
+  "bankVerified": false
+}

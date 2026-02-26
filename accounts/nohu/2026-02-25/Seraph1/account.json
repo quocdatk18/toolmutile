@@ -1,0 +1,25 @@
+{
+  "username": "Seraph1",
+  "password": "el3aw914jn9",
+  "withdrawPassword": "1",
+  "fullname": "VU THANH A NHAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CA MAU",
+    "accountNumber": "9686687660001116199",
+    "accountHolder": "VU THANH A NHAN"
+  },
+  "registeredAt": "2026-02-24T22:55:00.779Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:55:00.779Z",
+  "bankVerified": true
+}

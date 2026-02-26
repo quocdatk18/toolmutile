@@ -1,0 +1,25 @@
+{
+  "username": "SamuraiChampion",
+  "password": "h9zbqgg5m5",
+  "withdrawPassword": "1",
+  "fullname": "LAM THI MINH NGUYET DAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SON LA",
+    "accountNumber": "9686687660001122918",
+    "accountHolder": "LAM THI MINH NGUYET DAO"
+  },
+  "registeredAt": "2026-02-26T09:42:44.772Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:42:44.772Z",
+  "bankVerified": false
+}

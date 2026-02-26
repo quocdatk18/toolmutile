@@ -1,0 +1,25 @@
+{
+  "username": "NeonLord999",
+  "password": "vnlyxcll3k2",
+  "withdrawPassword": "1",
+  "fullname": "MAI GIA NGAN ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CA MAU",
+    "accountNumber": "9686687660001122153",
+    "accountHolder": "MAI GIA NGAN ANH"
+  },
+  "registeredAt": "2026-02-26T06:59:52.517Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:59:52.517Z",
+  "bankVerified": false
+}

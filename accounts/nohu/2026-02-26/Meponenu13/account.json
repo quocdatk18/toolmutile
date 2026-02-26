@@ -1,0 +1,25 @@
+{
+  "username": "Meponenu13",
+  "password": "vmax27vk6nxb",
+  "withdrawPassword": "1",
+  "fullname": "CHAU THI GIA LINH NHIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "NGHE AN",
+    "accountNumber": "9686687660001122917",
+    "accountHolder": "CHAU THI GIA LINH NHIEN"
+  },
+  "registeredAt": "2026-02-26T09:40:19.199Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:40:19.199Z",
+  "bankVerified": true
+}

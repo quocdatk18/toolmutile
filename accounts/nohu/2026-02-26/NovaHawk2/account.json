@@ -1,0 +1,25 @@
+{
+  "username": "NovaHawk2",
+  "password": "87ywa2dvb",
+  "withdrawPassword": "1",
+  "fullname": "TRAN HUU PHUC GIA KIET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TPHCM",
+    "accountNumber": "9686687660001122939",
+    "accountHolder": "TRAN HUU PHUC GIA KIET"
+  },
+  "registeredAt": "2026-02-26T10:33:13.470Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T10:33:13.470Z",
+  "bankVerified": false
+}

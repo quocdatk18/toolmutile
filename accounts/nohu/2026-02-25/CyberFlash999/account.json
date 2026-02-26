@@ -1,0 +1,25 @@
+{
+  "username": "CyberFlash999",
+  "password": "x4ks6e7t90lu",
+  "withdrawPassword": "1",
+  "fullname": "LE HOANG GIA BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BEN TRE",
+    "accountNumber": "963012001192794",
+    "accountHolder": "LE HOANG GIA BAO"
+  },
+  "registeredAt": "2026-02-24T22:18:24.877Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:18:24.877Z",
+  "bankVerified": true
+}

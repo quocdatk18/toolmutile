@@ -1,0 +1,25 @@
+{
+  "username": "Lord21",
+  "password": "c4zqp7a7o4",
+  "withdrawPassword": "1",
+  "fullname": "PHAN GIA BAO KHANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TON DUC THANG",
+    "accountNumber": "9686687660001119300",
+    "accountHolder": "PHAN GIA BAO KHANG"
+  },
+  "registeredAt": "2026-02-25T15:54:12.330Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T15:54:12.330Z",
+  "bankVerified": false
+}

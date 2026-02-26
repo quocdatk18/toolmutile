@@ -1,0 +1,21 @@
+{
+  "username": "Turbo1",
+  "password": "r4k33gcmzrd",
+  "withdrawPassword": "1",
+  "fullname": "DANG CONG GIA BAO PHUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC NINH",
+    "accountNumber": "9686687660001117786",
+    "accountHolder": "DANG CONG GIA BAO PHUC"
+  },
+  "registeredAt": "2026-02-25T07:31:27.450Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    "Pkwin"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

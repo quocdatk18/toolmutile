@@ -1,0 +1,25 @@
+{
+  "username": "OceanGhostX",
+  "password": "96eg143wst18",
+  "withdrawPassword": "1",
+  "fullname": "PHAN NGOC BAO CHAU",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH DUONG",
+    "accountNumber": "9686687660001123459",
+    "accountHolder": "PHAN NGOC BAO CHAU"
+  },
+  "registeredAt": "2026-02-26T12:28:42.001Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:28:42.001Z",
+  "bankVerified": false
+}

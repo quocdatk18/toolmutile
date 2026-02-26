@@ -1,0 +1,25 @@
+{
+  "username": "HawkCopper777",
+  "password": "0wrnypb4o24",
+  "withdrawPassword": "1",
+  "fullname": "TRAN HUU GIA KIET",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "KHANH HOA",
+    "accountNumber": "9686687660001123454",
+    "accountHolder": "TRAN HUU GIA KIET"
+  },
+  "registeredAt": "2026-02-26T12:27:48.057Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:27:48.057Z",
+  "bankVerified": true
+}

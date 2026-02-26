@@ -1,0 +1,25 @@
+{
+  "username": "Legend13",
+  "password": "zojc8c26x1n",
+  "withdrawPassword": "1",
+  "fullname": "LE MINH TRIET GIA BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAI DUONG",
+    "accountNumber": "9686687660001122261",
+    "accountHolder": "LE MINH TRIET GIA BAO"
+  },
+  "registeredAt": "2026-02-26T09:02:26.450Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:02:26.450Z",
+  "bankVerified": false
+}

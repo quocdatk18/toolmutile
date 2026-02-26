@@ -1,0 +1,25 @@
+{
+  "username": "Gopotika",
+  "password": "20r06cw77g",
+  "withdrawPassword": "1",
+  "fullname": "LY BAO NGAN GIA MY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HO CHI MINH",
+    "accountNumber": "9686687660001122233",
+    "accountHolder": "LY BAO NGAN GIA MY"
+  },
+  "registeredAt": "2026-02-26T07:44:28.483Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:44:28.483Z",
+  "bankVerified": true
+}

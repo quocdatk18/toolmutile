@@ -1,0 +1,25 @@
+{
+  "username": "PhoenixDragon7",
+  "password": "2fni1j5ieof0",
+  "withdrawPassword": "1",
+  "fullname": "PHAM HOANG GIA HUY DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TUYÊN QUANG",
+    "accountNumber": "9686687660001122260",
+    "accountHolder": "PHAM HOANG GIA HUY DAT"
+  },
+  "registeredAt": "2026-02-26T09:01:52.915Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:01:52.915Z",
+  "bankVerified": false
+}

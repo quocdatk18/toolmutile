@@ -1,0 +1,25 @@
+{
+  "username": "KingZ",
+  "password": "7regh90lbt",
+  "withdrawPassword": "1",
+  "fullname": "LE DINH BAO THINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DONG NAI",
+    "accountNumber": "9686687660001123455",
+    "accountHolder": "LE DINH BAO THINH"
+  },
+  "registeredAt": "2026-02-26T12:28:04.283Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T12:28:04.283Z",
+  "bankVerified": false
+}

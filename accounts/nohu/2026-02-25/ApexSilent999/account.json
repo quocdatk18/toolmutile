@@ -1,0 +1,25 @@
+{
+  "username": "ApexSilent999",
+  "password": "umtj047jaw",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN MINH DUC ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "LAI CHAU",
+    "accountNumber": "963012001192792",
+    "accountHolder": "NGUYEN MINH DUC ANH"
+  },
+  "registeredAt": "2026-02-24T22:16:36.301Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:16:36.301Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "EagleBlaze99",
+  "password": "p2laoi207xm5",
+  "withdrawPassword": "111222",
+  "fullname": "NGO THI GIA HUYEN",
+  "email": "o058dsx@gmail.com",
+  "phone": "814695366",
+  "registeredAt": "2026-02-26T17:37:55.243Z",
+  "firstSite": "F168",
+  "sites": [
+    "SC881",
+    "F168",
+    "CM88",
+    "C168"
+  ],
+  "status": "active",
+  "category": "okvipOtp",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Ninh Bình",
+    "accountNumber": "963012001211148",
+    "accountHolder": "NGO THI GIA HUYEN"
+  }
+}

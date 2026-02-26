@@ -74,23 +74,32 @@
   },
   "BushXyz": {
     "customerName": "BushXyz",
-    "machineId": "238404fd5bd8d15e",
-    "notes": "Updated from package management. Package exists.",
+    "machineId": "e83c8de44675ee42",
+    "notes": "Machine ID updated and locked by admin.",
     "displayName": "",
     "createdAt": "2025-12-20T07:37:26.681Z",
-    "updatedAt": "2025-12-20T07:38:53.757Z",
-    "updateCount": 1,
+    "updatedAt": "2026-02-25T08:40:09.363Z",
+    "updateCount": 2,
     "licenseHistory": [
       {
         "licenseKey": "eyJ1c2VybmFtZSI6IkJ1c2hYeXoiLCJtYWNoaW5lSWQiOiIyMzg0MDRmZDViZDhkMTVlIiwiZXhwaXJ5IjotMSwiY3JlYXRlZCI6MTc2NjIxNjM0ODc0NiwiYWxsb3dlZFRvb2xzIjpbIm5vaHUtdG9vbCIsInZpcC10b29sIl19.20a1d77a96e1d424a7153eb511e36975cd360aa5a68a355630047510af724ab9",
         "expiryDays": -1,
         "notes": "Generated from Customer Manager. Lifetime. Tools: nohu-tool, vip-tool",
         "createdAt": "2025-12-20T07:39:08.746Z",
+        "isActive": false
+      },
+      {
+        "licenseKey": "eyJ1IjoiQnVzaFh5eiIsIm0iOiJlODNjOGRlNDQ2NzVlZTQyIiwiZSI6MTgwMzU0NDg3MywidCI6WyJub2h1LXRvb2wiLCJ2aXAtdG9vbCJdfQ.6a5cc65458bff072",
+        "expiryDays": 365,
+        "notes": "Generated from Customer Manager. 365 days. Tools: nohu-tool, vip-tool",
+        "createdAt": "2026-02-25T08:41:13.989Z",
         "isActive": true
       }
     ],
     "machineIdLocked": true,
-    "machineIdSetAt": "2025-12-20T07:38:53.757Z"
+    "machineIdSetAt": "2026-02-25T08:40:09.363Z",
+    "machineIdUnlockedAt": "2026-02-25T08:40:07.253Z",
+    "unlockReason": "Admin unlock for editing"
   },
   "xuanDang": {
     "customerName": "xuanDang",
@@ -360,5 +369,25 @@
     ],
     "machineIdLocked": true,
     "machineIdSetAt": "2026-02-04T02:00:00.492Z"
+  },
+  "bushv2": {
+    "customerName": "bushv2",
+    "machineId": "eecbabeaed678328",
+    "notes": "Updated from package management. Package exists.",
+    "displayName": "",
+    "createdAt": "2026-02-26T11:45:32.034Z",
+    "updatedAt": "2026-02-26T11:52:04.106Z",
+    "updateCount": 1,
+    "licenseHistory": [
+      {
+        "licenseKey": "eyJ1IjoiYnVzaHYyIiwibSI6ImVlY2JhYmVhZWQ2NzgzMjgiLCJlIjotMSwidCI6WyJub2h1LXRvb2wiLCJ2aXAtdG9vbCJdfQ.69391d1f801441fd",
+        "expiryDays": -1,
+        "notes": "Generated from Customer Manager. Lifetime. Tools: nohu-tool, vip-tool",
+        "createdAt": "2026-02-26T11:52:22.923Z",
+        "isActive": true
+      }
+    ],
+    "machineIdLocked": true,
+    "machineIdSetAt": "2026-02-26T11:52:04.106Z"
   }
 }

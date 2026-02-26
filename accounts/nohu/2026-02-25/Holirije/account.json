@@ -1,0 +1,25 @@
+{
+  "username": "Holirije",
+  "password": "iga5c1tnqu3",
+  "withdrawPassword": "1",
+  "fullname": "VU HUU DUC THANH AN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA TAY",
+    "accountNumber": "9686687660001117784",
+    "accountHolder": "VU HUU DUC THANH AN"
+  },
+  "registeredAt": "2026-02-25T07:29:47.200Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T07:29:47.200Z",
+  "bankVerified": true
+}

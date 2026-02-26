@@ -1,0 +1,25 @@
+{
+  "username": "PhoenixVengeanc",
+  "password": "65av0mq7j7ia",
+  "withdrawPassword": "1",
+  "fullname": "BUI HUU THANH MINH DUC",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAI CHAU",
+    "accountNumber": "9686687660001117782",
+    "accountHolder": "BUI HUU THANH MINH DUC"
+  },
+  "registeredAt": "2026-02-25T07:28:31.756Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T07:28:31.756Z",
+  "bankVerified": false
+}

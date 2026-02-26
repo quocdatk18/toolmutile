@@ -1,0 +1,25 @@
+{
+  "username": "Metal7",
+  "password": "82d9qrox",
+  "withdrawPassword": "1",
+  "fullname": "VU GIA KHANH HUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HO CHI MINH",
+    "accountNumber": "9686687660001115834",
+    "accountHolder": "VU GIA KHANH HUY"
+  },
+  "registeredAt": "2026-02-24T18:31:12.039Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:31:12.039Z",
+  "bankVerified": false
+}

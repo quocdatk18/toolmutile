@@ -1,0 +1,25 @@
+{
+  "username": "PegasusDivine",
+  "password": "lw92g732d64",
+  "withdrawPassword": "1",
+  "fullname": "VU MINH GIA BAO TRAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TIEN GIANG",
+    "accountNumber": "9686687660001118086",
+    "accountHolder": "VU MINH GIA BAO TRAM"
+  },
+  "registeredAt": "2026-02-25T09:17:16.244Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T09:17:16.244Z",
+  "bankVerified": false
+}

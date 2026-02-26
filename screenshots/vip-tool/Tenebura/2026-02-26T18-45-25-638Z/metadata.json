@@ -1,0 +1,16 @@
+{
+  "profileName": "qdat",
+  "runNumber": 1,
+  "toolId": "vip-tool",
+  "category": "okvip",
+  "sites": [
+    "Hi88",
+    "F8BET",
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "mode": "auto",
+  "executionMode": "parallel",
+  "timestamp": "2026-02-26T18:45:25.639Z"
+}

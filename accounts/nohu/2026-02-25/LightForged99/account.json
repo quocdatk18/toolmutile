@@ -1,0 +1,25 @@
+{
+  "username": "LightForged99",
+  "password": "leu9r049ze",
+  "withdrawPassword": "1",
+  "fullname": "HOANG CONG MINH TRONG TIN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TPHCM",
+    "accountNumber": "9686687660001117785",
+    "accountHolder": "HOANG CONG MINH TRONG TIN"
+  },
+  "registeredAt": "2026-02-25T07:33:57.079Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T07:33:57.079Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "Hixusi99",
+  "password": "605aq8qmoa",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN MINH QUOC ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LONG AN",
+    "accountNumber": "9686687660001115836",
+    "accountHolder": "NGUYEN MINH QUOC ANH"
+  },
+  "registeredAt": "2026-02-24T18:31:37.994Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:31:37.994Z",
+  "bankVerified": false
+}

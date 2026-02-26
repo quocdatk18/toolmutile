@@ -1,0 +1,25 @@
+{
+  "username": "EagleAurora999",
+  "password": "r3276nhpfe",
+  "withdrawPassword": "1",
+  "fullname": "PHAN GIA LINH ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BAC KAN",
+    "accountNumber": "9686687660001122147",
+    "accountHolder": "PHAN GIA LINH ANH"
+  },
+  "registeredAt": "2026-02-26T06:55:05.625Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:55:05.625Z",
+  "bankVerified": false
+}

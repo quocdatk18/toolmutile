@@ -1,0 +1,25 @@
+{
+  "username": "LeopardEnergy99",
+  "password": "uwizr756",
+  "withdrawPassword": "1",
+  "fullname": "NGO THI MINH TAM ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAI PHONG",
+    "accountNumber": "9686687660001122926",
+    "accountHolder": "NGO THI MINH TAM ANH"
+  },
+  "registeredAt": "2026-02-26T09:48:18.238Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:48:18.238Z",
+  "bankVerified": true
+}

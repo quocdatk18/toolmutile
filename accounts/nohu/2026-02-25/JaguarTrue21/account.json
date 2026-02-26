@@ -1,0 +1,25 @@
+{
+  "username": "JaguarTrue21",
+  "password": "vrxwo45v",
+  "withdrawPassword": "1",
+  "fullname": "PHAM DINH QUANG HIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "GIA LAI",
+    "accountNumber": "9686687660001117277",
+    "accountHolder": "PHAM DINH QUANG HIEN"
+  },
+  "registeredAt": "2026-02-25T04:35:24.435Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T04:35:24.435Z",
+  "bankVerified": false
+}

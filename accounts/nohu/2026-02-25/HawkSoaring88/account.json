@@ -1,0 +1,25 @@
+{
+  "username": "HawkSoaring88",
+  "password": "7wi3x49rbc44",
+  "withdrawPassword": "1",
+  "fullname": "PHAM HUU THANH LIEM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "TIEN GIANG",
+    "accountNumber": "9686687660001117355",
+    "accountHolder": "PHAM HUU THANH LIEM"
+  },
+  "registeredAt": "2026-02-25T05:05:02.195Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T05:05:02.195Z",
+  "bankVerified": false
+}

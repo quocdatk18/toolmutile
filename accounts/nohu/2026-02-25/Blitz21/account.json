@@ -1,0 +1,25 @@
+{
+  "username": "Blitz21",
+  "password": "27timqiqyyss",
+  "withdrawPassword": "1",
+  "fullname": "LE THI KIM NGOC ANH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "BINH PHUOC",
+    "accountNumber": "9686687660001118318",
+    "accountHolder": "LE THI KIM NGOC ANH"
+  },
+  "registeredAt": "2026-02-25T11:15:07.954Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T11:15:07.954Z",
+  "bankVerified": false
+}

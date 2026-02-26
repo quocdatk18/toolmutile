@@ -1,0 +1,26 @@
+{
+  "username": "Tenebura",
+  "password": "r9p6a4zx58o",
+  "withdrawPassword": "111222",
+  "fullname": "NGUYEN QUOC DAT",
+  "email": "nmfdru7@gmail.com",
+  "phone": "0814582070",
+  "registeredAt": "2026-02-26T18:45:25.629Z",
+  "firstSite": "MB66",
+  "sites": [
+    "Hi88",
+    "F8BET",
+    "SHBET",
+    "NEW88",
+    "MB66"
+  ],
+  "status": "active",
+  "category": "okvip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "MBBank",
+    "branch": "Tiền Giang",
+    "accountNumber": "440714072",
+    "accountHolder": "NGUYEN QUOC DAT"
+  }
+}

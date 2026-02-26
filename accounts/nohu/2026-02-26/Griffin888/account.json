@@ -1,0 +1,25 @@
+{
+  "username": "Griffin888",
+  "password": "9glu033ygpf",
+  "withdrawPassword": "1",
+  "fullname": "LAM MINH THU TRANG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA GIANG",
+    "accountNumber": "9686687660001122155",
+    "accountHolder": "LAM MINH THU TRANG"
+  },
+  "registeredAt": "2026-02-26T07:00:50.370Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:00:50.370Z",
+  "bankVerified": false
+}

@@ -1,0 +1,25 @@
+{
+  "username": "KrakenWise69",
+  "password": "5d17omz9x",
+  "withdrawPassword": "1",
+  "fullname": "DANG QUOC MINH DUY",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAO CAI",
+    "accountNumber": "9686687660001115830",
+    "accountHolder": "DANG QUOC MINH DUY"
+  },
+  "registeredAt": "2026-02-24T18:30:52.268Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:30:52.268Z",
+  "bankVerified": false
+}

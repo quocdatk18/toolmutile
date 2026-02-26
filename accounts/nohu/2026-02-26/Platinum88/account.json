@@ -1,0 +1,25 @@
+{
+  "username": "Platinum88",
+  "password": "jsrzaqo4c6v2",
+  "withdrawPassword": "1",
+  "fullname": "NGO MINH CHAU GIA HAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LAI CHAU",
+    "accountNumber": "9686687660001122252",
+    "accountHolder": "NGO MINH CHAU GIA HAN"
+  },
+  "registeredAt": "2026-02-26T07:47:17.420Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T07:47:17.420Z",
+  "bankVerified": true
+}

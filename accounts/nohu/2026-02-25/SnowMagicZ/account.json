@@ -1,0 +1,21 @@
+{
+  "username": "SnowMagicZ",
+  "password": "g2mrgdxl70g",
+  "withdrawPassword": "1",
+  "fullname": "BUI GIA HAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CAO BANG",
+    "accountNumber": "9686687660001117501",
+    "accountHolder": "BUI GIA HAN"
+  },
+  "registeredAt": "2026-02-25T05:50:06.409Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    "Pkwin"
+  ],
+  "status": "active",
+  "tool": "nohu-sms"
+}

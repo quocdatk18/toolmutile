@@ -1,0 +1,25 @@
+{
+  "username": "Titanium999",
+  "password": "1dy15fi78ok",
+  "withdrawPassword": "1",
+  "fullname": "PHAM DUC MINH QUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "BIDV",
+    "branch": "BINH PHUOC",
+    "accountNumber": "963012001192795",
+    "accountHolder": "PHAM DUC MINH QUAN"
+  },
+  "registeredAt": "2026-02-24T22:18:38.361Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:18:38.361Z",
+  "bankVerified": false
+}

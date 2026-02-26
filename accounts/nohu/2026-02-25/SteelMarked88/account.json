@@ -1,0 +1,25 @@
+{
+  "username": "SteelMarked88",
+  "password": "szq90xhr",
+  "withdrawPassword": "1",
+  "fullname": "VO A MINH TRUONG",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAI DUONG",
+    "accountNumber": "9686687660001116530",
+    "accountHolder": "VO A MINH TRUONG"
+  },
+  "registeredAt": "2026-02-25T01:13:49.132Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T01:13:49.132Z",
+  "bankVerified": false
+}

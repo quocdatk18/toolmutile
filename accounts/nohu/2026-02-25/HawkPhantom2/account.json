@@ -1,0 +1,25 @@
+{
+  "username": "HawkPhantom2",
+  "password": "87s072ml",
+  "withdrawPassword": "1",
+  "fullname": "VO THANH GIA BAO",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DAK LAK",
+    "accountNumber": "9686687660001115828",
+    "accountHolder": "VO THANH GIA BAO"
+  },
+  "registeredAt": "2026-02-24T18:30:33.371Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T18:30:33.371Z",
+  "bankVerified": false
+}

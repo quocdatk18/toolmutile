@@ -1,0 +1,25 @@
+{
+  "username": "Cumatu870",
+  "password": "mxk05xk70",
+  "withdrawPassword": "1",
+  "fullname": "VO QUANG A LIEM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "THU DUC",
+    "accountNumber": "9686687660001116195",
+    "accountHolder": "VO QUANG A LIEM"
+  },
+  "registeredAt": "2026-02-24T22:53:14.280Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-24T22:53:14.280Z",
+  "bankVerified": false
+}

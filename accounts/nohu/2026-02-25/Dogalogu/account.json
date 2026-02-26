@@ -1,0 +1,25 @@
+{
+  "username": "Dogalogu",
+  "password": "03zyd49r",
+  "withdrawPassword": "1",
+  "fullname": "VO HUU DUC MINH TRI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LONG AN",
+    "accountNumber": "9686687660001117781",
+    "accountHolder": "VO HUU DUC MINH TRI"
+  },
+  "registeredAt": "2026-02-25T07:34:57.237Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T07:34:57.237Z",
+  "bankVerified": false
+}

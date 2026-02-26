@@ -1,0 +1,25 @@
+{
+  "username": "Zumanesa3",
+  "password": "pkm2blx5t",
+  "withdrawPassword": "1",
+  "fullname": "DO DINH VAN HUAN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "KON TUM",
+    "accountNumber": "9686687660001117273",
+    "accountHolder": "DO DINH VAN HUAN"
+  },
+  "registeredAt": "2026-02-25T04:34:46.935Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T04:34:46.935Z",
+  "bankVerified": true
+}

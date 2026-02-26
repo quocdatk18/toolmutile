@@ -1,0 +1,25 @@
+{
+  "username": "NovaBorn13",
+  "password": "19d5cm3n1zoz",
+  "withdrawPassword": "1",
+  "fullname": "PHAM DUC TIEN DAT",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "CAN THO",
+    "accountNumber": "9686687660001119292",
+    "accountHolder": "PHAM DUC TIEN DAT"
+  },
+  "registeredAt": "2026-02-25T15:49:08.712Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T15:49:08.712Z",
+  "bankVerified": true
+}

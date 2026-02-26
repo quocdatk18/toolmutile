@@ -1,0 +1,25 @@
+{
+  "username": "NinjaPaladin3",
+  "password": "787g520vn29s",
+  "withdrawPassword": "1",
+  "fullname": "BUI CONG MINH DUC GIA",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "DA LAT",
+    "accountNumber": "9686687660001122931",
+    "accountHolder": "BUI CONG MINH DUC GIA"
+  },
+  "registeredAt": "2026-02-26T09:50:54.899Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T09:50:54.899Z",
+  "bankVerified": false
+}

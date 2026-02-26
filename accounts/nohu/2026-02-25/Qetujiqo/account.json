@@ -1,0 +1,25 @@
+{
+  "username": "Qetujiqo",
+  "password": "w1sa2ab4x",
+  "withdrawPassword": "1",
+  "fullname": "HOANG NGOC THANH GIA NHI",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "SON LA",
+    "accountNumber": "9686687660001118087",
+    "accountHolder": "HOANG NGOC THANH GIA NHI"
+  },
+  "registeredAt": "2026-02-25T09:17:18.633Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T09:17:18.633Z",
+  "bankVerified": true
+}

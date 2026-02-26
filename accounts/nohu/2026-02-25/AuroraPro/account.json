@@ -1,0 +1,25 @@
+{
+  "username": "AuroraPro",
+  "password": "intv7184p54a",
+  "withdrawPassword": "1",
+  "fullname": "HOANG THI KIM BAO TRAM",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA NOI",
+    "accountNumber": "9686687660001118328",
+    "accountHolder": "HOANG THI KIM BAO TRAM"
+  },
+  "registeredAt": "2026-02-25T11:21:43.815Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T11:21:43.815Z",
+  "bankVerified": false
+}

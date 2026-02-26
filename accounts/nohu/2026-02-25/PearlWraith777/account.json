@@ -1,0 +1,25 @@
+{
+  "username": "PearlWraith777",
+  "password": "e6zk09ivu",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN THI NGOC BICH LIEN",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HA NOI",
+    "accountNumber": "9686687660001118316",
+    "accountHolder": "NGUYEN THI NGOC BICH LIEN"
+  },
+  "registeredAt": "2026-02-25T11:10:22.745Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T11:10:22.745Z",
+  "bankVerified": false
+}

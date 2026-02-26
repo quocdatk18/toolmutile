@@ -1,0 +1,25 @@
+{
+  "username": "Tometona108",
+  "password": "7kp8ourq",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN GIA HUY MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "HAU GIANG",
+    "accountNumber": "9686687660001122131",
+    "accountHolder": "NGUYEN GIA HUY MINH"
+  },
+  "registeredAt": "2026-02-26T06:46:06.441Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-26T06:46:06.441Z",
+  "bankVerified": false
+}

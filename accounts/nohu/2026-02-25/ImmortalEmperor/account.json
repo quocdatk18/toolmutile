@@ -1,0 +1,25 @@
+{
+  "username": "ImmortalEmperor",
+  "password": "q1hxoks7182",
+  "withdrawPassword": "1",
+  "fullname": "NGUYEN A KHA MINH",
+  "email": "",
+  "phone": "",
+  "bank": {
+    "name": "MSB",
+    "branch": "LONG AN",
+    "accountNumber": "9686687660001116524",
+    "accountHolder": "NGUYEN A KHA MINH"
+  },
+  "registeredAt": "2026-02-25T01:12:22.657Z",
+  "firstSite": "Pkwin",
+  "sites": [
+    {
+      "name": "Pkwin"
+    }
+  ],
+  "status": "active",
+  "tool": "nohu-sms",
+  "bankAddedAt": "2026-02-25T01:12:22.657Z",
+  "bankVerified": false
+}
