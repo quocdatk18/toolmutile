@@ -1,0 +1,22 @@
+{
+  "username": "Seraph21",
+  "password": "74njh9jku",
+  "withdrawPassword": "111222",
+  "fullname": "NHU HOA CO NUONG",
+  "email": "4oy7ckg@gmail.com",
+  "phone": "0971419844",
+  "registeredAt": "2026-05-31T16:14:10.683Z",
+  "firstSite": "58winlink",
+  "sites": [
+    "58winlink"
+  ],
+  "status": "active",
+  "category": "22vip",
+  "tool": "vip-tool",
+  "bank": {
+    "name": "BIDV",
+    "branch": "Vĩnh Phúc",
+    "accountNumber": "963012001713735",
+    "accountHolder": "NHU HOA CO NUONG"
+  }
+}

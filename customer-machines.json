@@ -323,12 +323,12 @@
   },
   "SatamaHim": {
     "customerName": "SatamaHim",
-    "machineId": "50b6f289839c6f84",
+    "machineId": "9f0482e4d7d88475",
     "notes": "Machine ID updated and locked by admin.",
     "displayName": "",
     "createdAt": "2026-01-31T09:24:42.452Z",
-    "updatedAt": "2026-02-21T14:43:37.114Z",
-    "updateCount": 2,
+    "updatedAt": "2026-05-31T16:03:31.669Z",
+    "updateCount": 3,
     "licenseHistory": [
       {
         "licenseKey": "eyJ1IjoiU2F0YW1hSGltIiwibSI6IjZjZGI1NTJiODViZDEzNDMiLCJlIjoxNzcyNDQzNjIwLCJ0IjpbIm5vaHUtdG9vbCJdfQ.50b6f289839c6f84",
@@ -342,12 +342,19 @@
         "expiryDays": -1,
         "notes": "Generated from Customer Manager. Lifetime. Tools: nohu-tool",
         "createdAt": "2026-02-21T14:44:41.856Z",
+        "isActive": false
+      },
+      {
+        "licenseKey": "eyJ1IjoiU2F0YW1hSGltIiwibSI6IjlmMDQ4MmU0ZDdkODg0NzUiLCJlIjoxNzgyODM1NDE4LCJ0IjpbIm5vaHUtdG9vbCIsInZpcC10b29sIl19.dfdb6722074ae654",
+        "expiryDays": 30,
+        "notes": "Generated from Customer Manager. 30 days. Tools: nohu-tool, vip-tool",
+        "createdAt": "2026-05-31T16:03:38.992Z",
         "isActive": true
       }
     ],
     "machineIdLocked": true,
-    "machineIdSetAt": "2026-02-21T14:43:37.114Z",
-    "machineIdUnlockedAt": "2026-02-21T14:43:34.667Z",
+    "machineIdSetAt": "2026-05-31T16:03:31.669Z",
+    "machineIdUnlockedAt": "2026-05-31T16:03:30.049Z",
     "unlockReason": "Admin unlock for editing"
   },
   "bemotele": {

@@ -3727,6 +3727,7 @@ class VIPAutomation {
                 const passInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'userpass');
                 const confirmInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'confirmPassword');
                 const nameInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'realName');
+                const phoneInput = Array.from(inputs).find(inp => inp.getAttribute('data-input-name') === 'phone');
 
                 // Fill account
                 if (accountInput) {
@@ -3736,6 +3737,20 @@ class VIPAutomation {
                     accountInput.dispatchEvent(new Event('input', { bubbles: true }));
                     accountInput.dispatchEvent(new Event('change', { bubbles: true }));
                     accountInput.dispatchEvent(new Event('blur', { bubbles: true }));
+                }
+
+                // Fill phone (remove leading 0)
+                if (phoneInput) {
+                    phoneInput.focus();
+                    phoneInput.click();
+                    // Use native setter to bypass React/Vue controlled input
+                    const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set;
+                    const rawPhone = data.phone || data.username || '';
+                    const phoneValue = rawPhone.startsWith('0') ? rawPhone.slice(1) : rawPhone;
+                    nativeSetter.call(phoneInput, phoneValue);
+                    phoneInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    phoneInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    phoneInput.dispatchEvent(new Event('blur', { bubbles: true }));
                 }
 
                 // Fill password
@@ -4558,17 +4573,117 @@ class VIPAutomation {
             // Fill withdraw password form using virtual keyboard (22VIP style)
             const password = profileData.withdrawPassword;
 
-            // Click on password input area to show keyboard
-            await page.evaluate(() => {
-                const firstBox = document.querySelector('ul.ui-password-input__security li.ui-password-input__item');
-                if (firstBox) {
-                    firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    firstBox.focus();
-                    firstBox.click();
+            // Click on password input area to show keyboard (with retry)
+            console.log('🔐 Clicking password input to show virtual keyboard...');
+            for (let attempt = 0; attempt < 3; attempt++) {
+                const clicked = await page.evaluate(() => {
+                    // Try multiple selectors to find the password input area
+                    const firstBox = document.querySelector('ul.ui-password-input__security li.ui-password-input__item') ||
+                        document.querySelector('ul.ui-password-input__security') ||
+                        document.querySelector('.ui-password-input__security');
+                    if (firstBox) {
+                        firstBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstBox.focus();
+                        try {
+                            firstBox.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, cancelable: true }));
+                            firstBox.dispatchEvent(new TouchEvent('touchend', { bubbles: true, cancelable: true }));
+                        } catch (e) { }
+                        firstBox.click();
+                        return true;
+                    }
+                    return false;
+                });
+                if (clicked) {
+                    console.log('✅ Password input clicked, waiting for keyboard...');
+                    break;
                 }
-            });
+                console.warn(`⚠️ Password input not found (attempt ${attempt + 1}/3), retrying...`);
+                await new Promise(r => setTimeout(r, 1000));
+            }
 
             await new Promise(r => setTimeout(r, 1000));
+
+            // Helper: Click digits on virtual keyboard (22VIP style)
+            const clickDigitsOnKeyboard = async (pwd) => {
+                // Bring page to front once at the start
+                await page.bringToFront();
+
+                for (let i = 0; i < pwd.length; i++) {
+                    const digit = pwd[i];
+                    await new Promise(r => setTimeout(r, 100));
+
+                    try {
+                        if (!page || page.isClosed?.()) {
+                            console.warn('⚠️ Page is closed, stopping keyboard input');
+                            throw new Error('Page is closed');
+                        }
+
+                        await Promise.race([
+                            page.evaluate((num) => {
+                                const buttons = document.querySelectorAll('button, div[role="button"]');
+                                let candidates = [];
+
+                                for (let btn of buttons) {
+                                    const text = btn.textContent.trim();
+                                    if (text === num && text.length === 1 && btn.offsetParent !== null) {
+                                        const rect = btn.getBoundingClientRect();
+                                        if (rect.width > 20 && rect.height > 20) {
+                                            candidates.push({ btn, rect });
+                                        }
+                                    }
+                                }
+
+                                if (candidates.length > 0) {
+                                    candidates.sort((a, b) => {
+                                        const areaA = a.rect.width * a.rect.height;
+                                        const areaB = b.rect.width * b.rect.height;
+                                        return Math.abs(areaB - 2500) - Math.abs(areaA - 2500);
+                                    });
+
+                                    const btn = candidates[0].btn;
+                                    try {
+                                        const rect = btn.getBoundingClientRect();
+                                        const touchObj = new Touch({
+                                            identifier: Date.now(),
+                                            target: btn,
+                                            clientX: rect.left + rect.width / 2,
+                                            clientY: rect.top + rect.height / 2,
+                                            radiusX: 2.5,
+                                            radiusY: 2.5,
+                                            rotationAngle: 0,
+                                            force: 1
+                                        });
+
+                                        btn.dispatchEvent(new TouchEvent('touchstart', {
+                                            bubbles: true,
+                                            cancelable: true,
+                                            touches: [touchObj],
+                                            targetTouches: [touchObj],
+                                            changedTouches: [touchObj]
+                                        }));
+
+                                        btn.dispatchEvent(new TouchEvent('touchend', {
+                                            bubbles: true,
+                                            cancelable: true,
+                                            changedTouches: [touchObj]
+                                        }));
+                                    } catch (e) { }
+
+                                    btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                                    btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                                    btn.click();
+                                }
+                            }, digit),
+                            new Promise((_, reject) => setTimeout(() => reject(new Error('Digit click timeout')), 5000))
+                        ]);
+                    } catch (e) {
+                        console.warn(`⚠️ Failed to click digit ${digit}:`, e.message);
+                        throw e;
+                    }
+
+                    await new Promise(r => setTimeout(r, 100 + Math.random() * 100));
+                }
+            };
 
             // Helper: Set password value directly (no character-by-character input)
             const setPasswordValue = async (pwd) => {
@@ -5571,6 +5686,11 @@ class VIPAutomation {
                     {
                         name: '888P',
                         registerUrl: 'https://m.888p28.com/?fixed.iswebclip=2',
+                        checkPromoUrl: ''
+                    },
+                    {
+                        name: '58winlink',
+                        registerUrl: 'https://d2moydbgomla28.cloudfront.net?fixed.iswebclip=2',
                         checkPromoUrl: ''
                     }
                 ]
